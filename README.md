@@ -1,29 +1,20 @@
-# Application Name
+# CITZ HybridWorkplace
 
 ## What am I?
 
-I am a template repo for use by the platform services team to encourage consistency in documentation and repo layout. For those using me, do not feel like you are *required* to adhere to this layout if you feel something better would suit the needs of your application or service. Find more information about this template [here](https://github.com/bcgov-c/platform-services-docs/blob/main/repo-organization.md)
+This is the project repo for the 2022 CITZ IMB "Hybrid Workplace" product. We are currently in our inception phase, come back often as content is constantly being added
 
-**Sadly, topics are not automatically imported when creating a repository from a template. Ensure you include the following topics:**
-- `citz`
-- `devops`
-- `platform-services`
-- `supported` / `unsupported`
-- plus any additional topics that may be appropriate
+**What are we hoping to do?
+- In 2021 the RISE leadership particpants identified a need for a centralized go to space that would help members to locate useful tips and info relevant to their interest(s). As part of that initiative we are exploring the need and benefit of a tool.
 
-Please use this README as a template for your own README, including all the same information, as appropriate.
+## Who are we?
 
-Consider including your namespace name(s) in this section, so others supporting this tool know where to look.
+- We are a small team of two developers and other collegues who will particpate in this effort starting in January 2022 till April 22nd, 2022
+- Our executive sponsor is Craig Shutko the Application Manager in the CITZ IMB.
 
-## Contact Info
-
-Relevant rocketchat channels, maybe some outside docs, vendor support portals, etc.
-
-## Vendor Info
-
-If this is a deployment of a vendored product, include some links to relevant repos and documentation.
+**Who to contact if you want to learn more?
+- robert.w.kobenter@gov.bc.ca   250 514 5911
 
 ## Repo Overview
 
-Tell me where to find important stuff in this repo and provide some info about the layout.
-
+Stay tuned for more info.
