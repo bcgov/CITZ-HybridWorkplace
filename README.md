@@ -18,13 +18,13 @@ Utilizing a platform that allows easy contribution of content in a moderated env
 
 ## Goal
 
-The goal of the CITZ Co-op 2022 Hybrid-Workplace project team is to create a modern web application as a tool for <TBD> to <TBA>.
+The goal of the CITZ Co-op 2022 Hybrid-Workplace project team is to create a modern web application as a tool for communities to collaborate.
 
 Objectives include:
 
 - Apply modern application development methodology based on AGILE principles
 - Create a modern web application that is intuitive and easy to use
-- Store project and reporting information in a central repository such as a database
+- Store information in a central repository such as a database
 - Host the solution in the BC Dev Exchange's container environment
 
 ## Who are we?
