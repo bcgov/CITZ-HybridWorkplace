@@ -1,9 +1,6 @@
 # CITZ HybridWorkplace
 
 
-This is the project repo for the 2022 CITZ IMB "Hybrid Workplace" product. We are currently in our inception phase, come back often as content is constantly being added
-
-
 ## Introduction
 
 This is the project repo for the 2022 CITZ IMB "Hybrid Workplace" product. We are currently in our inception phase, come back often as content is constantly being added
