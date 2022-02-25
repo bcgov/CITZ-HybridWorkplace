@@ -19,3 +19,42 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
+
+ import React, { Component } from 'react';
+ import {Link} from 'react-router-dom';
+ import styled from 'styled-components';
+ import { ExternalLink } from 'react-external-link';
+ import './footer.css';
+ 
+ const StyledLink = styled(Link)`
+   color: White;
+   text-decoration: none;
+   margin: 1rem;
+   position: relative;
+ `;
+ 
+ const StyledExLing = styled(ExternalLink)`
+   color: White;
+   text-decoration: none;
+   margin: 1rem;
+   position: relative;
+ `;
+ 
+ class Footer extends Component {
+   render() {
+     return (
+       <div className='footer' >
+           
+             <StyledLink to="/">Home</StyledLink>
+             <StyledExLing href="https://www2.gov.bc.ca/gov/content/home/disclaimer" target="_blank" rel="noopener noreferrer">Disclaimer</StyledExLing>
+             <StyledExLing href="https://www2.gov.bc.ca/gov/content/home/privacy" target="_blank" rel="noopener noreferrer">Privacy</StyledExLing>
+             <StyledExLing href="https://www2.gov.bc.ca/gov/content/home/accessibility" target="_blank" rel="noopener noreferrer">Accessability</StyledExLing>
+             <StyledExLing href="https://www2.gov.bc.ca/gov/content/home/copyright" target="_blank" rel="noopener noreferrer">Copyright</StyledExLing>
+ 
+             
+       </div>
+     )
+   }
+ }
+ 
+ export default Footer;
