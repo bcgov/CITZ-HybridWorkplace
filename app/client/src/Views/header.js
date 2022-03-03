@@ -19,3 +19,21 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
+ import React, { Component } from 'react';
+ import {Link} from 'react-router-dom';
+ import './header.css';
+ import BCLogo from './icons/BCLogo.svg';
+
+ class Header extends Component {
+    render() {
+      return (
+        <div className='header' >
+            <img src={BCLogo} className="App-logo" alt="logo" />
+            <h2> The Neighbourhood </h2>
+              
+        </div>
+      )
+    }
+  }
+  
+  export default Header;
