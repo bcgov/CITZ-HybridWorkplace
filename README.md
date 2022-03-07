@@ -18,7 +18,7 @@ Utilizing a platform that allows easy contribution of content in a moderated env
 
 ## Goal
 
-The goal of the CITZ Co-op 2022 Hybrid-Workplace project team is to create a modern web application as a tool for communities to collaborate.
+The goal of the CITZ Co-op/Capstone 2022 Hybrid-Workplace project team is to create a modern web application as a tool for communities to collaborate.
 
 Objectives include:
 
@@ -30,6 +30,7 @@ Objectives include:
 ## Who are we?
 
 - We are a small team of two developers and other collegues who will particpate in this effort starting in January 2022 till April 22nd, 2022
+- We expect to follow up with phase 2 from May 3rd till August 2022
 - Our executive sponsor is Craig Shutko the Application Manager in the CITZ IMB.
 
 **Who to contact if you want to learn more?
