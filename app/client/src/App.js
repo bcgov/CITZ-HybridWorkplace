@@ -27,6 +27,8 @@ import Login from './Components/login';
 import Register from './Components/register';
 import Dashboard from './Components/dashboard';
 import About from './Components/about';
+import Profile from './Components/profile';
+import EditProfile from './Components/editProfile';
 
 import React, { Component, } from 'react';
 import { Routes, Route } from 'react-router-dom';
@@ -46,6 +48,8 @@ class App extends Component {
 			  <Route path="/" exact element={<Register />} />
 			  <Route path="/dashboard" exact element={<Dashboard />} />  
         <Route path="/about" exact element={<About />} /> 
+        <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/profile/:id/edit" element={<EditProfile />} />
       </Routes> 
       </div> 
       < Footer />

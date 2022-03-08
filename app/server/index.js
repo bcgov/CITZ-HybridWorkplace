@@ -60,7 +60,7 @@
  
  app.post('/api/login', async (req, res) => {
      const user = await User.findOne({
-         email: req.body.email,
+         name: req.body.name,
      })
  
      if (!user) {
@@ -96,7 +96,7 @@
          const email = decoded.email
          const user = await User.findOne({ email: email })
  
-         return res.json({ status: 'ok', quote: user.quote })
+         return res.json({ status: 'ok', quote: user.quote, name: user.name })
      } catch (error) {
          console.log(error)
          res.json({ status: 'error', error: 'invalid token' })
@@ -121,6 +121,76 @@
      }
  })
  
+ app.get('/api/profile', async (req, res) => {
+    const token = req.headers['x-access-token']
+
+    try {
+        const decoded = jwt.verify(token, 'secret123')
+        const email = decoded.email
+        const user = await User.findOne({ email: email })
+
+        return res.json({ status: 'ok', name: user.name, email: user.email, fullName: user.fullName, bio: user.bio, title: user.title, quote:user.quote })
+    } catch (error) {
+        console.log(error)
+        res.json({ status: 'error', error: 'invalid token' })
+    }
+})
+
+app.post('/api/profile', async (req, res) => {
+    const token = req.headers['x-access-token']
+
+    try {
+        const decoded = jwt.verify(token, 'secret123')
+        const email = decoded.email
+        await User.updateOne(
+            { email: email },
+            { $set: { fullName: req.body.fullName } },
+        )
+
+        return res.json({ status: 'ok' })
+    } catch (error) {
+        console.log(error)
+        res.json({ status: 'error', error: 'invalid token' })
+    }
+})
+
+app.get('/api/editprofile', async (req, res) => {
+    const token = req.headers['x-access-token']
+
+    try {
+        const decoded = jwt.verify(token, 'secret123')
+        const email = decoded.email
+        const user = await User.findOne({ email: email })
+
+        return res.json({ status: 'ok', name: user.name, email: user.email, fullName: user.fullName, bio: user.bio, title: user.title, quote:user.quote })
+    } catch (error) {
+        console.log(error)
+        res.json({ status: 'error', error: 'invalid token' })
+    }
+})
+
+app.post('/api/editprofile', async (req, res) => {
+    const token = req.headers['x-access-token']
+
+    try {
+        const decoded = jwt.verify(token, 'secret123')
+        const email = decoded.email
+        await User.updateMany(
+            { email: email },
+            { $set: { fullName: req.body.fullName, title: req.body.title, bio: req.body.bio} },
+            
+        )
+
+        return res.json({ status: 'ok' })
+    } catch (error) {
+        console.log(error)
+        res.json({ status: 'error', error: 'invalid token' })
+    }
+})
+
  app.listen(port, () => {
      console.log(`Server started on port ${port}`)
  })
+
+
+
