@@ -72,7 +72,7 @@ function App() {
 				/>
 				<br />
 				<br/>
-				<input type="submit" value="Submit" />
+				<input type="submit" value="Submit" id='submit'/>
 			</form>
 		</div>
 	)

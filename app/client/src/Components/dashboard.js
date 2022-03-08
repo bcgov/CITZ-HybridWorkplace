@@ -20,15 +20,15 @@
  * @module
  */
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import jwt_decode from "jwt-decode";
+import { Link, useNavigate } from 'react-router-dom';
 
 
 const Dashboard = () => {
-	
+	const navigate = useNavigate();
     const [quote, setQuote] = useState('')
     const [tempQuote, setTempQuote] = useState('')
-    let Name = ''
+    const [name, setName] = useState('')
 
     async function populateQuote() {
         const req = await fetch('http://localhost:5000/api/quote', {
@@ -41,6 +41,7 @@ const Dashboard = () => {
         console.log(data)
         if(data.status === 'ok'){
             setQuote(data.quote)
+            setName(data.name)
         }else{
             alert(data.error)
         }
@@ -51,11 +52,10 @@ const Dashboard = () => {
             const user = jwt_decode(token)
             if(!user){
                 localStorage.removeItem('token')
-                window.location.href = '/login'
+                navigate('/login')
             }else{
                 console.log(user.name)
-                Name = user.name
-                console.log(typeof(Name))
+                
                 populateQuote()
             }
         }
@@ -89,6 +89,11 @@ const Dashboard = () => {
 
 	return (
 		<div>
+            <Link to="/profile/:id">
+              <button type='button' className='LogInbutton'>Profile</button>
+            </Link>
+            
+            <h2>{name}</h2>
             <h1>HomePage</h1> 
             <h3>{quote || 'Hello'}</h3>
             <form onSubmit={updateQuote}>

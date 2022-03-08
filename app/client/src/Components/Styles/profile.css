@@ -1,4 +1,4 @@
-//
+/* //
 // Copyright © 2022 Province of British Columbia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,28 +12,27 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
+// */
 
 /**
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
-const mongoose = require('mongoose')
+#ProfilePic{
+    height: 200px;
+    width: 200px;
+    border-radius: 100px;
+    padding: 40px;
+}
 
-const User = new mongoose.Schema(
-	{
-		name: { type: String, required: true },
-		email: { type: String, required: true, unique: true },
-		password: { type: String, required: true },
-		quote: { type: String },
-		fullName: {type: String},
-		title: {type: String},
-		bio: {type: String},
-	},
-	{ collection: 'user-data' }
-)
+#wrap{
+    display: flex;
+    justify-content: center;
+}
 
-const model = mongoose.model('UserData', User)
-
-module.exports = model
+#restPlace{
+    padding: 20px;
+    text-align: center;
+    
+}
