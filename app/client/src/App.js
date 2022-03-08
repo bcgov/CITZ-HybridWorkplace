@@ -43,7 +43,7 @@ class App extends Component {
       <Header />
       <div className="App"> 
       
-      <Routes>
+      <Routes> 
         <Route path="/login" exact element= {<Login /> }/>
 			  <Route path="/" exact element={<Register />} />
 			  <Route path="/dashboard" exact element={<Dashboard />} />  
