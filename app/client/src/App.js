@@ -22,15 +22,41 @@
 
 
 import './App.css';
-import Footer from './Views/footer';
 
-function App() {
+import Login from './Components/login';
+import Register from './Components/register';
+import Dashboard from './Components/dashboard';
+import About from './Components/about';
+import Profile from './Components/profile';
+import EditProfile from './Components/editProfile';
+
+import React, { Component, } from 'react';
+import { Routes, Route } from 'react-router-dom';
+
+import Footer from './Views/footer'
+import Header from './Views/header';
+
+class App extends Component {
+  render() {
   return (
-    <div className="App">
-      <h1> Hello</h1>
-      <Footer />
+    <div> 
+      <Header />
+      <div className="App"> 
+      
+      <Routes> 
+        <Route path="/login" exact element= {<Login /> }/>
+			  <Route path="/" exact element={<Register />} />
+			  <Route path="/dashboard" exact element={<Dashboard />} />  
+        <Route path="/about" exact element={<About />} /> 
+        <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/profile/:id/edit" element={<EditProfile />} />
+      </Routes> 
+      </div> 
+      < Footer />
     </div>
   );
+}
+
 }
 
 export default App;

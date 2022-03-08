@@ -19,21 +19,18 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
- import React, { Component } from 'react';
- import {Link} from 'react-router-dom';
- import './header.css';
- import BCLogo from './icons/BCLogo.svg';
+const mongoose = require('mongoose')
 
- class Header extends Component {
-    render() {
-      return (
-        <div className='header' >
-            <img src={BCLogo} className="App-logo" alt="logo" />
-            <h2> The Neighbourhood </h2>
-              
-        </div>
-      )
-    }
-  }
-  
-  export default Header;
+const User = new mongoose.Schema(
+	{
+		name: { type: String, required: true },
+		email: { type: String, required: true, unique: true },
+		password: { type: String, required: true },
+		quote: { type: String },
+	},
+	{ collection: 'user-data' }
+)
+
+const model = mongoose.model('UserData', User)
+
+module.exports = model
