@@ -21,11 +21,12 @@
  */
 
 import { useState } from 'react'
+import {useNavigate} from 'react-router-dom'
 
 function App() {
-	const [email, setEmail] = useState('')
+	const [name, setName] = useState('')
 	const [password, setPassword] = useState('')
-
+	const navigate = useNavigate();
 	async function loginUser(event) {
 		event.preventDefault()
 
@@ -35,7 +36,7 @@ function App() {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				email,
+				name,
 				password,
 			}),
 		})
@@ -46,7 +47,7 @@ function App() {
 		 if (data.user) {
 		 	localStorage.setItem('token', data.user)
 		 	alert('Login Successful')
-		 	window.location.href = '/dashboard'
+		 	navigate('/dashboard')
 		 } else {
 		 	alert('Please check your username and password and try again')
 		 }
@@ -57,10 +58,10 @@ function App() {
 			<h1>Login</h1>
 			<form onSubmit={loginUser}>
 				<input
-					value={email}
-					onChange={(e) => setEmail(e.target.value)}
-					type="email"
-					placeholder="Email"
+					value={name}
+					onChange={(e) => setName(e.target.value)}
+					type="name"
+					placeholder="ID"
 				/>
 				<br />
 				<input
