@@ -29,9 +29,15 @@ import Dashboard from './Components/dashboard';
 import About from './Components/about';
 import Profile from './Components/profile';
 import EditProfile from './Components/editProfile';
+import CreateCommunity from './Components/createCommunity';
+import Communities from './Components/Communities';
+import NewCommunity from './Components/newCommunity';
 
 import React, { Component, } from 'react';
 import { Routes, Route } from 'react-router-dom';
+
+import { Provider } from 'react-redux';
+import store from './store';
 
 import Footer from './Views/footer'
 import Header from './Views/header';
@@ -39,6 +45,7 @@ import Header from './Views/header';
 class App extends Component {
   render() {
   return (
+    <Provider store={store}>
     <div> 
       <Header />
       <div className="App"> 
@@ -50,10 +57,14 @@ class App extends Component {
         <Route path="/about" exact element={<About />} /> 
         <Route path="/profile/:id" element={<Profile />} />
         <Route path="/profile/:id/edit" element={<EditProfile />} />
+        <Route path="/createCommunity" element={<CreateCommunity/>} />
+        <Route path="/communities" element={<Communities/>} />
+        <Route path="/newCommunity" element={<NewCommunity/>} />
       </Routes> 
       </div> 
       < Footer />
     </div>
+    </Provider>
   );
 }
 

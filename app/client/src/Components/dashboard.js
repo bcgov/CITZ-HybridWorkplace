@@ -92,7 +92,9 @@ const Dashboard = () => {
             <Link to="/profile/:id">
               <button type='button' className='LogInbutton'>Profile</button>
             </Link>
-            
+            <Link to="/createCommunity">
+              <button type='button' className='LogInbutton'>Create Community</button>
+            </Link>
             <h2>{name}</h2>
             <h1>HomePage</h1> 
             <h3>{quote || 'Hello'}</h3>

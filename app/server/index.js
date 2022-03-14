@@ -27,6 +27,7 @@
  const cors = require('cors')
  const mongoose = require('mongoose')
  const User = require('./models/user.model')
+ const Community = require('./models/community.model')
  const jwt = require('jsonwebtoken')
  const bcrypt = require('bcryptjs') //encrypting passwords
  
@@ -162,7 +163,15 @@ app.get('/api/editprofile', async (req, res) => {
         const email = decoded.email
         const user = await User.findOne({ email: email })
 
-        return res.json({ status: 'ok', name: user.name, email: user.email, fullName: user.fullName, bio: user.bio, title: user.title, quote:user.quote })
+        return res.json({ 
+            status: 'ok', 
+            name: user.name, 
+            email: user.email, 
+            fullName: user.fullName, 
+            bio: user.bio, 
+            title: user.title, 
+            quote:user.quote 
+        })
     } catch (error) {
         console.log(error)
         res.json({ status: 'error', error: 'invalid token' })
@@ -187,6 +196,36 @@ app.post('/api/editprofile', async (req, res) => {
         res.json({ status: 'error', error: 'invalid token' })
     }
 })
+
+app.post('/api/Community', async (req, res) => {
+    console.log(req.body)
+    try {
+        
+        
+        await Community.create ({
+            title: req.body.title,
+            description: req.body.description,
+        })
+       
+        res.json({ status: 'ok' })
+    } catch (err) {
+       
+        res.json({ status: 'error', error: err })
+    }
+})
+
+app.get('/api/Community', async (req, res) => {
+    Community.find({ })
+        .then((data)=>{
+            console.log(data);
+            res.json(data);
+        })
+        .catch((error) =>{
+            console.log(error);
+        });
+
+})
+
 
  app.listen(port, () => {
      console.log(`Server started on port ${port}`)
