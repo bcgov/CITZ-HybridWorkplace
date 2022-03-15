@@ -126,7 +126,7 @@
      <div className="Register">
        
        <div id='register'>
-       <br/>
+       
        <h1> Sign Up</h1>
        <br/>
        <form onSubmit={registerUser}>
@@ -137,7 +137,7 @@
            value={name}
            onChange={(e) => setName(e.target.value)}
            type='text'
-           id='divBox'
+           className='divBox'
            placeholder='ID'
          />
          </div>
@@ -150,7 +150,7 @@
            value={email}
            onChange={(e) => setEmail(e.target.value)}
            type='email'
-           id='divBox'
+           className='divBox'
            placeholder='Email'
          />
          </div>
@@ -178,7 +178,7 @@
            onChange={(e) => setRePassword(e.target.value)}
            type='password'
            placeholder='Password'
-           id="divBox" 
+           className='divBox' 
          />
           </div>
          <br/>
