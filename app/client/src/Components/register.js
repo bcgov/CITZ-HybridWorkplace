@@ -130,7 +130,7 @@
        <h1> Sign Up</h1>
        <br/>
        <form onSubmit={registerUser}>
-       <div className="pword">  
+       <div className="inputWrap">  
        <label>IDIR:</label>
          <br/>
          <input 
@@ -143,7 +143,7 @@
          </div>
          <br/>
          
-         <div className="pword">
+         <div className="inputWrap">
          <label>Email:</label>
          <br/>
          <input 
@@ -155,7 +155,7 @@
          />
          </div>
          <br/>
-         <div className="pword">
+         <div className="inputWrap">
          <label>Password:</label>
          <br/>
          <input 
@@ -170,7 +170,7 @@
          />
           </div>
           <br/>
-         <div className="pword">
+         <div className="inputWrap">
          <label>Re-Enter Password:</label>
          <br/>
          <input 

@@ -23,7 +23,7 @@
  .Register{
   text-align: center;
  }
- .pword{
+ .inputWrap{
   display: inline-block;
   text-align: left;
   padding-top: 10px;
