@@ -54,6 +54,7 @@
      } catch (err) {
         
          res.json({ status: 'error', error: 'Duplicate email' })
+         
      }
  })
 
