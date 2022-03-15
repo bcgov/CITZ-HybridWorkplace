@@ -21,7 +21,8 @@
  */
 
 import { useState } from 'react'
-import {useNavigate} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
+import './Styles/login.css'
 
 function App() {
 	const [name, setName] = useState('')
@@ -47,33 +48,55 @@ function App() {
 		 if (data.user) {
 		 	localStorage.setItem('token', data.user)
 		 	alert('Login Successful')
-		 	navigate('/dashboard')
+		 	navigate('/communities')
 		 } else {
 		 	alert('Please check your username and password and try again')
 		 }
 	}
 
 	return (
-		<div>
+		<div className='LogIn'>
 			<h1>Login</h1>
+			<br/>
 			<form onSubmit={loginUser}>
+			
+				<div className="inputWrap">
+				<label>IDIR:</label>
+				<br/>
 				<input
 					value={name}
 					onChange={(e) => setName(e.target.value)}
 					type="name"
 					placeholder="ID"
+					className='divBox' 
 				/>
+				</div>
 				<br />
+				
+				<div className="inputWrap">
+				<label>Password:</label>
+				<br/>
 				<input
 					value={password}
 					onChange={(e) => setPassword(e.target.value)}
 					type="password"
 					placeholder="Password"
+					className='divBox' 
 				/>
+				</div>
 				<br />
 				<br/>
 				<input type="submit" value="Submit" id='submit'/>
 			</form>
+			<Link to="/" id='link'>
+              Forgot Password?
+        	</Link>
+			<br/>
+			<br/>
+			<br/>
+			<Link to="/" id='link'>
+              Sign Up
+        	</Link>
 		</div>
 	)
 }
