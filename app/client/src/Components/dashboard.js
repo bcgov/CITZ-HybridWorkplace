@@ -26,8 +26,6 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
 	const navigate = useNavigate();
-    const [quote, setQuote] = useState('')
-    const [tempQuote, setTempQuote] = useState('')
     const [name, setName] = useState('')
 
     async function populateQuote() {
@@ -40,7 +38,6 @@ const Dashboard = () => {
         const data = await req.json()
         console.log(data)
         if(data.status === 'ok'){
-            setQuote(data.quote)
             setName(data.name)
         }else{
             alert(data.error)
@@ -61,31 +58,6 @@ const Dashboard = () => {
         }
     }, [])
 
-    async function updateQuote(event){
-        event.preventDefault()
-
-        const req = await fetch('http://localhost:5000/api/quote', {
-           method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-access-token': localStorage.getItem('token'),
-            },
-            body: JSON.stringify({
-                quote: tempQuote,
-                
-            }),
-        })
-
-        const data = await req.json()
-        console.log(data)
-        if(data.status === 'ok'){
-            setQuote(tempQuote)
-            setTempQuote('')
-            
-        }else{
-            alert(data.error)
-        }
-    } 
 
 	return (
 		<div>
@@ -97,16 +69,6 @@ const Dashboard = () => {
             </Link>
             <h2>{name}</h2>
             <h1>HomePage</h1> 
-            <h3>{quote || 'Hello'}</h3>
-            <form onSubmit={updateQuote}>
-                <input 
-                    type='text' 
-                    placeholder='Description' 
-                    value={tempQuote} 
-                    onChange={(e) => setTempQuote(e.target.value)} 
-                />
-                <input type='submit' value='Submit' />
-            </form>
         </div>	
 	)
 }

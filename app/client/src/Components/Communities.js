@@ -21,24 +21,13 @@
  */
 
 import React, { Component } from 'react';
+import {Link} from 'react-router-dom';
 import { connect } from 'react-redux';
-import { getCommunities } from '../actions/communityActons'
+import { getCommunities } from '../actions/communityActons';
 import PropTypes from 'prop-types';
 
  class Communities extends Component {
 
-    // constructor(props){
-    //     super(props);
-    //     this.state = {
-    //         posts: []
-    //     };
-    // }
-    //  componentDidMount(){
-    //      console.log(123)
-    //      fetch('http://localhost:5000/api/Community')
-    //         .then(res => res.json())
-    //         .then(data => this.setState({ posts: data}));
-    //  }
 
     componentDidMount(){
         this.props.getCommunities();
@@ -53,7 +42,11 @@ import PropTypes from 'prop-types';
       ))
     return (
       <div>
-        <p> Communities</p>
+        <h1> Communities</h1>
+        <Link to="/newCommunity">
+              <button >Create New Community</button>
+        </Link>
+
         {communityItems}
       </div>
     )
@@ -66,7 +59,7 @@ Communities.propTypes = {
 }
 
 const mapStateToProps = state => ({
-    communities: state.communities.items //communities is set as community reducer in reducer
+    communities: state.communities.items 
 
 });
 

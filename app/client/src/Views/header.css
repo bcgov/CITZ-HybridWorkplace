@@ -35,6 +35,22 @@
   }
 
   .App-logo {
+    padding-left: 5px;
     height: 60px;
     width: 200px;
+  }
+  #Profile{
+
+    position: absolute;
+    right: 40px;
+    height: 60px;
+    width: 60px;
+    padding-top: 2.5px;
+  }
+
+  #Menu{
+    position: absolute;
+    right: 5px;
+    height: 60px;
+    width: 60px;
   }

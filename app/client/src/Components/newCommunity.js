@@ -23,7 +23,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createCommunity } from '../actions/communityActons';
-//import Communities from '../components/Communities';
 
 class newCommunity extends Component {
   constructor(props) {
@@ -43,6 +42,7 @@ class newCommunity extends Component {
 
   onSubmit(e) {
     e.preventDefault();
+
 
     const community = {
       title: this.state.title,

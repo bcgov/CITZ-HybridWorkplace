@@ -23,6 +23,8 @@
  import {Link} from 'react-router-dom';
  import './header.css';
  import BCLogo from './icons/BCLogo.svg';
+ import UserPic from './icons/user.png';
+ import Menu from './icons/menuLogo.svg';
 
  class Header extends Component {
     render() {
@@ -30,7 +32,10 @@
         <div className='header' >
             <img src={BCLogo} className="App-logo" alt="logo" />
             <h2> The Neighbourhood </h2>
-              
+            <Link to='./profile/:id' id='Profile'>
+              <img src={UserPic} id='Profile' alt="Profile" />  
+            </Link>
+            <img src={Menu} id='Menu' alt="Profile" />  
         </div>
       )
     }
