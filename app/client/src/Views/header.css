@@ -19,6 +19,60 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
+ .nav{
+  height: 100%;
+  width: 0;
+  margin-right: 0px;
+  right: 0;
+  position: fixed;
+  z-index: 1;
+  top:72px;
+  background-color: #036;
+  padding-top: 0px;
+  transition: 0.7s;
+  overflow-x: hidden;
+  opacity: 0.9;
+}
+
+.nav ul{
+  padding: 0;
+  padding-top: 25px;
+}
+
+.nav li:hover{
+  border-left: 7px solid #e3a82b;
+  background-color: rgb(2, 69, 136);
+}
+
+.nav li {
+  display: block;
+  padding: 10px 20px;
+  color: #ccc;
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.nav .close {
+  position: absolute;
+  top: 0;
+  right: 20px;
+  font-size: 30px;;
+}
+
+.nav a {
+  display: block;
+  padding: 2px;
+  color: #ccc;
+  text-decoration: none;
+  font-size: 25px;
+}
+#Menu{
+  height: 60px;
+  width: 60px;
+  position: absolute;
+  right: 5px;
+}
+
 .header {
     background-color: #036; /* BC Blue */
     font-weight: 600;
@@ -48,9 +102,10 @@
     padding-top: 2.5px;
   }
 
-  #Menu{
+  #Menue{
     position: absolute;
     right: 5px;
     height: 60px;
     width: 60px;
   }
+
