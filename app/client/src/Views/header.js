@@ -23,17 +23,57 @@
  import {Link} from 'react-router-dom';
  import './header.css';
  import BCLogo from './icons/BCLogo.svg';
+ import UserPic from './icons/user.png';
+ import Menu from './icons/menuLogo.svg';
 
- class Header extends Component {
-    render() {
+ const Header = () => {
+  async function openSlideMenu(){
+    console.log('hi');
+    document.getElementById('menu').style.width = '250px';
+    document.getElementById('menu').style.marginLeft = '250px';
+    
+  }  
+
+  async function closeSlideMenu(){
+    
+    document.getElementById('menu').style.width = '0px';
+    document.getElementById('menu').style.marginLeft = '0px';
+  }
+
       return (
         <div className='header' >
+
+            
             <img src={BCLogo} className="App-logo" alt="logo" />
             <h2> The Neighbourhood </h2>
-              
+            
+            <div id='content'>
+              <span className='slide'>
+                <a href="#" onClick={openSlideMenu}>
+                  <img src={Menu} id='Menu' alt="Profile" /> 
+                </a> 
+              </span>
+
+              <div id='menu' className='nav'>
+                <a href="#" className='close' onClick={closeSlideMenu} >
+                ✖
+                </a>
+                <ul>
+                  <li> <Link to='/dashboard' >Dashboard</Link></li>
+                  <li><Link to='./about' >About</Link></li>
+                  <li><Link to='./communities' >Communities</Link></li>
+                  <li><Link to='./profile/:id' >Profile</Link></li>
+                  <li><Link to='./login' >Log Off</Link></li>
+                </ul>
+                
+
+              </div>
+
+            </div>
+            
         </div>
       )
     }
-  }
+  
   
   export default Header;

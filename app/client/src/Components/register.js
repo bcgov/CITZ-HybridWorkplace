@@ -29,10 +29,13 @@
    const [name, setName] = useState('');
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
+   const [rePassword, setRePassword] = useState('');
  
    async function registerUser(event) {
      event.preventDefault()
- 
+     if(password != rePassword){
+       alert("Password's do not match, please try again")
+     }else{
      const response = await fetch('http://localhost:5000/api/register', {
      method: 'POST',
      headers: {
@@ -46,10 +49,17 @@
      })
  
      const data = await response.json()
+     if(data.status === 'error'){
+       alert('duplicate email or IDIR, please try again');
+     }
      console.log(data);
+
+     
+
      if (data.status === 'ok'){
       navigate('/login')
      }
+    }
    }
    
    async function PasswordRequirment(){
@@ -113,28 +123,40 @@
    }
  
    return (
-     <div className="App">
-       <h1>Welcome to The Neighbourhood</h1>
-       <p> The Neighbourhood is a place to share and view expiriences to make us all better leaders and learners</p>
-       <Link to="/about"> Learn More Here </Link>
+     <div className="Register">
+       
+       <div id='register'>
+       
+       <h1> Sign Up</h1>
        <br/>
-       <br/>
-       <div id='Register'>
-       <h2> Sign Up</h2>
        <form onSubmit={registerUser}>
+       <div className="inputWrap">  
+       <label>IDIR:</label>
+         <br/>
          <input 
            value={name}
            onChange={(e) => setName(e.target.value)}
            type='text'
+           className='divBox'
            placeholder='ID'
          />
+         </div>
+         <br/>
+         
+         <div className="inputWrap">
+         <label>Email:</label>
          <br/>
          <input 
            value={email}
            onChange={(e) => setEmail(e.target.value)}
            type='email'
+           className='divBox'
            placeholder='Email'
          />
+         </div>
+         <br/>
+         <div className="inputWrap">
+         <label>Password:</label>
          <br/>
          <input 
            value={password}
@@ -146,8 +168,20 @@
            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" 
            title="Password must contain at least one number, uppercase, and lowercase letter, and at least 8 or more characters"
          />
-
-         
+          </div>
+          <br/>
+         <div className="inputWrap">
+         <label>Re-Enter Password:</label>
+         <br/>
+         <input 
+           value={rePassword}
+           onChange={(e) => setRePassword(e.target.value)}
+           type='password'
+           placeholder='Password'
+           className='divBox' 
+         />
+          </div>
+         <br/>
          <br />
          <input type='submit' value='Submit' id='submit' />
        </form>
