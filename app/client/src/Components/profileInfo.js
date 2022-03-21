@@ -19,26 +19,32 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
-import React, { useEffect, useState } from 'react'
-import jwt_decode from "jwt-decode";
-import { Link, useNavigate } from 'react-router-dom';
+ import React, { useEffect, useState } from 'react'
+ import jwt_decode from "jwt-decode";
+ import { useNavigate } from 'react-router-dom';
 
-
-const Dashboard = () => {
-	const navigate = useNavigate();
+ const Profile = () => {
+    const navigate = useNavigate();
+    const [email, setEmail] = useState('')
+    const [title, setTitle] = useState('')
     const [name, setName] = useState('')
+    const [fullName, setFullName] = useState('')
+    const [bio, setBio] = useState('')
 
     async function populateQuote() {
-        const req = await fetch('http://localhost:5000/api/quote', {
+        const req = await fetch('http://localhost:5000/api/profile', {
             headers: {
                 'x-access-token': localStorage.getItem('token'),
             },
         })
 
         const data = await req.json()
-        console.log(data)
         if(data.status === 'ok'){
+            setEmail(data.email)
             setName(data.name)
+            setTitle(data.title)
+            setFullName(data.fullName)
+            setBio(data.bio)
         }else{
             alert(data.error)
         }
@@ -51,26 +57,21 @@ const Dashboard = () => {
                 localStorage.removeItem('token')
                 navigate('/login')
             }else{
-                console.log(user.name)
-                
+                 
                 populateQuote()
             }
         }
     }, [])
 
 
-	return (
-		<div>
-            <Link to="/profile/:id">
-              <button type='button' className='LogInbutton'>Profile</button>
-            </Link>
-            <Link to="/createCommunity">
-              <button type='button' className='LogInbutton'>Create Community</button>
-            </Link>
-            <h2>{name}</h2>
-            <h1>HomePage</h1> 
-        </div>	
-	)
-}
-
-export default Dashboard
+     return ( 
+        <div >
+            <h1>{fullName || ''}</h1>
+            <h3>{name}</h3>
+            <h5> {email} </h5>
+            <h3> {title || ''} </h3>
+            <h3> {bio || ''} </h3>
+        </div>
+     )
+ }
+ export default Profile;

@@ -22,7 +22,7 @@
  import React, { useEffect, useState } from 'react'
  import jwt_decode from "jwt-decode";
  import { Link, useNavigate } from 'react-router-dom';
- import './Styles/editprofile.css'
+ import '../views/Styles/editprofile.css'
 
  const EditProfile = () => {
     const navigate = useNavigate();
@@ -43,7 +43,6 @@
         })
 
         const data = await req.json()
-        console.log(data)
         if(data.status === 'ok'){
             setEmail(data.email)
             setName(data.name)
@@ -81,7 +80,6 @@
         })
 
         const data = await req.json()
-        console.log(data)
         if(data.status === 'ok'){
                 setTitle(temptitle)
          }else{
@@ -102,7 +100,6 @@
         })
 
         const data = await req.json()
-        console.log(data)
         if(data.status === 'ok'){
              setFullName(tempFullName)
         }else{
@@ -123,7 +120,6 @@
         })
 
         const data = await req.json()
-        console.log(data)
         if(data.status === 'ok'){
                 setBio(tempBio)
         }else{

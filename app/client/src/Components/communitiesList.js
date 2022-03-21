@@ -21,7 +21,6 @@
  */
 
 import React, { Component } from 'react';
-import {Link} from 'react-router-dom';
 import { connect } from 'react-redux';
 import { getCommunities } from '../actions/communityActons';
 import PropTypes from 'prop-types';
@@ -42,11 +41,6 @@ import PropTypes from 'prop-types';
       ))
     return (
       <div>
-        <h1> Communities</h1>
-        <Link to="/newCommunity">
-              <button >Create New Community</button>
-        </Link>
-
         {communityItems}
       </div>
     )
