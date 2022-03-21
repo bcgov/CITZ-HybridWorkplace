@@ -22,7 +22,7 @@
 
 import { useState } from 'react'
 import {Link, useNavigate} from 'react-router-dom'
-import './Styles/login.css'
+import '../views/Styles/login.css'
 
 function App() {
 	const [name, setName] = useState('')
@@ -30,7 +30,6 @@ function App() {
 	const navigate = useNavigate();
 	async function loginUser(event) {
 		event.preventDefault()
-
 		const response = await fetch('http://localhost:5000/api/login', {
 			method: 'POST',
 			headers: {
@@ -41,9 +40,8 @@ function App() {
 				password,
 			}),
 		})
-
+		
 		const data = await response.json()
-		console.log(data)
 
 		 if (data.user) {
 		 	localStorage.setItem('token', data.user)

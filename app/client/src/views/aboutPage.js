@@ -34,7 +34,10 @@ const about =  () => {
                 the rules listed below to ensure it's a safe space for everyone. 
             </p>
             <ul>
-                <li>no inapropriate language</li>
+                <li>No posting content with the intent to harm another user</li>
+                <li>No leading people astray or knowingly post false information</li>
+                <li>Be nice :)</li>
+                <li>Have a good time!</li>
             </ul>
             
         </div>

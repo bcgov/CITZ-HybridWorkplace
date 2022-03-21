@@ -21,7 +21,7 @@
  */
  import React, { useEffect, useState } from 'react'
  import jwt_decode from "jwt-decode";
- import { Link, useNavigate } from 'react-router-dom';
+ import { useNavigate } from 'react-router-dom';
  
  
  const CreateCommunity = () => {

@@ -19,36 +19,23 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
+ import React, { Component } from 'react';
+ import './header.css';
+ import BCLogo from './icons/BCLogo.svg';
+ import SideMenu from './sideMenu';
 
+ const Header = () => {
+      return (
+        <div className='header' >
 
-import './App.css';
-
-
-
-import React, { Component, } from 'react';
-import Routes from './routes';
-
-import { Provider } from 'react-redux';
-import store from './store';
-
-import Footer from './layout/footer'
-import Header from './layout/header';
-
-class App extends Component {
-  render() {
-  return (
-    <Provider store={store}>
-    <div> 
-      <Header />
-      <div className="App"> 
-        <Routes />
-      </div> 
-      < Footer />
-    </div>
-    </Provider>
-  );
-}
-
-}
-
-export default App;
+            
+            <img src={BCLogo} className="App-logo" alt="logo" />
+            <h2> The Neighbourhood </h2>
+            <SideMenu />
+            
+        </div>
+      )
+    }
+  
+  
+  export default Header;

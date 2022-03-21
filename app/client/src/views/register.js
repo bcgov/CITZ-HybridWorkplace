@@ -20,7 +20,7 @@
  * @module
  */
 
-  import './Styles/register.css'
+  import '../views/Styles/register.css'
  import {useState} from 'react';
  import {useNavigate, Link} from 'react-router-dom';
  
@@ -52,9 +52,6 @@
      if(data.status === 'error'){
        alert('duplicate email or IDIR, please try again');
      }
-     console.log(data);
-
-     
 
      if (data.status === 'ok'){
       navigate('/login')

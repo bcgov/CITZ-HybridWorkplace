@@ -19,36 +19,31 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
+import React, { useEffect, useState } from 'react'
+import jwt_decode from "jwt-decode";
+import { useNavigate } from 'react-router-dom';
 
 
-import './App.css';
+const Dashboard = () => {
+	const navigate = useNavigate();
+    
+    useEffect(() => {
+        const token = localStorage.getItem('token')
+        if (token){
+            const user = jwt_decode(token)
+            if(!user){
+                localStorage.removeItem('token')
+                navigate('/login')
+            }
+        }
+    }, [])
 
 
-
-import React, { Component, } from 'react';
-import Routes from './routes';
-
-import { Provider } from 'react-redux';
-import store from './store';
-
-import Footer from './layout/footer'
-import Header from './layout/header';
-
-class App extends Component {
-  render() {
-  return (
-    <Provider store={store}>
-    <div> 
-      <Header />
-      <div className="App"> 
-        <Routes />
-      </div> 
-      < Footer />
-    </div>
-    </Provider>
-  );
+	return (
+		<div>
+            <h1>HomePage</h1> 
+        </div>	
+	)
 }
 
-}
-
-export default App;
+export default Dashboard
