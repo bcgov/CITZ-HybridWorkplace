@@ -24,25 +24,54 @@
  import UserPic from '../layout/icons/user.png'
  import './Styles/profile.css';
  import ProfileInfo from '../components/profileInfo';
+ import { styled } from '@mui/material/styles';
+ import Grid from '@mui/material/Grid';
+ import Paper from '@mui/material/Paper';
+ import Box from '@mui/material/Box'
+
+ import Communities from '../components/communitiesList';
 
  const Profile = () => {
 
+    const Item = styled(Paper)(({ theme }) => ({
+        backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+        ...theme.typography.body2,
+        padding: theme.spacing(1),
+        textAlign: 'left',
+        color: theme.palette.text.secondary,
+      }));
      return (
-         <div id='prof'>
-             <div id='wrap'>
-                <div id='imgPlace' >
-                    <img src={UserPic} id='ProfilePic' alt="Profile" />
-                </div>
-                <div id='restPlace'>
-                    <h1> Profile </h1>
-                    <ProfileInfo />
-                     <Link to="/profile/:id/edit">
-                            edit Profile
-                    </Link>
-                </div>
+         <Box sx={{ alignItems: 'stretch' }}>
+            <Grid container spacing={2} >
+                <Grid item xs={2}>
+                    <Item>
+                        <img src={UserPic} id='ProfilePic' alt="Profile" />
+                    </Item>
+                </Grid>
+                <Grid item xs={6}>
+                    <Paper elevation={0}>
+                        <Item>
+                        <h1> Profile </h1>
+                        <hr/>
+                        <ProfileInfo />
+                        <Link to="/profile/:id/edit">
+                                edit Profile
+                        </Link> 
+                        </Item>
+                    </Paper>
+                </Grid>  
+                <Grid item xs={4}>
+                    <Item>
+                        <h2>Communities</h2>
+                        <Communities />
+                    </Item>
+                </Grid>
+               
+                    
                 
-            </div>
-         </div>
+            </Grid>    
+            
+         </Box>
      )
  }
  export default Profile;
