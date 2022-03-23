@@ -38,7 +38,8 @@ import Paper from '@mui/material/Paper';
           <div key={community._id}>
             <Paper
              sx={{
-              p: 1,
+              px: 1,
+              py: 0,
               margin: 'auto'
              }}
              variant="outlined" square 

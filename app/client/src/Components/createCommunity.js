@@ -22,33 +22,60 @@
  import React, { useEffect, useState } from 'react'
  import jwt_decode from "jwt-decode";
  import { useNavigate } from 'react-router-dom';
- 
+ import { useDispatch } from 'react-redux';
+ import { createCommunity } from '../actions/communityActons';
  
  const CreateCommunity = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [name, setName] = useState('');
     
     async function registerCommunity(event) {
-        event.preventDefault()
+        event.preventDefault();
+        const community = {
+            title: title, 
+            description: description,
+            creator: name
+        };
+        dispatch(createCommunity(community));
+        navigate('/dashboard')
+
     
-        const response = await fetch('http://localhost:5000/api/Community', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },  
-        body: JSON.stringify({
-            title,
-            description,
-          }),
-        })
+        // const response = await fetch('http://localhost:5000/api/Community', {
+        // method: 'POST',
+        // headers: {
+        //   'Content-Type': 'application/json',
+        // },  
+        // body: JSON.stringify({
+        //     title,
+        //     description,
+        //   }),
+        // })
     
-        const data = await response.json()
-        console.log(data);
-        if (data.status === 'ok'){
-         navigate('/dashboard')
-        }
+        // const data = await response.json()
+        // console.log(data);
+        // if (data.status === 'ok'){
+        //  navigate('/dashboard')
+        // }
       }
+
+      async function userInfo() {
+
+        const req = await fetch('http://localhost:5000/api/profile', {
+            headers: {
+                'x-access-token': localStorage.getItem('token'),
+            },
+        })
+
+        const data = await req.json()
+        if(data.status === 'ok'){
+            setName(data.name)
+        }else{
+            alert(data.error)
+        }
+    }
 
       useEffect(() => {
         const token = localStorage.getItem('token')
@@ -58,7 +85,7 @@
                 localStorage.removeItem('token')
                 navigate('/login')
             }else{
-                console.log(user.name)
+                userInfo();
                 
             }
         }

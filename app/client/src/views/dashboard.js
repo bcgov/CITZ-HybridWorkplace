@@ -21,8 +21,12 @@
  */
 import React, { useEffect, useState } from 'react'
 import jwt_decode from "jwt-decode";
-import { useNavigate } from 'react-router-dom';
-
+import { Link, useNavigate } from 'react-router-dom';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Communities from '../components/joinCommunitiesList'
+import Typography from '@mui/material/Typography'
 
 const Dashboard = () => {
 	const navigate = useNavigate();
@@ -41,7 +45,62 @@ const Dashboard = () => {
 
 	return (
 		<div>
-            <h1>HomePage</h1> 
+            <Grid container spacing={2}>
+                
+                <Grid item xs={8}>
+                    <Paper>
+                    <Box
+                            sx={{
+                                backgroundColor: '#036',
+                                color: 'white',
+                                px: 1,
+                                py: 0.5,
+                                textAlign: 'center',
+                            }}
+                        >
+                        <Typography variant='h6' component='h5'>Posts</Typography>
+                    
+                        </Box>
+                        <p>Posts</p>
+                    </Paper>
+                </Grid>
+                <Grid item xs={4}>
+                    <Paper>
+                        <Box
+                            sx={{
+                                backgroundColor: '#036',
+                                color: 'white',
+                                px: 1,
+                                py: 0.5,
+                                textAlign: 'center',
+                            }}
+                        >
+                            <Typography variant='h6' component='h5'>Communities</Typography>
+
+                        </Box>
+                        <Communities />
+                        <Link to='/createCommunity' style={{ textDecoration: 'none' }}>
+                        <Box
+                            sx={{
+                                backgroundColor: '#036',
+                                color: 'white',
+                                px: 1,
+                                py: 0.5,
+                                textAlign: 'center',
+                                
+                            }}
+                        >
+                            <Typography variant='h6' component='h5'>+ Create Community</Typography>
+                            
+                            
+
+                        </Box>
+                        </Link>
+                    </Paper>
+                </Grid>
+            </Grid>
+            
+ 
         </div>	
 	)
 }

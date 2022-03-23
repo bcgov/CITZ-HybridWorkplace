@@ -32,6 +32,7 @@
         await Community.create ({
             title: req.body.title,
             description: req.body.description,
+            creator: req.body.creator,
         })
        
         res.json({ status: 'ok' })

@@ -25,6 +25,7 @@
      {
          title: { type: String, required: true, unique: true},
          description: { type: String},
+         creator: { type: String},
          members: [{ 
              type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
