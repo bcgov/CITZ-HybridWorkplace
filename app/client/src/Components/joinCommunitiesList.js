@@ -46,7 +46,7 @@
               }}
               variant="outlined" square 
               >
-                <Grid container spacing={1}>
+                <Grid container spacing={1}  alignItems="center">
                     
                     <Grid item xs={9}>
                         <Typography p={1.5} variant='p' component='p'>{community.title}</Typography>

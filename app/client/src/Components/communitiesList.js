@@ -45,6 +45,7 @@ import Paper from '@mui/material/Paper';
              variant="outlined" square 
              >
               <h3>{community.title}</h3>
+              <p><small> { community.creator}</small></p>
               <p>{community.description}</p>
               
               </Paper>

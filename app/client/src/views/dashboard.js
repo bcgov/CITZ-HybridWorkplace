@@ -61,7 +61,7 @@ const Dashboard = () => {
                         <Typography variant='h6' component='h5'>Posts</Typography>
                     
                         </Box>
-                        <p>Posts</p>
+                        <p>To be implimented later</p>
                     </Paper>
                 </Grid>
                 <Grid item xs={4}>
