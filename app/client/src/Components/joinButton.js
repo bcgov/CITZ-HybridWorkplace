@@ -17,7 +17,6 @@ const theme = createTheme({
 
 function ButtonClick() {
  const [flag, setFlag] = React.useState(true);
- const primary = red[500]; 
  const handleClick = () => {
    setFlag(!flag);
  };

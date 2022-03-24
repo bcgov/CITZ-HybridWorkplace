@@ -20,18 +20,20 @@
  * @module
  */
 
+//here. Stop here
+
+
+
  import React, { Component } from 'react';
  import { connect } from 'react-redux';
  import { getCommunities } from '../actions/communityActons';
  import PropTypes from 'prop-types';
  import Paper from '@mui/material/Paper';
  import Grid from '@mui/material/Grid';
- import Checkbox from '@mui/material/Checkbox';
  import JoinButton from './joinButton'
  import Typography from '@mui/material/Typography'
 
   class Communities extends Component {
- 
  
      componentDidMount(){
          this.props.getCommunities();
