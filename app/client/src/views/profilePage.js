@@ -28,8 +28,9 @@
  import Grid from '@mui/material/Grid';
  import Paper from '@mui/material/Paper';
  import Box from '@mui/material/Box'
+ import Typography from '@mui/material/Typography'
 
- import Communities from '../components/communitiesList';
+ import Communities from '../components/joinCommunitiesList';
 
  const Profile = () => {
 
@@ -44,27 +45,62 @@
          <Box sx={{ alignItems: 'stretch' }}>
             <Grid container spacing={2} >
                 <Grid item xs={2}>
-                    <Item>
+                    
                         <img src={UserPic} id='ProfilePic' alt="Profile" />
-                    </Item>
+                        <ProfileInfo />
+                        <br />
+                        <br/>
+                        <Link to='./edit' style={{ textDecoration: 'none' }}>
+                        <Box
+                            sx={{
+                                backgroundColor: '#036',
+                                color: 'white',
+                                px: 1,
+                                py: 0.5,
+                                textAlign: 'center',
+                                
+                            }}
+                        >
+                            <Typography variant='h6' component='p'>Edit Profile</Typography>
+
+                        </Box>
+                        </Link>
                 </Grid>
                 <Grid item xs={6}>
                     <Paper elevation={0}>
-                        <Item>
-                        <h1> Profile </h1>
-                        <hr/>
-                        <ProfileInfo />
-                        <Link to="/profile/:id/edit">
-                                edit Profile
-                        </Link> 
-                        </Item>
+                       
+                        <Box
+                            sx={{
+                                backgroundColor: '#036',
+                                color: 'white',
+                                px: 1,
+                                py: 0.5,
+                                textAlign: 'center',
+                            }}
+                        >
+                            <Typography variant='h6' component='h5'>Posts</Typography>
+
+                        </Box>   
+                        
+                        
                     </Paper>
                 </Grid>  
                 <Grid item xs={4}>
-                    <Item>
-                        <h2>Communities</h2>
+                    
+                    <Box
+                            sx={{
+                                backgroundColor: '#036',
+                                color: 'white',
+                                px: 1,
+                                py: 0.5,
+                                textAlign: 'center',
+                            }}
+                        >
+                            <Typography variant='h6' component='h5'>My Communities</Typography>
+
+                        </Box>
                         <Communities />
-                    </Item>
+                    
                 </Grid>
                
                     

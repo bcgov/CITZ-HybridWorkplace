@@ -28,7 +28,7 @@ import Box from '@mui/material/Box';
 import Communities from '../components/joinCommunitiesList'
 import Typography from '@mui/material/Typography'
 
-const Dashboard = () => {
+const Home = () => {
 	const navigate = useNavigate();
     
     useEffect(() => {
@@ -105,4 +105,4 @@ const Dashboard = () => {
 	)
 }
 
-export default Dashboard
+export default Home

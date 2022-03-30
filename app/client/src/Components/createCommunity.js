@@ -40,7 +40,7 @@
             creator: name
         };
         dispatch(createCommunity(community));
-        navigate('/dashboard')
+        navigate('/home')
 
     
         // const response = await fetch('http://localhost:5000/api/Community', {
@@ -57,7 +57,7 @@
         // const data = await response.json()
         // console.log(data);
         // if (data.status === 'ok'){
-        //  navigate('/dashboard')
+        //  navigate('/home')
         // }
       }
 

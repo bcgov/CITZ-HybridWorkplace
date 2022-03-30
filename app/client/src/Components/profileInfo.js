@@ -66,11 +66,12 @@
 
      return ( 
         <div >
-            <h1>{fullName || ''}</h1>
-            <h3>{name}</h3>
-            <h5> {email} </h5>
-            <h3> {title || ''} </h3>
-            <h3> {bio || ''} </h3>
+            <h3>{fullName || ''}</h3>
+            <h4>{name}</h4>
+            <p> {email} </p>
+            <p> {title || ''} </p>
+            <br />
+            <p> {bio || ''} </p>
         </div>
      )
  }

@@ -29,6 +29,9 @@ const User = new mongoose.Schema(
 		fullName: {type: String},
 		title: {type: String},
 		bio: {type: String},
+		communities: [{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Communities'}],
 	},
 	{ collection: 'user-data' }
 )

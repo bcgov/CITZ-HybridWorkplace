@@ -25,7 +25,7 @@
 
  import Login from './views/login';
  import Register from './views/register';
- import Dashboard from './views/dashboard';
+ import Home from './views/home';
  import About from './views/aboutPage';
  import ProfilePage from './views/profilePage';
  import EditProfile from './components/editProfile';
@@ -44,7 +44,7 @@
         <Routes> 
             <Route path="/login" exact element= {<Login /> }/>
             <Route path="/" exact element={<Register />} />
-            <Route path="/dashboard" exact element={<Dashboard />} />  
+            <Route path="/home" exact element={<Home />} />  
             <Route path="/about" exact element={<About />} /> 
             <Route path="/profile/:id" element={<ProfilePage />} />
             <Route path="/profile/:id/edit" element={<EditProfile />} />

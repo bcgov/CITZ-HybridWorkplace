@@ -51,11 +51,12 @@
                 ✖
              </a>
             <ul>
-                <li> <Link to='/dashboard' >Dashboard</Link></li>
+                <li><Link to='/home' >Home</Link></li>
                 <li><Link to='./about' >About</Link></li>
                 <li><Link to='./communities' >Communities</Link></li>
                 <li><Link to='./profile/:id' >Profile</Link></li>
                 <li><Link to='./login' >Log Off</Link></li>
+                <li><Link to='./home' >Dark Mode</Link></li>
             </ul>
           
 

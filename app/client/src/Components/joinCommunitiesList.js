@@ -30,7 +30,7 @@
  import PropTypes from 'prop-types';
  import Paper from '@mui/material/Paper';
  import Grid from '@mui/material/Grid';
- import JoinButton from './joinButton'
+ import JoinButton from './JButton'
  import Typography from '@mui/material/Typography'
 
   class Communities extends Component {
@@ -56,7 +56,9 @@
                     </Grid>
                     <Grid item xs={3} >
                        
-                        <JoinButton />
+                        <JoinButton 
+                          name={community._id}
+                        />
                     </Grid>
                </Grid>
                </Paper>
