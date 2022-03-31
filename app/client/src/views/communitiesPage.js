@@ -31,9 +31,11 @@
             <div>
                 <h1>Communities</h1>
                 <Communities/>
-                <Link to='/newCommunity'>
+                <br/>
+                <Link to='/createCommunity'>
                     <button >Create New Community</button>
                 </Link>
+
             </div>
         )
     }

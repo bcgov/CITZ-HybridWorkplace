@@ -24,6 +24,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { getCommunities } from '../actions/communityActons';
 import PropTypes from 'prop-types';
+import Paper from '@mui/material/Paper';
+
 
  class Communities extends Component {
 
@@ -34,9 +36,19 @@ import PropTypes from 'prop-types';
   render() {
       const communityItems = this.props.communities.map(community => (
           <div key={community._id}>
+            <Paper
+             sx={{
+              px: 1,
+              py: 0,
+              margin: 'auto'
+             }}
+             variant="outlined" square 
+             >
               <h3>{community.title}</h3>
+              <p><small> { community.creator}</small></p>
               <p>{community.description}</p>
-              <hr />
+              
+              </Paper>
           </div>
       ))
     return (

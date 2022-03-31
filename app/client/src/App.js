@@ -27,6 +27,7 @@ import './App.css';
 
 import React, { Component, } from 'react';
 import Routes from './routes';
+import Container from '@mui/material/Container';
 
 import { Provider } from 'react-redux';
 import store from './store';
@@ -41,7 +42,9 @@ class App extends Component {
     <div> 
       <Header />
       <div className="App"> 
-        <Routes />
+        <Container>
+          <Routes />
+        </Container>
       </div> 
       < Footer />
     </div>

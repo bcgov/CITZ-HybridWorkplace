@@ -24,25 +24,90 @@
  import UserPic from '../layout/icons/user.png'
  import './Styles/profile.css';
  import ProfileInfo from '../components/profileInfo';
+ import { styled } from '@mui/material/styles';
+ import Grid from '@mui/material/Grid';
+ import Paper from '@mui/material/Paper';
+ import Box from '@mui/material/Box'
+ import Typography from '@mui/material/Typography'
+
+ import Communities from '../components/joinCommunitiesList';
 
  const Profile = () => {
 
+    const Item = styled(Paper)(({ theme }) => ({
+        backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+        ...theme.typography.body2,
+        padding: theme.spacing(1),
+        textAlign: 'left',
+        color: theme.palette.text.secondary,
+      }));
      return (
-         <div id='prof'>
-             <div id='wrap'>
-                <div id='imgPlace' >
-                    <img src={UserPic} id='ProfilePic' alt="Profile" />
-                </div>
-                <div id='restPlace'>
-                    <h1> Profile </h1>
-                    <ProfileInfo />
-                     <Link to="/profile/:id/edit">
-                            edit Profile
-                    </Link>
-                </div>
+         <Box sx={{ alignItems: 'stretch' }}>
+            <Grid container spacing={2} >
+                <Grid item xs={2}>
+                    
+                        <img src={UserPic} id='ProfilePic' alt="Profile" />
+                        <ProfileInfo />
+                        <br />
+                        <br/>
+                        <Link to='./edit' style={{ textDecoration: 'none' }}>
+                        <Box
+                            sx={{
+                                backgroundColor: '#036',
+                                color: 'white',
+                                px: 1,
+                                py: 0.5,
+                                textAlign: 'center',
+                                
+                            }}
+                        >
+                            <Typography variant='h6' component='p'>Edit Profile</Typography>
+
+                        </Box>
+                        </Link>
+                </Grid>
+                <Grid item xs={6}>
+                    <Paper elevation={0}>
+                       
+                        <Box
+                            sx={{
+                                backgroundColor: '#036',
+                                color: 'white',
+                                px: 1,
+                                py: 0.5,
+                                textAlign: 'center',
+                            }}
+                        >
+                            <Typography variant='h6' component='h5'>Posts</Typography>
+
+                        </Box>   
+                        
+                        
+                    </Paper>
+                </Grid>  
+                <Grid item xs={4}>
+                    
+                    <Box
+                            sx={{
+                                backgroundColor: '#036',
+                                color: 'white',
+                                px: 1,
+                                py: 0.5,
+                                textAlign: 'center',
+                            }}
+                        >
+                            <Typography variant='h6' component='h5'>My Communities</Typography>
+
+                        </Box>
+                        <Communities />
+                    
+                </Grid>
+               
+                    
                 
-            </div>
-         </div>
+            </Grid>    
+            
+         </Box>
      )
  }
  export default Profile;

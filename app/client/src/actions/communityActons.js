@@ -36,7 +36,8 @@ export const getCommunities = () => dispatch => {
 
 export const createCommunity = communityData => dispatch => {
     
-    console.log('hi');
+    console.log(communityData);
+    console.log('hello');
     fetch('http://localhost:5000/api/Community', {
         method: 'POST',
         headers: {
@@ -45,6 +46,7 @@ export const createCommunity = communityData => dispatch => {
         body: JSON.stringify({
             title: communityData.title,
             description: communityData.description,
+            creator: communityData.creator,
           }),
         })
         .then(res => res.json())
