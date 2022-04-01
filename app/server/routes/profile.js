@@ -34,7 +34,7 @@
         const email = decoded.email
         const user = await User.findOne({ email: email })
 
-        return res.json({ status: 'ok', name: user.name, email: user.email, fullName: user.fullName, bio: user.bio, title: user.title, quote:user.quote })
+        return res.json({ status: 'ok', name: user.name, email: user.email, fullName: user.fullName, bio: user.bio, title: user.title, darkMode:user.darkMode })
     } catch (error) {
         console.log(error)
         res.json({ status: 'error', error: 'invalid token' })

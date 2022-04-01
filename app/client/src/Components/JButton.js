@@ -1,19 +1,20 @@
 import Button from "@mui/material/Button";
 import React, { Component } from 'react'
  import jwt_decode from "jwt-decode";
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { red, green } from '@mui/material/colors';
+// import { ThemeProvider, createTheme } from '@mui/material/styles';
+ import { red, green } from '@mui/material/colors';
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#f44336',
-    },
-    secondary: {
-      main: green[600],
-    },
-  },
-});
+// const theme = createTheme({
+//   palette: {
+//     primary: {
+//       main: '#f44336',
+//     },
+//     secondary: {
+//       main: green[600],
+//     },
+//   },
+// });
+
 
 class JoinButton extends Component{
   constructor(props) {
@@ -83,17 +84,17 @@ class JoinButton extends Component{
     render(){
       
         return (
-            <ThemeProvider theme={theme}>
+            
            <Button
              
              onClick={this.handleClick}
              variant="contained"
-             color={this.state.flag === true ? "primary" : 'secondary' }
+             color={this.state.flag === true ? 'error' : 'success' }
              size="small"
            >
              {this.state.flag? "Remove" : "Join"}
            </Button>
-           </ThemeProvider>
+           
          );
     }
 

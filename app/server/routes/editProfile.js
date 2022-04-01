@@ -58,7 +58,7 @@ router.post('/', async (req, res) => {
         const email = decoded.email
         await User.updateMany(
             { email: email },
-            { $set: { fullName: req.body.fullName, title: req.body.title, bio: req.body.bio} },
+            { $set: { fullName: req.body.fullName, title: req.body.title, bio: req.body.bio, darkMode: req.body.darkMode} },
             
         )
 
