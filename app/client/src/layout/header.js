@@ -24,14 +24,15 @@
  import BCLogo from './icons/BCLogo.svg';
  import SideMenu from './sideMenu';
 
- const Header = () => {
+
+ const Header = ({darkMode, setDarkMode}) => {
       return (
         <div className='header' >
 
             
             <img src={BCLogo} className="App-logo" alt="logo" />
-            <h2> The Neighbourhood </h2>
-            <SideMenu />
+            <h2> The Neighbourhood  </h2>
+            <SideMenu darkMode={darkMode} setDarkMode={setDarkMode}/>
             
         </div>
       )

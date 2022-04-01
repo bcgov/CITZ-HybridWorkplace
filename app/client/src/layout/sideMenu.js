@@ -23,8 +23,15 @@
  import {Link} from 'react-router-dom';
  import './sideMenu.css';
  import Menu from './icons/menuLogo.svg';
+ import House from '@mui/icons-material/House'
+ import Person from '@mui/icons-material/Person'
+ import HelpCenter from '@mui/icons-material/HelpCenter'
+ import LogOut from '@mui/icons-material/Logout'
+ import DarkMode from '@mui/icons-material/DarkMode'
+ import Group from '@mui/icons-material/Group'
 
- const Header = () => {
+
+ const SideMenu = ({darkMode, setDarkMode}) => {
   async function openSlideMenu(){
     console.log('hi');
     document.getElementById('menu').style.width = '250px';
@@ -36,6 +43,21 @@
     
     document.getElementById('menu').style.width = '0px';
     document.getElementById('menu').style.marginLeft = '0px';
+  }
+  async function updateDarkMode(event){
+    event.preventDefault()
+    setDarkMode(!darkMode)
+    const req = await fetch('http://localhost:5000/api/editprofile', {
+       method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-access-token': localStorage.getItem('token'),
+        },
+        body: JSON.stringify({
+            darkMode: darkMode,
+        }),
+
+    })
   }
 
       return (
@@ -51,12 +73,13 @@
                 ✖
              </a>
             <ul>
-                <li><Link to='/home' >Home</Link></li>
-                <li><Link to='./about' >About</Link></li>
-                <li><Link to='./communities' >Communities</Link></li>
-                <li><Link to='./profile/:id' >Profile</Link></li>
-                <li><Link to='./login' >Log Off</Link></li>
-                <li><Link to='./home' >Dark Mode</Link></li>
+                <li><Link to='/home' ><House /> Home</Link></li>
+                <li><Link to='./profile/:id' ><Person />  Profile</Link></li>
+                <li ><Link to='./communities' ><Group />  Communities</Link></li>
+                <li><Link to='./about' ><HelpCenter />  About</Link></li>
+                <li onClick={updateDarkMode} id='DMode'><DarkMode />  Dark Mode</li>
+                <li><Link to='./login' ><LogOut /> Log Off</Link></li>
+                
             </ul>
           
 
@@ -65,7 +88,7 @@
          </div>
 
       )
-    }
+    
+ }
   
-  
-  export default Header;
+  export default SideMenu;

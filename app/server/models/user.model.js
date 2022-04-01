@@ -29,6 +29,7 @@ const User = new mongoose.Schema(
 		fullName: {type: String},
 		title: {type: String},
 		bio: {type: String},
+		darkMode: {type: Boolean},
 		communities: [{
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Communities'}],
