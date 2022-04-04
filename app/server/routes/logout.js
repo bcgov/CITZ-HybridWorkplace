@@ -22,16 +22,10 @@
 
  const express = require('express');
  const router = express.Router();
-
- const User = require('../models/user.model')
- const bcrypt = require('bcryptjs') //encrypting passwords
- const jwt = require('jsonwebtoken')
  
 
 router.get('/', async (req, res) => {
-    console.log('logged off');
  req.session = null;
- console.log('logged off');
  req.headers['x-access-token'] = null
  
 })
