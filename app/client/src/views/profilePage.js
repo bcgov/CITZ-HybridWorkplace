@@ -23,7 +23,7 @@
   
  import { Link, useNavigate } from 'react-router-dom';
  import './Styles/profile.css';
- import ProfileInfo from '../components/profileInfo';
+ import ProfileInfo from '../Components/profileInfo';
  import { styled } from '@mui/material/styles';
  import Grid from '@mui/material/Grid';
  import Paper from '@mui/material/Paper';
@@ -32,7 +32,7 @@
  import AccountCircle from '@mui/icons-material/AccountCircle'
  import jwt_decode from "jwt-decode";
 
- import Communities from '../components/joinCommunitiesList';
+ import Communities from '../Components/joinCommunitiesList';
 
  const Profile = () => {
     const navigate = useNavigate();

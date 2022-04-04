@@ -26,10 +26,7 @@ import Posts from '../components/PostsList';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
-
-import Communities from '../components/joinCommunitiesList'
-
- import PostModal from '../components/modals/addPost'
+import Communities from '../Components/joinCommunitiesList'
 import Typography from '@mui/material/Typography'
 
 const Home = () => {
