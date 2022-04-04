@@ -14,7 +14,7 @@
 >>>>>>> 552a08e (fix)
 {
     "compilerOptions": {
-      "baseUrl": "src"
+      "baseUrl": "./src"
     }
   }
 >>>>>>> bad1b37 (fix)
