@@ -1,0 +1,173 @@
+# Copyright 2021 The Province of British Columbia
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# This role binding is meant to allow the Patroni and backup container
+# deployment pull image from the tools namespace. Run this policy in
+# your tools namespace.
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: ${NAME}${SUFFIX}
+  annotations:
+    description: Deployment template for a nodejs server and postgres db.
+    tags: node
+    iconClass: icon-node
+objects:
+  - apiVersion: v1
+    kind: ImageStream
+    metadata:
+      labels:
+        shared: "true"
+      name: ${NAME}
+    spec:
+      lookupPolicy:
+        local: true
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: "${NAME}${SUFFIX}"
+      annotations:
+        description: Exposes and load balances the application pods
+      labels:
+        app: "${NAME}"
+    spec:
+      ports:
+        - name: ${PORT}-tcp
+          port: ${{PORT}}
+          targetPort: ${{PORT}}
+      selector:
+        deploymentconfig: "${NAME}${SUFFIX}"
+  - kind: Route
+    apiVersion: v1
+    metadata:
+      labels:
+        app: "${NAME}${SUFFIX}"
+      name: ${NAME}-to-api
+    spec:
+      host: "${NAME}${SUFFIX}.${NAMESPACE}.${CLUSTER_DOMAIN}"
+      path: "/api"
+      port:
+        targetPort: 8080-tcp
+      tls:
+        termination: edge
+      to:
+        kind: Service
+        name: "rdsi-server${SUFFIX}"
+        weight: 100
+  - kind: Route
+    apiVersion: v1
+    metadata:
+      name: "${NAME}${SUFFIX}"
+      labels:
+        app: "${NAME}"
+    spec:
+      host: "${NAME}${SUFFIX}.${NAMESPACE}.${CLUSTER_DOMAIN}"
+      port:
+        targetPort: ${PORT}-tcp
+      path: ''
+      to:
+        kind: Service
+        name: "${NAME}${SUFFIX}"
+        weight: 100
+      tls:
+        termination: edge
+  - kind: DeploymentConfig
+    apiVersion: v1
+    metadata:
+      name: "${NAME}${SUFFIX}"
+      labels:
+        app: "${NAME}"
+      annotations:
+        description: Defines how to deploy the application server
+    spec:
+      strategy:
+        type: Rolling
+      triggers:
+        - type: ImageChange
+          imageChangeParams:
+            automatic: true
+            containerNames:
+              - ${NAME}${SUFFIX}
+            from:
+              kind: ImageStreamTag
+              name: "${NAME}:${VERSION}"
+        - type: ConfigChange
+      replicas: 1
+      selector:
+        name: "${NAME}${SUFFIX}"
+      template:
+        metadata:
+          name: "${NAME}${SUFFIX}"
+          labels:
+            name: "${NAME}${SUFFIX}"
+            app: "${NAME}"
+        spec:
+          containers:
+            - name: "${NAME}${SUFFIX}"
+              image: " "
+              ports:
+                - name: "${NAME}"
+                  containerPort: ${{PORT}}
+                  protocol: TCP
+              livenessProbe:
+                failureThreshold: 3
+                httpGet:
+                  path: /
+                  port: ${{PORT}}
+                  scheme: HTTP
+                initialDelaySeconds: 60
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 3
+              readinessProbe:
+                failureThreshold: 3
+                httpGet:
+                  path: /
+                  port: ${{PORT}}
+                  scheme: HTTP
+                initialDelaySeconds: 25
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 2
+              resources:
+                requests:
+                  memory: 256Mi
+                  cpu: 500m
+                limits:
+                  memory: 512Mi
+                  cpu: 1
+              env:
+                - name: PORT
+                  value: "${PORT}"
+parameters:
+  - name: PORT
+    required: true
+    value: "8080"
+    description: service open port
+  - name: NAME
+    required: true
+    value: hwp-client
+  - name: NAMESPACE
+    required: true
+  - name: VERSION
+    required: true
+    description: version as an image tag
+  - name: SUFFIX
+    description: namespace with build version
+    required: false
+  - name: CLUSTER_DOMAIN
+    description: domain name of cluster
+    required: true
