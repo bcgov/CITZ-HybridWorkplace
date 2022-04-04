@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 {
     "compilerOptions": {
       "module": "commonjs",
@@ -9,6 +10,8 @@
   
 =======
 //jsconfig.json
+=======
+>>>>>>> 552a08e (fix)
 {
     "compilerOptions": {
       "baseUrl": "src"
