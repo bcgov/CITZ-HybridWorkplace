@@ -29,6 +29,7 @@
  import LogOut from '@mui/icons-material/Logout'
  import DarkMode from '@mui/icons-material/DarkMode'
  import Group from '@mui/icons-material/Group'
+ //import {logOff} from '../components/logout';
 
 
  const SideMenu = ({darkMode, setDarkMode}) => {
@@ -59,6 +60,15 @@
 
     })
   }
+  async function logOff(){
+   
+    fetch('http://localhost:5000/api/logout', {
+      headers: {
+          'x-access-token': localStorage.getItem('token'),
+      },
+    })
+    localStorage.removeItem('token')
+  }
 
       return (
         <div id='content'>
@@ -78,7 +88,7 @@
                 <li ><Link to='./communities' ><Group />  Communities</Link></li>
                 <li><Link to='./about' ><HelpCenter />  About</Link></li>
                 <li onClick={updateDarkMode} id='DMode'><DarkMode />  Dark Mode</li>
-                <li><Link to='./login' ><LogOut /> Log Off</Link></li>
+                <li onClick={logOff}><Link to='./login' ><LogOut /> Log Off</Link></li>
                 
             </ul>
           

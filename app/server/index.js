@@ -34,6 +34,7 @@
  const editProfileRouter = require('./routes/editProfile')
  const communitiesRouter = require('./routes/communities')
  const communitiesListRouter = require('./routes/communitiesListRouter')
+ const logoutRouter = require('./routes/logout')
  
   app.use(cors()) //middleware
   app.use(express.json())
@@ -48,6 +49,7 @@ mongoose.connect('mongodb://localhost:27017/TheNeighborhood')
  app.use('/api/editProfile', editProfileRouter);
  app.use('/api/community', communitiesRouter);
  app.use('/api/communitiesList', communitiesListRouter);
+ app.use('/api/logout', logoutRouter);
  
 
  app.listen(port, () => {

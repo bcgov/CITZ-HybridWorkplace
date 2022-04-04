@@ -21,7 +21,6 @@
  */
  import React, { useEffect, useState } from 'react'
  import { Link } from 'react-router-dom';
- import UserPic from '../layout/icons/user.png'
  import './Styles/profile.css';
  import ProfileInfo from '../components/profileInfo';
  import { styled } from '@mui/material/styles';
@@ -29,6 +28,7 @@
  import Paper from '@mui/material/Paper';
  import Box from '@mui/material/Box'
  import Typography from '@mui/material/Typography'
+ import AccountCircle from '@mui/icons-material/AccountCircle'
 
  import Communities from '../components/joinCommunitiesList';
 
@@ -46,7 +46,7 @@
             <Grid container spacing={2} >
                 <Grid item xs={2}>
                     
-                        <img src={UserPic} id='ProfilePic' alt="Profile" />
+                        <AccountCircle style={{width: '100%', height:'40%'}} />
                         <ProfileInfo />
                         <br />
                         <br/>
