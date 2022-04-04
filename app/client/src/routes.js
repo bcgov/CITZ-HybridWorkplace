@@ -23,14 +23,14 @@
 
  import './App.css';
 
- import Login from 'views/login';
- import Register from 'views/register';
- import Home from 'views/home';
- import About from 'views/aboutPage';
- import ProfilePage from 'views/profilePage';
+ import Login from './views/login';
+ import Register from './views/register';
+ import Home from './views/home';
+ import About from './views/aboutPage';
+ import ProfilePage from './views/profilePage';
  import EditProfile from './Components/editProfile';
  import CreateCommunity from './Components/createCommunity';
- import CommunitiesPage from 'views/communitiesPage';
+ import CommunitiesPage from './views/communitiesPage';
  import NewCommunity from './Components/newCommunity';
  
  import React, { Component, } from 'react';
