@@ -21,7 +21,7 @@
  */
 
  import React, { Component } from 'react';
- import Communities from '../components/communitiesList';
+ import Communities from '../Components/communitiesList';
  import {Link} from 'react-router-dom';
 
  class CommunitiesPage extends Component{

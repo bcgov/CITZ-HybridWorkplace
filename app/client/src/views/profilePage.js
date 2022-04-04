@@ -23,14 +23,14 @@
  import { Link } from 'react-router-dom';
  import UserPic from '../layout/icons/user.png'
  import './Styles/profile.css';
- import ProfileInfo from '../components/profileInfo';
+ import ProfileInfo from '../Components/profileInfo';
  import { styled } from '@mui/material/styles';
  import Grid from '@mui/material/Grid';
  import Paper from '@mui/material/Paper';
  import Box from '@mui/material/Box'
  import Typography from '@mui/material/Typography'
 
- import Communities from '../components/joinCommunitiesList';
+ import Communities from '../Components/joinCommunitiesList';
 
  const Profile = () => {
 

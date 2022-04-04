@@ -25,7 +25,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
-import Communities from '../components/joinCommunitiesList'
+import Communities from '../Components/joinCommunitiesList'
 import Typography from '@mui/material/Typography'
 
 const Home = () => {
