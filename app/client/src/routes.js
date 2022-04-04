@@ -23,15 +23,15 @@
 
  import './App.css';
 
- import Login from './views/login';
- import Register from './views/register';
- import Home from './views/home';
- import About from './views/aboutPage';
- import ProfilePage from './views/profilePage';
- import EditProfile from './components/editProfile';
- import CreateCommunity from './components/createCommunity';
- import CommunitiesPage from './views/communitiesPage';
- import NewCommunity from './components/newCommunity';
+ import Login from 'views/login';
+ import Register from 'views/register';
+ import Home from 'views/home';
+ import About from 'views/aboutPage';
+ import ProfilePage from 'views/profilePage';
+ import EditProfile from 'components/editProfile';
+ import CreateCommunity from 'components/createCommunity';
+ import CommunitiesPage from 'views/communitiesPage';
+ import NewCommunity from 'components/newCommunity';
  
  import React, { Component, } from 'react';
  import { Routes, Route } from 'react-router-dom';
