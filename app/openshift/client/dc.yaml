@@ -155,7 +155,7 @@ objects:
 parameters:
   - name: PORT
     required: true
-    value: "8000"
+    value: "8080"
     description: service open port
   - name: NAME
     required: true
