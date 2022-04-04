@@ -1,0 +1,176 @@
+# Copyright 2021 The Province of British Columbia
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# This role binding is meant to allow the Patroni and backup container
+# deployment pull image from the tools namespace. Run this policy in
+# your tools namespace.
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: ${NAME}
+  annotations:
+    description: Deployment template for a nodejs server and postgres db.
+    tags: node
+    iconClass: icon-node
+objects:
+  - kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: ${NAME}
+      labels:
+        template: mongodb-persistent-template
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: netapp-file-standard
+      volumeMode: Filesystem
+    status:
+      phase: Bound
+      accessModes:
+        - ReadWriteOnce
+      capacity:
+        storage: 1Gi
+
+  - kind: DeploymentConfig
+    apiVersion: apps.openshift.io/v1
+    metadata:
+      name: ${NAME}
+    spec:
+      strategy:
+        type: Recreate
+        resources: {}
+        activeDeadlineSeconds: 21600
+        recreateParams:
+          timeoutSeconds: 600
+      triggers:
+        - type: ImageChange
+          imageChangeParams:
+            automatic: true
+            containerNames:
+              - ${NAME}
+            from:
+              kind: ImageStreamTag
+              name: 'mongodb:3.6'
+              namespace: openshift
+        - type: ConfigChange
+      replicas: 1
+      revisionHistoryLimit: 10
+      test: false
+      selector:
+        name: ${NAME}
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            name: ${NAME}
+        spec:
+          volumes:
+            - name: ${NAME}-data
+              persistentVolumeClaim:
+                claimName: ${NAME}
+          containers:
+            - resources:
+                limits:
+                  memory: 512Mi
+              readinessProbe:
+                exec:
+                  command:
+                    - /bin/sh
+                    - '-i'
+                    - '-c'
+                    - >-
+                      mongo 127.0.0.1:27017/$MONGODB_DATABASE -u $MONGODB_USER -p
+                      $MONGODB_PASSWORD --eval="quit()"
+                initialDelaySeconds: 3
+                timeoutSeconds: 1
+                periodSeconds: 10
+                successThreshold: 1
+                failureThreshold: 3
+              terminationMessagePath: /dev/termination-log
+              name: mongodb
+              livenessProbe:
+                tcpSocket:
+                  port: 27017
+                initialDelaySeconds: 30
+                timeoutSeconds: 1
+                periodSeconds: 10
+                successThreshold: 1
+                failureThreshold: 3
+              env:
+                - name: MONGODB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: mongodb
+                      key: database-user
+                - name: MONGODB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: mongodb
+                      key: database-password
+                - name: MONGODB_ADMIN_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: mongodb
+                      key: database-admin-password
+                - name: MONGODB_DATABASE
+                  valueFrom:
+                    secretKeyRef:
+                      name: mongodb
+                      key: database-name
+              securityContext:
+                capabilities: {}
+                privileged: false
+              ports:
+                - containerPort: 27017
+                  protocol: TCP
+              imagePullPolicy: IfNotPresent
+              volumeMounts:
+                - name: mongodb-data
+                  mountPath: /var/lib/mongodb/data
+              terminationMessagePolicy: File
+              image: >-
+                image-registry.openshift-image-registry.svc:5000/openshift/mongodb@sha256:8dc9932eabd30f2ee4d0b882500c65b48f3c2fbbd85bfd51d0d18410af404a39
+          restartPolicy: Always
+          terminationGracePeriodSeconds: 30
+          dnsPolicy: ClusterFirst
+          securityContext: {}
+          schedulerName: default-scheduler
+          imagePullSecrets: []
+      paused: false
+    status:
+      observedGeneration: 3
+      details:
+        message: image change
+        causes:
+          - type: ImageChange
+            imageTrigger:
+              from:
+                kind: DockerImage
+                name: >-
+                  image-registry.openshift-image-registry.svc:5000/openshift/mongodb@sha256:8dc9932eabd30f2ee4d0b882500c65b48f3c2fbbd85bfd51d0d18410af404a39
+      availableReplicas: 1
+      unavailableReplicas: 0
+      latestVersion: 2
+      updatedReplicas: 1
+      replicas: 1
+      readyReplicas: 1
+parameters:
+  - name: NAME
+    required: true
+    value: mongodb

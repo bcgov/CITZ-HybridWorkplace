@@ -1,0 +1,28 @@
+{
+  "name": "pipeline",
+  "version": "1.0.0",
+  "description": "This a pipeline script",
+  "engines": {
+    "node": ">=8"
+  },
+  "scripts": {
+    "debug": "DEBUG=* node build.js",
+    "build": "node build.js",
+    "clean": "node clean.js",
+    "deploy": "node deploy.js",
+    "test:lint": "eslint --fix .",
+    "version": "echo \"node@$(node --version) ($(which node))\" && echo \"npm@$(npm --version) ($(which npm))\" && npm ls"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@bcgov/pipeline-cli": "1.0.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.12.1",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.1.2"
+  }
+}
