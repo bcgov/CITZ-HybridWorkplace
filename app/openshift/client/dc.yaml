@@ -144,11 +144,11 @@ objects:
                 timeoutSeconds: 2
               resources:
                 requests:
-                  memory: 10Mi
-                  cpu: 50m
+                  memory: 256Mi
+                  cpu: 10m
                 limits:
                   memory: 512Mi
-                  cpu: 1
+                  cpu: 50m
               env:
                 - name: PORT
                   value: "${PORT}"
