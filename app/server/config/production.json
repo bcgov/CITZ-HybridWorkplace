@@ -1,0 +1,11 @@
+{
+  "env": "production",
+  "db": {
+      "host": "localhost",
+      "database": "hwp",
+      "port": 27017
+  },
+  "apiUrl": "*",
+  "secretKey": "secretKey",
+  "auth_timeout": 36000
+}
