@@ -28,6 +28,7 @@
  const mongoose = require('mongoose')
 
  
+<<<<<<< HEAD
  const registerRouter = require('./routes/register')
  const loginRouter = require('./routes/login')
  const profileRouter = require('./routes/profile')
@@ -36,13 +37,21 @@
  const communitiesListRouter = require('./routes/communitiesListRouter')
  const logoutRouter = require('./routes/logout')
  const postRouter = require('./routes/posts')
+=======
+ const registerRouter = require('./src/routes/register')
+ const loginRouter = require('./src/routes/login')
+ const profileRouter = require('./src/routes/profile')
+ const editProfileRouter = require('./src/routes/editProfile')
+ const communitiesRouter = require('./src/routes/communities')
+ const communitiesListRouter = require('./src/routes/communitiesListRouter')
+>>>>>>> 4257b48 (fix)
  
   app.use(cors()) //middleware
   app.use(express.json())
  
 
 
-mongoose.connect('mongodb://localhost:27017/TheNeighborhood')
+//mongoose.connect('mongodb://localhost:27017/TheNeighborhood')
 
  app.use("/api/register", registerRouter);
  app.use('/api/login', loginRouter);
