@@ -36,7 +36,7 @@
   app.use(express.json())
  
 
-const mongodb_url = process.env.MONGODB_URI
+const mongodb_url = encodeURIComponent(process.env.MONGODB_URI)
 const mongodb_main = process.env.MONGODB_DB_MAIN
 mongoose.connect("mongodb://"+mongodb_url+mongodb_main)
 
