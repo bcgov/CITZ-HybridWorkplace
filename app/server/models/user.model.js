@@ -19,21 +19,24 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
+const mongoose = require('mongoose')
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import {BrowserRouter} from 'react-router-dom';
-console.log("Hello")
+const User = new mongoose.Schema(
+	{
+		name: { type: String, required: true, unique: true },
+		email: { type: String, required: true, unique: true },
+		password: { type: String, required: true },
+		fullName: {type: String},
+		title: {type: String},
+		bio: {type: String},
+		darkMode: {type: Boolean},
+		communities: [{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Communities'}],
+	},
+	{ collection: 'user-data' }
+)
 
+const model = mongoose.model('UserData', User)
 
-ReactDOM.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>,
-  document.getElementById('root')
-);
-
+module.exports = model

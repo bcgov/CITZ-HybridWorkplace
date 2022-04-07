@@ -20,22 +20,14 @@
  * @module
  */
 
-import { createStore, applyMiddleware, compose } from 'redux';
-import thunk from 'redux-thunk';
-import rootReducer from './reducers';
+ const express = require('express');
+ const router = express.Router();
+ 
 
-const initialState = {};
+router.get('/', async (req, res) => {
+ req.session = null;
+ req.headers['x-access-token'] = null
+ 
+})
 
-const middleware = [thunk];
-
-const store = createStore(
-    rootReducer, 
-    initialState, 
-    compose(
-        applyMiddleware(...middleware),
-        //window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__() //extentions for working with redux on chrome.
-        //comment out above line if you want this to work on other browsers.
-        )
-);
-
-export default store;
+module.exports = router;

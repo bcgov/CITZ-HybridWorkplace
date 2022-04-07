@@ -19,21 +19,21 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
+ const mongoose = require('mongoose')
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import {BrowserRouter} from 'react-router-dom';
-console.log("Hello")
-
-
-ReactDOM.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>,
-  document.getElementById('root')
-);
-
+ const Post = new mongoose.Schema(
+     {
+         title: { type: String, required: true},
+         message: { type: String},
+         creator: { type: String},
+         community: { 
+             type: mongoose.Schema.Types.ObjectId,
+            ref: 'Community'
+            },
+     },
+     { collection: 'post-data' }
+ )
+ 
+ const model = mongoose.model('PostData', Post)
+ 
+ module.exports = model

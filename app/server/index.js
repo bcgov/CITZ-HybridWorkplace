@@ -1,12 +1,9 @@
 /* 
  Copyright © 2022 Province of British Columbia
-
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
-
  http://www.apache.org/licenses/LICENSE-2.0
-
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,12 +26,16 @@
 
  
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> a6d930a (fix)
  const registerRouter = require('./routes/register')
  const loginRouter = require('./routes/login')
  const profileRouter = require('./routes/profile')
  const editProfileRouter = require('./routes/editProfile')
  const communitiesRouter = require('./routes/communities')
  const communitiesListRouter = require('./routes/communitiesListRouter')
+<<<<<<< HEAD
  const logoutRouter = require('./routes/logout')
  const postRouter = require('./routes/posts')
 =======
@@ -45,13 +46,15 @@
  const communitiesRouter = require('./src/routes/communities')
  const communitiesListRouter = require('./src/routes/communitiesListRouter')
 >>>>>>> 4257b48 (fix)
+=======
+>>>>>>> a6d930a (fix)
  
   app.use(cors()) //middleware
   app.use(express.json())
  
 
 
-//mongoose.connect('mongodb://localhost:27017/TheNeighborhood')
+mongoose.connect('mongodb://localhost:27017/TheNeighborhood')
 
  app.use("/api/register", registerRouter);
  app.use('/api/login', loginRouter);
@@ -66,6 +69,3 @@
  app.listen(port, () => {
      console.log(`Server started on port ${port}`)
  })
-
-
-

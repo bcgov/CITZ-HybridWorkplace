@@ -20,22 +20,26 @@
  * @module
  */
 
-import { createStore, applyMiddleware, compose } from 'redux';
-import thunk from 'redux-thunk';
-import rootReducer from './reducers';
+ import React, { Component, useState } from 'react';
+ import Posts from '../components/PostsList';
+ import {Link} from 'react-router-dom';
+ import PostModal from '../components/modals/addPost'
 
-const initialState = {};
+ const PostsPage = () => {
 
-const middleware = [thunk];
+   const [show, setShow] = useState(false);
 
-const store = createStore(
-    rootReducer, 
-    initialState, 
-    compose(
-        applyMiddleware(...middleware),
-        //window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__() //extentions for working with redux on chrome.
-        //comment out above line if you want this to work on other browsers.
+        return(
+            <div>
+                <h1>Posts</h1>
+                <Posts/>
+                <br/>
+                <button onClick={() => setShow(true)}>Add Post</button>
+                
+                <PostModal onClose={() =>setShow(false)} show={show} />
+                
+            </div>
         )
-);
-
-export default store;
+    }
+ 
+ export default PostsPage;
