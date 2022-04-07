@@ -24,17 +24,6 @@ module.exports = (settings)=>{
     }
   }))
 
-  objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/client/dc.yaml`, {
-    'param':{
-      'NAME': `${phases[phase].name}-client`,
-      'SUFFIX': phases[phase].suffix,
-      'VERSION': phases[phase].tag,
-      'NAMESPACE': phases[phase].namespace,
-      'PORT': 8080,
-      'CLUSTER_DOMAIN': 'apps.silver.devops.gov.bc.ca',
-    }
-  }))
-
   objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/server/dc.yaml`, {
     'param':{
       'NAME': `${phases[phase].name}-server`,
@@ -47,6 +36,19 @@ module.exports = (settings)=>{
       'MONGODB_DB_MAIN' : phases[phase].name
     }
   }))
+
+//  objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/client/dc.yaml`, {
+//    'param':{
+//      'NAME': `${phases[phase].name}-client`,
+//      'SUFFIX': phases[phase].suffix,
+//      'VERSION': phases[phase].tag,
+//      'NAMESPACE': phases[phase].namespace,
+//      'PORT': 8080,
+//      'CLUSTER_DOMAIN': 'apps.silver.devops.gov.bc.ca',
+//    }
+//  }))
+
+
 
   oc.applyRecommendedLabels(objects, phases[phase].name, phase, `${changeId}`, phases[phase].instance)
   oc.importImageStreams(objects, phases[phase].tag, phases.build.namespace, phases.build.tag)

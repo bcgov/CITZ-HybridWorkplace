@@ -42,7 +42,7 @@
  
 
 
-//mongoose.connect('mongodb://localhost:27017/TheNeighborhood')
+mongoose.connect('mongodb://mongodb:27017/TheNeighborhood')
 
  app.use("/api/register", registerRouter);
  app.use('/api/login', loginRouter);
@@ -56,7 +56,11 @@
 
  app.listen(port, () => {
      console.log(`Server started on port ${port}`)
+<<<<<<< HEAD
  })
 
 
 
+=======
+ })
+>>>>>>> 9fbf953 (fix)
