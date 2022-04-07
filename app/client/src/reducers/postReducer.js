@@ -20,28 +20,28 @@
  * @module
  */
 
-import { GET_COMMUNITIES, ADD_COMMUNITY} from "../actions/types"
+ import { GET_POSTS, ADD_POST} from "../actions/types"
 
-const initialState = { 
-    items:[], //communitys
-    item: {} //single community
-}
-export default function (state = initialState, action){
-    switch(action.type){
-    
-        case GET_COMMUNITIES:
-            return {
-            ...state,
-            items: action.payload
-            }
-
-        case ADD_COMMUNITY:
-            console.log('yes')
-            return{
-                ...state, 
-                items: [...state.items, action.payload]
-            }
-        default:
-            return state;
-    }
-}
+ const initialState = { 
+     items:[], //communitys
+     item: {} //single community
+ }
+ export default function (state = initialState, action){
+     switch(action.type){
+     
+         case GET_POSTS:
+             return {
+             ...state,
+             items: action.payload
+             }
+ 
+         case ADD_POST:
+             console.log('yes')
+             return{
+                 ...state, 
+                 items: [...state.items, action.payload]
+             }
+         default:
+             return state;
+     }
+ }

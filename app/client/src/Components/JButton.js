@@ -17,6 +17,7 @@ import React, { Component } from 'react'
 
 
 class JoinButton extends Component{
+  //_isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -28,6 +29,8 @@ class JoinButton extends Component{
   }
 
   componentDidMount(){
+    //this._isMounted = true;
+
     const token = localStorage.getItem('token')
     if (token){
       const user = jwt_decode(token)
@@ -56,7 +59,15 @@ class JoinButton extends Component{
     }
   }
 
+  componentWillUnmount() {
+    // fix Warning: Can't perform a React state update on an unmounted component
+    this.setState = (state,callback)=>{
+        return;
+    };
+}
+
   handleClick () {
+    if (this._isMounted){
     this.setState({flag: !this.state.flag});
     if(!this.state.flag){
         fetch('http://localhost:5000/api/communitiesList', {
@@ -79,6 +90,7 @@ class JoinButton extends Component{
         },
      }) 
      }
+    }
   };
 
     render(){

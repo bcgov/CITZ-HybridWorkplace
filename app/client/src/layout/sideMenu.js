@@ -86,9 +86,11 @@
                 <li><Link to='/home' ><House /> Home</Link></li>
                 <li><Link to='./profile/:id' ><Person />  Profile</Link></li>
                 <li ><Link to='./communities' ><Group />  Communities</Link></li>
+                <li ><Link to='./posts' ><Group />  Posts</Link></li>
                 <li><Link to='./about' ><HelpCenter />  About</Link></li>
                 <li onClick={updateDarkMode} id='DMode'><DarkMode />  Dark Mode</li>
                 <li onClick={logOff}><Link to='./login' ><LogOut /> Log Off</Link></li>
+                
                 
             </ul>
           

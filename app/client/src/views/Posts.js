@@ -20,28 +20,26 @@
  * @module
  */
 
-import { GET_COMMUNITIES, ADD_COMMUNITY} from "../actions/types"
+ import React, { Component, useState } from 'react';
+ import Posts from '../components/PostsList';
+ import {Link} from 'react-router-dom';
+ import PostModal from '../components/modals/addPost'
 
-const initialState = { 
-    items:[], //communitys
-    item: {} //single community
-}
-export default function (state = initialState, action){
-    switch(action.type){
-    
-        case GET_COMMUNITIES:
-            return {
-            ...state,
-            items: action.payload
-            }
+ const PostsPage = () => {
 
-        case ADD_COMMUNITY:
-            console.log('yes')
-            return{
-                ...state, 
-                items: [...state.items, action.payload]
-            }
-        default:
-            return state;
+   const [show, setShow] = useState(false);
+
+        return(
+            <div>
+                <h1>Posts</h1>
+                <Posts/>
+                <br/>
+                <button onClick={() => setShow(true)}>Add Post</button>
+                
+                <PostModal onClose={() =>setShow(false)} show={show} />
+                
+            </div>
+        )
     }
-}
+ 
+ export default PostsPage;

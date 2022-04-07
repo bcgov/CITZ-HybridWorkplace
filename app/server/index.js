@@ -35,6 +35,7 @@
  const communitiesRouter = require('./routes/communities')
  const communitiesListRouter = require('./routes/communitiesListRouter')
  const logoutRouter = require('./routes/logout')
+ const postRouter = require('./routes/posts')
  
   app.use(cors()) //middleware
   app.use(express.json())
@@ -50,6 +51,7 @@ mongoose.connect('mongodb://localhost:27017/TheNeighborhood')
  app.use('/api/community', communitiesRouter);
  app.use('/api/communitiesList', communitiesListRouter);
  app.use('/api/logout', logoutRouter);
+ app.use('/api/post', postRouter);
  
 
  app.listen(port, () => {
