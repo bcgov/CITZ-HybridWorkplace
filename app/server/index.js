@@ -25,19 +25,19 @@
  const mongoose = require('mongoose')
 
  
- const registerRouter = require('./src/routes/register')
- const loginRouter = require('./src/routes/login')
- const profileRouter = require('./src/routes/profile')
- const editProfileRouter = require('./src/routes/editProfile')
- const communitiesRouter = require('./src/routes/communities')
- const communitiesListRouter = require('./src/routes/communitiesListRouter')
+ const registerRouter = require('./routes/register')
+ const loginRouter = require('./routes/login')
+ const profileRouter = require('./routes/profile')
+ const editProfileRouter = require('./routes/editProfile')
+ const communitiesRouter = require('./routes/communities')
+ const communitiesListRouter = require('./routes/communitiesListRouter')
  
   app.use(cors()) //middleware
   app.use(express.json())
  
 
 
-//mongoose.connect('mongodb://localhost:27017/TheNeighborhood')
+mongoose.connect('mongodb://mongodb:27017/TheNeighborhood')
 
  app.use("/api/register", registerRouter);
  app.use('/api/login', loginRouter);
