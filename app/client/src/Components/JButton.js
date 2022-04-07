@@ -1,23 +1,9 @@
 import Button from "@mui/material/Button";
 import React, { Component } from 'react'
  import jwt_decode from "jwt-decode";
-// import { ThemeProvider, createTheme } from '@mui/material/styles';
- import { red, green } from '@mui/material/colors';
-
-// const theme = createTheme({
-//   palette: {
-//     primary: {
-//       main: '#f44336',
-//     },
-//     secondary: {
-//       main: green[600],
-//     },
-//   },
-// });
 
 
 class JoinButton extends Component{
-  //_isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -29,7 +15,6 @@ class JoinButton extends Component{
   }
 
   componentDidMount(){
-    //this._isMounted = true;
 
     const token = localStorage.getItem('token')
     if (token){
@@ -46,9 +31,9 @@ class JoinButton extends Component{
         }) 
         .then (res => res.json())
         .then( data => {
-          this.state.communitiesList = data.communities
+          this.setState({communitiesList: data.communities})
           
-          if((this.state.communitiesList[0]).includes(this.props.name)){ 
+          if((this.state.communitiesList[0]) && (this.state.communitiesList[0]).includes(this.props.name)){ 
             this.setState({flag: true});
             
            }else{    
@@ -60,7 +45,6 @@ class JoinButton extends Component{
   }
 
   componentWillUnmount() {
-    // fix Warning: Can't perform a React state update on an unmounted component
     this.setState = (state,callback)=>{
         return;
     };

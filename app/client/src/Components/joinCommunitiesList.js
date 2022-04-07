@@ -56,7 +56,7 @@
                     </Grid>
                     <Grid item xs={3} textAlign='center'>
                        
-                        <JoinButton 
+                    <JoinButton 
                           name={community._id}
                         />
                     </Grid>
