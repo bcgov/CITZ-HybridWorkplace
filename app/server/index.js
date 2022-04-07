@@ -43,7 +43,7 @@
 
 const mongodb_url = encodeURIComponent(process.env.MONGODB_URI)
 const mongodb_main = process.env.MONGODB_DB_MAIN
-mongoose.connect("mongodb://"+mongodb_url+mongodb_main)
+mongoose.connect("mongodb://"+mongodb_url+'/'+mongodb_main)
 
  app.use("/api/register", registerRouter);
  app.use('/api/login', loginRouter);
