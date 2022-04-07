@@ -33,7 +33,7 @@ module.exports = (settings)=>{
       'MONGODB_USER': mongoCredential['user'],
       'MONGODB_PASSWORD': mongoCredential['pass'],
       'MONGODB_URL' : 'mongodb',
-      'MONGODB_DB_MAIN' : phases[phase].name
+      'MONGODB_DB_MAIN' : 'TheNeighborhood'
     }
   }))
 
