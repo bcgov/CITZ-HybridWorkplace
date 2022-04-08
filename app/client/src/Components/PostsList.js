@@ -20,7 +20,7 @@
  * @module
  */
 
- import React, { Component } from 'react';
+ import React, { Component, setState } from 'react';
  import { connect } from 'react-redux';
  import { getPosts } from '../actions/postActions';
  import PropTypes from 'prop-types';
@@ -28,27 +28,33 @@
  
  
   class Posts extends Component {
- 
+  constructor(props){
+      super(props);
+      this.state = {
+          posts: []
+      }
+  }
+
  
      componentDidMount(){
-         this.props.getPosts();
+        //  this.props.getPosts();
+        fetch('http://localhost:5000/api/post')
+             .then(res => res.json())
+             .then(data => (this.setState({posts: data})));
      }
    render() {
-       const postItems = this.props.posts.map(post => (
+       const postItems = this.state.posts.map(post => (
            <div key={post._id}>
-             <Paper
-              sx={{
+            <Paper sx={{
                px: 1,
                py: 0,
                margin: 'auto'
               }}
-              variant="outlined" square 
-              >
+              variant="outlined" square >
                <h3>{post.title}</h3>
-               <p><small> { post.creator}</small></p>
-               <p>{post.description}</p>
-               
-               </Paper>
+              <p>{post.message}</p>
+              </Paper>   
+              
            </div>
        ))
      return (

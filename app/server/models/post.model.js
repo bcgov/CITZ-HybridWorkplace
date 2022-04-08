@@ -24,7 +24,7 @@
  const Post = new mongoose.Schema(
      {
          title: { type: String, required: true},
-         description: { type: String},
+         message: { type: String},
          creator: { type: String},
          community: { 
              type: mongoose.Schema.Types.ObjectId,

@@ -45,7 +45,7 @@
          },  
          body: JSON.stringify({
              title: postData.title,
-             description: postData.description,
+             message: postData.message,
              creator: postData.creator,
            }),
          })

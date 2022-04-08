@@ -31,7 +31,7 @@
         
         await Post.create ({
             title: req.body.title,
-            description: req.body.description,
+            message: req.body.message,
             creator: req.body.creator,
         })
        

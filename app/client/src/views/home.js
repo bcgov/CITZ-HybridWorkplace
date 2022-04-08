@@ -29,11 +29,12 @@ import Box from '@mui/material/Box';
 
 import Communities from '../components/joinCommunitiesList'
 
+ import PostModal from '../components/modals/addPost'
 import Typography from '@mui/material/Typography'
 
 const Home = () => {
 	const navigate = useNavigate();
-    
+    const [show, setShow] = useState(false);
     useEffect(() => {
         
         const token = localStorage.getItem('token')
@@ -64,6 +65,9 @@ const Home = () => {
                             }}
                         >
                         <Typography variant='h6' component='h5'>Posts</Typography>
+                        <button onClick={() => setShow(true)}>Add Post</button>
+                
+                        <PostModal onClose={() =>setShow(false)} show={show} />
                     
                         </Box>
                         <Posts />

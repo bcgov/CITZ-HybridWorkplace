@@ -21,7 +21,7 @@
  */
 
  import React, { Component } from 'react';
- import Communities from '../components/communitiesList';
+ //import Communities from '../components/communitiesList';
  import {Link} from 'react-router-dom';
 
  class CommunitiesPage extends Component{
@@ -30,7 +30,7 @@
         return(
             <div>
                 <h1>Communities</h1>
-                <Communities/>
+         
                 <br/>
                 <Link to='/createCommunity'>
                     <button >Create New Community</button>

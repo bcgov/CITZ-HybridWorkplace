@@ -1,6 +1,19 @@
 import Button from "@mui/material/Button";
 import React, { Component } from 'react'
  import jwt_decode from "jwt-decode";
+// import { ThemeProvider, createTheme } from '@mui/material/styles';
+ //import { red, green } from '@mui/material/colors';
+
+// const theme = createTheme({
+//   palette: {
+//     primary: {
+//       main: '#f44336',
+//     },
+//     secondary: {
+//       main: green[600],
+//     },
+//   },
+// });
 
 
 class JoinButton extends Component{
@@ -15,7 +28,6 @@ class JoinButton extends Component{
   }
 
   componentDidMount(){
-
     const token = localStorage.getItem('token')
     if (token){
       const user = jwt_decode(token)
@@ -33,7 +45,7 @@ class JoinButton extends Component{
         .then( data => {
           this.setState({communitiesList: data.communities})
           
-          if((this.state.communitiesList[0]) && (this.state.communitiesList[0]).includes(this.props.name)){ 
+          if((this.state.communitiesList[0]).includes(this.props.name)){ 
             this.setState({flag: true});
             
            }else{    
@@ -44,14 +56,7 @@ class JoinButton extends Component{
     }
   }
 
-  componentWillUnmount() {
-    this.setState = (state,callback)=>{
-        return;
-    };
-}
-
   handleClick () {
-    if (this._isMounted){
     this.setState({flag: !this.state.flag});
     if(!this.state.flag){
         fetch('http://localhost:5000/api/communitiesList', {
@@ -74,7 +79,6 @@ class JoinButton extends Component{
         },
      }) 
      }
-    }
   };
 
     render(){

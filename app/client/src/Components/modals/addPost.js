@@ -25,7 +25,8 @@
  import { useDispatch } from 'react-redux';
  import { createPost } from '../../actions/postActions';
  import './addPost.css'
- import Paper from '@mui/material/Paper'
+ import Paper from '@mui/material/Paper';
+ import ChooseCommunities from '../communityAutoComplete'
  
  const CreatePost = (props) => {
 
@@ -33,14 +34,14 @@
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
+    const [message, setMessage] = useState('');
     const [name, setName] = useState('');
     
     async function registerPost(event) {
         event.preventDefault();
         const post = {
             title: title, 
-            description: description,
+            message: message,
             creator: name
         };
         dispatch(createPost(post));
@@ -94,12 +95,13 @@
                     />
                     <br/>
                     <textarea 
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
                         type='text'
-                        placeholder='Description'
+                        placeholder='Message'
                     />
                     <br/>
+                    <ChooseCommunities />
                     <input type='submit' value='Submit' id='submit' />
                 </form>
                 <br/>

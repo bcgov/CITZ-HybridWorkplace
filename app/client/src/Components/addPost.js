@@ -29,14 +29,14 @@
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
+    const [message, setMessage] = useState('');
     const [name, setName] = useState('');
     
     async function registerPost(event) {
         event.preventDefault();
         const post = {
             title: title, 
-            description: description,
+            message: message,
             creator: name
         };
         dispatch(createPost(post));
@@ -50,7 +50,7 @@
         // },  
         // body: JSON.stringify({
         //     title,
-        //     description,
+        //     message,
         //   }),
         // })
     
@@ -103,10 +103,10 @@
                 />
                 <br/>
                 <textarea 
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                     type='text'
-                    placeholder='Description'
+                    placeholder='Message'
                 />
                 <br/>
                 <input type='submit' value='Submit' id='submit' />
