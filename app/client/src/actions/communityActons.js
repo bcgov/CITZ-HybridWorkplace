@@ -20,7 +20,7 @@
  * @module
  */
 
-import { GET_COMMUNITIES, ADD_POST } from "./types";
+import { GET_COMMUNITIES, ADD_COMMUNITY } from "./types";
 
 
 export const getCommunities = () => dispatch => {
@@ -52,7 +52,7 @@ export const createCommunity = communityData => dispatch => {
         .then(res => res.json())
         .then(community => 
             dispatch({
-                type: ADD_POST,
+                type: ADD_COMMUNITY,
                 payload: community
             }));       
         

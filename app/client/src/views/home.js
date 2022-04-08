@@ -22,16 +22,21 @@
 import React, { useEffect, useState } from 'react'
 import jwt_decode from "jwt-decode";
 import { Link, useNavigate } from 'react-router-dom';
+import Posts from '../components/PostsList';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
+
 import Communities from '../components/joinCommunitiesList'
+
+ import PostModal from '../components/modals/addPost'
 import Typography from '@mui/material/Typography'
 
 const Home = () => {
 	const navigate = useNavigate();
-    
+    const [show, setShow] = useState(false);
     useEffect(() => {
+        
         const token = localStorage.getItem('token')
         if (token){
             const user = jwt_decode(token)
@@ -40,6 +45,7 @@ const Home = () => {
                 navigate('/login')
             }
         }
+        
     }, [])
 
 
@@ -59,9 +65,12 @@ const Home = () => {
                             }}
                         >
                         <Typography variant='h6' component='h5'>Posts</Typography>
+                        <button onClick={() => setShow(true)}>Add Post</button>
+                
+                        <PostModal onClose={() =>setShow(false)} show={show} />
                     
                         </Box>
-                        <p>To be implimented later</p>
+                        <Posts />
                     </Paper>
                 </Grid>
                 <Grid item xs={4}>

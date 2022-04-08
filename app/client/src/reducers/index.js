@@ -22,9 +22,11 @@
 
 import {combineReducers} from 'redux';
 import communityReducer from './communityReducer';
+import postReducer from './postReducer'
 
 export default combineReducers({
-    communities: communityReducer
+    communities: communityReducer,
+    posts: postReducer
     //can add as many as you want
     //reducers are where state goes.
 })

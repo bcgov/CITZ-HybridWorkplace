@@ -2,7 +2,7 @@ import Button from "@mui/material/Button";
 import React, { Component } from 'react'
  import jwt_decode from "jwt-decode";
 // import { ThemeProvider, createTheme } from '@mui/material/styles';
- import { red, green } from '@mui/material/colors';
+ //import { red, green } from '@mui/material/colors';
 
 // const theme = createTheme({
 //   palette: {
@@ -43,7 +43,7 @@ class JoinButton extends Component{
         }) 
         .then (res => res.json())
         .then( data => {
-          this.state.communitiesList = data.communities
+          this.setState({communitiesList: data.communities})
           
           if((this.state.communitiesList[0]).includes(this.props.name)){ 
             this.setState({flag: true});

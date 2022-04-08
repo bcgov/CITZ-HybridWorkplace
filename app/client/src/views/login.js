@@ -46,7 +46,7 @@ function App() {
 		 if (data.user) {
 		 	localStorage.setItem('token', data.user)
 		 	alert('Login Successful')
-		 	navigate('/communities')
+		 	navigate('/home')
 		 } else {
 		 	alert('Please check your username and password and try again')
 		 }

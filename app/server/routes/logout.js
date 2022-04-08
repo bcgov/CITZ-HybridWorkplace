@@ -20,28 +20,14 @@
  * @module
  */
 
-import { GET_COMMUNITIES, ADD_COMMUNITY} from "../actions/types"
+ const express = require('express');
+ const router = express.Router();
+ 
 
-const initialState = { 
-    items:[], //communitys
-    item: {} //single community
-}
-export default function (state = initialState, action){
-    switch(action.type){
-    
-        case GET_COMMUNITIES:
-            return {
-            ...state,
-            items: action.payload
-            }
+router.get('/', async (req, res) => {
+ req.session = null;
+ req.headers['x-access-token'] = null
+ 
+})
 
-        case ADD_COMMUNITY:
-            console.log('yes')
-            return{
-                ...state, 
-                items: [...state.items, action.payload]
-            }
-        default:
-            return state;
-    }
-}
+module.exports = router;

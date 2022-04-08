@@ -54,9 +54,9 @@
                         <Typography p={1.5} variant='p' component='p'>{community.title}</Typography>
                     
                     </Grid>
-                    <Grid item xs={3} >
+                    <Grid item xs={3} textAlign='center'>
                        
-                        <JoinButton 
+                    <JoinButton 
                           name={community._id}
                         />
                     </Grid>

@@ -20,8 +20,8 @@
  * @module
  */
  import React, { useEffect, useState } from 'react'
- import { Link } from 'react-router-dom';
- import UserPic from '../layout/icons/user.png'
+  
+ import { Link, useNavigate } from 'react-router-dom';
  import './Styles/profile.css';
  import ProfileInfo from '../components/profileInfo';
  import { styled } from '@mui/material/styles';
@@ -29,24 +29,33 @@
  import Paper from '@mui/material/Paper';
  import Box from '@mui/material/Box'
  import Typography from '@mui/material/Typography'
+ import AccountCircle from '@mui/icons-material/AccountCircle'
+ import jwt_decode from "jwt-decode";
 
  import Communities from '../components/joinCommunitiesList';
 
  const Profile = () => {
-
-    const Item = styled(Paper)(({ theme }) => ({
-        backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-        ...theme.typography.body2,
-        padding: theme.spacing(1),
-        textAlign: 'left',
-        color: theme.palette.text.secondary,
-      }));
+    const navigate = useNavigate();
+    useEffect(() => {
+        const token = localStorage.getItem('token')
+        if (token){
+            const user = jwt_decode(token)
+            if(!user){
+                localStorage.removeItem('token')
+                navigate('/login')
+            }
+        }else{
+            alert('Please Log in or Register before accessing this page')
+            navigate('/login')
+        }
+    }, [])
+   
      return (
          <Box sx={{ alignItems: 'stretch' }}>
             <Grid container spacing={2} >
                 <Grid item xs={2}>
                     
-                        <img src={UserPic} id='ProfilePic' alt="Profile" />
+                        <AccountCircle style={{width: '100%', height:'40%'}} />
                         <ProfileInfo />
                         <br />
                         <br/>
