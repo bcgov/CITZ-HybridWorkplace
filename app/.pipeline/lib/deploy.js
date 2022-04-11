@@ -18,9 +18,9 @@ module.exports = (settings)=>{
 
   const templatesLocalBaseUrl =oc.toFileUrl(path.resolve(__dirname, '../../openshift'))
 
-  objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/mongodb/dc.yaml`, {
+ // objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/mongodb/dc.yaml`, {
 
-  }))
+  //}))
 
   objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/server/dc.yaml`, {
     'param':{
