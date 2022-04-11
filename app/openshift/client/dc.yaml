@@ -145,10 +145,10 @@ objects:
               resources:
                 requests:
                   memory: 256Mi
-                  cpu: 10m
+                  cpu: 50m
                 limits:
                   memory: 512Mi
-                  cpu: 50m
+                  cpu: 150m
               env:
                 - name: PORT
                   value: "${PORT}"
