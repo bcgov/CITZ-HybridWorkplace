@@ -182,8 +182,8 @@ objects:
       selector:
         name: "${MONGODB_SERVICE_NAME}"
 
-# Mongo DB StatefulSet
-  - kind: StatefulSet
+# Mongo DB 
+  - kind: DeploymentConfig
     apiVersion: v1
     metadata:
       name: "${MONGODB_SERVICE_NAME}"
