@@ -30,7 +30,7 @@ module.exports = (settings)=>{
       'NAMESPACE': phases[phase].namespace,
       'MONGODB_USER': mongoCredential['user'],
       'MONGODB_PASSWORD': mongoCredential['pass'],
-      'MONGODB_DB_MAIN' : 'TheNeighborhood'
+      'MONGODB_MAIN' : 'TheNeighborhood'
     }
   }))
   objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/client/dc.yaml`, {
