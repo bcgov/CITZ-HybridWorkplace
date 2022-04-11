@@ -36,17 +36,16 @@ module.exports = (settings)=>{
       'MONGODB_DB_MAIN' : 'TheNeighborhood'
     }
   }))
-
-//  objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/client/dc.yaml`, {
-//    'param':{
-//      'NAME': `${phases[phase].name}-client`,
-//      'SUFFIX': phases[phase].suffix,
-//      'VERSION': phases[phase].tag,
-//      'NAMESPACE': phases[phase].namespace,
-//      'PORT': 8080,
-//      'CLUSTER_DOMAIN': 'apps.silver.devops.gov.bc.ca',
-//    }
-//  }))
+  objects.push(...oc.processDeploymentTemplate(`${templatesLocalBaseUrl}/client/dc.yaml`, {
+    'param':{
+      'NAME': `${phases[phase].name}-client`,
+      'SUFFIX': phases[phase].suffix,
+      'VERSION': phases[phase].tag,
+      'NAMESPACE': phases[phase].namespace,
+      'PORT': 8080,
+      'CLUSTER_DOMAIN': 'apps.silver.devops.gov.bc.ca',
+    }
+  }))
 
 
 
