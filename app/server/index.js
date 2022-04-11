@@ -34,7 +34,7 @@
  
   app.use(cors()) //middleware
   app.use(express.json())
-  var url = '127.0.0.1:27017/' + process.env.MONGO_DB_MAIN;
+  var url = '127.0.0.1:27017/TheNeighborhood';
  
   // if OPENSHIFT env variables are present, use the available connection info:
   if (process.env.OPENSHIFT_MONGODB_DB_URL) {
