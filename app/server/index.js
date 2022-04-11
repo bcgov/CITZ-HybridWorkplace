@@ -37,8 +37,8 @@
   var url = '127.0.0.1:27017/TheNeighborhood';
  
   // if OPENSHIFT env variables are present, use the available connection info:
-  if (process.env.OPENSHIFT_MONGODB_DB_URL) {
-      url = process.env.OPENSHIFT_MONGODB_DB_URL
+  if (process.env.MONGODB_URL) {
+      url = process.env.MONGODB_URL
   }
    
   // Connect to mongodb
