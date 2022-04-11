@@ -31,21 +31,25 @@ parameters:
     description: Amount of Memory to Request.
     displayName: Memory Request
     required: true
+    value: "256MiB"
 
   - name: MEMORY_LIMIT
     description: Amount of Memory to Limit.
     displayName: Memory Limit
     required: true
+    value: "512MiB"
 
   - name: CPU_REQUEST
     description: Amount of CPU to Request.
     displayName: Memory Request
     required: true
+    value: "200m"
 
   - name: CPU_LIMIT
     description: Amount of CPU to Limit.
     displayName: Memory Limit
     required: true
+    value: "400m"
     
   - name: MONGODB_SERVICE_NAME
     description: Name of the MongoDB Service
@@ -121,11 +125,13 @@ parameters:
     displayName: "Volume Capacity for MongoDB"
     description: "Volume space available for data, e.g. 512Mi, 2Gi."
     required: true
+    value: "1Gi"
 
   - name: SC_MONGO
     description: The Storage Class for the MongoDB
     displayName: Storage Class for MongoDB
     required: true
+    value: "netapp-file-standard"
 
 objects:
 # Secrets for mongo DB 
