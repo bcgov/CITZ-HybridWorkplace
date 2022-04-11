@@ -30,7 +30,6 @@ module.exports = (settings)=>{
       'NAMESPACE': phases[phase].namespace,
       'MONGODB_USER': mongoCredential['user'],
       'MONGODB_PASSWORD': mongoCredential['pass'],
-      'MONGODB_URL' : 'mongodb',
       'MONGODB_DB_MAIN' : 'TheNeighborhood'
     }
   }))
