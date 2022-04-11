@@ -128,8 +128,8 @@ objects:
                   path: /
                   port: ${{PORT}}
                   scheme: HTTP
-                initialDelaySeconds: 1000
-                periodSeconds: 10
+                initialDelaySeconds: 2000
+                periodSeconds: 50
                 successThreshold: 1
                 timeoutSeconds: 3
               readinessProbe:
@@ -138,8 +138,8 @@ objects:
                   path: /
                   port: ${{PORT}}
                   scheme: HTTP
-                initialDelaySeconds: 1000
-                periodSeconds: 10
+                initialDelaySeconds: 2000
+                periodSeconds: 50
                 successThreshold: 1
                 timeoutSeconds: 2
               resources:
