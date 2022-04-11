@@ -184,7 +184,7 @@ objects:
 
 # Mongo DB StatefulSet
   - kind: StatefulSet
-    apiVersion: apps/v1beta1
+    apiVersion: v1
     metadata:
       name: "${MONGODB_SERVICE_NAME}"
     spec:
