@@ -17,160 +17,253 @@
 # deployment pull image from the tools namespace. Run this policy in
 # your tools namespace.
 ---
-kind: Template
+Kind: Template
 apiVersion: v1
 metadata:
-  name: ${NAME}
+  name: mongodb
   annotations:
-    description: Deployment template for a nodejs server and postgres db.
-    tags: node
-    iconClass: icon-node
+    description: "MongoDB database running as replicate set"
+    iconClass: "icon-nodejs"
+    tags: "nodejs,mongodb,replication,instant-app"
+
+parameters:
+  - name: MEMORY_REQUEST
+    description: Amount of Memory to Request.
+    displayName: Memory Request
+    required: true
+
+  - name: MEMORY_LIMIT
+    description: Amount of Memory to Limit.
+    displayName: Memory Limit
+    required: true
+
+  - name: CPU_REQUEST
+    description: Amount of CPU to Request.
+    displayName: Memory Request
+    required: true
+
+  - name: CPU_LIMIT
+    description: Amount of CPU to Limit.
+    displayName: Memory Limit
+    required: true
+    
+  - name: MONGODB_SERVICE_NAME
+    description: Name of the MongoDB Service
+    displayName: MongoDB Service Name
+    value: "mongodb"
+    required: true
+
+  - name: MONGODB_REPLICAS
+    description: Number of MongoDB replica pods
+    displayName: MongoDB Replicas
+    value: "1"
+    required: true
+
+  - name: MONGODB_SECRET_NAME
+    displayName: MongoDB Secret.
+    description: Name of the Secret containing MongoDB Assets
+    value: "mongodb"
+    required: true
+    
+  - name: MONGODB_USER
+    displayName: "MongoDB Connection Username"
+    description: "Username for MongoDB user that will be used for accessing the database."
+    generate: expression
+    from: "[a-zA-Z0-9]{5}"
+    required: true
+
+  - name: MONGODB_PASSWORD
+    displayName: "MongoDB Connection Password"
+    description: "Password for the MongoDB connection user."
+    generate: expression
+    from: "[a-zA-Z0-9]{16}"
+    required: true
+
+  - name: MONGODB_DATABASE
+    displayName: "MongoDB Database Name"
+    description: "Name of the MongoDB database accessed."
+    value: "TheNeighborhood"
+    required: true
+
+  - name: MONGODB_ADMIN_PASSWORD
+    displayName: "MongoDB Admin Password"
+    description: "Password for the database admin user."
+    generate: expression
+    from: "[a-zA-Z0-9]{16}"
+    required: true
+
+  - name: MONGODB_REPLICA_NAME
+    displayName: "Replica Set Name"
+    description: "The name of the replica set."
+    value: rs0
+    required: true
+
+  - name: MONGODB_KEYFILE_VALUE
+    displayName: "Keyfile Content"
+    description: "The value of the MongoDB keyfile (https://docs.mongodb.com/manual/core/security-internal-authentication/#internal-auth-keyfile)."
+    generate: expression
+    from: "[a-zA-Z0-9]{255}"
+    required: true
+
+  - name: MONGODB_IMAGE
+    displayName: "MongoDB Docker Image"
+    description: "A reference to a supported MongoDB Docker image."
+    value: "docker-registry.default.svc:5000/openshift/mongodb"
+    required: true
+
+  - name: MONGODB_IMAGE_TAG
+    description: Name of the MongoDB tag that should be used
+    displayName: MongoDB Tag
+    value: "3.6"
+    required: true
+
+  - name: VOLUME_CAPACITY
+    displayName: "Volume Capacity for MongoDB"
+    description: "Volume space available for data, e.g. 512Mi, 2Gi."
+    required: true
+
+  - name: SC_MONGO
+    description: The Storage Class for the MongoDB
+    displayName: Storage Class for MongoDB
+    required: true
+
 objects:
-  - kind: PersistentVolumeClaim
+# Secrets for mongo DB 
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: ${MONGODB_SECRET_NAME}
+      labels:
+        name: "${MONGODB_SERVICE_NAME}"
+    stringData:
+      username: "${MONGODB_USER}"
+      password: "${MONGODB_PASSWORD}"
+      admin-username: "admin"
+      admin-password: "${MONGODB_ADMIN_PASSWORD}"
+      database: "${MONGODB_DATABASE}"
+      replica-name: "${MONGODB_REPLICA_NAME}"
+      mongo-url: "mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_SERVICE_NAME}:27017/${MONGODB_DATABASE}?replicaSet=${MONGODB_REPLICA_NAME}"
+      mongo-oplog-url: "mongodb://admin:${MONGODB_ADMIN_PASSWORD}@${MONGODB_SERVICE_NAME}:27017/local?authSource=admin&replicaSet=${MONGODB_REPLICA_NAME}"
+
+  # A non-headless service which takes pod readiness into consideration
+  - kind: Service
     apiVersion: v1
     metadata:
-      name: ${NAME}
+      name: "${MONGODB_SERVICE_NAME}"
       labels:
-        template: mongodb-persistent-template
+        name: "${MONGODB_SERVICE_NAME}"
     spec:
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: 1Gi
-      storageClassName: netapp-file-standard
-      volumeMode: Filesystem
-    status:
-      phase: Bound
-      accessModes:
-        - ReadWriteOnce
-      capacity:
-        storage: 1Gi
-
-  - kind: DeploymentConfig
-    apiVersion: apps.openshift.io/v1
-    metadata:
-      name: ${NAME}
-    spec:
-      strategy:
-        type: Recreate
-        resources: {}
-        activeDeadlineSeconds: 21600
-        recreateParams:
-          timeoutSeconds: 600
-      triggers:
-        - type: ImageChange
-          imageChangeParams:
-            automatic: true
-            containerNames:
-              - ${NAME}
-            from:
-              kind: ImageStreamTag
-              name: 'mongodb:3.6'
-              namespace: openshift
-        - type: ConfigChange
-      replicas: 1
-      revisionHistoryLimit: 10
-      test: false
+      ports:
+        - name: mongodb
+          port: 27017
       selector:
-        name: ${NAME}
+        name: "${MONGODB_SERVICE_NAME}"
+
+  # A headless service to create DNS records
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: "${MONGODB_SERVICE_NAME}-internal"
+      labels:
+        name: "${MONGODB_SERVICE_NAME}"
+      annotations:
+        service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+    spec:    
+      clusterIP: None
+      ports:
+        - name: mongodb
+          port: 27017
+      selector:
+        name: "${MONGODB_SERVICE_NAME}"
+
+# Mongo DB StatefulSet
+  - kind: StatefulSet
+    apiVersion: apps/v1beta1
+    metadata:
+      name: "${MONGODB_SERVICE_NAME}"
+    spec:
+      serviceName: "${MONGODB_SERVICE_NAME}-internal"
+      replicas: "${MONGODB_REPLICAS}"
       template:
         metadata:
-          creationTimestamp: null
           labels:
-            name: ${NAME}
+            name: "${MONGODB_SERVICE_NAME}"
         spec:
-          volumes:
-            - name: ${NAME}-data
-              persistentVolumeClaim:
-                claimName: ${NAME}
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                  - key: name
+                    operator: In
+                    values: 
+                    - ${MONGODB_SERVICE_NAME}
+                topologyKey: "kubernetes.io/hostname"
           containers:
-            - resources:
-                limits:
-                  memory: 512Mi
-              readinessProbe:
-                exec:
-                  command:
-                    - /bin/sh
-                    - '-i'
-                    - '-c'
-                    - >-
-                      mongo mongodb:27017/$MONGODB_DATABASE -u $MONGODB_USER -p
-                      $MONGODB_PASSWORD --eval="quit()"
-                initialDelaySeconds: 3
-                timeoutSeconds: 1
-                periodSeconds: 10
-                successThreshold: 1
-                failureThreshold: 3
-              terminationMessagePath: /dev/termination-log
-              name: mongodb
-              livenessProbe:
-                tcpSocket:
-                  port: 27017
-                initialDelaySeconds: 30
-                timeoutSeconds: 1
-                periodSeconds: 10
-                successThreshold: 1
-                failureThreshold: 3
+            - name: mongo-container
+              image: "${MONGODB_IMAGE}:${MONGODB_IMAGE_TAG}"
+              ports:
+                - containerPort: 27017
+              args:
+                - "run-mongod-replication"
+              volumeMounts:
+                - name: mongo-data
+                  mountPath: "/var/lib/mongodb/data"
               env:
                 - name: MONGODB_USER
                   valueFrom:
                     secretKeyRef:
-                      name: mongodb
-                      key: database-user
+                      key: username
+                      name: "${MONGODB_SECRET_NAME}"
                 - name: MONGODB_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: mongodb
-                      key: database-password
-                - name: MONGODB_ADMIN_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      name: mongodb
-                      key: database-admin-password
+                      key: password
+                      name: "${MONGODB_SECRET_NAME}"
                 - name: MONGODB_DATABASE
                   valueFrom:
                     secretKeyRef:
-                      name: mongodb
-                      key: database-name
-              securityContext:
-                capabilities: {}
-                privileged: false
-              ports:
-                - containerPort: 27017
-                  protocol: TCP
-              imagePullPolicy: IfNotPresent
-              volumeMounts:
-                - name: mongodb-data
-                  mountPath: /var/lib/mongodb/data
-              terminationMessagePolicy: File
-              image: >-
-                image-registry.openshift-image-registry.svc:5000/openshift/mongodb@sha256:8dc9932eabd30f2ee4d0b882500c65b48f3c2fbbd85bfd51d0d18410af404a39
-          restartPolicy: Always
-          terminationGracePeriodSeconds: 30
-          dnsPolicy: ClusterFirst
-          securityContext: {}
-          schedulerName: default-scheduler
-          imagePullSecrets: []
-      paused: false
-    status:
-      observedGeneration: 3
-      details:
-        message: image change
-        causes:
-          - type: ImageChange
-            imageTrigger:
-              from:
-                kind: DockerImage
-                name: >-
-                  image-registry.openshift-image-registry.svc:5000/openshift/mongodb@sha256:8dc9932eabd30f2ee4d0b882500c65b48f3c2fbbd85bfd51d0d18410af404a39
-      availableReplicas: 1
-      unavailableReplicas: 0
-      latestVersion: 2
-      updatedReplicas: 1
-      replicas: 1
-      readyReplicas: 1
-parameters:
-  - name: NAME
-    required: true
-    value: mongodb
+                      key: database
+                      name: "${MONGODB_SECRET_NAME}"
+                - name: MONGODB_ADMIN_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: admin-password
+                      name: "${MONGODB_SECRET_NAME}"
+                - name: MONGO_OPLOG_URL
+                  valueFrom:
+                    secretKeyRef:
+                      key: mongo-oplog-url
+                      name: "${MONGODB_SECRET_NAME}"
+                - name: MONGODB_REPLICA_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      key: replica-name
+                      name: "${MONGODB_SECRET_NAME}"
+                - name: MONGODB_KEYFILE_VALUE
+                  value: "${MONGODB_KEYFILE_VALUE}"
+                - name: MONGODB_SERVICE_NAME
+                  value: "${MONGODB_SERVICE_NAME}-internal"
+              resources:
+                limits:
+                  memory: "${MEMORY_LIMIT}"
+                  cpu: "${CPU_LIMIT}"
+                requests:
+                  memory: "${MEMORY_REQUEST}"
+                  cpu: "${CPU_REQUEST}"
+              readinessProbe:
+                exec:
+                  command:
+                    - stat
+                    - /tmp/initialized
+      volumeClaimTemplates:
+        - metadata:
+            name: mongo-data
+            labels:
+              name: "${MONGODB_SERVICE_NAME}"
+          spec:
+            accessModes: [ ReadWriteOnce ]
+            storageClassName: "${SC_MONGO}"
+            resources:
+              requests:
+                storage: "${VOLUME_CAPACITY}"
