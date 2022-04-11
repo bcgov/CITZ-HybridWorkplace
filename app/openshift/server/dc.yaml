@@ -135,10 +135,9 @@ objects:
               env:
                 - name: PORT
                   value: ${PORT}
-                - name: MONGODB_URI
-                  value: "mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_URL}:27017"
-                - name: MONGODB_DB_MAIN
-                  value: ${MONGODB_DB_MAIN}
+                - name: MONGODB_URL
+                  value: "mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongodb:27017/${MONGODB_MAIN}"
+                  
 parameters:
   - name: PORT
     required: true
@@ -152,8 +151,6 @@ parameters:
   - name: MONGODB_USER
     required: true
   - name: MONGODB_PASSWORD
-    required: true
-  - name: MONGODB_URL
     required: true
   - name: MONGODB_DB_MAIN
     required: true

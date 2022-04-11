@@ -20,7 +20,7 @@
 Kind: Template
 apiVersion: v1
 metadata:
-  name: mongodb
+  name: rocket-chat-mongodb
   annotations:
     description: "MongoDB database running as replicate set"
     iconClass: "icon-nodejs"
@@ -31,25 +31,21 @@ parameters:
     description: Amount of Memory to Request.
     displayName: Memory Request
     required: true
-    value: "256MiB"
 
   - name: MEMORY_LIMIT
     description: Amount of Memory to Limit.
     displayName: Memory Limit
     required: true
-    value: "512MiB"
 
   - name: CPU_REQUEST
     description: Amount of CPU to Request.
     displayName: Memory Request
     required: true
-    value: "200m"
 
   - name: CPU_LIMIT
     description: Amount of CPU to Limit.
     displayName: Memory Limit
     required: true
-    value: "400m"
     
   - name: MONGODB_SERVICE_NAME
     description: Name of the MongoDB Service
@@ -60,7 +56,7 @@ parameters:
   - name: MONGODB_REPLICAS
     description: Number of MongoDB replica pods
     displayName: MongoDB Replicas
-    value: "1"
+    value: "3"
     required: true
 
   - name: MONGODB_SECRET_NAME
@@ -86,7 +82,7 @@ parameters:
   - name: MONGODB_DATABASE
     displayName: "MongoDB Database Name"
     description: "Name of the MongoDB database accessed."
-    value: "TheNeighborhood"
+    value: rocketdb
     required: true
 
   - name: MONGODB_ADMIN_PASSWORD
@@ -125,13 +121,11 @@ parameters:
     displayName: "Volume Capacity for MongoDB"
     description: "Volume space available for data, e.g. 512Mi, 2Gi."
     required: true
-    value: "1Gi"
 
   - name: SC_MONGO
     description: The Storage Class for the MongoDB
     displayName: Storage Class for MongoDB
     required: true
-    value: "netapp-file-standard"
 
 objects:
 # Secrets for mongo DB 
@@ -182,9 +176,9 @@ objects:
       selector:
         name: "${MONGODB_SERVICE_NAME}"
 
-# Mongo DB 
-  - kind: DeploymentConfig
-    apiVersion: v1
+# Mongo DB StatefulSet
+  - kind: StatefulSet
+    apiVersion: apps/v1beta1
     metadata:
       name: "${MONGODB_SERVICE_NAME}"
     spec:

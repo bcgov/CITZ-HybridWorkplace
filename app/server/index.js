@@ -39,16 +39,26 @@
  
   app.use(cors()) //middleware
   app.use(express.json())
+  var url = '127.0.0.1:27017/' + process.env.MONGO_DB_MAIN;
  
-
-const mongodb_url = encodeURIComponent(process.env.MONGODB_URI)
-const mongodb_main = process.env.MONGODB_DB_MAIN
-mongoose.connect("mongodb://"+mongodb_url+'/'+mongodb_main)
-
-mongoose.connection.once('open',(data)=>
-{
-    console.log(data);
-})
+  // if OPENSHIFT env variables are present, use the available connection info:
+  if (process.env.OPENSHIFT_MONGODB_DB_URL) {
+      url = process.env.OPENSHIFT_MONGODB_DB_URL
+  }
+   
+  // Connect to mongodb
+  var connect = function () {
+      mongoose.connect(url);
+  };
+  connect();
+   
+  var db = mongoose.connection;
+   
+  db.on('error', function(error){
+      console.log("Error loading the db - "+ error);
+  });
+   
+  db.on('disconnected', connect);
  app.use("/api/register", registerRouter);
  app.use('/api/login', loginRouter);
  app.use('/api/profile', profileRouter);
