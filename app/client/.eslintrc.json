@@ -1,0 +1,29 @@
+{
+    "env": {
+        "browser": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint",
+       "ecmaFeatures": {
+         "jsx": true
+      },
+      "ecmaVersion": 2018,
+      "sourceType": "module",
+      "allowImportExportEverywhere": true
+    },
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+      "react/jsx-props-no-spreading": "off",
+      "react/prop-types": "off",
+      "react/destructuring-assignment": "off",
+      "max-len": "off",
+      "no-console": "off", 
+      "no-alert": "off"
+    }
+}

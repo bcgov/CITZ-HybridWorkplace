@@ -20,6 +20,7 @@
  * @module
  */
 <<<<<<< HEAD
+<<<<<<< HEAD
  import React, { useEffect, useState } from 'react'
   
  import { Link, useNavigate } from 'react-router-dom';
@@ -63,6 +64,9 @@
                         <Link to='./edit' style={{ textDecoration: 'none' }}>
 =======
 import React, { useEffect, useState } from 'react'
+=======
+import React from 'react'
+>>>>>>> 8b0f97d (fix)
 import { Link } from 'react-router-dom'
 import UserPic from '../layout/icons/user.png'
 import './Styles/profile.css'

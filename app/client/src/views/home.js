@@ -19,6 +19,7 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
+<<<<<<< HEAD
 import React, { useEffect, useState } from 'react'
 <<<<<<< HEAD
 import jwt_decode from "jwt-decode";
@@ -28,6 +29,9 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 =======
+=======
+import React, { useEffect} from 'react'
+>>>>>>> 8b0f97d (fix)
 import jwt_decode from 'jwt-decode'
 import { Link, useNavigate } from 'react-router-dom'
 import Grid from '@mui/material/Grid'

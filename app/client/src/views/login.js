@@ -19,7 +19,7 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
-import React, { Component }  from 'react';
+import React from 'react';
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import '../views/Styles/login.css'
