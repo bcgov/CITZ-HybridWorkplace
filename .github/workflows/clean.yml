@@ -5,8 +5,7 @@ name: clean
 # Controls when the action will run. 
 on:
   pull_request:
-    branches: ['main', 'release/**']
-    types: ['closed']
+    types: ['merged']
   
 defaults:
   run:
