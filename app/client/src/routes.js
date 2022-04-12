@@ -20,43 +20,42 @@
  * @module
  */
 
+import './App.css'
 
- import './App.css';
+import Login from './views/login'
+import Register from './views/register'
+import Home from './views/home'
+import About from './views/aboutPage'
+import ProfilePage from './views/profilePage'
+import EditProfile from './Components/editProfile'
+import CreateCommunity from './Components/createCommunity'
+import CommunitiesPage from './views/communitiesPage'
+import NewCommunity from './Components/newCommunity'
 
- import Login from './views/login';
- import Register from './views/register';
- import Home from './views/home';
- import About from './views/aboutPage';
- import ProfilePage from './views/profilePage';
- import EditProfile from './Components/editProfile';
- import CreateCommunity from './Components/createCommunity';
- import CommunitiesPage from './views/communitiesPage';
- import NewCommunity from './Components/newCommunity';
- 
- import React, { Component, } from 'react';
- import { Routes, Route } from 'react-router-dom';
- 
- 
- class App extends Component {
-   render() {
-   return (
-       <div className="Routes"> 
-        <Routes> 
-            <Route path="/login" exact element= {<Login /> }/>
-            <Route path="/" exact element={<Register />} />
-            <Route path="/home" exact element={<Home />} />  
-            <Route path="/about" exact element={<About />} /> 
-            <Route path="/profile/:id" element={<ProfilePage />} />
-            <Route path="/profile/:id/edit" element={<EditProfile />} />
-            <Route path="/createCommunity" element={<CreateCommunity/>} />
-            <Route path="/communities" element={<CommunitiesPage/>} />
-            <Route path="/newCommunity" element={<NewCommunity/>} />
-        </Routes> 
-       </div> 
-   );
- }
- 
- }
- 
- export default App;
- 
+import React, { Component } from 'react'
+import { Routes, Route } from 'react-router-dom'
+
+class App extends Component {
+    render() {
+        return (
+            <div className="Routes">
+                <Routes>
+                    <Route path="/login" exact element={<Login />} />
+                    <Route path="/" exact element={<Register />} />
+                    <Route path="/home" exact element={<Home />} />
+                    <Route path="/about" exact element={<About />} />
+                    <Route path="/profile/:id" element={<ProfilePage />} />
+                    <Route path="/profile/:id/edit" element={<EditProfile />} />
+                    <Route
+                        path="/createCommunity"
+                        element={<CreateCommunity />}
+                    />
+                    <Route path="/communities" element={<CommunitiesPage />} />
+                    <Route path="/newCommunity" element={<NewCommunity />} />
+                </Routes>
+            </div>
+        )
+    }
+}
+
+export default App

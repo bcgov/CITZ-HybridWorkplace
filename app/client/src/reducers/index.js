@@ -20,11 +20,11 @@
  * @module
  */
 
-import {combineReducers} from 'redux';
-import communityReducer from './communityReducer';
+import { combineReducers } from 'redux'
+import communityReducer from './communityReducer'
 
 export default combineReducers({
-    communities: communityReducer
+    communities: communityReducer,
     //can add as many as you want
     //reducers are where state goes.
 })

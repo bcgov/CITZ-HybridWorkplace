@@ -20,7 +20,7 @@
  * @module
  */
 
- input {
+input {
     width: 60%;
     max-width: 400px;
     min-width: 200px;
@@ -30,21 +30,21 @@
     box-sizing: border-box;
     margin-top: 6px;
     margin-bottom: 6px;
-  }
-  
-  /* Style the submit button */
-  #check {
+}
+
+/* Style the submit button */
+#check {
     width: 40%;
     max-width: 50px;
-    min-width: 40px; 
-    background-color: 	#25a144;
+    min-width: 40px;
+    background-color: #25a144;
     color: white;
-  }
-  #check:hover{
-      background-color: #23963f;
-  }
+}
+#check:hover {
+    background-color: #23963f;
+}
 
-  textarea{
+textarea {
     width: 60%;
     max-width: 400px;
     min-width: 200px;
@@ -54,23 +54,22 @@
     box-sizing: border-box;
     margin-top: 6px;
     margin-bottom: 6px;
-  }
+}
 
-  #eprofile{
-    
+#eprofile {
     text-align: left;
-    
+
     justify-content: center;
-  }
+}
 
-  #bio{
+#bio {
     left: 20px;
-  }
+}
 
-  #title{
+#title {
     left: 20px;
-  }
+}
 
-  #fullname{
-    left:20px;
-  }
+#fullname {
+    left: 20px;
+}

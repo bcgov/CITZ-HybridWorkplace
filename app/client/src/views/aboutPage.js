@@ -18,29 +18,38 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
-
-const about =  () => {
+import React from 'react';
+const about = () => {
     return (
         <div>
             <h1> Welcome to the Neigbourhood</h1>
-            
-            <p> The Neighbourhood is a place where users are free to post there expiriences and questions. It is an open and safe environment
-                to crowdsource ideas with coworkers. You can join communities based on your interests, post, comment and vote while interacting
-                 with other users.
+
+            <p>
+                {' '}
+                The Neighbourhood is a place where users are free to post there
+                expiriences and questions. It is an open and safe environment to
+                crowdsource ideas with coworkers. You can join communities based
+                on your interests, post, comment and vote while interacting with
+                other users.
             </p>
-            <br/>
+            <br />
             <h2> The Rules:</h2>
-            <p> The neighborhood is a safe space for public servants to post and interact with other public servants. Because of this, please follow 
-                the rules listed below to ensure it's a safe space for everyone. 
+            <p>
+                {' '}
+                The neighborhood is a safe space for public servants to post and
+                interact with other public servants. Because of this, please
+                follow the rules listed below to ensure it is a safe space for
+                everyone.
             </p>
             <ul>
                 <li>No posting content with the intent to harm another user</li>
-                <li>No leading people astray or knowingly post false information</li>
+                <li>
+                    No leading people astray or knowingly post false information
+                </li>
                 <li>Be nice :)</li>
                 <li>Have a good time!</li>
             </ul>
-            
         </div>
     )
 }
-export default about;
+export default about

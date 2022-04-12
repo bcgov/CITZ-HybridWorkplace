@@ -19,76 +19,88 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
- import React, { Component } from 'react';
- import {Link} from 'react-router-dom';
- import './sideMenu.css';
- import Menu from './icons/menuLogo.svg';
- import House from '@mui/icons-material/House'
- import Person from '@mui/icons-material/Person'
- import HelpCenter from '@mui/icons-material/HelpCenter'
- import LogOut from '@mui/icons-material/Logout'
- import DarkMode from '@mui/icons-material/DarkMode'
- import Group from '@mui/icons-material/Group'
+import React from 'react'
+import { Link } from 'react-router-dom'
+import './sideMenu.css'
+import Menu from './icons/menuLogo.svg'
+import House from '@mui/icons-material/House'
+import Person from '@mui/icons-material/Person'
+import HelpCenter from '@mui/icons-material/HelpCenter'
+import LogOut from '@mui/icons-material/Logout'
+import DarkMode from '@mui/icons-material/DarkMode'
+import Group from '@mui/icons-material/Group'
 
+const SideMenu = ({ darkMode, setDarkMode }) => {
+    async function openSlideMenu() {
+        console.log('hi')
+        document.getElementById('menu').style.width = '250px'
+        document.getElementById('menu').style.marginLeft = '250px'
+    }
 
- const SideMenu = ({darkMode, setDarkMode}) => {
-  async function openSlideMenu(){
-    console.log('hi');
-    document.getElementById('menu').style.width = '250px';
-    document.getElementById('menu').style.marginLeft = '250px';
-    
-  }  
+    async function closeSlideMenu() {
+        document.getElementById('menu').style.width = '0px'
+        document.getElementById('menu').style.marginLeft = '0px'
+    }
+    async function updateDarkMode(event) {
+        event.preventDefault()
+        setDarkMode(!darkMode)
+        const req = await fetch('http://localhost:5000/api/editprofile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-access-token': localStorage.getItem('token'),
+            },
+            body: JSON.stringify({
+                darkMode: darkMode,
+            }),
+        })
+    }
 
-  async function closeSlideMenu(){
-    
-    document.getElementById('menu').style.width = '0px';
-    document.getElementById('menu').style.marginLeft = '0px';
-  }
-  async function updateDarkMode(event){
-    event.preventDefault()
-    setDarkMode(!darkMode)
-    const req = await fetch('http://localhost:5000/api/editprofile', {
-       method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'x-access-token': localStorage.getItem('token'),
-        },
-        body: JSON.stringify({
-            darkMode: darkMode,
-        }),
-
-    })
-  }
-
-      return (
-        <div id='content'>
-            <span className='slide'>
-              <a href="#" onClick={openSlideMenu}>
-                <img src={Menu} id='Menu' alt="Profile" /> 
-              </a> 
+    return (
+        <div id="content">
+            <span className="slide">
+                <a href="#" onClick={openSlideMenu}>
+                    <img src={Menu} id="Menu" alt="Profile" />
+                </a>
             </span>
 
-            <div id='menu' className='nav'>
-             <a href="#" className='close' onClick={closeSlideMenu} >
-                ✖
-             </a>
-            <ul>
-                <li><Link to='/home' ><House /> Home</Link></li>
-                <li><Link to='./profile/:id' ><Person />  Profile</Link></li>
-                <li ><Link to='./communities' ><Group />  Communities</Link></li>
-                <li><Link to='./about' ><HelpCenter />  About</Link></li>
-                <li onClick={updateDarkMode} id='DMode'><DarkMode />  Dark Mode</li>
-                <li><Link to='./login' ><LogOut /> Log Off</Link></li>
-                
-            </ul>
-          
-
+            <div id="menu" className="nav">
+                <a href="#" className="close" onClick={closeSlideMenu}>
+                    ✖
+                </a>
+                <ul>
+                    <li>
+                        <Link to="/home">
+                            <House /> Home
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="./profile/:id">
+                            <Person /> Profile
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="./communities">
+                            <Group /> Communities
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="./about">
+                            <HelpCenter /> About
+                        </Link>
+                    </li>
+                    <li onClick={updateDarkMode} id="DMode">
+                        <DarkMode /> Dark Mode
+                    </li>
+                    <li>
+                        <Link to="./login">
+                            <LogOut /> Log Off
+                        </Link>
+                    </li>
+                </ul>
             </div>
+        </div>
+    )
+}
 
-         </div>
-
-      )
-    
- }
-  
-  export default SideMenu;
+export default SideMenu

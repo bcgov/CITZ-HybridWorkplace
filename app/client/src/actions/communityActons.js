@@ -20,40 +20,38 @@
  * @module
  */
 
-import { GET_COMMUNITIES, ADD_POST } from "./types";
+import { GET_COMMUNITIES, ADD_POST } from './types'
 
-
-export const getCommunities = () => dispatch => {
-        fetch('http://localhost:5000/api/Community')
-            .then(res => res.json())
-            .then(communities => dispatch({
+export const getCommunities = () => (dispatch) => {
+    fetch('http://localhost:5000/api/Community')
+        .then((res) => res.json())
+        .then((communities) =>
+            dispatch({
                 type: GET_COMMUNITIES,
-                payload: communities
-            }));
-    
+                payload: communities,
+            })
+        )
 }
 
-
-export const createCommunity = communityData => dispatch => {
-    
-    console.log(communityData);
-    console.log('hello');
+export const createCommunity = (communityData) => (dispatch) => {
+    console.log(communityData)
+    console.log('hello')
     fetch('http://localhost:5000/api/Community', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-        },  
+            'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
             title: communityData.title,
             description: communityData.description,
             creator: communityData.creator,
-          }),
-        })
-        .then(res => res.json())
-        .then(community => 
+        }),
+    })
+        .then((res) => res.json())
+        .then((community) =>
             dispatch({
                 type: ADD_POST,
-                payload: community
-            }));       
-        
+                payload: community,
+            })
+        )
 }

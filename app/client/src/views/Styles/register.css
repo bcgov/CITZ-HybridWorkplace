@@ -20,23 +20,22 @@
  * @module
  */
 
- .Register{
-  text-align: center;
- }
- .inputWrap{
-  display: inline-block;
-  text-align: left;
-  padding-top: 10px;
-  font-size: small;
+.Register {
+    text-align: center;
+}
+.inputWrap {
+    display: inline-block;
+    text-align: left;
+    padding-top: 10px;
+    font-size: small;
+}
+#psw {
+    width: 500px;
+}
 
- }
- #psw{
-  width: 500px;
- }
-
- .divBox{
-   width: 500px;
- }
+.divBox {
+    width: 500px;
+}
 
 input {
     width: 60%;
@@ -48,29 +47,29 @@ input {
     box-sizing: border-box;
     margin-top: 6px;
     margin-bottom: 6px;
-  }
-  
-  /* Style the submit button */
-  #submit {
+}
+
+/* Style the submit button */
+#submit {
     background-color: #036;
-    
+
     color: white;
-  }
-  
-  /* Style the container for inputs */
-  .container {
+}
+
+/* Style the container for inputs */
+.container {
     background-color: #f1f1f1;
     padding: 20px;
-  }
-  
-  /* The message box is shown when the user clicks on the password field */
-  #message {
+}
+
+/* The message box is shown when the user clicks on the password field */
+#message {
     width: 60%;
     max-width: 500px;
-    min-width: 200px; 
+    min-width: 200px;
     margin-left: auto;
     margin-right: auto;
-    display:none;
+    display: none;
     background: #f1f1f1;
     text-align: justify;
     color: #000;
@@ -78,32 +77,31 @@ input {
     padding: 1px;
     padding-top: 0px;
     margin-top: 10px;
-    
-  }
-  
-  #message p {
+}
+
+#message p {
     padding: 1px 25px;
     font-size: 12px;
-  }
-  
-  /* Add a green text color and a checkmark when the requirements are right */
-  .valid {
+}
+
+/* Add a green text color and a checkmark when the requirements are right */
+.valid {
     color: green;
-  }
-  
-  .valid:before {
+}
+
+.valid:before {
     position: relative;
     left: -20px;
-    content: "\2713";
-  }
-  
-  /* Add a red text color and an "x" icon when the requirements are wrong */
-  .invalid {
+    content: '\2713';
+}
+
+/* Add a red text color and an "x" icon when the requirements are wrong */
+.invalid {
     color: red;
-  }
-  
-  .invalid:before {
+}
+
+.invalid:before {
     position: relative;
     left: -20px;
-    content: "\00d7";
-  }
+    content: '\00d7';
+}

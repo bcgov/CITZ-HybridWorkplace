@@ -20,6 +20,6 @@
  * @module
  */
 
-export const GET_COMMUNITIES = 'GET_COMMUNITIES';
-export const ADD_POST = 'ADD_POST';
+export const GET_COMMUNITIES = 'GET_COMMUNITIES'
+export const ADD_POST = 'ADD_POST'
 // export const DELETE_COMMUNITY = 'DELETE_COMMUNITY'

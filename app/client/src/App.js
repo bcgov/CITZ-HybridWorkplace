@@ -20,76 +20,70 @@
  * @module
  */
 
+import './App.css'
 
-import './App.css';
+import React, {  useState, useEffect } from 'react'
+import Routes from './routes'
+import Container from '@mui/material/Container'
 
-
-
-import React, { Component, useState, useEffect } from 'react';
-import Routes from './routes';
-import Container from '@mui/material/Container';
-
-import { Provider } from 'react-redux';
-import store from './store';
+import { Provider } from 'react-redux'
+import store from './store'
 
 import Footer from './layout/footer'
-import Header from './layout/header';
+import Header from './layout/header'
 
 import Paper from '@mui/material/Paper'
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme } from '@mui/material/styles'
 
+function App() {
+    const [darkMode, setDarkMode] = useState(false)
 
-
-function App(){
-  const [darkMode, setDarkMode] = useState(false)
-
-  const theme = createTheme({
-    palette: {
-      mode: darkMode ? 'dark' : 'light'
-    },
-  });
-
-  async function populateDark() {
-    const req = await fetch('http://localhost:5000/api/editprofile', {
-        headers: {
-            'x-access-token': localStorage.getItem('token'),
+    const theme = createTheme({
+        palette: {
+            mode: darkMode ? 'dark' : 'light',
         },
     })
 
-    const data = await req.json()
-    if(data.status === 'ok'){
-      if(data.darkmode == undefined){
-        setDarkMode(false)
-      }else{
-        setDarkMode(data.darkMode)
-      }
-        console.log(data.darkMode)
-    }else{
-        alert(data.error)
+    async function populateDark() {
+        const req = await fetch('http://localhost:5000/api/editprofile', {
+            headers: {
+                'x-access-token': localStorage.getItem('token'),
+            },
+        })
+
+        const data = await req.json()
+        if (data.status === 'ok') {
+            if (data.darkmode == undefined) {
+                setDarkMode(false)
+            } else {
+                setDarkMode(data.darkMode)
+            }
+            console.log(data.darkMode)
+        } else {
+            alert(data.error)
+        }
     }
-}
-useEffect(() => {
-     populateDark()
-}, [])
+    useEffect(() => {
+        populateDark()
+    }, [])
 
-  
-  return (
-    <ThemeProvider theme={theme}>
-    <Paper style={{ minHeight: '100vh'}}>
-    <Provider store={store}>
-    <div> 
-      <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-      <div className="App"> 
-        <Container>
-          <Routes />
-        </Container>
-      </div> 
-      < Footer />
-    </div>
-    </Provider>
-    </Paper>
-    </ThemeProvider>
-  );
+    return (
+        <ThemeProvider theme={theme}>
+            <Paper style={{ minHeight: '100vh' }}>
+                <Provider store={store}>
+                    <div>
+                        <Header darkMode={darkMode} setDarkMode={setDarkMode} />
+                        <div className="App">
+                            <Container>
+                                <Routes />
+                            </Container>
+                        </div>
+                        <Footer />
+                    </div>
+                </Provider>
+            </Paper>
+        </ThemeProvider>
+    )
 }
 
-export default App;
+export default App

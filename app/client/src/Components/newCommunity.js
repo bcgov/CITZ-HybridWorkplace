@@ -19,77 +19,76 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { createCommunity } from '../actions/communityActons';
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { createCommunity } from '../actions/communityActons'
 
 class newCommunity extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      title: '',
-      description: ''
-    };
+    constructor(props) {
+        super(props)
+        this.state = {
+            title: '',
+            description: '',
+        }
 
-    this.onChange = this.onChange.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
-  }
+        this.onChange = this.onChange.bind(this)
+        this.onSubmit = this.onSubmit.bind(this)
+    }
 
-  onChange(e) {
-    this.setState({ [e.target.name]: e.target.value });
-  }
+    onChange(e) {
+        this.setState({ [e.target.name]: e.target.value })
+    }
 
-  onSubmit(e) {
-    e.preventDefault();
+    onSubmit(e) {
+        e.preventDefault()
 
+        const community = {
+            title: this.state.title,
+            description: this.state.description,
+        }
 
-    const community = {
-      title: this.state.title,
-      description: this.state.description
-    };
+        this.props.createCommunity(community)
 
-    this.props.createCommunity(community);
+        window.location.href = './communities'
+    }
 
-     window.location.href='./communities';
-  }
-
-  render() {
-    return (
-      <div>
-        <h1>Create New Community</h1>
-        <form onSubmit={this.onSubmit}>
-          <div>
-            <label>Title: </label>
-            <br />
-            <input
-              type="text"
-              name="title"
-              onChange={this.onChange}
-              value={this.state.title}
-            />
-          </div>
-          <br />
-          <div>
-            <label>Description: </label>
-            <br />
-            <textarea
-              name="description"
-              onChange={this.onChange}
-              value={this.state.description}
-            />
-          </div>
-          <br />
-          <button type="submit">Submit</button>
-        </form>
-        <hr />
-      </div>
-    );
-  }
+    render() {
+        return (
+            <div>
+                <h1>Create New Community</h1>
+                <form onSubmit={this.onSubmit}>
+                    <div>
+                        <label>Title: </label>
+                        <br />
+                        <input
+                            type="text"
+                            name="title"
+                            onChange={this.onChange}
+                            value={this.state.title}
+                        />
+                    </div>
+                    <br />
+                    <div>
+                        <label>Description: </label>
+                        <br />
+                        <textarea
+                            name="description"
+                            onChange={this.onChange}
+                            value={this.state.description}
+                        />
+                    </div>
+                    <br />
+                    <button type="submit">Submit</button>
+                </form>
+                <hr />
+            </div>
+        )
+    }
 }
 
 newCommunity.propTypes = {
-  createCommunity: PropTypes.func.isRequired
-};
+    createCommunity: PropTypes.func.isRequired,
+}
 
-export default connect(null, { createCommunity })(newCommunity);
+export default connect(null, { createCommunity })(newCommunity)
