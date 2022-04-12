@@ -18,28 +18,33 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
-
+import './Styles/about.css'
 const about =  () => {
     return (
         <div>
             <h1> Hybrid Workplace: The Neigbourhood</h1>
-            <br/>
             <p>Is a collaboration tool for internal government communities as per our problem statement
             </p>
             <p>VERSION.BUILD v.1.0.1</p>
             <br/>
             <h2> Developed By:</h2>
-            <p> Abby: a.ulveland@gmail.com </p>
-              <p>  Jayna: bettesworthjayna@gmail.com </p>
+            <ul className="no-bullets" >
+                <li> Abby: a.ulveland@gmail.com </li>
+                <li>  Jayna: bettesworthjayna@gmail.com </li>
+            </ul>
               <br />
-            <p> This project is open sourced for fair use, with attribution.</p> 
-             <p>   This work carried no warranty or implied guarantee. </p>
-             <p>   All third party libraries are those of their rightful owners or licensees. </p>
-              <p>  BC government theme © 2020 by the Government of BC </p>
+            <ul className="no-bullets" >
+            <li> This project is open sourced for fair use, with attribution.</li> 
+             <li>   This work carried no warranty or implied guarantee. </li>
+             <li>   All third party libraries are those of their rightful owners or licensees. </li>
+              <li>  BC government theme © 2020 by the Government of BC </li>
+              </ul>
             <br/>
             <h2>Platform:</h2>
-            <p>Developed using React.js, Node.js, MongoDB and Express hosted on the http://BCDevExchange.org DevOps Environment.</p>
-            <p>Addingtional info: http://github.com/bcgov/CITZ-HybridWorkplace</p>
+            <ul className="no-bullets" >
+            <li>Developed using React.js, Node.js, MongoDB and Express hosted on the <a target="_blank" rel="noopener noreferrer" href='http://BCDevExchange.org'>http://BCDevExchange.org</a> DevOps Environment.</li>
+            <li>Addingtional info: <a target="_blank" rel="noopener noreferrer" href='http://github.com/bcgov/CITZ-HybridWorkplace'>http://github.com/bcgov/CITZ-HybridWorkplace</a></li>
+            </ul>
             <br/>
             <h2>Features Include:</h2>
             <ul>
@@ -57,6 +62,7 @@ const about =  () => {
                 </ul>
                 <li>APIs</li>
                 <br />
+                <br/>
                
             </ul>
             

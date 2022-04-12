@@ -62,10 +62,11 @@ const Home = () => {
                                 px: 1,
                                 py: 0.5,
                                 textAlign: 'center',
+                                display: 'flex',
                             }}
                         >
-                        <Typography variant='h6' component='h5'>Posts</Typography>
-                        <button onClick={() => setShow(true)}>Add Post</button>
+                        <Typography variant='h6' component='h5'> Posts </Typography>
+                        <button onClick={() => setShow(true)}> Add Post </button>
                 
                         <PostModal onClose={() =>setShow(false)} show={show} />
                     
