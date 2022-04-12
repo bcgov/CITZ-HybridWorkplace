@@ -20,6 +20,7 @@
  * @module
  */
 
+<<<<<<< HEAD
 import {combineReducers} from 'redux';
 import communityReducer from './communityReducer';
 import postReducer from './postReducer'
@@ -27,6 +28,13 @@ import postReducer from './postReducer'
 export default combineReducers({
     communities: communityReducer,
     posts: postReducer
+=======
+import { combineReducers } from 'redux'
+import communityReducer from './communityReducer'
+
+export default combineReducers({
+    communities: communityReducer,
+>>>>>>> 5d08463 (fix)
     //can add as many as you want
     //reducers are where state goes.
 })

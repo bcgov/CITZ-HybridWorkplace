@@ -20,46 +20,43 @@
  * @module
  */
 
- .LogIn{
+.LogIn {
     text-align: center;
-    
-   }
+}
 
-   .inputWrap{
+.inputWrap {
     display: inline-block;
     text-align: left;
     padding-top: 10px;
     font-size: small;
-  
-   }
-   #psw{
+}
+#psw {
     width: 500px;
-   }
-  
-   .divBox{
-     width: 500px;
-   }
-  
-  input {
-      width: 60%;
-      max-width: 300px;
-      min-width: 300px;
-      padding: 5px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
-      margin-top: 6px;
-      margin-bottom: 6px;
-    }
-    
-    /* Style the submit button */
-    #submit {
-      background-color: #036;
-      
-      color: white;
-    }
+}
 
-    #link{
-        font-size: small;
-    }
-    
+.divBox {
+    width: 500px;
+}
+
+input {
+    width: 60%;
+    max-width: 300px;
+    min-width: 300px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+/* Style the submit button */
+#submit {
+    background-color: #036;
+
+    color: white;
+}
+
+#link {
+    font-size: small;
+}

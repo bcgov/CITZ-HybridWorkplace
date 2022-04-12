@@ -20,24 +20,37 @@
  * @module
  */
 import React, { useEffect, useState } from 'react'
+<<<<<<< HEAD
 import jwt_decode from "jwt-decode";
 import { Link, useNavigate } from 'react-router-dom';
 import Posts from '../components/PostsList';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
+=======
+import jwt_decode from 'jwt-decode'
+import { Link, useNavigate } from 'react-router-dom'
+import Grid from '@mui/material/Grid'
+import Paper from '@mui/material/Paper'
+import Box from '@mui/material/Box'
+>>>>>>> 5d08463 (fix)
 import Communities from '../Components/joinCommunitiesList'
 import Typography from '@mui/material/Typography'
 
 const Home = () => {
+<<<<<<< HEAD
 	const navigate = useNavigate();
     const [show, setShow] = useState(false);
+=======
+    const navigate = useNavigate()
+
+>>>>>>> 5d08463 (fix)
     useEffect(() => {
         
         const token = localStorage.getItem('token')
-        if (token){
+        if (token) {
             const user = jwt_decode(token)
-            if(!user){
+            if (!user) {
                 localStorage.removeItem('token')
                 navigate('/login')
             }
@@ -45,14 +58,12 @@ const Home = () => {
         
     }, [])
 
-
-	return (
-		<div>
+    return (
+        <div>
             <Grid container spacing={2}>
-                
                 <Grid item xs={8}>
                     <Paper>
-                    <Box
+                        <Box
                             sx={{
                                 backgroundColor: '#036',
                                 color: 'white',
@@ -61,11 +72,17 @@ const Home = () => {
                                 textAlign: 'center',
                             }}
                         >
+<<<<<<< HEAD
                         <Typography variant='h6' component='h5'>Posts</Typography>
                         <button onClick={() => setShow(true)}>Add Post</button>
                 
                         <PostModal onClose={() =>setShow(false)} show={show} />
                     
+=======
+                            <Typography variant="h6" component="h5">
+                                Posts
+                            </Typography>
+>>>>>>> 5d08463 (fix)
                         </Box>
                         <Posts />
                     </Paper>
@@ -81,34 +98,34 @@ const Home = () => {
                                 textAlign: 'center',
                             }}
                         >
-                            <Typography variant='h6' component='h5'>Communities</Typography>
-
+                            <Typography variant="h6" component="h5">
+                                Communities
+                            </Typography>
                         </Box>
                         <Communities />
-                        <Link to='/createCommunity' style={{ textDecoration: 'none' }}>
-                        <Box
-                            sx={{
-                                backgroundColor: '#036',
-                                color: 'white',
-                                px: 1,
-                                py: 0.5,
-                                textAlign: 'center',
-                                
-                            }}
+                        <Link
+                            to="/createCommunity"
+                            style={{ textDecoration: 'none' }}
                         >
-                            <Typography variant='h6' component='h5'>+ Create Community</Typography>
-                            
-                            
-
-                        </Box>
+                            <Box
+                                sx={{
+                                    backgroundColor: '#036',
+                                    color: 'white',
+                                    px: 1,
+                                    py: 0.5,
+                                    textAlign: 'center',
+                                }}
+                            >
+                                <Typography variant="h6" component="h5">
+                                    + Create Community
+                                </Typography>
+                            </Box>
                         </Link>
                     </Paper>
                 </Grid>
             </Grid>
-            
- 
-        </div>	
-	)
+        </div>
+    )
 }
 
 export default Home

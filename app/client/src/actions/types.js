@@ -20,6 +20,7 @@
  * @module
  */
 
+<<<<<<< HEAD
 export const GET_COMMUNITIES = 'GET_COMMUNITIES';
 export const ADD_COMMUNITY = 'ADD_COMMUNITY';
 export const DARK_MODE = 'DARK_MODE';
@@ -27,3 +28,8 @@ export const DARK_MODE = 'DARK_MODE';
 export const GET_POSTS = 'GET_COMMUNITIES';
 export const ADD_POST = 'ADD_COMMUNITY';
 // export const DELETE_COMMUNITY = 'DELETE_COMMUNITY'
+=======
+export const GET_COMMUNITIES = 'GET_COMMUNITIES'
+export const ADD_POST = 'ADD_POST'
+// export const DELETE_COMMUNITY = 'DELETE_COMMUNITY'
+>>>>>>> 5d08463 (fix)

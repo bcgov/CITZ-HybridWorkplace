@@ -20,24 +20,29 @@
  * @module
  */
 
- import React, { Component } from 'react';
- import Communities from '../Components/communitiesList';
- import {Link} from 'react-router-dom';
+import React, { Component } from 'react'
+import Communities from '../Components/communitiesList'
+import { Link } from 'react-router-dom'
 
- class CommunitiesPage extends Component{
-
-    render () {
-        return(
+class CommunitiesPage extends Component {
+    render() {
+        return (
             <div>
                 <h1>Communities</h1>
+<<<<<<< HEAD
          
                 <br/>
                 <Link to='/createCommunity'>
                     <button >Create New Community</button>
+=======
+                <Communities />
+                <br />
+                <Link to="/createCommunity">
+                    <button>Create New Community</button>
+>>>>>>> 5d08463 (fix)
                 </Link>
-
             </div>
         )
     }
- }
- export default CommunitiesPage;
+}
+export default CommunitiesPage

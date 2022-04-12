@@ -19,12 +19,12 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
- import React, { useEffect, useState } from 'react'
- import jwt_decode from "jwt-decode";
- import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react'
+import jwt_decode from 'jwt-decode'
+import { useNavigate } from 'react-router-dom'
 
- const Profile = () => {
-    const navigate = useNavigate();
+const Profile = () => {
+    const navigate = useNavigate()
     const [email, setEmail] = useState('')
     const [title, setTitle] = useState('')
     const [name, setName] = useState('')
@@ -39,33 +39,31 @@
         })
 
         const data = await req.json()
-        if(data.status === 'ok'){
+        if (data.status === 'ok') {
             setEmail(data.email)
             setName(data.name)
             setTitle(data.title)
             setFullName(data.fullName)
             setBio(data.bio)
-        }else{
+        } else {
             alert(data.error)
         }
     }
     useEffect(() => {
         const token = localStorage.getItem('token')
-        if (token){
+        if (token) {
             const user = jwt_decode(token)
-            if(!user){
+            if (!user) {
                 localStorage.removeItem('token')
                 navigate('/login')
-            }else{
-                 
+            } else {
                 populateQuote()
             }
         }
     }, [])
 
-
-     return ( 
-        <div >
+    return (
+        <div>
             <h3>{fullName || ''}</h3>
             <h4>{name}</h4>
             <p> {email} </p>
@@ -73,6 +71,6 @@
             <br />
             <p> {bio || ''} </p>
         </div>
-     )
- }
- export default Profile;
+    )
+}
+export default Profile

@@ -18,13 +18,34 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
-
-const about =  () => {
+import React from 'react';
+const about = () => {
     return (
         <div>
+<<<<<<< HEAD
             <h1> Hybrid Workplace: The Neigbourhood</h1>
             <br/>
             <p>Is a collaboration tool for internal government communities as per our problem statement
+=======
+            <h1> Welcome to the Neigbourhood</h1>
+
+            <p>
+                {' '}
+                The Neighbourhood is a place where users are free to post there
+                expiriences and questions. It is an open and safe environment to
+                crowdsource ideas with coworkers. You can join communities based
+                on your interests, post, comment and vote while interacting with
+                other users.
+            </p>
+            <br />
+            <h2> The Rules:</h2>
+            <p>
+                {' '}
+                The neighborhood is a safe space for public servants to post and
+                interact with other public servants. Because of this, please
+                follow the rules listed below to ensure it is a safe space for
+                everyone.
+>>>>>>> 5d08463 (fix)
             </p>
             <p>VERSION.BUILD v.1.0.1</p>
             <br/>
@@ -43,6 +64,7 @@ const about =  () => {
             <br/>
             <h2>Features Include:</h2>
             <ul>
+<<<<<<< HEAD
                 <li>User Account Managmanet</li>
                 <ul>
                     <li>Registration</li>
@@ -58,9 +80,16 @@ const about =  () => {
                 <li>APIs</li>
                 <br />
                
+=======
+                <li>No posting content with the intent to harm another user</li>
+                <li>
+                    No leading people astray or knowingly post false information
+                </li>
+                <li>Be nice :)</li>
+                <li>Have a good time!</li>
+>>>>>>> 5d08463 (fix)
             </ul>
-            
         </div>
     )
 }
-export default about;
+export default about

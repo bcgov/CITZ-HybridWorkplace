@@ -1,8 +1,12 @@
 {
     "compilerOptions": {
-      "module": "commonjs",
-      "target": "es6"
+        "module": "commonjs",
+        "target": "es6"
     },
     "include": ["src/**/*"]
+<<<<<<< HEAD
   }
   
+=======
+}
+>>>>>>> 5d08463 (fix)

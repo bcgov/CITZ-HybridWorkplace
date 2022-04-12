@@ -19,6 +19,7 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
+<<<<<<< HEAD
  import React, { useEffect, useState } from 'react'
   
  import { Link, useNavigate } from 'react-router-dom';
@@ -60,6 +61,38 @@
                         <br />
                         <br/>
                         <Link to='./edit' style={{ textDecoration: 'none' }}>
+=======
+import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import UserPic from '../layout/icons/user.png'
+import './Styles/profile.css'
+import ProfileInfo from '../Components/profileInfo'
+import { styled } from '@mui/material/styles'
+import Grid from '@mui/material/Grid'
+import Paper from '@mui/material/Paper'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+
+import Communities from '../Components/joinCommunitiesList'
+
+const Profile = () => {
+    const Item = styled(Paper)(({ theme }) => ({
+        backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+        ...theme.typography.body2,
+        padding: theme.spacing(1),
+        textAlign: 'left',
+        color: theme.palette.text.secondary,
+    }))
+    return (
+        <Box sx={{ alignItems: 'stretch' }}>
+            <Grid container spacing={2}>
+                <Grid item xs={2}>
+                    <img src={UserPic} id="ProfilePic" alt="Profile" />
+                    <ProfileInfo />
+                    <br />
+                    <br />
+                    <Link to="./edit" style={{ textDecoration: 'none' }}>
+>>>>>>> 5d08463 (fix)
                         <Box
                             sx={{
                                 backgroundColor: '#036',
@@ -67,17 +100,16 @@
                                 px: 1,
                                 py: 0.5,
                                 textAlign: 'center',
-                                
                             }}
                         >
-                            <Typography variant='h6' component='p'>Edit Profile</Typography>
-
+                            <Typography variant="h6" component="p">
+                                Edit Profile
+                            </Typography>
                         </Box>
-                        </Link>
+                    </Link>
                 </Grid>
                 <Grid item xs={6}>
                     <Paper elevation={0}>
-                       
                         <Box
                             sx={{
                                 backgroundColor: '#036',
@@ -87,36 +119,30 @@
                                 textAlign: 'center',
                             }}
                         >
-                            <Typography variant='h6' component='h5'>Posts</Typography>
-
-                        </Box>   
-                        
-                        
-                    </Paper>
-                </Grid>  
-                <Grid item xs={4}>
-                    
-                    <Box
-                            sx={{
-                                backgroundColor: '#036',
-                                color: 'white',
-                                px: 1,
-                                py: 0.5,
-                                textAlign: 'center',
-                            }}
-                        >
-                            <Typography variant='h6' component='h5'>My Communities</Typography>
-
+                            <Typography variant="h6" component="h5">
+                                Posts
+                            </Typography>
                         </Box>
-                        <Communities />
-                    
+                    </Paper>
                 </Grid>
-               
-                    
-                
-            </Grid>    
-            
-         </Box>
-     )
- }
- export default Profile;
+                <Grid item xs={4}>
+                    <Box
+                        sx={{
+                            backgroundColor: '#036',
+                            color: 'white',
+                            px: 1,
+                            py: 0.5,
+                            textAlign: 'center',
+                        }}
+                    >
+                        <Typography variant="h6" component="h5">
+                            My Communities
+                        </Typography>
+                    </Box>
+                    <Communities />
+                </Grid>
+            </Grid>
+        </Box>
+    )
+}
+export default Profile

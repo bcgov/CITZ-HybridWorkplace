@@ -19,21 +19,17 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
-#ProfilePic{
-  
+#ProfilePic {
     width: 100%;
-    
 }
 
-#wrap{
+#wrap {
     display: flex;
     justify-content: center;
 }
 
-#restPlace{
+#restPlace {
     padding: 20px;
     text-align: left;
     width: 100%;
-  
-    
 }
