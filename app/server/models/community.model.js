@@ -30,6 +30,7 @@
              type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
             }],
+        flagged: {type: Boolean},
      },
      { collection: 'community-data' }
  )

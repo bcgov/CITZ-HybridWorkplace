@@ -30,6 +30,7 @@
              type: mongoose.Schema.Types.ObjectId,
             ref: 'Community'
             },
+        flagged: {type: Boolean},
      },
      { collection: 'post-data' }
  )
