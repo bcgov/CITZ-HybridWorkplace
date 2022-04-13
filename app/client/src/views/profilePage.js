@@ -19,12 +19,11 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
- import React, { useEffect, useState } from 'react'
+ import React, { useEffect } from 'react'
   
  import { Link, useNavigate } from 'react-router-dom';
  import './Styles/profile.css';
  import ProfileInfo from '../components/profileInfo';
- import { styled } from '@mui/material/styles';
  import Grid from '@mui/material/Grid';
  import Paper from '@mui/material/Paper';
  import Box from '@mui/material/Box'

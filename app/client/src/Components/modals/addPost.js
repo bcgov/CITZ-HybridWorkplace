@@ -22,14 +22,10 @@
 
 //here
 
- import React, { Component, useEffect, useState } from 'react'
- import jwt_decode from "jwt-decode";
- import { renderMatches, useNavigate, Link } from 'react-router-dom';
- import { useDispatch } from 'react-redux';
+ import React, { Component } from 'react'
  import { createPost } from '../../actions/postActions';
  import './addPost.css'
  import Paper from '@mui/material/Paper';
- import ChooseCommunities from '../communityAutoComplete'
  import { connect } from 'react-redux';
  import { getCommunities } from '../../actions/communityActons';
  import PropTypes from 'prop-types';
@@ -62,8 +58,7 @@ class CreatePost extends Component {
         };
         console.log(post)
         this.props.createPost(post);
-       // window.location.reload() 
-       // navigate('/posts')
+        window.location.reload() 
       }
 
       onChange(event){
@@ -93,19 +88,6 @@ class CreatePost extends Component {
         this.props.getCommunities();
     }
 
-    //   useEffect(() => {
-    //     const token = localStorage.getItem('token')
-    //     if (token){
-    //         const user = jwt_decode(token)
-    //         if(!user){
-    //             localStorage.removeItem('token')
-    //             navigate('/login')
-    //         }else{
-    //             userInfo();
-                
-    //         }
-    //     }
-    // }, [])
     setCommunity(id){
         console.log('clicked' + id)
         this.setState({community: id})
@@ -142,17 +124,20 @@ class CreatePost extends Component {
                         placeholder='Message'
                     />
                     <br/>
-                 
+                    <p>Choose a Community:</p>
+                    { this.props.communities.map(community => (
+                        <div key={community._id}>
+                        <Button onClick={() => this.setCommunity(community._id)}>{community.title} </Button>
+                        
+                        </div>))}
                     <input type='submit' value='Submit' id='submit' />
                 </form>
                 
                 <br/>
-                { this.props.communities.map(community => (
-            <div key={community._id}>
-               <Button onClick={() => this.setCommunity(community._id)}>{community.title} </Button>
-               
-            </div>))}
+                
                 </Paper>
+                <br />
+                <br />
             </div> 
          </div>	
      )

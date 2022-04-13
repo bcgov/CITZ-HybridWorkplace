@@ -26,6 +26,7 @@ import Posts from '../components/PostsList';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 
 import Communities from '../components/joinCommunitiesList'
 
@@ -66,7 +67,7 @@ const Home = () => {
                             }}
                         >
                         <Typography variant='h6' component='h5'> Posts </Typography>
-                        <button onClick={() => setShow(true)}> Add Post </button>
+                        <Button onClick={() => setShow(true)}> Add Post </Button>
                 
                         <PostModal onClose={() =>setShow(false)} show={show} />
                     
