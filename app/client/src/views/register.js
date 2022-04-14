@@ -33,7 +33,7 @@
  
    async function registerUser(event) {
      event.preventDefault()
-     if(password != rePassword){
+     if(password !== rePassword){
        alert("Password's do not match, please try again")
      }else{
      const response = await fetch('http://localhost:5000/api/register', {

@@ -32,7 +32,7 @@
  import CreateCommunity from './components/createCommunity';
  import CommunitiesPage from './views/communitiesPage';
  import NewCommunity from './components/newCommunity';
- import NewPost from './components/addPost';
+
  import PostList from './views/Posts'
  
  import React, { Component, } from 'react';
@@ -53,7 +53,7 @@
             <Route path="/createCommunity" element={<CreateCommunity/>} />
             <Route path="/communities" element={<CommunitiesPage/>} />
             <Route path="/newCommunity" element={<NewCommunity/>} />
-            <Route path="/newPost" element={<NewPost/>} />
+           
             <Route path="/Posts" element={<PostList/>} />
         </Routes> 
        </div> 

@@ -33,6 +33,7 @@
             title: req.body.title,
             message: req.body.message,
             creator: req.body.creator,
+            community: req.body.community,
         })
        
         res.json({ status: 'ok' })

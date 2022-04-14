@@ -20,9 +20,8 @@
  * @module
  */
 
- import React, { Component, useState } from 'react';
+ import React, {  useState } from 'react';
  import Posts from '../components/PostsList';
- import {Link} from 'react-router-dom';
  import PostModal from '../components/modals/addPost'
 
  const PostsPage = () => {
