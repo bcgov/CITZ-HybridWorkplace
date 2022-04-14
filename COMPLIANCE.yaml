@@ -1,11 +1,12 @@
 name: compliance
 description: |
   This document is used to track a projects PIA and STRA
+  requires review in June 2022
   compliance.
 spec:
   - name: PIA
-    status: PIA_STATUS_HERE
+    status: (currently) exempt
     last-updated: '2022-04-14T22:25:44.862Z'
   - name: STRA
-    status: STRA_STATUS_HERE
+    status: (currently) exempt
     last-updated: '2022-04-14T22:25:44.862Z'
