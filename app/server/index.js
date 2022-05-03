@@ -36,6 +36,7 @@
  const communitiesListRouter = require('./routes/communitiesListRouter')
  const logoutRouter = require('./routes/logout')
  const postRouter = require('./routes/posts')
+ const apiMonitoringRouter = require('./routes/apiMonitoring')
  
   app.use(cors()) //middleware
   app.use(express.json())
@@ -52,7 +53,7 @@ mongoose.connect('mongodb://localhost:27017/TheNeighborhood')
  app.use('/api/communitiesList', communitiesListRouter);
  app.use('/api/logout', logoutRouter);
  app.use('/api/post', postRouter);
- 
+ app.use('/api/health', apiMonitoringRouter)
 
  app.listen(port, () => {
      console.log(`Server started on port ${port}`)
