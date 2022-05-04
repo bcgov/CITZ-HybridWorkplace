@@ -1,23 +1,35 @@
 version: "3.7"
 services:
-#############################################################################################
-###                                     MONGO DB                                          ###
-#############################################################################################
-mongodb:
-  image: 'mongo:latest'
-  container_name: 'mongodb'
-  environment:
-    - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME:-admin}
-    - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:-admin}
-  volumes:
-    - mongo-volume:/data/db
-  ports:
-    - 27017:27017
-  networks:
-    -chw-network
+  #############################################################################################
+  ###                                     MONGO DB                                          ###
+  #############################################################################################
+  mongodb:
+    image: 'mongo:latest'
+    container_name: 'mongodb'
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME:-admin}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:-admin}
+    volumes:
+      - mongo-volume:/data/db
+    ports:
+      - 27017:27017
+    networks:
+      - hwp-network
+
+  #############################################################################################
+  ###                                     React Frontend                                    ###
+  #############################################################################################
+  hwp-frontend:
+    container_name: hwp-frontend
+    build:
+      context: ./app/client
+    networks:
+      - hwp-network
+    ports:
+      - 8080:8080
 
 networks:
-  chw-network:
+  hwp-network:
     driver: "bridge"
     
 volumes:
