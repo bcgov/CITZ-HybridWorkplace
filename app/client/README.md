@@ -68,3 +68,22 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+# Building the Front-End Docker Image
+
+## Steps
+
+1. Open terminal
+2. Run the following commands:
+
+```
+docker build -t react-frontend .
+```
+
+this builds the image, then:
+
+```
+docker run -d -p 8080:80 react-frontend
+```
+
+The `-d` and `-p 8080:80` flags tell the container to run _detached_ (which means it runs in the background) and specifies the port to use, respectively.
