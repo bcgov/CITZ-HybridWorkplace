@@ -28,6 +28,18 @@ services:
     ports:
       - 8080:8080
 
+  #############################################################################################
+  ###                                     Express API                                       ###
+  #############################################################################################
+  hwp-api:
+    container_name: hwp-api
+    build:
+      context: ./app/server
+    networks:
+      - hwp-network
+    ports:
+      - 5000:5000
+      
 networks:
   hwp-network:
     driver: "bridge"
