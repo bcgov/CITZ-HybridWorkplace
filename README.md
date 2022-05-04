@@ -1,10 +1,17 @@
 [![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://github.com/bcgov/citz-HybridWorkplace)
 # CITZ HybridWorkplace
 
-
-## Introduction
+## Project Introduction
 
 This is the project repo for the 2022 CITZ IMB "Hybrid Workplace" product. We are currently completing our first phase: prototype development.Come back often as content is constantly being added. As part of that initiative we are exploring the need and benefit of a tool.
+
+## Development Team Introduction
+
+- Phase 2 May-August 2022 -> Currently a team of three Camosun Capstone students (@BradyMitch, @Bottle7, @ZachBourque)
+- Phase 1 January-April 2022 -> Project initiation from a team of UVic Co-op Students (@aulveland, @bettesworthjayna)
+- CI/CD Initiated by @poornima-sivanand
+- Product Owner -> @CITZ-rwk
+- Executive Project Sponsor -> @CraigShutko
 
 ## Problem Statement
 
@@ -27,47 +34,20 @@ Objectives include:
 - Store information in a central repository such as a database
 - Host the solution in the BC Dev Exchange's container environment
 
-## Who are we?
+## Project Stucture
 
-- We are a small team of two developers and other collegues who will particpate in this effort starting in January 2022 till April 22nd, 2022
-- We expect to follow up with phase 2 from May 3rd till August 2022
-- Our executive sponsor is Craig Shutko the Application Manager in the CITZ IMB.
+TBD
 
-**Who to contact if you want to learn more?
-- robert.w.kobenter@gov.bc.ca   250 514 5911
+## Running the Application
 
-## Repo Overview
+[docker instructions go here]
 
-Stay tuned for more info.
+## Services
 
-  
-  
- ## Project Status
-
-> Under development starting January 31,2022
-
-## Development
-
-Node.js | React.js | OpenShift 4 | Jenkins | MongoDB | GitHub
+frontend -> accessible at [http://localhost:3000](http://localhost:3000)
+api -> accessible at TBD
+mongo db -> instance available at exposed port 27017
 
 ## Documentation
 
 Click [here](https://github.com/bcgov/citz-hybridworkplace/wiki) to view the project documentation.
-
-## License
-
-```
-Copyright 2022 Province of British Columbia
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-```
