@@ -19,3 +19,6 @@ mongodb:
 networks:
   chw-network:
     driver: "bridge"
+    
+volumes:
+  mongo-volume:
