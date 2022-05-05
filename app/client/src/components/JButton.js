@@ -35,7 +35,7 @@ class JoinButton extends Component{
           localStorage.removeItem('token')
           
       }else{
-        fetch('http://localhost:5000/api/communitiesList', {
+        fetch(`${process.env.API_REF}/communitiesList`, {
            headers: {
             'x-access-token': localStorage.getItem('token'),
           },
@@ -59,7 +59,7 @@ class JoinButton extends Component{
   handleClick () {
     this.setState({flag: !this.state.flag});
     if(!this.state.flag){
-        fetch('http://localhost:5000/api/communitiesList', {
+        fetch(`${process.env.API_REF}/communitiesList`, {
          method: 'POST',
          headers: {
              'Content-Type': 'application/json',
@@ -71,7 +71,7 @@ class JoinButton extends Component{
       }) 
        
      }else{
-       fetch( `http://localhost:5000/api/communitiesList/${this.props.name}`, {
+       fetch( `${process.env.API_REF}/communitiesList/${this.props.name}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',

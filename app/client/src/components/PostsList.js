@@ -38,7 +38,7 @@
  
      componentDidMount(){
         //  this.props.getPosts();
-        fetch('http://localhost:5000/api/post')
+        fetch(`${process.env.API_REF}/post`)
              .then(res => res.json())
              .then(data => (this.setState({posts: data})));
      }

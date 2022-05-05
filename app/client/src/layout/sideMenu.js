@@ -48,7 +48,7 @@
   async function updateDarkMode(event){
     event.preventDefault()
     setDarkMode(!darkMode)
-    const req = await fetch('http://localhost:5000/api/editprofile', {
+    const req = await fetch(`${process.env.API_REF}/editprofile`, {
        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -62,7 +62,7 @@
   }
   async function logOff(){
    
-    fetch('http://localhost:5000/api/logout', {
+    fetch(`${process.env.API_REF}/logout`, {
       headers: {
           'x-access-token': localStorage.getItem('token'),
       },
@@ -85,8 +85,8 @@
             <ul>
                 <li><Link to='/home' ><House /> Home</Link></li>
                 <li><Link to='./profile/:id' ><Person />  Profile</Link></li>
-                <li ><Link to='./communities' ><Group />  Communities</Link></li>
-                <li ><Link to='./posts' ><Group />  Posts</Link></li>
+                <li><Link to='./communities' ><Group />  Communities</Link></li>
+                <li><Link to='./posts' ><Group />  Posts</Link></li>
                 <li><Link to='./about' ><HelpCenter />  About</Link></li>
                 <li onClick={updateDarkMode} id='DMode'><DarkMode />  Dark Mode</li>
                 <li onClick={logOff}><Link to='./login' ><LogOut /> Log Off</Link></li>
