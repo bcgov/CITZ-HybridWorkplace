@@ -48,7 +48,7 @@ router.post('/', async (req, res) => {
                 name: user.name,
                 email: user.email,
             },
-            'secret123'
+            process.env.JWT_SECRET
         )
 
         return res.json({ status: 'ok', user: token })
