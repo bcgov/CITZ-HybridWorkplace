@@ -1,7 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 
-const dbURI = process.env.MONGO_URI || 'mongodb://mongodb:27017/TheNeighborhood';
+const dbURI = process.env.MONGO_URI;
 
 mongoose.connect(dbURI, {
     useNewUrlParser: true,
