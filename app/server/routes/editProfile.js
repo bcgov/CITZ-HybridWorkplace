@@ -31,7 +31,7 @@ router.get('/', async (req, res) => {
     const token = req.headers['x-access-token']
 
     try {
-        const decoded = jwt.verify(token, 'secret123')
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
         const email = decoded.email
         const user = await User.findOne({ email: email })
 
@@ -54,7 +54,7 @@ router.post('/', async (req, res) => {
     const token = req.headers['x-access-token']
 
     try {
-        const decoded = jwt.verify(token, 'secret123')
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
         const email = decoded.email
         await User.updateMany(
             { email: email },
