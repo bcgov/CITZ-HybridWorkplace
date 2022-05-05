@@ -43,7 +43,7 @@
  
 
 
- mongoose.connect('mongodb://localhost:27017/TheNeighborhood')
+mongoose.connect('mongodb://localhost:27017/TheNeighborhood')
 
  app.use("/api/register", registerRouter);
  app.use('/api/login', loginRouter);
