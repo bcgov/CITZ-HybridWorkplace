@@ -33,7 +33,7 @@
    position: relative;
  `;
  
- const StyledExLing = styled(ExternalLink)`
+ const StyledExLink = styled(ExternalLink)`
    color: White;
    text-decoration: none;
    margin: 1rem;
@@ -46,10 +46,10 @@
        <div className='footer' >
            
              <StyledLink to="/">Home</StyledLink>
-             <StyledExLing href="https://www2.gov.bc.ca/gov/content/home/disclaimer" target="_blank" rel="noopener noreferrer">Disclaimer</StyledExLing>
-             <StyledExLing href="https://www2.gov.bc.ca/gov/content/home/privacy" target="_blank" rel="noopener noreferrer">Privacy</StyledExLing>
-             <StyledExLing href="https://www2.gov.bc.ca/gov/content/home/accessibility" target="_blank" rel="noopener noreferrer">Accessability</StyledExLing>
-             <StyledExLing href="https://www2.gov.bc.ca/gov/content/home/copyright" target="_blank" rel="noopener noreferrer">Copyright</StyledExLing>
+             <StyledExLink href="https://www2.gov.bc.ca/gov/content/home/disclaimer" target="_blank" rel="noopener noreferrer">Disclaimer</StyledExLink>
+             <StyledExLink href="https://www2.gov.bc.ca/gov/content/home/privacy" target="_blank" rel="noopener noreferrer">Privacy</StyledExLink>
+             <StyledExLink href="https://www2.gov.bc.ca/gov/content/home/accessibility" target="_blank" rel="noopener noreferrer">Accessability</StyledExLink>
+             <StyledExLink href="https://www2.gov.bc.ca/gov/content/home/copyright" target="_blank" rel="noopener noreferrer">Copyright</StyledExLink>
  
              
        </div>
