@@ -2,6 +2,12 @@
 FROM node:17.9.0-alpine3.14 as build
 WORKDIR /usr/src/app
 ENV PATH /node_modules/.bin:$PATH
+
+ENV REACT_APP_API_REF=http://localhost:5000/api
+ENV REACT_APP_BCGOV_HOMEPAGE_URL=https://www2.gov.bc.ca/gov/content/home
+ENV REACT_APP_GITHUB_REPO_URL=http://github.com/bcgov/CITZ-HybridWorkplace
+ENV REACT_APP_BCGOV_EXCHANGE_URL=http://BCDevExchange.org
+
 COPY package*.json ./
 RUN npm ci
 COPY . .

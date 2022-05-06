@@ -36,7 +36,7 @@
     const [tempBio, setTempBio] = useState('')
 
     async function populateProfile() {
-        const req = await fetch(`${process.env.API_REF}/editprofile`, {
+        const req = await fetch(`${process.env.REACT_APP_API_REF}/editprofile`, {
             headers: {
                 'x-access-token': localStorage.getItem('token'),
             },
@@ -68,7 +68,7 @@
 
     async function updateTitle(event){
         event.preventDefault()
-        const req = await fetch(`${process.env.API_REF}/editprofile`, {
+        const req = await fetch(`${process.env.REACT_APP_API_REF}/editprofile`, {
            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -88,7 +88,7 @@
     } 
     async function updateFullName(event){
         event.preventDefault()
-        const req = await fetch(`${process.env.API_REF}/editprofile`, {
+        const req = await fetch(`${process.env.REACT_APP_API_REF}/editprofile`, {
            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -108,7 +108,7 @@
     } 
     async function updateBio(event){
         event.preventDefault()
-        const req = await fetch(`${process.env.API_REF}/editprofile`, {
+        const req = await fetch(`${process.env.REACT_APP_API_REF}/editprofile`, {
            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

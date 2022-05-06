@@ -42,8 +42,8 @@ const about =  () => {
             <br/>
             <h2>Platform:</h2>
             <ul className="no-bullets" >
-            <li>Developed using React.js, Node.js, MongoDB and Express hosted on the <a target="_blank" rel="noopener noreferrer" href='http://BCDevExchange.org'>http://BCDevExchange.org</a> DevOps Environment.</li>
-            <li>Addingtional info: <a target="_blank" rel="noopener noreferrer" href='http://github.com/bcgov/CITZ-HybridWorkplace'>http://github.com/bcgov/CITZ-HybridWorkplace</a></li>
+            <li>Developed using React.js, Node.js, MongoDB and Express hosted on the <a target="_blank" rel="noopener noreferrer" href={process.env.REACT_APP_BCDEV_EXCHANGE_URL}>{process.env.REACT_APP_BCDEV_EXCHANGE_URL}</a> DevOps Environment.</li>
+            <li>Addingtional info: <a target="_blank" rel="noopener noreferrer" href={process.env.REACT_APP_GITHUB_REPO_URL}>{process.env.REACT_APP_GITHUB_REPO_URL}</a></li>
             </ul>
             <br/>
             <h2>Features Include:</h2>

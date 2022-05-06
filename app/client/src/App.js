@@ -50,7 +50,7 @@ function App(){
   });
 
   async function populateDark() {
-    const req = await fetch('http://localhost:5000/api/editprofile', {
+    const req = await fetch(`${process.env.REACT_APP_API_REF}/editprofile`, {
         headers: {
             'x-access-token': localStorage.getItem('token'),
         },

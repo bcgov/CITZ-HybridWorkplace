@@ -46,11 +46,10 @@
        <div className='footer' >
            
              <StyledLink to="/">Home</StyledLink>
-             <StyledExLink href="https://www2.gov.bc.ca/gov/content/home/disclaimer" target="_blank" rel="noopener noreferrer">Disclaimer</StyledExLink>
-             <StyledExLink href="https://www2.gov.bc.ca/gov/content/home/privacy" target="_blank" rel="noopener noreferrer">Privacy</StyledExLink>
-             <StyledExLink href="https://www2.gov.bc.ca/gov/content/home/accessibility" target="_blank" rel="noopener noreferrer">Accessability</StyledExLink>
-             <StyledExLink href="https://www2.gov.bc.ca/gov/content/home/copyright" target="_blank" rel="noopener noreferrer">Copyright</StyledExLink>
- 
+             <StyledExLink href={process.env.REACT_APP_BCGOV_DISCLAIMER_URL + 'disclaimer'} target="_blank" rel="noopener noreferrer">Disclaimer</StyledExLink>
+             <StyledExLink href={process.env.REACT_APP_BCGOV_DISCLAIMER_URL + 'privacy'} target="_blank" rel="noopener noreferrer">Privacy</StyledExLink>
+             <StyledExLink href={process.env.REACT_APP_BCGOV_DISCLAIMER_URL + 'accessability'} target="_blank" rel="noopener noreferrer">Accessability</StyledExLink>
+             <StyledExLink href={process.env.REACT_APP_BCGOV_DISCLAIMER_URL + 'copyright'} target="_blank" rel="noopener noreferrer">Copyright</StyledExLink>
              
        </div>
      )

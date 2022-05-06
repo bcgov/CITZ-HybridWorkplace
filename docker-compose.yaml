@@ -20,7 +20,6 @@ services:
   ###                                     React Frontend                                    ###
   #############################################################################################
   hwp-frontend:
-    env_file: .env
     container_name: hwp-frontend
     build:
       context: ./app/client

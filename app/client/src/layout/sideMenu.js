@@ -34,7 +34,6 @@
 
  const SideMenu = ({darkMode, setDarkMode}) => {
   async function openSlideMenu(){
-    console.log('hi');
     document.getElementById('menu').style.width = '250px';
     document.getElementById('menu').style.marginLeft = '250px';
     
@@ -48,7 +47,7 @@
   async function updateDarkMode(event){
     event.preventDefault()
     setDarkMode(!darkMode)
-    const req = await fetch(`${process.env.API_REF}/editprofile`, {
+    const req = await fetch(`${process.env.REACT_APP_API_REF}/editprofile`, {
        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -62,7 +61,7 @@
   }
   async function logOff(){
    
-    fetch(`${process.env.API_REF}/logout`, {
+    fetch(`${process.env.REACT_APP_API_REF}/logout`, {
       headers: {
           'x-access-token': localStorage.getItem('token'),
       },
