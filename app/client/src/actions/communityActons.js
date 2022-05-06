@@ -24,7 +24,7 @@ import { GET_COMMUNITIES, ADD_COMMUNITY } from "./types";
 
 
 export const getCommunities = () => dispatch => {
-        fetch('http://localhost:5000/api/Community')
+        fetch(`${process.env.API_REF}/Community`)
             .then(res => res.json())
             .then(communities => dispatch({
                 type: GET_COMMUNITIES,
@@ -35,10 +35,8 @@ export const getCommunities = () => dispatch => {
 
 
 export const createCommunity = communityData => dispatch => {
-    
-    console.log(communityData);
-    console.log('hello');
-    fetch('http://localhost:5000/api/Community', {
+
+    fetch(`${process.env.REACT_APP_API_REF}/Community`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

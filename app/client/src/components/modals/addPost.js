@@ -73,7 +73,7 @@ class CreatePost extends Component {
 
       userInfo() {
         
-         fetch('http://localhost:5000/api/profile', {
+         fetch(`${process.env.API_REF}/profile`, {
             headers: {
                 'x-access-token': localStorage.getItem('token'),
             },

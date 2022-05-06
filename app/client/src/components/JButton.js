@@ -71,7 +71,7 @@ class JoinButton extends Component{
       }) 
        
      }else{
-       fetch( `${process.env.API_REF}/communitiesList/${this.props.name}`, {
+       fetch( `${process.env.REACT_APP_API_REF}/communitiesList/${this.props.name}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',

@@ -24,21 +24,18 @@
 
 
  export const getPosts = () => dispatch => {
-         fetch('http://localhost:5000/api/post')
-             .then(res => res.json())
-             .then(posts => dispatch({
-                 type: GET_POSTS,
-                 payload: posts
-             }));
-     
+    fetch(`${process.env.REACT_APP_API_REF}/post`)
+        .then(res => res.json())
+        .then(posts => dispatch({
+            type: GET_POSTS,
+            payload: posts
+        }));
  }
  
  
  export const createPost = postData => dispatch => {
-     
-     console.log(postData);
-     console.log('hello');
-     fetch('http://localhost:5000/api/post', {
+
+     fetch(`${process.env.REACT_APP_API_REF}/post`, {
          method: 'POST',
          headers: {
            'Content-Type': 'application/json',

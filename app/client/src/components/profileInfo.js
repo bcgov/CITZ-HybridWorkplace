@@ -32,7 +32,7 @@
     const [bio, setBio] = useState('')
 
     async function populateQuote() {
-        const req = await fetch(`${process.env.API_REF}/profile`, {
+        const req = await fetch(`${process.env.REACT_APP_API_REF}/profile`, {
             headers: {
                 'x-access-token': localStorage.getItem('token'),
             },

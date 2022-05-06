@@ -30,7 +30,6 @@
 router.post('/', async (req, res) => {
 
      try {
-         
          const newPassword = await bcrypt.hash(req.body.password, 10)
          
          await User.create ({
