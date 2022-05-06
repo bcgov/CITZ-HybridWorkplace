@@ -61,4 +61,3 @@ mongo db -> instance available at exposed port 27017
 
 Click [here](https://github.com/bcgov/citz-hybridworkplace/wiki) to view the project documentation.
 
-
