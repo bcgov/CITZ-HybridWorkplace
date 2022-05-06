@@ -40,7 +40,16 @@ TBD
 
 ## Running the Application
 
-[docker instructions go here]
+### Build
+1. Navigate to project root directory.
+2. Use the command: `docker-compose up --build`.
+3. The containers for the client, server, and database should now be running.
+
+### Teardown
+1. Navigate to the project root directory
+2. Use the command: `docker-compose down -v`.
+  - Note: the `-v` flag tells docker to dispose of the volumes associated with the containers.
+3. The containers for the client, server, and database should now be stopped and removed, along with their volumes.
 
 ## Services
 
@@ -51,3 +60,5 @@ mongo db -> instance available at exposed port 27017
 ## Documentation
 
 Click [here](https://github.com/bcgov/citz-hybridworkplace/wiki) to view the project documentation.
+
+
