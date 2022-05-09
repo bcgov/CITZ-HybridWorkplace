@@ -24,7 +24,7 @@
 
 
  export const getPosts = () => dispatch => {
-    fetch(`${process.env.REACT_APP_API_REF}/post`)
+    fetch(`${window._env_.API_REF}/post`)
         .then(res => res.json())
         .then(posts => dispatch({
             type: GET_POSTS,
@@ -35,7 +35,7 @@
  
  export const createPost = postData => dispatch => {
 
-     fetch(`${process.env.REACT_APP_API_REF}/post`, {
+     fetch(`${window._env_.API_REF}/post`, {
          method: 'POST',
          headers: {
            'Content-Type': 'application/json',

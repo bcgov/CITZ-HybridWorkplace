@@ -30,7 +30,7 @@ function App() {
 	const navigate = useNavigate();
 	async function loginUser(event) {
 		event.preventDefault()
-		const response = await fetch(`${process.env.REACT_APP_API_REF}/login`, {
+		const response = await fetch(`${window._env_.API_REF}/login`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
