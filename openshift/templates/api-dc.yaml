@@ -1,0 +1,63 @@
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  annotations:
+    app.openshift.io/vcs-ref: ''
+    app.openshift.io/vcs-uri: 'https://github.com/bcgov/CITZ-HybridWorkplace'
+    openshift.io/generated-by: OpenShiftWebConsole
+  name: hwp-express-api
+  generation: 1
+  namespace: d63404-dev
+  labels:
+    app: hwp-express-api
+    app.kubernetes.io/component: hwp-express-api
+    app.kubernetes.io/instance: hwp-express-api
+    app.kubernetes.io/name: hwp-express-api
+    app.kubernetes.io/part-of: hwp-application-group
+spec:
+  strategy:
+    type: Rolling
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 600
+      maxUnavailable: 25%
+      maxSurge: 25%
+    resources: {}
+    activeDeadlineSeconds: 21600
+  triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+          - hwp-express-api
+        from:
+          kind: ImageStreamTag
+          namespace: d63404-dev
+          name: 'hwp-express-api:latest'
+    - type: ConfigChange
+  replicas: 1
+  revisionHistoryLimit: 10
+  test: false
+  selector:
+    app: hwp-express-api
+    deploymentconfig: hwp-express-api
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: hwp-express-api
+        deploymentconfig: hwp-express-api
+    spec:
+      containers:
+        - name: hwp-express-api
+          image: 'hwp-express-api:latest'
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
