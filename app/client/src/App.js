@@ -23,8 +23,6 @@
 
 import './App.css';
 
-
-
 import React, { Component, useState, useEffect } from 'react';
 import Routes from './routes';
 import Container from '@mui/material/Container';
@@ -85,6 +83,7 @@ useEffect(() => {
         </Container>
       </div> 
       < Footer />
+      <p>API: {window._env_.API_REF}</p>
     </div>
     </Provider>
     </Paper>

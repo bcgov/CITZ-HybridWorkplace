@@ -1,7 +1,7 @@
 # Stage 1 - build react front-end
 FROM node:17.9.0-alpine3.14 as build
 WORKDIR /usr/src/app
-ENV PATH /node_modules/.bin:$PATH
+#ENV PATH /node_modules/.bin:$PATH
 
 COPY package*.json ./
 RUN npm ci
@@ -20,8 +20,6 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 COPY --from=build /usr/src/app/build /usr/share/nginx/html
 
-EXPOSE 80
-
 COPY ./env.sh .
 COPY .env .
 
@@ -30,6 +28,8 @@ RUN apk add --no-cache bash
 
 # Make our shell script executable
 RUN chmod +x env.sh
+
+EXPOSE 80
 
 # Start Nginx server
 CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh && nginx -g \"daemon off;\""]
