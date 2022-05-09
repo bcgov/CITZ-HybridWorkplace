@@ -9,8 +9,10 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME:-admin}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:-admin}
+      - MONGO_INITDB_DATABASE=TheNeighborhood
     volumes:
-      - mongo-volume:/data/db
+      - ./init-mongodb:/docker-entrypoint-initdb.d
+      - ./init-mongodb/data:/tmp/data
     ports:
       - 27017:27017
     networks:
@@ -41,10 +43,9 @@ services:
       - hwp-network
     ports:
       - 5000:5000
-      
+    depends_on:
+      - mongodb
+
 networks:
   hwp-network:
     driver: "bridge"
-    
-volumes:
-  mongo-volume:
