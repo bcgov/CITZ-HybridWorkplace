@@ -35,7 +35,7 @@ import {useNavigate, Link} from 'react-router-dom';
      if(password !== rePassword){
        alert("Password's do not match, please try again")
      }else{
-     const response = await fetch(`${process.env.REACT_APP_API_REF}/register`, {
+     const response = await fetch(`${window._env_.API_REF}/register`, {
      method: 'POST',
      headers: {
        'Content-Type': 'application/json',

@@ -48,7 +48,7 @@ function App(){
   });
 
   async function populateDark() {
-    const req = await fetch(`${process.env.REACT_APP_API_REF}/editprofile`, {
+    const req = await fetch(`${window._env_.API_REF}/editprofile`, {
         headers: {
             'x-access-token': localStorage.getItem('token'),
         },
@@ -83,7 +83,6 @@ useEffect(() => {
         </Container>
       </div> 
       < Footer />
-      <p>API: {window._env_.API_REF}</p>
     </div>
     </Provider>
     </Paper>

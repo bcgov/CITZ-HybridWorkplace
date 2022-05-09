@@ -36,7 +36,7 @@ export const getCommunities = () => dispatch => {
 
 export const createCommunity = communityData => dispatch => {
 
-    fetch(`${process.env.REACT_APP_API_REF}/Community`, {
+    fetch(`${window._env_.API_REF}/Community`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

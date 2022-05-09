@@ -47,7 +47,7 @@
   async function updateDarkMode(event){
     event.preventDefault()
     setDarkMode(!darkMode)
-    const req = await fetch(`${process.env.REACT_APP_API_REF}/editprofile`, {
+    const req = await fetch(`${window._env_.API_REF}/editprofile`, {
        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -61,7 +61,7 @@
   }
   async function logOff(){
    
-    fetch(`${process.env.REACT_APP_API_REF}/logout`, {
+    fetch(`${window._env_.API_REF}/logout`, {
       headers: {
           'x-access-token': localStorage.getItem('token'),
       },
