@@ -7,10 +7,6 @@ on:
       - "src/app/server/**"
   workflow_dispatch:
 
-concurrency:
-  group: hwp-CICD
-  cancel-in-progress: false
-
 jobs:
   build:
     runs-on: ubuntu-latest
