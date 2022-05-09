@@ -22,11 +22,12 @@ services:
   hwp-frontend:
     container_name: hwp-frontend
     build:
-      context: ./app/client
+      context: ./
+      dockerfile: ./app/client/Dockerfile
     networks:
       - hwp-network
     ports:
-      - 8080:8080
+      - 80:80
 
   #############################################################################################
   ###                                     Express API                                       ###

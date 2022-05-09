@@ -3,9 +3,9 @@ FROM node:17.9.0-alpine3.14 as build
 WORKDIR /usr/src/app
 #ENV PATH /node_modules/.bin:$PATH
 
-COPY package*.json ./
+COPY app/client/package*.json ./
 RUN npm ci
-COPY . .
+COPY app/client/. .
 
 RUN npm run build
 
@@ -16,11 +16,11 @@ WORKDIR /usr/share/nginx/html
 # Removes the default static files
 RUN rm -rf ./*
 RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY app/client/nginx.conf /etc/nginx/conf.d/default.conf
 
 COPY --from=build /usr/src/app/build /usr/share/nginx/html
 
-COPY ./env.sh .
+COPY app/client/./env.sh .
 COPY .env .
 
 # Add bash
@@ -33,12 +33,3 @@ EXPOSE 80
 
 # Start Nginx server
 CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh && nginx -g \"daemon off;\""]
-
-# Already tried...
-
-#CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh && nginx", "-g", "daemon off;"]
-
-# and...
-
-#CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh"]
-#ENTRYPOINT [ "nginx", "-g", "daemon off;" ]
