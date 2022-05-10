@@ -30,7 +30,7 @@
  import PropTypes from 'prop-types';
  import Paper from '@mui/material/Paper';
  import Grid from '@mui/material/Grid';
- import JoinButton from './JButton'
+ import JoinButton from './JoinButton'
  import Typography from '@mui/material/Typography'
 
   class Communities extends Component {
