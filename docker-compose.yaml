@@ -11,8 +11,9 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
       - MONGO_INITDB_DATABASE=root-db
     volumes:
-      - ./init-mongodb:/docker-entrypoint-initdb.d
-      - ./init-mongodb/data:/tmp/data
+      - ./mongo/init:/docker-entrypoint-initdb.d
+      - ./mongo/init/data:/tmp/data
+      - ./mongo/data:/data/db
     ports:
       - 27017:27017
     networks:
