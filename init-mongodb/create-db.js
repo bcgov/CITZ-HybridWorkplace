@@ -3,8 +3,8 @@ db = new Mongo().getDB("TheNeighborhood");
 
 db.createUser(
   {
-    user: 'admin',
-    pwd: 'admin',
+    user: 'db-admin',
+    pwd: 'db-admin',
     roles: [{ role: 'readWrite', db: 'TheNeighborhood' }],
   },
 );
