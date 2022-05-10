@@ -22,7 +22,7 @@ describe('testing jest responses', () => {
   });
   
   test('intended to pass for jest testing', () => {
-    expect(4).toEqual(4);
+    expect(4).toEqual(4); 
   });  
 });
 
