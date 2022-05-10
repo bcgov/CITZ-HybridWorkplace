@@ -19,77 +19,71 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createCommunity } from '../actions/communityActons';
 
-class newCommunity extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      title: '',
-      description: ''
-    };
+const NewCommunity = (props) => {
 
-    this.onChange = this.onChange.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
+
+  const onTitleChange = (e) => {
+    setTitle(e.target.value)
   }
 
-  onChange(e) {
-    this.setState({ [e.target.name]: e.target.value });
+  const onDescriptionChange = (e) => {
+    setDescription(e.target.value)
   }
 
-  onSubmit(e) {
+  const onSubmit = (e) => {
     e.preventDefault();
 
 
     const community = {
-      title: this.state.title,
-      description: this.state.description
+      title,
+      description
     };
 
-    this.props.createCommunity(community);
+    props.createCommunity(community);
 
-     window.location.href='./communities';
+    window.location.href = './communities';
   }
-
-  render() {
-    return (
-      <div>
-        <h1>Create New Community</h1>
-        <form onSubmit={this.onSubmit}>
-          <div>
-            <label>Title: </label>
-            <br />
-            <input
-              type="text"
-              name="title"
-              onChange={this.onChange}
-              value={this.state.title}
-            />
-          </div>
+  return (
+    <div>
+      <h1>Create New Community</h1>
+      <form onSubmit={onSubmit}>
+        <div>
+          <label>Title: </label>
           <br />
-          <div>
-            <label>Description: </label>
-            <br />
-            <textarea
-              name="description"
-              onChange={this.onChange}
-              value={this.state.description}
-            />
-          </div>
+          <input
+            type="text"
+            name="title"
+            onChange={onTitleChange}
+            value={title}
+          />
+        </div>
+        <br />
+        <div>
+          <label>Description: </label>
           <br />
-          <button type="submit">Submit</button>
-        </form>
-        <hr />
-      </div>
-    );
-  }
+          <textarea
+            name="description"
+            onChange={onDescriptionChange}
+            value={description}
+          />
+        </div>
+        <br />
+        <button type="submit">Submit</button>
+      </form>
+      <hr />
+    </div>
+  );
 }
 
-newCommunity.propTypes = {
+NewCommunity.propTypes = {
   createCommunity: PropTypes.func.isRequired
 };
 
-export default connect(null, { createCommunity })(newCommunity);
+export default connect(null, { createCommunity })(NewCommunity);

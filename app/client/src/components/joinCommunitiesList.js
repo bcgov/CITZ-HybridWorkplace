@@ -72,6 +72,11 @@ const JoinCommunitiesList = (props) => {
   )
 }
 
+JoinCommunitiesList.propTypes = {
+  getCommunities: PropTypes.func.isRequired,
+  communities: PropTypes.array.isRequired
+}
+
 const mapStateToProps = state => ({
   communities: state.communities.items
 });
