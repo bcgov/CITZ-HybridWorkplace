@@ -42,6 +42,8 @@ router.post('/', async (req, res) => {
         user.password
     )
 
+    console.log(user);
+
     if (isPasswordValid) {
         const token = jwt.sign(
             {
