@@ -26,6 +26,10 @@ COPY .env-template .env
 # Add bash
 RUN apk add --no-cache bash
 
+#Elevate!
+RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx
+RUN chmod g+rwx /etc/nginx/html
+
 # Make our shell script executable
 RUN chmod g+rwx env.sh
 
