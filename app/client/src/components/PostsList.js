@@ -26,9 +26,6 @@ import { getPosts } from '../actions/postActions';
 import PropTypes from 'prop-types';
 import Paper from '@mui/material/Paper';
 
-
-
-
 const PostsList = (props) => {
 
   useEffect(() => {
@@ -57,7 +54,6 @@ const PostsList = (props) => {
     </div>
   )
 }
-
 
 PostsList.propTypes = {
   getPosts: PropTypes.func.isRequired,
