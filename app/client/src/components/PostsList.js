@@ -20,60 +20,49 @@
  * @module
  */
 
- import React, { Component, setState } from 'react';
- import { connect } from 'react-redux';
- import { getPosts } from '../actions/postActions';
- import PropTypes from 'prop-types';
- import Paper from '@mui/material/Paper';
- 
- 
-  class Posts extends Component {
-  constructor(props){
-      super(props);
-      this.state = {
-          posts: []
-      }
-  }
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { getPosts } from '../actions/postActions';
+import PropTypes from 'prop-types';
+import Paper from '@mui/material/Paper';
 
- 
-     componentDidMount(){
-        //  this.props.getPosts();
-        fetch(`${window._env_.API_REF}/post`)
-             .then(res => res.json())
-             .then(data => (this.setState({posts: data})));
-     }
-   render() {
-       const postItems = this.state.posts.map(post => (
-           <div key={post._id}>
-            <Paper sx={{
-               px: 1,
-               py: 0,
-               margin: 'auto'
+const PostsList = (props) => {
+
+  useEffect(() => {
+    props.getPosts()
+  }, [props])
+
+  return (
+    <div>
+      {
+        props.posts.map(post => (
+          <div key={post._id}>
+            <Paper
+              sx={{
+                px: 1,
+                py: 0,
+                margin: 'auto'
               }}
-              variant="outlined" square >
-               <h3>{post.title}</h3>
+              variant="outlined"
+              square>
+              <h3>{post.title}</h3>
               <p>{post.message}</p>
-              </Paper>   
-              
-           </div>
-       ))
-     return (
-       <div>
-         {postItems}
-       </div>
-     )
-   }
- }
- 
- Posts.propTypes = {
-     getPosts: PropTypes.func.isRequired, 
-     posts: PropTypes.array.isRequired
- }
- 
- const mapStateToProps = state => ({
-     posts: state.posts.items 
- 
- });
- 
- export default connect(mapStateToProps, {getPosts})(Posts);
- 
+            </Paper>
+          </div>
+        ))
+      }
+    </div>
+  )
+}
+
+PostsList.propTypes = {
+  getPosts: PropTypes.func.isRequired,
+  posts: PropTypes.array.isRequired
+}
+
+const mapStateToProps = state => ({
+  posts: state.posts.items
+
+});
+
+export default connect(mapStateToProps, { getPosts })(PostsList);
