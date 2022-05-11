@@ -40,7 +40,6 @@ const NewCommunity = (props) => {
   const onSubmit = (e) => {
     e.preventDefault();
 
-
     const community = {
       title,
       description
