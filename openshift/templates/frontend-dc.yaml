@@ -75,7 +75,7 @@ parameters:
   displayName: AppName
   name: APPLICATION_NAME
   required: true
-  value: citz-imb-slam-api
+  value: hwp-frontend-application
 - description: License Plate
   displayName: License Plate
   name: LICENSE_PLATE
