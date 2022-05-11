@@ -41,7 +41,7 @@ objects:
             - ${APPLICATION_NAME}
           from:
             kind: ImageStreamTag
-            namespace: ${LICENSE_PLATE}-${ENVIRONMENT}
+            namespace: ${LICENSE_PLATE}-tools
             name: '${APPLICATION_NAME}:${IMAGE_TAG}'
       - type: ConfigChange
     replicas: 1
