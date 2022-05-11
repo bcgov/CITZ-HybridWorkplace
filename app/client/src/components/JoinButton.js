@@ -84,6 +84,3 @@ const JoinButton = (props) => {
 }
 
 export default JoinButton
-
-
-
