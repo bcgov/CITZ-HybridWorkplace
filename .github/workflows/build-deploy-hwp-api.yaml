@@ -50,6 +50,10 @@ jobs:
           cmd: |
             'version'
             
+      - name: DEBUG - Where am I?
+        run: |
+          pwd
+          
       - name: Deploy to DEV
         env:
           NAMESPACE: "${{ secrets.OPENSHIFT_DEV_NAMESPACE }}"
