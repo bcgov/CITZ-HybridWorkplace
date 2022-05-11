@@ -21,7 +21,7 @@ COPY app/client/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /usr/src/app/build /usr/share/nginx/html
 
 COPY app/client/./env.sh .
-COPY .env .
+COPY .env.template .env
 
 # Add bash
 RUN apk add --no-cache bash
