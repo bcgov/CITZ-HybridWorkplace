@@ -32,11 +32,11 @@ jobs:
           
       - name: Build the Docker image
         run: |
-          docker-compose build ${REPLACE_ME}
+          docker-compose build hwp-frontend
           
       - name: Docker Tag Version
         run: |
-          docker tag CITZ-HybridWorkplace_${REPLACE_ME} ${{ secrets.OPENSHIFT4_API_PUBLIC_IMAGE_REPOSITORY }}:latest
+          docker tag citz-hybridworkplace_hwp-frontend ${{ secrets.OPENSHIFT4_API_PUBLIC_IMAGE_REPOSITORY }}:latest
           
       - name: Docker List Images
         run: |
