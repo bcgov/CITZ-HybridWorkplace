@@ -71,12 +71,9 @@
         setMessage(event.target.value)
     }
 
-
-
     const onCommunityClick = (id) => {
         setCommunity(id)
     }
-
 
      return (
          <div className={`modal ${props.show ? 'show' : ''}`} onClick={props.onClose}>
@@ -163,10 +160,6 @@ const mapStateToProps = state => ({
 //           this.setState({[event.target.name]: event.target.value})
 //       }
 
-     
-
-
-
 //       userInfo() {
         
 //          fetch(`${process.env.API_REF}/profile`, {
@@ -178,7 +171,6 @@ const mapStateToProps = state => ({
 //         .then(res => res.json())
 //          .then(data => this.state.creator = data.name);
       
-       
 //     }
 //     componentDidMount(){
 //         this.props.getCommunities();
