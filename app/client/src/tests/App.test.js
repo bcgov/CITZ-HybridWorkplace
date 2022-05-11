@@ -1,28 +1,10 @@
-import { Description } from '@mui/icons-material';
 import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactTestUtils from 'react-dom/test-utils';
 import '../index.css';
 import App from '../App';
 import {BrowserRouter} from 'react-router-dom';
-import { isElement } from 'react-dom/test-utils';
-
-
-// //test just to see jest response
-// describe('testing jest responses', () => {
-//   test('intended to fail for jest testing', () => {
-//     expect(3).toEqual(4);
-//   });
-  
-//   test('intended to pass for jest testing', () => {
-//     expect(4).toEqual(4); 
-//   });  
-// });
-
-// test('renders footer with "Accessability" inside', () => {
-//   const linkElement = screen.getByText(/Accessability/i);
-//   expect(linkElement).toBeInTheDocument();
-// });
+import $ from 'jquery';
 
 //Test to ensure footer contains "Accessability" after initial render 
 describe('Testing that elements rendered', () => {
@@ -33,7 +15,6 @@ describe('Testing that elements rendered', () => {
           <App />
         </BrowserRouter>
       </React.StrictMode>
-
     );
   });
 
@@ -45,8 +26,6 @@ describe('Testing that elements rendered', () => {
     const accessLink = screen.getByText(/Accessability/i);
     const copyrightLink = screen.getByText(/Copyright/i);
 
-    
-
     expect(footer.className).toBe('footer');  //this is redundant... if you got footer from above, then of course it does.
     // expect(homeLink).toBeTruthy();
     expect(disclaimerLink).toBeInTheDocument();
@@ -54,6 +33,34 @@ describe('Testing that elements rendered', () => {
     expect(accessLink).toBeInTheDocument();
     expect(copyrightLink).toBeInTheDocument();
   });
+});
+
+describe('Test side menu functionality', () => {
+  const menuIsVisible = () => {
+    if ($('#menu').width() == '0')
+      return false; //not visible
+    else 
+      return true; //visible
+    };
+
+  test('menu appears when clicked', () => {
+    $('#Menu').trigger('click'); //click hamburger icon
+    ReactTestUtils.Simulate.click($('#Menu'));    
+    expect(menuIsVisible()).toBe(true);
+  });
+
+  test('menu disappears when clicked again', () => {
+    $('#Menu').trigger('click'); //click hamburger icon
+    expect(menuIsVisible()).toBe(false);
+  });
+
+  test('menu closes when X is clicked', () => {
+    $('#Menu').trigger('click'); //click hamburger icon
+    $('a.close').trigger('click'); //click X button in side menu
+    expect(menuIsVisible()).toBe(false);
+  });
+
+
 });
 
 
