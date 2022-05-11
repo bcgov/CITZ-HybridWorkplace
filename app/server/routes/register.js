@@ -20,11 +20,11 @@
  * @module
  */
 
- const express = require('express');
- const router = express.Router();
+const express = require('express');
+const router = express.Router();
 
- const User = require('../models/user.model')
- const bcrypt = require('bcryptjs') //encrypting passwords
+const User = require('../models/user.model')
+const bcrypt = require('bcryptjs') //encrypting passwords
 
  
 router.post('/', async (req, res) => {
@@ -40,10 +40,10 @@ router.post('/', async (req, res) => {
         
          res.json({ status: 'ok' })
      } catch (err) {
-        
-         res.json({ status: 'error', error: 'Duplicate email' })
+        console.log('Register error: ' + err);
+        res.json({ status: 'error', error: 'Duplicate email' })
          
      }
  })
 
- module.exports = router;
+module.exports = router;

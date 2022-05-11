@@ -53,9 +53,13 @@ TBD
 
 ## Services
 
-frontend -> accessible at [http://localhost:3000](http://localhost:3000)
-api -> accessible at TBD
+frontend -> accessible at [http://localhost](http://localhost)
+api -> accessible at [http://localhost:5000/api](http://localhost:5000/api)
 mongo db -> instance available at exposed port 27017
+
+## Mongo Configuration
+To change the name of the database you must change the current database name 'TheNeighborhood'
+in the following files: ./init-mongodb/create-db.js , ./init-mongodb/init-db.sh , .env
 
 ## Documentation
 

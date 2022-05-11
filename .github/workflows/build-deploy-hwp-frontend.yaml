@@ -1,0 +1,74 @@
+name: DEV Build and Deploy HWP Frontend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/app/client/**"
+  workflow_dispatch:
+
+concurrency:
+  group: hwp-CICD
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cluster Login
+        uses: redhat-developer/openshift-actions@v1.1
+        with:
+          openshift_server_url: ${{ secrets.OPENSHIFT4_SERVER_URL }}
+          parameters: '{"apitoken": "${{ secrets.OPENSHIFT4_SA_PASSWORD }}"}'
+          cmd: |
+            'version'
+            
+      - name: Login to Openshift Docker
+        run : |
+          docker login ${{ secrets.OPENSHIFT4_PUBLIC_IMAGE_REPOSITORY_BASE_URL }} -u ${{ secrets.OPENSHIFT4_SA_USERNAME }} -p ${{ secrets.OPENSHIFT4_SA_PASSWORD }}
+          
+      - name: Build the Docker image
+        run: |
+          docker-compose build ${REPLACE_ME}
+          
+      - name: Docker Tag Version
+        run: |
+          docker tag CITZ-HybridWorkplace_${REPLACE_ME} ${{ secrets.OPENSHIFT4_API_PUBLIC_IMAGE_REPOSITORY }}:latest
+          
+      - name: Docker List Images
+        run: |
+          docker image ls
+          
+      - name: Docker Push Version
+        run: |
+          docker push ${{ secrets.OPENSHIFT4_API_PUBLIC_IMAGE_REPOSITORY }}:latest
+          
+      - name: Cluster Login
+        uses: redhat-developer/openshift-actions@v1.1
+        with:
+          openshift_server_url: ${{ secrets.OPENSHIFT4_SERVER_URL }}
+          parameters: '{"apitoken": "${{ secrets.OPENSHIFT4_DEV_SA_PASSWORD }}"}'
+          cmd: |
+            'version'
+            
+      - name: Deploy to DEV
+        env:
+          NAMESPACE: "${{ secrets.OPENSHIFT_DEV_NAMESPACE }}"
+          APPLICATION_NAME: "${{ secrets.APPLICATION_NAME }}"
+          LICENSE_PLATE: "${{ secrets.LICENSE_PLATE }}"
+          ENVIRONMENT: "${{ secrets.ENVIRONMENT }}"
+          IMAGE_TAG: latest
+        run: |
+          ./.github/helpers/deploy-api.sh ${{ env.LATEST_VERSION }}
+          
+      - name: Health Check DEV deployment
+        env:
+          NAMESPACE: "${{ secrets.OPENSHIFT_DEV_NAMESPACE }}"
+          APPLICATION_NAME: "${{ secrets.APPLICATION_NAME }}"
+          LICENSE_PLATE: "${{ secrets.LICENSE_PLATE }}"
+          ENVIRONMENT: "${{ secrets.ENVIRONMENT }}"
+        run: |
+          ./.github/helpers/application_health.sh

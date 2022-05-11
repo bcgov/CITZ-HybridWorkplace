@@ -7,10 +7,12 @@ services:
     image: 'mongo:latest'
     container_name: 'mongodb'
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME:-admin}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:-admin}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=root-db
     volumes:
-      - mongo-volume:/data/db
+      - ./init-mongodb:/docker-entrypoint-initdb.d
+      - ./init-mongodb/data:/tmp/data
     ports:
       - 27017:27017
     networks:
@@ -22,17 +24,19 @@ services:
   hwp-frontend:
     container_name: hwp-frontend
     build:
-      context: ./app/client
+      context: ./
+      dockerfile: ./app/client/Dockerfile
     networks:
       - hwp-network
     ports:
-      - 8080:8080
+      - 80:80
 
   #############################################################################################
   ###                                     Express API                                       ###
   #############################################################################################
   hwp-api:
-    env_file: .env
+    environment:
+      - MONGO_URI=${MONGO_URI:-mongodb://mongodb:27017}
     container_name: hwp-api
     build:
       context: ./app/server
@@ -40,10 +44,9 @@ services:
       - hwp-network
     ports:
       - 5000:5000
-      
+    depends_on:
+      - mongodb
+
 networks:
   hwp-network:
     driver: "bridge"
-    
-volumes:
-  mongo-volume:
