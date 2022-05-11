@@ -28,7 +28,7 @@ RUN apk add --no-cache bash
 
 #Elevate!
 RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx
-RUN chmod g+rwx /etc/nginx/html
+RUN chmod g+rwx /usr/share/nginx/html
 
 # Make our shell script executable
 RUN chmod g+rwx env.sh
