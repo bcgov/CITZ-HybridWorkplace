@@ -44,7 +44,7 @@ jobs:
           
       - name: Docker Push Version
         run: |
-          docker push ${{ secrets.OPENSHIFT4_API_PUBLIC_IMAGE_REPOSITORY }}:latest
+          docker push ${{ secrets.OPENSHIFT4_REACT_PUBLIC_IMAGE_REPOSITORY }}:latest
           
       - name: Cluster Login
         uses: redhat-developer/openshift-actions@v1.1
