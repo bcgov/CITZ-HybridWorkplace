@@ -27,7 +27,7 @@ COPY .env-template .env
 RUN apk add --no-cache bash
 
 # Make our shell script executable
-RUN chmod +x env.sh
+RUN chmod g+rwx env.sh
 
 EXPOSE 80
 
