@@ -36,7 +36,7 @@ jobs:
           
       - name: Docker Tag Version
         run: |
-          docker tag citz-hybridworkplace_hwp-frontend ${{ secrets.OPENSHIFT4_API_PUBLIC_IMAGE_REPOSITORY }}:latest
+          docker tag citz-hybridworkplace_hwp-frontend ${{ secrets.OPENSHIFT4_REACT_PUBLIC_IMAGE_REPOSITORY }}:latest
           
       - name: Docker List Images
         run: |
