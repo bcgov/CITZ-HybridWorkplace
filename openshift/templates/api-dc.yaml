@@ -75,7 +75,7 @@ parameters:
   displayName: AppName
   name: APPLICATION_NAME
   required: true
-  value: hwp-express-api
+  value: hwp-express
 - description: License Plate
   displayName: License Plate
   name: LICENSE_PLATE
