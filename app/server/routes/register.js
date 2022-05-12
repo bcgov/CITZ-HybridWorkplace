@@ -23,8 +23,6 @@
 const express = require('express');
 const router = express.Router();
 
-const User = require('../models/user.model')
-const bcrypt = require('bcryptjs'); //encrypting passwords
 const { registerUser } = require('../controllers/userController');
 
 router.post('/', registerUser)
