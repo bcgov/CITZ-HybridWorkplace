@@ -43,7 +43,7 @@ const deletePost = asyncHandler(async (req, res) => {
 
   if (!post) {
     res.status(400)
-    throw new Error('Goal not found')
+    throw new Error('Post not found')
   }
 
   // Check for user
