@@ -26,7 +26,7 @@
 
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { getCommunities } from '../actions/communityActons';
+import { getCommunities } from '../actions/communityActions';
 import PropTypes from 'prop-types';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';

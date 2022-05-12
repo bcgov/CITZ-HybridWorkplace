@@ -23,7 +23,7 @@
  import jwt_decode from "jwt-decode";
  import { useNavigate } from 'react-router-dom';
  import { useDispatch } from 'react-redux';
- import { createCommunity } from '../actions/communityActons';
+ import { createCommunity } from '../actions/communityActions';
  
  const CreateCommunity = () => {
     const navigate = useNavigate();

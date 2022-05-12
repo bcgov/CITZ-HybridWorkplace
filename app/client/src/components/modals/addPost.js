@@ -25,7 +25,7 @@
  import './addPost.css'
  import Paper from '@mui/material/Paper';
  import { connect } from 'react-redux';
- import { getCommunities } from '../../actions/communityActons';
+ import { getCommunities } from '../../actions/communityActions';
  import PropTypes from 'prop-types';
  import { Button } from '@mui/material';
 
@@ -35,7 +35,7 @@
     const [message, setMessage] = useState('')
 
     const userInfo = () => {
-        fetch(`${process.env.API_REF}/profile`, {
+        fetch(`${window._env_.API_REF}/profile`, {
            headers: {
                'x-access-token': localStorage.getItem('token'),
            },

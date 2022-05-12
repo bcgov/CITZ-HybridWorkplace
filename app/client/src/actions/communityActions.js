@@ -24,7 +24,7 @@ import { GET_COMMUNITIES, ADD_COMMUNITY } from "./types";
 
 
 export const getCommunities = () => dispatch => {
-        fetch(`${process.env.API_REF}/Community`)
+        fetch(`${window._env_.API_REF}/Community`)
             .then(res => res.json())
             .then(communities => dispatch({
                 type: GET_COMMUNITIES,
