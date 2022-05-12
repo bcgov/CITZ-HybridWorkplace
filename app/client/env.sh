@@ -18,7 +18,7 @@ do
   fi
 
   # Read value of current variable if exists as Environment variable
-  value=$(printf '%s\n' "${!varname}")
+  value=$(printf '%s\n' "${varname}")
   # Otherwise use value from .env file
   [[ -z $value ]] && value=${varvalue}
   # Fix the line ending if it is a windows one
