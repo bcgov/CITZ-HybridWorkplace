@@ -60,6 +60,12 @@ objects:
         containers:
           - name: ${APPLICATION_NAME}
             image: '${APPLICATION_NAME}:${IMAGE_TAG}'
+            env:
+              - name: MONGO_URI
+                valueFrom:
+                  secretKeyRef:
+                    name: mongo-connection-string
+                    key: MONGO_URI
             resources: {}
             terminationMessagePath: /dev/termination-log
             terminationMessagePolicy: File
