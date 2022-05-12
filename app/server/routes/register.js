@@ -26,7 +26,6 @@ const router = express.Router();
 const User = require('../models/user.model')
 const bcrypt = require('bcryptjs') //encrypting passwords
 
- 
 router.post('/', async (req, res) => {
 
      try {

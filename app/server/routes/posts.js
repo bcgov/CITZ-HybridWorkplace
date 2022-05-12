@@ -20,39 +20,42 @@
  * @module
  */
 
- const express = require('express');
- const router = express.Router();
+const express = require('express');
+const router = express.Router();
 
- const Post = require('../models/post.model')
+const Post = require('../models/post.model')
 
- router.post('/', async (req, res) => {
-    console.log(req.body)
-    try {
-        
-        await Post.create ({
-            title: req.body.title,
-            message: req.body.message,
-            creator: req.body.creator,
-            community: req.body.community,
-        })
-       
-        res.json({ status: 'ok' })
-    } catch (err) {
-       
-        res.json({ status: 'error', error: err })
-    }
+const authenticateToken = require('../middleware/authenticateToken')
+
+router.post('/', authenticateToken, async (req, res) => {
+  console.log(req.body)
+  try {
+      
+      await Post.create ({
+          title: req.body.title,
+          message: req.body.message,
+          creator: req.body.creator,
+          community: req.body.community,
+      })
+     
+      res.json({ status: 'ok' })
+  } catch (err) {
+     
+      res.json({ status: 'error', error: err })
+  }
 })
 
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
     Post.find({ })
-        .then((data)=>{
+        .then((data) => {
             console.log(data);
             res.json(data);
         })
-        .catch((error) =>{
+        .catch((error) => {
             console.log(error);
         });
 
 })
+
 
 module.exports = router;
