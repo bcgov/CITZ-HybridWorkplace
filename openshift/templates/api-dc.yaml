@@ -60,6 +60,9 @@ objects:
         containers:
           - name: ${APPLICATION_NAME}
             image: '${APPLICATION_NAME}:${IMAGE_TAG}'
+            envFrom:
+              - secretRef:
+                  name: mongo-connection-string
             env:
               - name: MONGO_URI
                 valueFrom:
