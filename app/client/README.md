@@ -2,6 +2,10 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Development vs. Production
+
+To get env variables to work in development uncomment the line in Dockerfile copying .env file and comment out line copying .env-template. For production to the reverse of this.
+
 ## Available Scripts
 
 In the project directory, you can run:
