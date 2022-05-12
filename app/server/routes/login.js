@@ -19,14 +19,15 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
+require("dotenv").config()
 
- const express = require('express');
- const router = express.Router();
+const express = require('express');
 
- const User = require('../models/user.model')
- const bcrypt = require('bcryptjs') //encrypting passwords
- const jwt = require('jsonwebtoken')
- 
+const router = express.Router();
+
+const User = require('../models/user.model')
+const bcrypt = require('bcryptjs') //encrypting passwords
+const jwt = require('jsonwebtoken')
 
 router.post('/', async (req, res) => {
     const user = await User.findOne({
@@ -50,13 +51,15 @@ router.post('/', async (req, res) => {
                 name: user.name,
                 email: user.email,
             },
-            process.env.JWT_SECRET
+            process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_TOKEN_EXPIRY }
         )
 
-        return res.json({ status: 'ok', user: token })
+        return res.json({ status: "ok", user: token })
     } else {
-        return res.json({ status: 'error', user: false })
+        return res.status(401).send("Token could not be generated.")
     }
 })
+
 
 module.exports = router;

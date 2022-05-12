@@ -36,7 +36,7 @@ app.use('/api/editProfile', editProfileRouter);
 app.use('/api/community', communitiesRouter);
 app.use('/api/communitiesList', communitiesListRouter);
 app.use('/api/logout', logoutRouter);
-app.use('/api/post', postRouter);
+app.use('/api/posts', postRouter);
 app.use('/api/health', apiMonitoringRouter);
 
 module.exports = app;
