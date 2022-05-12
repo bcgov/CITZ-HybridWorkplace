@@ -24,8 +24,6 @@
  const router = express.Router();
 
  const { getUser } = require('../controllers/userController')
- const User = require('../models/user.model')
- const jwt = require('jsonwebtoken');
 const authenticateToken = require('../middleware/authenticateToken');
  
  router.get('/', authenticateToken, getUser)
