@@ -62,7 +62,7 @@ objects:
             image: '${APPLICATION_NAME}:${IMAGE_TAG}'
             env:
               - name: API_REF
-                value: hwp-express-api
+                value: hwp-express
               - name: API_PORT
                 value: '5000'
             resources: {}
