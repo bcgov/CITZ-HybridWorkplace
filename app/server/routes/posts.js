@@ -23,38 +23,11 @@
 const express = require('express');
 const router = express.Router();
 
-const Post = require('../models/post.model')
+const authenticateToken = require('../middleware/authenticateToken');
+const { getPosts, createPost, deletePost } = require('../controllers/postController');
 
-const authenticateToken = require('../middleware/authenticateToken')
-
-router.post('/', authenticateToken, async (req, res) => {
-  console.log(req.body)
-  try {
-      
-      await Post.create ({
-          title: req.body.title,
-          message: req.body.message,
-          creator: req.body.creator,
-          community: req.body.community,
-      })
-     
-      res.json({ status: 'ok' })
-  } catch (err) {
-     
-      res.json({ status: 'error', error: err })
-  }
-})
-
-router.get('/', authenticateToken, async (req, res) => {
-    Post.find({ })
-        .then((data) => {
-            console.log(data);
-            res.json(data);
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-
-})
+router.post('/', authenticateToken, createPost)
+router.get('/', authenticateToken, getPosts)
+router.delete('/:id', authenticateToken, deletePost)
 
 module.exports = router;

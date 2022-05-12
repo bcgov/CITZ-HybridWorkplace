@@ -1,26 +1,37 @@
-/**
- * @file A helper function which houses methods that are used commonly in the server
- * 
- * @author Brandon Bouchard
- * 
- * @module
- * @function
- * 
- */
+const jwt = require('jsonwebtoken')
+const asyncHandler = require('express-async-handler')
+const User = require('../models/userModel')
 
-const authenticateToken = function (req, res, next) {
-  const authHeader = req.headers['Authorization']
-  const token = authHeader && authHeader.split(' ')[1]
+const authenticateToken = asyncHandler(async (req, res, next) => {
+  let token
 
-  if (token == null) return res.sendStatus(401)
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    try {
+      // Get token from header
+      token = req.headers.authorization.split(' ')[1]
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) return res.sendStatus(403)
+      // Verify token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
-    req.user.name = decoded.name
+      // Get user from the token
+      req.user = await User.findById(decoded.id).select('-password')
 
-    next()
-  })
-}
+      next()
+    } catch (error) {
+      console.log(error)
+      res.status(401)
+      throw new Error('Not authorized')
+    }
+  }
+
+  if (!token) {
+    res.status(401)
+    throw new Error('Not authorized, no token')
+  }
+})
+
 
 module.exports = authenticateToken;
