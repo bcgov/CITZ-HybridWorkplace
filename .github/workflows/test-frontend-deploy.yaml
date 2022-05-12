@@ -1,0 +1,42 @@
+name: TEST Deploy of SLAM Frontend Application Image 
+
+on: workflow_dispatch
+   
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.tag }}
+
+      - name: Cluster Login
+        uses: redhat-developer/openshift-actions@v1.1
+        with:
+          openshift_server_url: ${{ secrets.OPENSHIFT4_SERVER_URL }}
+          parameters: '{"apitoken": "${{ secrets.OPENSHIFT4_TEST_SA_PASSWORD }}"}'
+          cmd: |
+            'version'
+            
+      - name: Login to Openshift Docker
+        run : |
+          docker login ${{ secrets.OPENSHIFT4_EXTERNAL_REPOSITORY }} -u ${{ secrets.OPENSHIFT4_SA_USERNAME }} -p ${{ secrets.OPENSHIFT4_TEST_SA_PASSWORD }}
+            
+      - name: Deploy to TEST
+        env:
+          NAMESPACE: "${{ secrets.OPENSHIFT_TEST_NAMESPACE }}"
+          APPLICATION_NAME: "${{ secrets.APPLICATION_NAME }}"
+          LICENSE_PLATE: "${{ secrets.LICENSE_PLATE }}"
+          ENVIRONMENT: "${{ secrets.TEST_ENVIRONMENT }}"
+        run: |  
+          ./.github/helpers/deploy-app.sh
+          
+      - name: Health Check TEST deployment
+        env:
+          NAMESPACE: "${{ secrets.OPENSHIFT_TEST_NAMESPACE }}"
+          APPLICATION_NAME: "${{ secrets.APPLICATION_NAME }}"
+          LICENSE_PLATE: "${{ secrets.LICENSE_PLATE }}"
+          ENVIRONMENT: "${{ secrets.TEST_ENVIRONMENT }}"
+        run: |  
+          ./.github/helpers/application-health.sh
