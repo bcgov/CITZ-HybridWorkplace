@@ -60,6 +60,11 @@ objects:
         containers:
           - name: ${APPLICATION_NAME}
             image: '${APPLICATION_NAME}:${IMAGE_TAG}'
+            env:
+              - name: API_REF
+                value: hwp-express-api
+              - name: API_PORT
+                value: '5000'
             resources: {}
             terminationMessagePath: /dev/termination-log
             terminationMessagePolicy: File
