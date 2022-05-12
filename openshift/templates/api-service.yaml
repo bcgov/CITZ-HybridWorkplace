@@ -1,0 +1,56 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: ${APPLICATION_NAME}
+labels:
+  template: ${APPLICATION_NAME}-template
+objects:
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: ${APPLICATION_NAME}
+    namespace: ${LICENSE_PLATE}-${ENVIRONMENT}
+    labels:
+      app: ${APPLICATION_NAME}
+      app.kubernetes.io/component: ${APPLICATION_NAME}
+      app.kubernetes.io/instance: ${APPLICATION_NAME}
+      app.kubernetes.io/name: ${APPLICATION_NAME}
+      app.kubernetes.io/part-of: hwp-application-group
+    annotations:
+      app.openshift.io/vcs-ref: ''
+      app.openshift.io/vcs-uri: 'https://github.com/bcgov/CITZ-HybridWorkplace'
+      openshift.io/generated-by: OpenShiftWebConsole
+  spec:
+    ports:
+      - name: 8080-tcp
+        protocol: TCP
+        port: 8080
+        targetPort: 8080
+    selector:
+      app: ${APPLICATION_NAME}
+      deploymentconfig: ${APPLICATION_NAME}
+    type: ClusterIP
+    sessionAffinity: None
+    ipFamilies:
+      - IPv4
+    ipFamilyPolicy: SingleStack
+  status:
+    loadBalancer: {}
+
+parameters:
+- description: Application Name
+  displayName: AppName
+  name: APPLICATION_NAME
+  required: true
+  value: hwp-express-api
+- description: License Plate
+  displayName: License Plate
+  name: LICENSE_PLATE
+  required: true
+  value: d63404
+- description: Environment
+  displayName: Environment
+  name: ENVIRONMENT
+  required: true
+  value: dev

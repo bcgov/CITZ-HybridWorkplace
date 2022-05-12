@@ -80,7 +80,7 @@ parameters:
   displayName: License Plate
   name: LICENSE_PLATE
   required: true
-  value: ca94a8
+  value: d63404
 - description: Environment
   displayName: Environment
   name: ENVIRONMENT
