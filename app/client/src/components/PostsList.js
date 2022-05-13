@@ -21,16 +21,18 @@
  */
 
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { getPosts } from '../actions/postActions';
+import { connect, useDispatch } from 'react-redux';
+import { getPosts } from '../redux/ducks/postDuck';
 import PropTypes from 'prop-types';
 import Paper from '@mui/material/Paper';
 
 const PostsList = (props) => {
 
+  const dispatch = useDispatch()
+
   useEffect(() => {
     props.getPosts()
-  }, [props])
+  }, [])
 
   return (
     <div>
@@ -45,6 +47,7 @@ const PostsList = (props) => {
               }}
               variant="outlined"
               square>
+              <h1>Testing2</h1>
               <h3>{post.title}</h3>
               <p>{post.message}</p>
             </Paper>

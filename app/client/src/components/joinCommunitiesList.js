@@ -26,7 +26,7 @@
 
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { getCommunities } from '../actions/communityActions';
+import { getCommunities } from '../redux/ducks/communityDuck';
 import PropTypes from 'prop-types';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
@@ -37,7 +37,7 @@ const JoinCommunitiesList = (props) => {
 
   useEffect(() => {
     props.getCommunities()
-  }, [props])
+  }, [])
 
   return (
     <div>
