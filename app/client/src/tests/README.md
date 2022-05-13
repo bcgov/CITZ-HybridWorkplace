@@ -21,4 +21,5 @@ Test files should be named appropriately based on the aspect of the application 
 
 ### 2022-05-13
 Some minor front-end tests have been added so far. 
-Issues with further testing include difficulty in targeting elements with no identifying attributes nor visible text. 
+Issues with further testing include difficulty in targeting elements with no identifying attributes nor visible text.
+Environment variables currently not working with testing setup. Manual changes needed.
