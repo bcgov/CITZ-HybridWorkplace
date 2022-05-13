@@ -32,11 +32,11 @@ jobs:
           
       - name: Build the Docker image
         run: |
-          docker-compose build ${REPLACE_ME}
+          docker-compose build hwp-frontend
           
       - name: Docker Tag Version
         run: |
-          docker tag CITZ-HybridWorkplace_${REPLACE_ME} ${{ secrets.OPENSHIFT4_API_PUBLIC_IMAGE_REPOSITORY }}:latest
+          docker tag citz-hybridworkplace_hwp-frontend ${{ secrets.OPENSHIFT4_REACT_PUBLIC_IMAGE_REPOSITORY }}:latest
           
       - name: Docker List Images
         run: |
@@ -44,7 +44,7 @@ jobs:
           
       - name: Docker Push Version
         run: |
-          docker push ${{ secrets.OPENSHIFT4_API_PUBLIC_IMAGE_REPOSITORY }}:latest
+          docker push ${{ secrets.OPENSHIFT4_REACT_PUBLIC_IMAGE_REPOSITORY }}:latest
           
       - name: Cluster Login
         uses: redhat-developer/openshift-actions@v1.1
@@ -57,7 +57,7 @@ jobs:
       - name: Deploy to DEV
         env:
           NAMESPACE: "${{ secrets.OPENSHIFT_DEV_NAMESPACE }}"
-          APPLICATION_NAME: "${{ secrets.APPLICATION_NAME }}"
+          APPLICATION_NAME: "${{ secrets.FRONTEND_APPLICATION_NAME }}"
           LICENSE_PLATE: "${{ secrets.LICENSE_PLATE }}"
           ENVIRONMENT: "${{ secrets.ENVIRONMENT }}"
           IMAGE_TAG: latest
@@ -67,7 +67,7 @@ jobs:
       - name: Health Check DEV deployment
         env:
           NAMESPACE: "${{ secrets.OPENSHIFT_DEV_NAMESPACE }}"
-          APPLICATION_NAME: "${{ secrets.APPLICATION_NAME }}"
+          APPLICATION_NAME: "${{ secrets.FRONTEND_APPLICATION_NAME }}"
           LICENSE_PLATE: "${{ secrets.LICENSE_PLATE }}"
           ENVIRONMENT: "${{ secrets.ENVIRONMENT }}"
         run: |

@@ -22,7 +22,7 @@
 import React, { useEffect, useState } from 'react'
 import jwt_decode from "jwt-decode";
 import { Link, useNavigate } from 'react-router-dom';
-import Posts from '../components/PostsList';
+import Posts from '../components/postsList';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -30,33 +30,33 @@ import Button from '@mui/material/Button';
 
 import Communities from '../components/joinCommunitiesList'
 
- import PostModal from '../components/modals/addPost'
+import PostModal from '../components/modals/addPost'
 import Typography from '@mui/material/Typography'
 
 const Home = () => {
-	const navigate = useNavigate();
+    const navigate = useNavigate();
     const [show, setShow] = useState(false);
     useEffect(() => {
-        
+
         const token = localStorage.getItem('token')
-        if (token){
+        if (token) {
             const user = jwt_decode(token)
-            if(!user){
+            if (!user) {
                 localStorage.removeItem('token')
                 navigate('/login')
             }
         }
-        
+
     }, [])
 
 
-	return (
-		<div>
+    return (
+        <div>
             <Grid container spacing={2}>
-                
+
                 <Grid item xs={8}>
                     <Paper>
-                    <Box
+                        <Box
                             sx={{
                                 backgroundColor: '#036',
                                 color: 'white',
@@ -66,11 +66,11 @@ const Home = () => {
                                 display: 'flex',
                             }}
                         >
-                        <Typography variant='h6' component='h5'> Posts </Typography>
-                        <Button onClick={() => setShow(true)}> Add Post </Button>
-                
-                        <PostModal onClose={() =>setShow(false)} show={show} />
-                    
+                            <Typography variant='h6' component='h5'> Posts </Typography>
+                            <Button onClick={() => setShow(true)}> Add Post </Button>
+
+                            <PostModal onClose={() => setShow(false)} show={show} />
+
                         </Box>
                         <Posts />
                     </Paper>
@@ -91,29 +91,29 @@ const Home = () => {
                         </Box>
                         <Communities />
                         <Link to='/createCommunity' style={{ textDecoration: 'none' }}>
-                        <Box
-                            sx={{
-                                backgroundColor: '#036',
-                                color: 'white',
-                                px: 1,
-                                py: 0.5,
-                                textAlign: 'center',
-                                
-                            }}
-                        >
-                            <Typography variant='h6' component='h5'>+ Create Community</Typography>
-                            
-                            
+                            <Box
+                                sx={{
+                                    backgroundColor: '#036',
+                                    color: 'white',
+                                    px: 1,
+                                    py: 0.5,
+                                    textAlign: 'center',
 
-                        </Box>
+                                }}
+                            >
+                                <Typography variant='h6' component='h5'>+ Create Community</Typography>
+
+
+
+                            </Box>
                         </Link>
                     </Paper>
                 </Grid>
             </Grid>
-            
- 
-        </div>	
-	)
+
+
+        </div>
+    )
 }
 
 export default Home

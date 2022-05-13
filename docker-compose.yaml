@@ -9,10 +9,10 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
-      - MONGO_INITDB_DATABASE=root-db
     volumes:
-      - ./init-mongodb:/docker-entrypoint-initdb.d
-      - ./init-mongodb/data:/tmp/data
+      - ./mongo/init:/docker-entrypoint-initdb.d
+      - ./mongo/init/data:/tmp/data
+      - ./mongo/data:/data/db
     ports:
       - 27017:27017
     networks:
@@ -29,14 +29,14 @@ services:
     networks:
       - hwp-network
     ports:
-      - 80:80
+      - 80:8080
 
   #############################################################################################
   ###                                     Express API                                       ###
   #############################################################################################
   hwp-api:
     environment:
-      - MONGO_URI=${MONGO_URI:-mongodb://mongodb:27017}
+      - MONGO_URI=${MONGO_URI}
     container_name: hwp-api
     build:
       context: ./app/server

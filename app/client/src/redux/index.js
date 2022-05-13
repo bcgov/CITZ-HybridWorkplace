@@ -16,13 +16,13 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Zach Bouruqe](zachbourque01@gmail.com)
  * @module
  */
 
-import {combineReducers} from 'redux';
-import communityReducer from './communityReducer';
-import postReducer from './postReducer'
+import { combineReducers } from 'redux';
+import { communityReducer } from './ducks/communityDuck';
+import { postReducer } from './ducks/postDuck'
 
 export default combineReducers({
     communities: communityReducer,

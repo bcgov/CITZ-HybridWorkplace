@@ -19,10 +19,10 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
-import React, { Component, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { createCommunity } from '../actions/communityActons';
+import { createCommunity } from '../redux/ducks/communityDuck';
 
 const NewCommunity = (props) => {
 

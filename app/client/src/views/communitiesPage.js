@@ -21,13 +21,14 @@
  */
 
 import { Link } from 'react-router-dom';
+import Communities from '../components/communitiesList';
 
 const CommunitiesPage = () => {
 
     return (
         <div>
             <h1>Communities</h1>
-
+            <Communities/>
             <br />
             <Link to='/createCommunity'>
                 <button >Create New Community</button>

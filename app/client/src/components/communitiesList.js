@@ -16,24 +16,17 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
  */
-
-//here. Stop here
-
-
 
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { getCommunities } from '../redux/ducks/communityDuck';
 import PropTypes from 'prop-types';
 import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
-import JoinButton from './JoinButton'
-import Typography from '@mui/material/Typography'
 
-const JoinCommunitiesList = (props) => {
+const CommunitiesList = (props) => {
 
   useEffect(() => {
     props.getCommunities()
@@ -46,24 +39,14 @@ const JoinCommunitiesList = (props) => {
           <div key={community._id}>
             <Paper
               sx={{
-                px: 0.5,
+                px: 1,
+                py: 0,
                 margin: 'auto'
               }}
-              variant="outlined" square
-            >
-              <Grid container spacing={1} alignItems="center">
-
-                <Grid item xs={9}>
-                  <Typography p={1.5} variant='p' component='p'>{community.title}</Typography>
-                </Grid>
-
-                <Grid item xs={3} textAlign='center'>
-                  <JoinButton
-                    name={community._id}
-                  />
-                </Grid>
-
-              </Grid>
+              variant="outlined"
+              square>
+              <h3>{community.title}</h3>
+              <p>{community.description}</p>
             </Paper>
           </div>
         ))
@@ -72,17 +55,14 @@ const JoinCommunitiesList = (props) => {
   )
 }
 
-JoinCommunitiesList.propTypes = {
+CommunitiesList.propTypes = {
   getCommunities: PropTypes.func.isRequired,
   communities: PropTypes.array.isRequired
 }
 
 const mapStateToProps = state => ({
   communities: state.communities.items
+
 });
 
-const mapActionsToProps = {
-  getCommunities
-}
-
-export default connect(mapStateToProps, mapActionsToProps)(JoinCommunitiesList);
+export default connect(mapStateToProps, { getCommunities })(CommunitiesList);
