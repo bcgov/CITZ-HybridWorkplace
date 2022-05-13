@@ -43,7 +43,7 @@ const JoinButton = (props) => {
           })
       }
     }
-  }, [communitiesList, props.name])
+  }, [])
 
   const handleClick = () => {
 

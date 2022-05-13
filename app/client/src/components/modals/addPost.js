@@ -21,11 +21,11 @@
  */
 
  import React, { useEffect, useState } from 'react'
- import { createPost } from '../../actions/postActions';
+ import { createPost } from '../../redux/ducks/postDuck';
  import './addPost.css'
  import Paper from '@mui/material/Paper';
  import { connect } from 'react-redux';
- import { getCommunities } from '../../actions/communityActions';
+ import { getCommunities } from '../../redux/ducks/communityDuck';
  import PropTypes from 'prop-types';
  import { Button } from '@mui/material';
 
@@ -49,7 +49,7 @@
 
     useEffect(() => {
         props.getCommunities()
-    }, [props])
+    }, [])
     
     const registerPost = (event) => {
         event.preventDefault();
@@ -61,13 +61,13 @@
         };
         props.createPost(post);
         window.location.reload() 
-      }
+    }
 
-      const onTitleChange = (event) => {
+    const onTitleChange = (event) => {
           setTitle(event.target.value)
-      }
+    }
 
-      const onMessageChange = (event) => {
+    const onMessageChange = (event) => {
         setMessage(event.target.value)
     }
 

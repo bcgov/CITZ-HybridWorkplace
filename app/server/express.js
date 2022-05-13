@@ -15,18 +15,18 @@ const communitiesListRouter = require('./routes/communitiesListRouter');
 const logoutRouter = require('./routes/logout');
 const postRouter = require('./routes/posts');
 const apiMonitoringRouter = require('./routes/apiMonitoring');
- 
-const app = express(); 
- 
+
+const app = express();
+
 // Express middleware 
 app.use(express.json());
-app.use(cors()); 
+app.use(cors());
 app.use(rateLimit());
- 
+
 // Routing 
-app.get('/', (req, res) => { 
-  res.send('Node.js Server is live!'); 
-}); 
+app.get('/', (req, res) => {
+  res.send('Node.js Server is live!');
+});
 
 // Routes
 app.use("/api/register", registerRouter);
@@ -38,5 +38,5 @@ app.use('/api/communitiesList', communitiesListRouter);
 app.use('/api/logout', logoutRouter);
 app.use('/api/post', postRouter);
 app.use('/api/health', apiMonitoringRouter);
- 
+
 module.exports = app;

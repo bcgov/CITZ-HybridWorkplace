@@ -22,7 +22,7 @@
 
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { getCommunities } from '../actions/communityActions';
+import { getCommunities } from '../redux/ducks/communityDuck';
 import PropTypes from 'prop-types';
 import Paper from '@mui/material/Paper';
 
@@ -30,7 +30,7 @@ const CommunitiesList = (props) => {
 
   useEffect(() => {
     props.getCommunities()
-  }, [props])
+  }, [])
 
   return (
     <div>
