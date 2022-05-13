@@ -54,6 +54,6 @@
     "@babel/preset-env": "^7.17.10",
     "babel-jest": "^28.1.0",
     "jest": "^28.1.0",
-    "jquery": "^3.6.0"
+    "jsdom": "^19.0.0"
   }
 }
