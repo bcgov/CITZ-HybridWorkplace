@@ -23,22 +23,9 @@
  const express = require('express');
  const router = express.Router();
 
- const User = require('../models/user.model')
- const jwt = require('jsonwebtoken')
+ const { getUser } = require('../controllers/userController')
+const authenticateToken = require('../middleware/authenticateToken');
  
- router.get('/', async (req, res) => {
-    const token = req.headers['x-access-token']
-
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        const email = decoded.email
-        const user = await User.findOne({ email: email })
-
-        return res.json({ status: 'ok', name: user.name, email: user.email, fullName: user.fullName, bio: user.bio, title: user.title, darkMode:user.darkMode })
-    } catch (error) {
-        console.log(error)
-        res.json({ status: 'error', error: 'invalid token' })
-    }
-})
+ router.get('/', authenticateToken, getUser)
 
  module.exports = router;

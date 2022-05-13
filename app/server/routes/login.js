@@ -22,41 +22,12 @@
 
  const express = require('express');
  const router = express.Router();
-
- const User = require('../models/user.model')
- const bcrypt = require('bcryptjs') //encrypting passwords
- const jwt = require('jsonwebtoken')
  
-
-router.post('/', async (req, res) => {
-    const user = await User.findOne({
-        name: req.body.name,
-    })
-
-    if (!user) {
-        return { status: 'error', error: 'Invalid login' }
-    }
-
-    const isPasswordValid = await bcrypt.compare(
-        req.body.password,
-        user.password
-    )
-
-    console.log(user);
-
-    if (isPasswordValid) {
-        const token = jwt.sign(
-            {
-                name: user.name,
-                email: user.email,
-            },
-            process.env.JWT_SECRET
-        )
-
-        return res.json({ status: 'ok', user: token })
-    } else {
-        return res.json({ status: 'error', user: false })
-    }
-})
-
-module.exports = router;
+ const {
+     loginUser
+ } = require('../controllers/userController')
+ 
+ router.post('/login', loginUser)
+ 
+ module.exports = router;
+ 
