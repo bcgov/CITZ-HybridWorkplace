@@ -21,7 +21,7 @@ const app = express();
 // Express middleware 
 app.use(express.json());
 app.use(cors());
-//app.use(rateLimit());
+app.use(rateLimit());
 
 // Routing 
 app.get('/', (req, res) => {
