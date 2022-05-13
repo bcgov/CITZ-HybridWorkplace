@@ -28,8 +28,6 @@ import Paper from '@mui/material/Paper';
 
 const PostsList = (props) => {
 
-  const dispatch = useDispatch()
-
   useEffect(() => {
     props.getPosts()
   }, [])

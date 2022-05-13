@@ -29,7 +29,7 @@ import Paper from '@mui/material/Paper';
 const CommunitiesList = (props) => {
 
   useEffect(() => {
-    //props.getCommunities()
+    props.getCommunities()
   }, [])
 
   return (
