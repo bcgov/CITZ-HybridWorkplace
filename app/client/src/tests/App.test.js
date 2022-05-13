@@ -2,22 +2,42 @@ import { render, screen } from '@testing-library/react';
 import React from 'react';
 import '../index.css';
 import App from '../App';
-import {BrowserRouter} from 'react-router-dom';
+import {BrowserRouter, unmountComponentAtNode} from 'react-router-dom';
 import UserEvent from '@testing-library/user-event';
 
+/*
+  Setup of DOM container
+*/
 
+let container = null;
+
+function containerInit(){
+  container = document.createElement("div");
+  document.body.appendChild(container);
+
+  render( <React.StrictMode>
+    <BrowserRouter>
+    <App/>
+    </BrowserRouter>
+    </React.StrictMode>, container
+  );
+}
+
+function containerRemove(){
+    unmountComponentAtNode(container);
+    container.remove();
+    container = null;
+}
 
 
 
 describe('Testing log in, sign up, register front-end behaviours', () => {
   beforeEach(() => {
-    render(
-      <React.StrictMode>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </React.StrictMode>
-    );
+    containerInit();
+  });
+
+  afterEach(() => {
+    containerRemove();
   });
 
   test('clicking log in loads form without sign-up-related fields', () => {
