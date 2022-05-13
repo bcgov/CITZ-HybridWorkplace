@@ -45,7 +45,6 @@ const PostsList = (props) => {
               }}
               variant="outlined"
               square>
-              <h1>Testing2</h1>
               <h3>{post.title}</h3>
               <p>{post.message}</p>
             </Paper>
