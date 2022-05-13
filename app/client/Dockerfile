@@ -13,7 +13,7 @@ RUN npm run build
 FROM nginx:alpine
 WORKDIR /usr/share/nginx/html
 
-ARG env_file_to_copy
+ARG env
 
 # Removes the default static files
 RUN rm -rf ./*
@@ -24,10 +24,8 @@ COPY --from=build /usr/src/app/build /usr/share/nginx/html
 
 COPY app/client/./env.sh .
 
-# Production
-COPY .env-template .env
-# Development
-#COPY .env .env
+# Copy env file, default .env-template
+COPY $env .env
 
 # Add bash
 RUN apk add --no-cache bash
