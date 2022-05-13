@@ -26,6 +26,8 @@ services:
     build:
       context: ./
       dockerfile: ./app/client/Dockerfile
+      args:
+        env: ${ENV_FILE_REACT:-.env-template}
     networks:
       - hwp-network
     ports:
