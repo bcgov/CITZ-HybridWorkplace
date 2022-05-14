@@ -56,7 +56,7 @@ function App() {
     else if (response.status === 201) {
       navigate('/login');
     } else {
-      alert('Bad Request: ' + response.body);
+      alert('Bad Request.');
     }
   }
 
