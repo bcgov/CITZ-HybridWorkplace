@@ -18,16 +18,14 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
- */
+*/
 
- const express = require('express');
- const router = express.Router();
+const express = require('express');
+const router = express.Router();
  
 
 router.get('/', async (req, res) => {
- req.session = null;
- req.headers['x-access-token'] = null
  
-})
+});
 
 module.exports = router;

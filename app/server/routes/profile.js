@@ -16,7 +16,7 @@
 
 /**
 * Application entry point
-* @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+* @author [Brady Mitchell](braden.jr.mitch@gmail.com)
 * @module
 */
 
