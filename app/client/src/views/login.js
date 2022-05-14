@@ -26,8 +26,8 @@ import {Link, useNavigate} from 'react-router-dom';
 import '../views/Styles/login.css';
 
 function App() {
-	const [name, setName] = useState('')
-	const [password, setPassword] = useState('')
+	const [name, setName] = useState('Undefined');
+	const [password, setPassword] = useState('Undefined');
 	const navigate = useNavigate();
 
 	//FIX ME: AUTH
