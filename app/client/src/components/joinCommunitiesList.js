@@ -20,18 +20,16 @@
  * @module
  */
 
-//here. Stop here
-
-
-
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { getCommunities } from '../redux/ducks/communityDuck';
 import PropTypes from 'prop-types';
+
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import JoinButton from './JoinButton'
-import Typography from '@mui/material/Typography'
+import Typography from '@mui/material/Typography';
+
+import { getCommunities } from '../redux/ducks/communityDuck';
+import JoinButton from './JoinButton';
 
 const JoinCommunitiesList = (props) => {
 
@@ -69,7 +67,7 @@ const JoinCommunitiesList = (props) => {
         ))
       }
     </div>
-  )
+  );
 }
 
 JoinCommunitiesList.propTypes = {

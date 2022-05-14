@@ -22,14 +22,16 @@
 
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { getCommunities } from '../redux/ducks/communityDuck';
 import PropTypes from 'prop-types';
+
 import Paper from '@mui/material/Paper';
+
+import { getCommunities } from '../redux/ducks/communityDuck';
 
 const CommunitiesList = (props) => {
 
   useEffect(() => {
-    props.getCommunities()
+    props.getCommunities();
   }, [])
 
   return (
@@ -62,7 +64,6 @@ CommunitiesList.propTypes = {
 
 const mapStateToProps = state => ({
   communities: state.communities.items
-
 });
 
 export default connect(mapStateToProps, { getCommunities })(CommunitiesList);

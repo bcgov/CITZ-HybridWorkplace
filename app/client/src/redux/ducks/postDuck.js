@@ -46,7 +46,7 @@ export const createPost = (postData) => (dispatch) => {
             title: postData.title,
             message: postData.message,
             creator: postData.creator,
-            community: postData.community,
+            community: postData.community
         }),
     })
         .then(res => res.json())

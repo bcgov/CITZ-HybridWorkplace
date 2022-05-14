@@ -44,7 +44,7 @@ export const createCommunity = (communityData) => (dispatch) => {
         body: JSON.stringify({
             title: communityData.title,
             description: communityData.description,
-            creator: communityData.creator,
+            creator: communityData.creator
         }),
     })
         .then(res => res.json())

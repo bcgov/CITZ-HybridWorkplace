@@ -18,37 +18,41 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
- */
- import React, { useEffect, useState } from 'react'
- import jwt_decode from "jwt-decode";
- import { useNavigate } from 'react-router-dom';
+*/
 
- const Profile = () => {
-    const navigate = useNavigate();
-    const [email, setEmail] = useState('')
-    const [title, setTitle] = useState('')
-    const [name, setName] = useState('')
-    const [fullName, setFullName] = useState('')
-    const [bio, setBio] = useState('')
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+
+const Profile = () => {
+    //const navigate = useNavigate();
+
+    const [email, setEmail] = useState('Undefined');
+    const [title, setTitle] = useState('Undefined');
+    const [name, setName] = useState('Undefined');
+    const [fullName, setFullName] = useState('Undefined');
+    const [bio, setBio] = useState('Undefined');
 
     async function populateQuote() {
-        const req = await fetch(`${window._env_.API_REF}/profile`, {
+        const response = await fetch(`${window._env_.API_REF}/profile`, {
             headers: {
-                'x-access-token': localStorage.getItem('token'),
+                //'x-access-token': localStorage.getItem('token'),
             },
         })
 
-        const data = await req.json()
-        if(data.status === 'ok'){
-            setEmail(data.email)
-            setName(data.name)
-            setTitle(data.title)
-            setFullName(data.fullName)
-            setBio(data.bio)
-        }else{
-            alert(data.error)
+        const data = await response.json();
+
+        if (response.status === 200) {
+            setEmail(data.email);
+            setName(data.name);
+            setTitle(data.title);
+            setFullName(data.fullName);
+            setBio(data.bio);
+        } else {
+            alert("At least one field in JSON is undefined, line 50, profileInfo.js: " + data.error);
         }
     }
+
+    /*
     useEffect(() => {
         const token = localStorage.getItem('token')
         if (token){
@@ -61,10 +65,10 @@
                 populateQuote()
             }
         }
-    }, [])
+    }, []);
+    */
 
-
-     return ( 
+    return ( 
         <div >
             <h3>{fullName || ''}</h3>
             <h4>{name}</h4>
@@ -73,6 +77,7 @@
             <br />
             <p> {bio || ''} </p>
         </div>
-     )
- }
- export default Profile;
+    )
+}
+
+export default Profile;
