@@ -36,15 +36,17 @@ import Paper from '@mui/material/Paper'
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 function App(){
-  /*
-  const [darkMode, setDarkMode] = useState(false)
 
+  //const [darkMode, setDarkMode] = useState(false);
+
+  //mode: darkMode ? 'dark' : 'light'
   const theme = createTheme({
     palette: {
-      mode: darkMode ? 'dark' : 'light'
+      mode: 'light'
     },
   });
 
+  /*
   async function populateDark() {
     const req = await fetch(`${window._env_.API_REF}/editprofile`, {
         headers: {
