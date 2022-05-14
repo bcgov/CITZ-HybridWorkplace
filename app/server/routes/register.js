@@ -45,7 +45,6 @@ router.post('/', async (req, res) => {
         res.status(201).send('Registered.');
     } catch (err) {
         res.status(400).send('Bad Request: ' + err);
-         
     }
 });
 
