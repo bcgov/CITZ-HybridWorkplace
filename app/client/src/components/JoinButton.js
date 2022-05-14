@@ -33,7 +33,7 @@ import React, { useEffect, useState } from 'react';
 
 const JoinButton = (props) => {
   const [flag, setFlag] = useState(false);
-  const [communitiesList, setCommunitiesList] = useState([]);
+  const [communitiesList, setCommunitiesList] = useState([{}]);
 
   useEffect(() => {
     //const token = localStorage.getItem('token');

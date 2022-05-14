@@ -132,7 +132,7 @@ const EditProfile = () => {
         const data = await response.json();
 
         if (response.status === 200) {
-                setBio(tempBio)
+            setBio(tempBio);
         } else {
             alert("At least one field in JSON is undefined, line 137, editProfile.js: " + data.error);
         }

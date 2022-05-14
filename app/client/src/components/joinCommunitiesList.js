@@ -34,8 +34,8 @@ import JoinButton from './JoinButton';
 const JoinCommunitiesList = (props) => {
 
   useEffect(() => {
-    props.getCommunities()
-  }, [])
+    props.getCommunities();
+  }, []);
 
   return (
     <div>
