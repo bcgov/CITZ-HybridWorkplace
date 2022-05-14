@@ -29,7 +29,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
 import { getCommunities } from '../redux/ducks/communityDuck';
-import JoinButton from './JoinButton';
+import JoinButton from './joinButton';
 
 const JoinCommunitiesList = (props) => {
 
