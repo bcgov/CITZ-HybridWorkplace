@@ -46,7 +46,7 @@ const CreatePost = (props) => {
        .then(data => setCreator(data.name));
    }
 
-    const [creator, setCreator] = useState(userInfo());
+    const [creator, setCreator] = useState(userInfo() ?? 'undefined');
     const [community, setCommunity] = useState('Undefined');
 
     useEffect(() => {
