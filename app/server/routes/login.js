@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
     try {
         const user = await User.findOne({
             name: req.body.name,
-        }).exec();
+        });
 
         if (!user) res.sendStatus(404);
 

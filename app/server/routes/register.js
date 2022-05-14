@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
             name: req.body.name,
             email: req.body.email,
             password: hashedPassword,
-        }).exec();
+        });
         
         res.status(201).send('Registered.');
     } catch (err) {
