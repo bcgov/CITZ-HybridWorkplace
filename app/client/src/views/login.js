@@ -20,14 +20,17 @@
  * @module
  */
 
-import { useState } from 'react'
-import {Link, useNavigate} from 'react-router-dom'
-import '../views/Styles/login.css'
+import { useState } from 'react';
+import {Link, useNavigate} from 'react-router-dom';
+
+import '../views/Styles/login.css';
 
 function App() {
 	const [name, setName] = useState('')
 	const [password, setPassword] = useState('')
 	const navigate = useNavigate();
+
+	//FIX ME: AUTH
 	async function loginUser(event) {
 		event.preventDefault()
 		const response = await fetch(`${window._env_.API_REF}/login`, {
@@ -39,17 +42,16 @@ function App() {
 				name,
 				password,
 			}),
-		})
+		});
 		
-		const data = await response.json()
+		//const data = await response.json();
 
-		 if (data.user) {
-		 	localStorage.setItem('token', data.user)
-		 	alert('Login Successful')
-		 	navigate('/home')
-		 } else {
-		 	alert('Please check your username and password and try again')
-		 }
+		//FIX ME: AUTH
+		if (response.status === 200) {
+			navigate('/home');
+		} else {
+			alert('Please check your username and password and try again');
+		}
 	}
 
 	return (
@@ -96,7 +98,7 @@ function App() {
               Sign Up
         	</Link>
 		</div>
-	)
+	);
 }
 
-export default App
+export default App;

@@ -18,62 +18,68 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
- */
- import React, { useEffect } from 'react'
-  
- import { Link, useNavigate } from 'react-router-dom';
- import './Styles/profile.css';
- import ProfileInfo from '../components/profileInfo';
- import Grid from '@mui/material/Grid';
- import Paper from '@mui/material/Paper';
- import Box from '@mui/material/Box'
- import Typography from '@mui/material/Typography'
- import AccountCircle from '@mui/icons-material/AccountCircle'
- import jwt_decode from "jwt-decode";
+*/
 
- import Communities from '../components/joinCommunitiesList';
+import React, { useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
 
- const Profile = () => {
+import './Styles/profile.css';
+
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+
+import Communities from '../components/joinCommunitiesList';
+import ProfileInfo from '../components/profileInfo';
+
+const Profile = () => {
+    /*
     const navigate = useNavigate();
+
     useEffect(() => {
-        const token = localStorage.getItem('token')
-        if (token){
+        const token = localStorage.getItem('token');
+        if (token) {
             const user = jwt_decode(token)
             if(!user){
                 localStorage.removeItem('token')
-                navigate('/login')
+                navigate('/login');
             }
-        }else{
-            alert('Please Log in or Register before accessing this page')
-            navigate('/login')
+        } else {
+            alert('Please Log in or Register before accessing this page');
+            navigate('/login');
         }
-    }, [])
+    }, []);
+    */
    
-     return (
-         <Box sx={{ alignItems: 'stretch' }}>
+    return (
+        <Box sx={{ alignItems: 'stretch' }}>
             <Grid container spacing={2} >
                 <Grid item xs={2}>
-                    
-                        <AccountCircle style={{width: '100%', height:'40%'}} />
-                        <ProfileInfo />
-                        <br />
-                        <br/>
-                        <Link to='./edit' style={{ textDecoration: 'none' }}>
-                        <Box
-                            sx={{
-                                backgroundColor: '#036',
-                                color: 'white',
-                                px: 1,
-                                py: 0.5,
-                                textAlign: 'center',
-                                
-                            }}
-                        >
-                            <Typography variant='h6' component='p'>Edit Profile</Typography>
 
-                        </Box>
-                        </Link>
+                    <AccountCircle style={{width: '100%', height:'40%'}} />
+                    <ProfileInfo />
+                    <br />
+                    <br/>
+                    <Link to='./edit' style={{ textDecoration: 'none' }}>
+
+                    <Box
+                        sx={{
+                            backgroundColor: '#036',
+                            color: 'white',
+                            px: 1,
+                            py: 0.5,
+                            textAlign: 'center',
+                            
+                        }}
+                    >
+                        <Typography variant='h6' component='p'>Edit Profile</Typography>
+                    </Box>
+
+                    </Link>
                 </Grid>
+
                 <Grid item xs={6}>
                     <Paper elevation={0}>
                        
@@ -87,35 +93,30 @@
                             }}
                         >
                             <Typography variant='h6' component='h5'>Posts</Typography>
-
                         </Box>   
-                        
                         
                     </Paper>
                 </Grid>  
+
                 <Grid item xs={4}>
                     
                     <Box
-                            sx={{
-                                backgroundColor: '#036',
-                                color: 'white',
-                                px: 1,
-                                py: 0.5,
-                                textAlign: 'center',
-                            }}
-                        >
-                            <Typography variant='h6' component='h5'>My Communities</Typography>
+                        sx={{
+                            backgroundColor: '#036',
+                            color: 'white',
+                            px: 1,
+                            py: 0.5,
+                            textAlign: 'center',
+                        }}
+                    >
+                        <Typography variant='h6' component='h5'>My Communities</Typography>
+                    </Box>
+                    <Communities />
 
-                        </Box>
-                        <Communities />
-                    
                 </Grid>
-               
-                    
-                
             </Grid>    
-            
-         </Box>
-     )
- }
- export default Profile;
+        </Box>
+    );
+}
+
+export default Profile;

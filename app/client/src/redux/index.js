@@ -21,12 +21,14 @@
  */
 
 import { combineReducers } from 'redux';
+
+// Ducks
 import { communityReducer } from './ducks/communityDuck';
-import { postReducer } from './ducks/postDuck'
+import { postReducer } from './ducks/postDuck';
 
 export default combineReducers({
     communities: communityReducer,
     posts: postReducer
     //can add as many as you want
     //reducers are where state goes.
-})
+});
