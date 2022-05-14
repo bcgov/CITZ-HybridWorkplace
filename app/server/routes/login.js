@@ -33,20 +33,19 @@ router.post('/', async (req, res) => {
             name: req.body.name,
         });
 
-        if (!user) res.sendStatus(404);
+        if (!user) return res.sendStatus(404);
 
         const isPasswordValid = await bcrypt.compare(
             req.body.password,
             user.password
-        )
+        );
 
         if (isPasswordValid) {
-            res.status(201).send('Success, but no token set up.');
+            return res.status(201).send('Success, but no token set up.');
         }
-        res.status(400).send('Bad Request.');
+        return res.status(400).send('Bad Request.');
     } catch (err) {
-        console.log(err);
-        res.status(400).send('Bad Request: ' + err);
+        return res.status(400).send('Bad Request: ' + err);
     }
 })
 
