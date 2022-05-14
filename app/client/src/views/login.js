@@ -26,8 +26,8 @@ import {Link, useNavigate} from 'react-router-dom';
 import '../views/Styles/login.css';
 
 function App() {
-	const [name, setName] = useState('Undefined');
-	const [password, setPassword] = useState('Undefined');
+	const [name, setName] = useState('');
+	const [password, setPassword] = useState('');
 	const navigate = useNavigate();
 
 	//FIX ME: AUTH
@@ -47,7 +47,7 @@ function App() {
 		//const data = await response.json();
 
 		//FIX ME: AUTH
-		if (response.status === 200) {
+		if (response.status === 201) {
 			navigate('/home');
 		} else {
 			alert('Please check your username and password and try again');

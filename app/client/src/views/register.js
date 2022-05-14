@@ -27,10 +27,10 @@ import '../views/Styles/register.css';
 
 function App() {
   const navigate = useNavigate();
-  const [name, setName] = useState('Undefined');
-  const [email, setEmail] = useState('Undefined');
-  const [password, setPassword] = useState('Undefined');
-  const [rePassword, setRePassword] = useState('Undefined');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [rePassword, setRePassword] = useState('');
 
   async function registerUser(event) {
     event.preventDefault()
