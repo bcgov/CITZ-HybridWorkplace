@@ -24,7 +24,7 @@ const GET_COMMUNITIES = 'GET_COMMUNITIES';
 const ADD_COMMUNITY = 'ADD_COMMUNITY';
 
 export const getCommunities = () => (dispatch) => {
-    fetch(`${window._env_.API_REF}/Community`)
+    fetch(`${window._env_.API_REF}/community`)
         .then(res => res.json())
         .then(communities => dispatch({
             type: GET_COMMUNITIES,
@@ -36,7 +36,7 @@ export const getCommunities = () => (dispatch) => {
 
 export const createCommunity = (communityData) => (dispatch) => {
 
-    fetch(`${window._env_.API_REF}/Community`, {
+    fetch(`${window._env_.API_REF}/community`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ export const createCommunity = (communityData) => (dispatch) => {
         body: JSON.stringify({
             title: communityData.title,
             description: communityData.description,
-            creator: communityData.creator,
+            creator: communityData.creator
         }),
     })
         .then(res => res.json())
@@ -55,7 +55,6 @@ export const createCommunity = (communityData) => (dispatch) => {
             }));
 
 }
-
 
 
 const initialState = {

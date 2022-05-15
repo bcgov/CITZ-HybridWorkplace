@@ -18,25 +18,23 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
- */
- import React, { Component } from 'react';
- import './header.css';
- import BCLogo from './icons/BCLogo.svg';
- import SideMenu from './sideMenu';
+*/
 
+import React from 'react';
+import './header.css';
+import BCLogo from './icons/BCLogo.svg';
+import SideMenu from './sideMenu';
 
- const Header = ({darkMode, setDarkMode}) => {
-      return (
-        <div className='header' >
-
-            
-            <img src={BCLogo} className="App-logo" alt="logo" />
-            <h2> The Neighbourhood  </h2>
-            <SideMenu darkMode={darkMode} setDarkMode={setDarkMode}/>
-            
-        </div>
-      )
-    }
+// props: {darkMode, setDarkMode}
+// <SideMenu darkMode={darkMode} setDarkMode={setDarkMode}/>
+const Header = () => {
+  return (
+    <div className='header' >
+      <img src={BCLogo} className="App-logo" alt="logo" />
+      <h2> The Neighbourhood  </h2>
+      <SideMenu />
+    </div>
+  );
+}
   
-  
-  export default Header;
+export default Header;

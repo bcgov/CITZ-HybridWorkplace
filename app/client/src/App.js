@@ -18,35 +18,35 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
- */
-
+*/
 
 import './App.css';
 
-import React, { Component, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Routes from './routes';
 import Container from '@mui/material/Container';
 
 import { Provider } from 'react-redux';
 import store from './store';
 
-import Footer from './layout/footer'
+import Footer from './layout/footer';
 import Header from './layout/header';
 
-import Paper from '@mui/material/Paper'
+import Paper from '@mui/material/Paper';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-
-
 function App(){
-  const [darkMode, setDarkMode] = useState(false)
 
+  //const [darkMode, setDarkMode] = useState(false);
+
+  //mode: darkMode ? 'dark' : 'light'
   const theme = createTheme({
     palette: {
-      mode: darkMode ? 'dark' : 'light'
+      mode: 'light'
     },
   });
 
+  /*
   async function populateDark() {
     const req = await fetch(`${window._env_.API_REF}/editprofile`, {
         headers: {
@@ -69,14 +69,16 @@ function App(){
 useEffect(() => {
      populateDark()
 }, [])
+*/
 
-  
+//<Header darkMode={darkMode} setDarkMode={setDarkMode} />
+ 
   return (
     <ThemeProvider theme={theme}>
     <Paper style={{ minHeight: '100vh'}}>
     <Provider store={store}>
     <div> 
-      <Header darkMode={darkMode} setDarkMode={setDarkMode} />
+      <Header />
       <div className="App"> 
         <Container>
           <Routes />

@@ -18,16 +18,18 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
- */
+*/
+
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+
 import { createCommunity } from '../redux/ducks/communityDuck';
 
 const NewCommunity = (props) => {
 
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
 
   const onTitleChange = (e) => {
     setTitle(e.target.value)
@@ -49,6 +51,7 @@ const NewCommunity = (props) => {
 
     window.location.href = './communities';
   }
+  
   return (
     <div>
       <h1>Create New Community</h1>

@@ -18,10 +18,12 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
- */
-import '../views/Styles/register.css'
+*/
+
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+
+import '../views/Styles/register.css';
 
 function App() {
   const navigate = useNavigate();
@@ -33,28 +35,28 @@ function App() {
   async function registerUser(event) {
     event.preventDefault()
     if (password !== rePassword) {
-      alert("Password's do not match, please try again")
+      alert("Password's do not match, please try again");
+    }
+
+    const response = await fetch(`${window._env_.API_REF}/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+      }),
+    });
+
+    if (response.status === 403) {
+      alert(response.body);
+    }
+    else if (response.status === 201) {
+      navigate('/login');
     } else {
-      const response = await fetch(`${window._env_.API_REF}/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-        }),
-      })
-
-      const data = await response.json()
-      if (data.status === 'error') {
-        alert('duplicate email or IDIR, please try again');
-      }
-
-      if (data.status === 'ok') {
-        navigate('/login')
-      }
+      alert('Bad Request.');
     }
   }
 
@@ -198,7 +200,6 @@ function App() {
         </Link>
       </p>
     </div>
-
   );
 }
 

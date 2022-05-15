@@ -18,13 +18,15 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
- */
+*/
 
 import React, { useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import { getPosts } from '../redux/ducks/postDuck';
 import PropTypes from 'prop-types';
+
 import Paper from '@mui/material/Paper';
+
+import { getPosts } from '../redux/ducks/postDuck';
 
 const PostsList = (props) => {
 
@@ -52,7 +54,7 @@ const PostsList = (props) => {
         ))
       }
     </div>
-  )
+  );
 }
 
 PostsList.propTypes = {

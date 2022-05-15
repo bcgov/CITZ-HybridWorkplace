@@ -18,13 +18,12 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
- */
+*/
 
 import { Link } from 'react-router-dom';
 import Communities from '../components/communitiesList';
 
 const CommunitiesPage = () => {
-
     return (
         <div>
             <h1>Communities</h1>
@@ -37,4 +36,5 @@ const CommunitiesPage = () => {
         </div>
     )
 }
+
 export default CommunitiesPage;

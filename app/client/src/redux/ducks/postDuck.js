@@ -18,10 +18,10 @@
  * Application entry point
  * @author [Zach Bourque](zachbourque01@gmai.com)
  * @module
- */
+*/
+
 const GET_POSTS = 'CITZ-HYBRIDWORKPLACE/POST/GET_COMMUNITIES';
 const ADD_POST = 'CITZ-HYBRIDWORKPLACE/POST/ADD_COMMUNITY';
-
 
 export const getPosts = () => (dispatch) => {
     fetch(`${window._env_.API_REF}/post`)
@@ -46,7 +46,7 @@ export const createPost = (postData) => (dispatch) => {
             title: postData.title,
             message: postData.message,
             creator: postData.creator,
-            community: postData.community,
+            community: postData.community
         }),
     })
         .then(res => res.json())

@@ -18,11 +18,12 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
- */
+*/
+
 import React, { useEffect, useState } from 'react'
-import jwt_decode from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+
 import { createCommunity } from '../redux/ducks/communityDuck';
 
 const CreateCommunity = () => {
@@ -30,7 +31,7 @@ const CreateCommunity = () => {
     const dispatch = useDispatch();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [name, setName] = useState('');
+    const [name, setName] = useState('Undefined');
 
     async function registerCommunity(event) {
         event.preventDefault();
@@ -40,38 +41,38 @@ const CreateCommunity = () => {
             creator: name
         };
         dispatch(createCommunity(community));
-        navigate('/home')
+        navigate('/home');
     }
 
+    /*
     async function userInfo() {
 
-        const req = await fetch(`${window._env_.API_REF}/profile`, {
-            headers: {
-                'x-access-token': localStorage.getItem('token'),
-            },
-        })
+        const response = await fetch(`${window._env_.API_REF}/profile`, {
+            //headers: {
+            //    'x-access-token': localStorage.getItem('token'),
+            //},
+        });
 
-        const data = await req.json()
-        if (data.status === 'ok') {
-            setName(data.name)
+        if (response.status === 200) {
+            setName(data.name);
         } else {
-            alert(data.error)
+            alert("At least one field in JSON is undefined, line 59, createCommunity.js: " + data.error);
         }
     }
 
     useEffect(() => {
         const token = localStorage.getItem('token')
         if (token) {
-            const user = jwt_decode(token)
+            const user = jwt_decode(token);
             if (!user) {
-                localStorage.removeItem('token')
-                navigate('/login')
+                //localStorage.removeItem('token')
+                navigate('/login');
             } else {
                 userInfo();
-
             }
         }
-    }, [])
+    }, []);
+    */
 
     return (
         <div>
