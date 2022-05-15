@@ -15,30 +15,66 @@
  */
 
 /**
- * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
- * @module
- */
+* Application entry point
+* @author [Brady Mitchell](braden.jr.mitch@gmail.com)
+* @module
+*/
 
- const express = require('express');
- const router = express.Router();
+const express = require('express');
+const router = express.Router();
 
- const User = require('../models/user.model')
- const jwt = require('jsonwebtoken')
+const User = require('../models/user.model');
  
- router.get('/', async (req, res) => {
-    const token = req.headers['x-access-token']
-
+// Get user's profile
+//FIX ME
+router.get('/', async (req, res) => {
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        const email = decoded.email
-        const user = await User.findOne({ email: email })
+        //FIX ME: DEFINE USER
+        const user = await User.findOne({ name: req.user.name }).exec();
 
-        return res.json({ status: 'ok', name: user.name, email: user.email, fullName: user.fullName, bio: user.bio, title: user.title, darkMode:user.darkMode })
-    } catch (error) {
-        console.log(error)
-        res.json({ status: 'error', error: 'invalid token' })
+        if (!user) res.sendStatus(404);
+
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(400)
+        .send('Bad Request. The User in the body of the Request is either missing or malformed. ' + err);
     }
-})
+});
 
- module.exports = router;
+// Edit user's profile
+//FIX ME: AUTH
+router.patch('/', async (req, res) => {
+    try {
+        //FIX ME: AUTH USER IS OWNER OF PROFILE
+        const user = await User.findOne({ name: req.body.name }).exec();
+
+        if (!user) res.sendStatus(404);
+
+        // Save updates
+        await user.save();
+        res.status(204).send('Updated profile.');
+    } catch (err) {
+        res.status(400)
+        .send('Bad Request. The User in the params of the Request is either missing or malformed. ' + err);
+    }
+});
+
+// Get user profile from name
+router.get('/:name', async (req, res) => {
+    try {
+        const user = await User.findOne({ name: req.params.name }).exec();
+
+        if (!user) res.sendStatus(404);
+
+        //FIX ME: UPDATE SCHEMA/DATA MODEL
+        res.status(200).json({
+            name: user.name,
+            email: user.email
+        });
+    } catch (err) {
+        res.status(400)
+        .send('Bad Request. The User in the params of the Request is either missing or malformed. ' + err);
+    }
+});
+
+module.exports = router;

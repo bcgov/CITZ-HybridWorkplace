@@ -37,8 +37,7 @@ services:
   ###                                     Express API                                       ###
   #############################################################################################
   hwp-api:
-    environment:
-      - MONGO_URI=${MONGO_URI}
+    env_file: .env
     container_name: hwp-api
     build:
       context: ./app/server

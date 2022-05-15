@@ -16,46 +16,36 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
- */
+*/
 
- const express = require('express');
- const router = express.Router();
+const express = require('express');
+const router = express.Router();
 
- const User = require('../models/user.model')
- const bcrypt = require('bcryptjs') //encrypting passwords
- const jwt = require('jsonwebtoken')
+const User = require('../models/user.model');
+const bcrypt = require('bcryptjs'); //hashing passwords
  
-
+// Login
 router.post('/', async (req, res) => {
-    const user = await User.findOne({
-        name: req.body.name,
-    })
+    try {
+        const user = await User.findOne({
+            name: req.body.name,
+        });
 
-    if (!user) {
-        return { status: 'error', error: 'Invalid login' }
-    }
+        if (!user) return res.sendStatus(404);
 
-    const isPasswordValid = await bcrypt.compare(
-        req.body.password,
-        user.password
-    )
+        const isPasswordValid = await bcrypt.compare(
+            req.body.password,
+            user.password
+        );
 
-    console.log(user);
-
-    if (isPasswordValid) {
-        const token = jwt.sign(
-            {
-                name: user.name,
-                email: user.email,
-            },
-            process.env.JWT_SECRET
-        )
-
-        return res.json({ status: 'ok', user: token })
-    } else {
-        return res.json({ status: 'error', user: false })
+        if (isPasswordValid) {
+            return res.status(201).send('Success, but no token set up.');
+        }
+        return res.status(400).send('Bad Request.');
+    } catch (err) {
+        return res.status(400).send('Bad Request: ' + err);
     }
 })
 
