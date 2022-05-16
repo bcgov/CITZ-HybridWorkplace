@@ -10,7 +10,7 @@ COPY app/client/. .
 RUN npm run build
 
 # Stage 2 - serve with nginx
-FROM nginx:alpine
+FROM nginx:1.19-alpine
 WORKDIR /usr/share/nginx/html
 
 ARG env
