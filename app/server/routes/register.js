@@ -18,34 +18,38 @@
  * Application entry point
  * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
-*/
+ */
 
-const express = require('express');
+const express = require("express");
+
 const router = express.Router();
 
-const User = require('../models/user.model');
-const bcrypt = require('bcryptjs'); //hashing passwords
+const bcrypt = require("bcryptjs"); // hashing passwords
+
+const User = require("../models/user.model");
 
 // Register User
-router.post('/', async (req, res) => {
-    try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+router.post("/", async (req, res) => {
+  try {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-        if (await User.exists({'$or': [
-            { name: req.body.name },
-            { email: req.body.email }
-        ]})) res.status(403).send('IDIR or email already exists.');
-         
-        const user = await User.create({
-            name: req.body.name,
-            email: req.body.email,
-            password: hashedPassword,
-        });
-        
-        res.status(201).send('Registered.');
-    } catch (err) {
-        res.status(400).send('Bad Request: ' + err);
-    }
+    if (
+      await User.exists({
+        $or: [{ name: req.body.name }, { email: req.body.email }],
+      })
+    )
+      return res.status(403).send("IDIR or email already exists.");
+
+    const user = await User.create({
+      name: req.body.name,
+      email: req.body.email,
+      password: hashedPassword,
+    });
+
+    return res.status(201).send("Registered.");
+  } catch (err) {
+    return res.status(400).send(`Bad Request: ${err}`);
+  }
 });
 
 module.exports = router;

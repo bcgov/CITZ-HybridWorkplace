@@ -18,49 +18,57 @@
  * Application entry point
  * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
-*/
+ */
 
-const express = require('express');
+const express = require("express");
+
 const router = express.Router();
 
-const User = require('../models/user.model');
+const User = require("../models/user.model");
 
-router.get('/', async (req, res) => {
-    //const token = req.headers['x-access-token']
+router.get("/", async (req, res) => {
+  // const token = req.headers['x-access-token']
 
-    try {
-        //const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        //const email = decoded.email;
-        const user = await User.findOne({ email: req.body.email });
+  try {
+    // const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // const email = decoded.email;
+    const user = await User.findOne({ email: req.body.email });
 
-        res.status(200).json({
-            name: user.name, 
-            email: user.email, 
-            fullName: user.fullName, 
-            bio: user.bio, 
-            title: user.title, 
-            quote:user.quote 
-        });
-    } catch (err) {
-        res.status(400).send('Bad Request: ' + err);
-    }
+    return res.status(200).json({
+      name: user.name,
+      email: user.email,
+      fullName: user.fullName,
+      bio: user.bio,
+      title: user.title,
+      quote: user.quote,
+    });
+  } catch (err) {
+    return res.status(400).send(`Bad Request: + ${err}`);
+  }
 });
 
-router.post('/', async (req, res) => {
-    //const token = req.headers['x-access-token']
+router.post("/", async (req, res) => {
+  // const token = req.headers['x-access-token']
 
-    try {
-        //const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        //const email = decoded.email;
-        await User.updateMany(
-            { email: email },
-            { $set: { fullName: req.body.fullName, title: req.body.title, bio: req.body.bio, darkMode: req.body.darkMode} },
-        );
+  try {
+    // const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // const email = decoded.email;
+    await User.updateMany(
+      { email: req.body.email },
+      {
+        $set: {
+          fullName: req.body.fullName,
+          title: req.body.title,
+          bio: req.body.bio,
+          darkMode: req.body.darkMode,
+        },
+      }
+    );
 
-        res.sendStatus(204);
-    } catch (err) {
-        res.status(400).send('Bad Request: ' + err);
-    }
+    return res.sendStatus(204);
+  } catch (err) {
+    return res.status(400).send(`Bad Request: ${err}`);
+  }
 });
 
 module.exports = router;
