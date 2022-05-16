@@ -37,7 +37,5 @@ RUN chmod g+rwx /usr/share/nginx/html
 # Make our shell script executable
 RUN chmod g+rwx env.sh
 
-EXPOSE 80
-
 # Start Nginx server
 CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh && nginx -g \"daemon off;\""]
