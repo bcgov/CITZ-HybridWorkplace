@@ -15,29 +15,30 @@ RUN npm run build
 #############################################################################################
 FROM nginx:1.19-alpine
 
-WORKDIR /etc/nginx/html
-
 ARG env
 
 # Removes the default static files
-RUN rm -rf ./*
+RUN rm -rf /user/share/nginx/html/
+COPY --from=build /usr/src/app/build /etc/nginx/html
+
+WORKDIR /etc/nginx/html
+
 RUN rm /etc/nginx/conf.d/default.conf
 COPY app/client/nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY --from=build /usr/src/app/build /etc/nginx/html
 COPY app/client/./env.sh .
 
 # Copy env file, default .env-template
 COPY $env .env
 
-# Add bash
-RUN apk add --no-cache bash
-
-RUN chgrp -R 0 /etc/nginx && chmod -R g=u /etc/nginx
-
 #Elevate!
 RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx
 RUN chmod g+rwx /etc/nginx/html
+
+# Add bash
+RUN apk add --no-cache bash
+
+#RUN chgrp -R 0 /etc/nginx && chmod -R g=u /etc/nginx
 
 # Make our shell script executable
 RUN chmod g+rwx env.sh
