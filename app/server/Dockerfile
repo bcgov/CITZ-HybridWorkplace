@@ -1,5 +1,8 @@
 FROM node:17.9.0-alpine3.14
 
+RUN apk add --update nodejs && apk add npm
+RUN npm i -g nodemon
+
 # Create app directory
 WORKDIR /usr/src/app
 

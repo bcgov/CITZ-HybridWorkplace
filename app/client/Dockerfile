@@ -14,6 +14,12 @@ RUN npm run build
 ###                                 PRODUCTION IMAGE                                      ###
 #############################################################################################
 FROM nginx:1.19-alpine
+# Stage 2 - serve with nginx
+
+RUN apk add --update nodejs && apk add npm 
+RUN npm i -g nodemon
+
+WORKDIR /usr/share/nginx/html
 
 ARG env
 

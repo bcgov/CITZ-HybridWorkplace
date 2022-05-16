@@ -28,10 +28,15 @@ services:
       dockerfile: ./app/client/Dockerfile
       args:
         env: ${ENV_FILE:-.env-template}
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
     networks:
       - hwp-network
     ports:
       - 8080:8080
+    volumes:
+      - .:/usr/src/app/client
+      - /usr/src/app/client/node_modules
 
   #############################################################################################
   ###                                     Express API                                       ###
@@ -45,8 +50,16 @@ services:
         env: ${ENV_FILE:-.env-template}
     networks:
       - hwp-network
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
     ports:
       - 5000:5000
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command:
+      - nodemon
+      - /usr/src/app/app/server/index.js
     depends_on:
       - mongodb
 
