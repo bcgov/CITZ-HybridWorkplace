@@ -18,37 +18,39 @@
  * Application entry point
  * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
- */
+*/
 
-const express = require("express");
-
+require('dotenv').config();
+const express = require('express');
 const router = express.Router();
 
-const bcrypt = require("bcryptjs"); // hashing passwords
-
-const User = require("../models/user.model");
-
+const User = require('../models/user.model');
+const bcrypt = require('bcryptjs'); //hashing passwords
+const jwt = require('jsonwebtoken');
+ 
 // Login
-router.post("/", async (req, res) => {
-  try {
-    const user = await User.findOne({
-      name: req.body.name,
-    });
+router.post('/', async (req, res) => {
+    try {
+        const user = await User.findOne({
+            name: req.body.name,
+        });
 
-    if (!user) return res.sendStatus(404);
+        if (!user) return res.sendStatus(404);
 
-    const isPasswordValid = await bcrypt.compare(
-      req.body.password,
-      user.password
-    );
+        const isPasswordValid = await bcrypt.compare(
+            req.body.password,
+            user.password
+        );
 
-    if (isPasswordValid) {
-      return res.status(201).send("Success, but no token set up.");
+        if (isPasswordValid) {
+            const token = jwt.sign(
+                { name: user.name, password: user.password }, process.env.JWT_SECRET);
+            return res.status(201).json({ token: token });
+        }
+        return res.status(400).send('Bad Request.');
+    } catch (err) {
+        return res.status(400).send('Bad Request: ' + err);
     }
-    return res.status(400).send("Bad Request.");
-  } catch (err) {
-    return res.status(400).send(`Bad Request: ${err}`);
-  }
 });
 
 module.exports = router;
