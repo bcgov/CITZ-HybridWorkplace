@@ -64,13 +64,13 @@ objects:
               - secretRef:
                   name: mongo-connection-string
             env:
-              - name: API_PORT
-                  value: '5000'
               - name: MONGO_URI
                 valueFrom:
                   secretKeyRef:
                     name: mongo-connection-string
                     key: MONGO_URI
+              - name: API_PORT
+                value: '5000'
             resources: {}
             terminationMessagePath: /dev/termination-log
             terminationMessagePolicy: File
