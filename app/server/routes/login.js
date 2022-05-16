@@ -38,7 +38,7 @@ router.post("/", async (req, res) => {
       name: req.body.name,
     });
 
-    if (!user) return res.sendStatus(404);
+    if (!user) return res.status(404).send("User not found.");
 
     const isPasswordValid = await bcrypt.compare(
       req.body.password,
@@ -57,14 +57,14 @@ router.post("/", async (req, res) => {
       );
 
       // Send JWT Refresh Cookie (HTTPOnly - JS can't touch)
-      res.status(201).cookie("jwt", refreshToken, {
+      res.cookie("jwt", refreshToken, {
         httpOnly: true,
       });
 
       // Send JWT
-      return res.status(201).json({ token });
+      return res.status(201).json({ token, refreshToken });
     }
-    return res.status(400).send("Bad Request.");
+    return res.status(400).send("Bad Request");
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);
   }
