@@ -18,13 +18,12 @@
  * Application entry point
  * @author [Zach Bourque](zachbourque01@gmail.com)
  * @module
-*/
+ */
 
-const express = require('express');
+const express = require("express");
+
 const router = express.Router();
 
-router.get('/', async (req, res) => {
-    return res.status(200).send('API is running!');
-});
+router.get("/", async (req, res) => res.status(200).send("API is running!"));
 
 module.exports = router;

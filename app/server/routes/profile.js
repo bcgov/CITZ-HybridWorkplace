@@ -15,66 +15,76 @@
  */
 
 /**
-* Application entry point
-* @author [Brady Mitchell](braden.jr.mitch@gmail.com)
-* @module
-*/
+ * Application entry point
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
+ * @module
+ */
 
-const express = require('express');
+const express = require("express");
+
 const router = express.Router();
 
-const User = require('../models/user.model');
- 
+const User = require("../models/user.model");
+
 // Get user's profile
-//FIX ME
-router.get('/', async (req, res) => {
-    try {
-        //FIX ME: DEFINE USER
-        const user = await User.findOne({ name: req.user.name }).exec();
+// FIX ME
+router.get("/", async (req, res) => {
+  try {
+    // FIX ME: DEFINE USER
+    const user = await User.findOne({ name: req.user.name }).exec();
 
-        if (!user) res.sendStatus(404);
+    if (!user) return res.sendStatus(404);
 
-        res.status(200).json(user);
-    } catch (err) {
-        res.status(400)
-        .send('Bad Request. The User in the body of the Request is either missing or malformed. ' + err);
-    }
+    return res.status(200).json(user);
+  } catch (err) {
+    return res
+      .status(400)
+      .send(
+        `Bad Request. The User in the body of the Request is either missing or malformed. ${err}`
+      );
+  }
 });
 
 // Edit user's profile
-//FIX ME: AUTH
-router.patch('/', async (req, res) => {
-    try {
-        //FIX ME: AUTH USER IS OWNER OF PROFILE
-        const user = await User.findOne({ name: req.body.name }).exec();
+// FIX ME: AUTH
+router.patch("/", async (req, res) => {
+  try {
+    // FIX ME: AUTH USER IS OWNER OF PROFILE
+    const user = await User.findOne({ name: req.body.name }).exec();
 
-        if (!user) res.sendStatus(404);
+    if (!user) return res.sendStatus(404);
 
-        // Save updates
-        await user.save();
-        res.status(204).send('Updated profile.');
-    } catch (err) {
-        res.status(400)
-        .send('Bad Request. The User in the params of the Request is either missing or malformed. ' + err);
-    }
+    // Save updates
+    await user.save();
+    return res.status(204).send("Updated profile.");
+  } catch (err) {
+    return res
+      .status(400)
+      .send(
+        `Bad Request. The User in the params of the Request is either missing or malformed. ${err}`
+      );
+  }
 });
 
 // Get user profile from name
-router.get('/:name', async (req, res) => {
-    try {
-        const user = await User.findOne({ name: req.params.name }).exec();
+router.get("/:name", async (req, res) => {
+  try {
+    const user = await User.findOne({ name: req.params.name }).exec();
 
-        if (!user) res.sendStatus(404);
+    if (!user) return res.sendStatus(404);
 
-        //FIX ME: UPDATE SCHEMA/DATA MODEL
-        res.status(200).json({
-            name: user.name,
-            email: user.email
-        });
-    } catch (err) {
-        res.status(400)
-        .send('Bad Request. The User in the params of the Request is either missing or malformed. ' + err);
-    }
+    // FIX ME: UPDATE SCHEMA/DATA MODEL
+    return res.status(200).json({
+      name: user.name,
+      email: user.email,
+    });
+  } catch (err) {
+    return res
+      .status(400)
+      .send(
+        `Bad Request. The User in the params of the Request is either missing or malformed. ${err}`
+      );
+  }
 });
 
 module.exports = router;

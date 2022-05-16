@@ -15,94 +15,99 @@
  */
 
 /**
-* Application entry point
-* @author [Brady Mitchell](braden.jr.mitch@gmail.com)
-* @module
-*/
+ * Application entry point
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
+ * @module
+ */
 
-const express = require('express');
+const express = require("express");
+
 const router = express.Router();
 
-const Post = require('../models/post.model');
+const Post = require("../models/post.model");
 
 // Create post
-router.post('/', async (req, res) => {
-    try {
-        const post = await Post.create({
-            title: req.body.title,
-            message: req.body.message,
-            creator: req.body.creator,
-            community: req.body.community,
-        }).exec();
-       
-        res.status(201).json(post);
-    } catch (err) {
-        res.status(400)
-        .send('Bad Request. The Post in the body of the Request is either missing or malformed. ' + err);
-    }
+router.post("/", async (req, res) => {
+  try {
+    const post = await Post.create({
+      title: req.body.title,
+      message: req.body.message,
+      creator: req.body.creator,
+      community: req.body.community,
+    }).exec();
+
+    return res.status(201).json(post);
+  } catch (err) {
+    return res
+      .status(400)
+      .send(
+        `Bad Request. The Post in the body of the Request is either missing or malformed. ${err}`
+      );
+  }
 });
 
 // Get all posts
-router.get('/', async (req, res) => {
-    try {
-        const posts = await Post.find( {}, '', { sort: { _id: -1 } }).exec();
+router.get("/", async (req, res) => {
+  try {
+    const posts = await Post.find({}, "", { sort: { _id: -1 } }).exec();
 
-        if (!posts) res.sendStatus(404);
+    if (!posts) return res.sendStatus(404);
 
-        res.status(200).json(posts);
-    } catch (err) {
-        res.status(400).send('Bad Request: ' + err);
-    }
+    return res.status(200).json(posts);
+  } catch (err) {
+    return res.status(400).send(`Bad Request: ${err}`);
+  }
 });
 
 // Get post by id
-router.get('/:id', async (req, res) => {
-    try {
-        const post = await Post.findOneById({ _id: req.params.id }).exec();
+router.get("/:id", async (req, res) => {
+  try {
+    const post = await Post.findOneById({ _id: req.params.id }).exec();
 
-        if (!post) res.sendStatus(404);
+    if (!post) return res.sendStatus(404);
 
-        res.status(200).json(post);
-    } catch (err) {
-        res.status(400).send('Bad Request: ' + err);
-    }
+    return res.status(200).json(post);
+  } catch (err) {
+    return res.status(400).send(`Bad Request: ${err}`);
+  }
 });
 
 // Edit post by id
-//FIX ME: AUTH
-router.patch('/:id', async (req, res) => {
-    try {
-        //FIX ME: AUTH USER IS OWNER OF POST OR MODERATOR
-        const post = await Post.findOneById({ _id: req.params.id }).exec();
+// FIX ME: AUTH
+router.patch("/:id", async (req, res) => {
+  try {
+    // FIX ME: AUTH USER IS OWNER OF POST OR MODERATOR
+    const post = await Post.findOneById({ _id: req.params.id }).exec();
 
-        if (!post) res.sendStatus(404);
+    if (!post) return res.sendStatus(404);
 
-        // Update post
-        await post.save();
-        res.status(200).json(post);
-    } catch (err) {
-        res.status(400).send('Bad Request: ' + err);
-    }
+    // Update post
+    await post.save();
+    return res.status(200).json(post);
+  } catch (err) {
+    return res.status(400).send(`Bad Request: ${err}`);
+  }
 });
 
 // Remove post by id
-//FIX ME: AUTH
-router.delete('/:id', async (req, res) => {
-    try {
-        const post = await Post.findByIdAndDelete({ _id: req.params.id }).exec();
+// FIX ME: AUTH
+router.delete("/:id", async (req, res) => {
+  try {
+    const post = await Post.findByIdAndDelete({ _id: req.params.id }).exec();
 
-        if (!post) res.sendStatus(404);
-
-        //FIX ME: AUTH ONLY CREATOR OF POST OR MODERATOR
-        if (post.creator.name === req.user.name) {
-            res.status(200).send('Post removed.');
-        } else {
-            //Not authorized
-            res.sendStatus(401);
-        }
-    } catch (err) {
-        res.status(400).send('Bad Request: ' + err);
+    if (!post) {
+      return res.sendStatus(404);
     }
+
+    // FIX ME: AUTH ONLY CREATOR OF POST OR MODERATOR
+    if (post.creator.name === req.user.name) {
+      return res.status(200).send("Post removed.");
+    }
+    // Not authorized
+    return res.sendStatus(401);
+  } catch (err) {
+    return res.status(400).send(`Bad Request: ${err}`);
+  }
 });
 
 module.exports = router;
