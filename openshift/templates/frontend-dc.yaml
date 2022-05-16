@@ -62,9 +62,7 @@ objects:
             image: '${APPLICATION_NAME}:${IMAGE_TAG}'
             env:
               - name: API_REF
-                value: hwp-express
-              - name: API_PORT
-                value: '5000'
+                value: hwp-express-api:5000/api
             resources: {}
             terminationMessagePath: /dev/termination-log
             terminationMessagePolicy: File
