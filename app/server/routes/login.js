@@ -24,9 +24,13 @@ require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 
-const User = require('../models/user.model');
 const bcrypt = require('bcryptjs'); //hashing passwords
-const jwt = require('jsonwebtoken');
+
+const generateToken = require('../middleware/generateToken');
+const generateRefreshToken = require('../middleware/generateRefreshToken');
+
+const User = require('../models/user.model');
+const Tokens = require('../models/refreshTokens.model');
  
 // Login
 router.post('/', async (req, res) => {
@@ -43,9 +47,10 @@ router.post('/', async (req, res) => {
         );
 
         if (isPasswordValid) {
-            const token = jwt.sign(
-                { name: user.name, password: user.password }, process.env.JWT_SECRET);
-            return res.status(201).json({ token: token });
+            const token = generateToken(user);
+            const refreshToken = generateRefreshToken(user);
+            await Tokens.create({ token: refreshToken, });
+            return res.status(201).json({ token: token, refreshToken: refreshToken });
         }
         return res.status(400).send('Bad Request.');
     } catch (err) {

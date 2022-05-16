@@ -18,17 +18,26 @@
  * Application entry point
  * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
- */
+*/
 
-const express = require("express");
-
+require('dotenv').config();
+const express = require('express');
+const jwt = require('jsonwebtoken');
 const router = express.Router();
+
+const generateToken = require('../middleware/generateToken');
 
 const Tokens = require('../models/refreshTokens.model');
 
-router.delete('/', async (req, res) => {
-    await Tokens.findOneAndDelete({ token: req.body.token });
-    res.sendStatus(204);
+router.post('/', async (req, res) => {
+    const refreshToken = req.body.token;
+    if (refreshToken == null) return res.sendStatus(401);
+    if (!Tokens.exists({ token: refreshToken })) return res.status(403).send('Not Authorized.');
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
+        if (err) return res.status(403).send('Not Authorized.');
+        const token = generateToken({ name: user.name, password: user.password });
+        res.json({ token: token });
+    })
 });
 
 module.exports = router;
