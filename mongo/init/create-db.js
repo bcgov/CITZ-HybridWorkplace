@@ -12,3 +12,4 @@ db.createUser(
 db.createCollection("user-data", { capped: false });
 db.createCollection("community-data", { capped: false });
 db.createCollection("post-data", { capped: false });
+db.createCollection("refreshTokens", { capped: false });
