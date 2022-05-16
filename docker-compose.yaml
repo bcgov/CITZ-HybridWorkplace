@@ -4,8 +4,8 @@ services:
   ###                                     MONGO DB                                          ###
   #############################################################################################
   mongodb:
-    image: 'mongo:latest'
-    container_name: 'mongodb'
+    image: "mongo:latest"
+    container_name: "mongodb"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
@@ -27,7 +27,7 @@ services:
       context: ./
       dockerfile: ./app/client/Dockerfile
       args:
-        env: ${ENV_FILE_REACT:-.env-template}
+        env: ${ENV_FILE:-.env-template}
     networks:
       - hwp-network
     ports:
@@ -37,10 +37,12 @@ services:
   ###                                     Express API                                       ###
   #############################################################################################
   hwp-api:
-    env_file: .env
     container_name: hwp-api
     build:
-      context: ./app/server
+      context: ./
+      dockerfile: ./app/server/Dockerfile
+      args:
+        env: ${ENV_FILE:-.env-template}
     networks:
       - hwp-network
     ports:
