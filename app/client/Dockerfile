@@ -30,6 +30,8 @@ COPY $env .env
 # Add bash
 RUN apk add --no-cache bash
 
+RUN chgrp -R 0 /etc/nginx && chmod -R g=u /etc/nginx
+
 #Elevate!
 RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx
 RUN chmod g+rwx /usr/share/nginx/html
