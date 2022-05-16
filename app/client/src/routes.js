@@ -18,46 +18,45 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
-*/
+ */
 
-import './App.css';
-import React, { Component, } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import "./App.css";
+import React, { Component } from "react";
+import { Routes, Route } from "react-router-dom";
 
 // Views
-import Login from './views/login';
-import Register from './views/register';
-import Home from './views/home';
-import About from './views/aboutPage';
-import ProfilePage from './views/profilePage';
-import CommunitiesPage from './views/communitiesPage';
-import Posts from './views/posts'
+import Login from "./views/login";
+import Register from "./views/register";
+import Home from "./views/home";
+import About from "./views/aboutPage";
+import ProfilePage from "./views/profilePage";
+import CommunitiesPage from "./views/communitiesPage";
+import Posts from "./views/posts";
 
 //Components
-import EditProfile from './components/editProfile';
-import CreateCommunity from './components/createCommunity';
-import NewCommunity from './components/newCommunity';
- 
+import EditProfile from "./components/editProfile";
+import CreateCommunity from "./components/createCommunity";
+import NewCommunity from "./components/newCommunity";
+
 class App extends Component {
   render() {
     return (
-      <div className="Routes"> 
-      <Routes>
-          <Route path="/" exact element={<Register />} />
-          <Route path="/login" exact element= {<Login /> }/>
-          <Route path="/home" exact element={<Home />} />  
-          <Route path="/about" exact element={<About />} /> 
-          <Route path="/profile/:id" element={<ProfilePage />} />
-          <Route path="/profile/:id/edit" element={<EditProfile />} />
-          <Route path="/createCommunity" element={<CreateCommunity/>} />
-          <Route path="/communities" element={<CommunitiesPage/>} />
-          <Route path="/newCommunity" element={<NewCommunity/>} />
-          <Route path="/posts" element={<Posts/>} />
-      </Routes> 
-      </div> 
+      <div className="Routes">
+        <Routes>
+          <Route path="/hwp/" exact element={<Register />} />
+          <Route path="/hwp/login" exact element={<Login />} />
+          <Route path="/hwp/hwp/home" exact element={<Home />} />
+          <Route path="/hwp/about" exact element={<About />} />
+          <Route path="/hwp/profile/:id" element={<ProfilePage />} />
+          <Route path="/hwp/profile/:id/edit" element={<EditProfile />} />
+          <Route path="/hwp/createCommunity" element={<CreateCommunity />} />
+          <Route path="/hwp/communities" element={<CommunitiesPage />} />
+          <Route path="/hwp/newCommunity" element={<NewCommunity />} />
+          <Route path="/hwp/posts" element={<Posts />} />
+        </Routes>
+      </div>
     );
   }
 }
- 
+
 export default App;
- 
