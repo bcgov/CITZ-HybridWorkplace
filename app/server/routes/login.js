@@ -49,7 +49,7 @@ router.post('/', async (req, res) => {
         if (isPasswordValid) {
             const token = generateToken(user);
             const refreshToken = generateRefreshToken(user);
-            await Tokens.create({ token: refreshToken, });
+            await Tokens.create({ token: refreshToken, user: user.name });
             return res.status(201).json({ token: token, refreshToken: refreshToken });
         }
         return res.status(400).send('Bad Request.');
