@@ -3,7 +3,7 @@ name: TEST Deploy of HWP API Image
 on: workflow_dispatch
    
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
