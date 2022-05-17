@@ -50,10 +50,9 @@ jobs:
           cmd: |
             'version'
             
-      - name: DEBUG - Where am I?
-        run: |
-          pwd
-          
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to DEV
         env:
           NAMESPACE: "${{ secrets.OPENSHIFT_DEV_NAMESPACE }}"
@@ -64,7 +63,10 @@ jobs:
           DEPLOYMENT_CONFIG: api-dc.yaml
         run: |
           ./.github/helpers/deploy.sh 
-          
+
+  health-check:
+    runs-on: ubuntu-latest
+    steps:
       - name: Health Check DEV deployment
         env:
           NAMESPACE: "${{ secrets.OPENSHIFT_DEV_NAMESPACE }}"
