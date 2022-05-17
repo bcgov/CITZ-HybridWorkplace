@@ -6,7 +6,7 @@ const db = require("./db");
 
 // route imports
 const communityRouter = require("./routes/community");
-const postRouter = require("./routes/post")
+const postRouter = require("./routes/post");
 const profileRouter = require("./routes/profile");
 const registerRouter = require("./routes/register");
 const loginRouter = require("./routes/login");
@@ -36,9 +36,9 @@ app.use("/api/community", communityRouter);
 app.use("/api/post", postRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/register", registerRouter);
-app.use('/api/login', loginRouter);
-app.use('/api/logout', logoutRouter);
-app.use('/api/health', healthCheckRouter);
-app.use('/api/token', tokenRouter);
+app.use("/api/login", loginRouter);
+app.use("/api/logout", logoutRouter);
+app.use("/api/health", healthCheckRouter);
+app.use("/api/token", tokenRouter);
 
 module.exports = app;
