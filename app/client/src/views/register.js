@@ -18,45 +18,47 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
-*/
+ */
 
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
-import '../views/Styles/register.css';
+import "../views/Styles/register.css";
 
 function App() {
   const navigate = useNavigate();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [rePassword, setRePassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rePassword, setRePassword] = useState("");
 
   async function registerUser(event) {
-    event.preventDefault()
+    event.preventDefault();
     if (password !== rePassword) {
       alert("Password's do not match, please try again");
     }
 
-    const response = await fetch(`${window._env_.API_REF}/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-        email,
-        password,
-      }),
-    });
+    const response = await fetch(
+      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/register`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      }
+    );
 
     if (response.status === 403) {
       alert(response.body);
-    }
-    else if (response.status === 201) {
-      navigate('/login');
+    } else if (response.status === 201) {
+      navigate("/login");
     } else {
-      alert('Bad Request.');
+      alert("Bad Request.");
     }
   }
 
@@ -70,12 +72,12 @@ function App() {
     //clicks on the password field, show the message box
     myInput.onfocus = function () {
       document.getElementById("message").style.display = "block";
-    }
+    };
 
     // Clicks outside of the password field, hide the message box
     myInput.onblur = function () {
       document.getElementById("message").style.display = "none";
-    }
+    };
 
     // When the user starts to type something inside the password field
     myInput.onkeyup = function () {
@@ -117,14 +119,12 @@ function App() {
         length.classList.remove("valid");
         length.classList.add("invalid");
       }
-    }
+    };
   }
 
   return (
     <div className="Register">
-
-      <div id='register'>
-
+      <div id="register">
         <h1> Sign Up</h1>
         <br />
         <form onSubmit={registerUser}>
@@ -134,9 +134,9 @@ function App() {
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              type='text'
-              className='divBox'
-              placeholder='ID'
+              type="text"
+              className="divBox"
+              placeholder="ID"
             />
           </div>
           <br />
@@ -147,9 +147,9 @@ function App() {
             <input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              type='email'
-              className='divBox'
-              placeholder='Email'
+              type="email"
+              className="divBox"
+              placeholder="Email"
             />
           </div>
           <br />
@@ -158,9 +158,12 @@ function App() {
             <br />
             <input
               value={password}
-              onChange={(e) => { PasswordRequirment(); setPassword(e.target.value) }}
-              type='password'
-              placeholder='Password'
+              onChange={(e) => {
+                PasswordRequirment();
+                setPassword(e.target.value);
+              }}
+              type="password"
+              placeholder="Password"
               id="psw"
               name="psw"
               pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
@@ -174,30 +177,36 @@ function App() {
             <input
               value={rePassword}
               onChange={(e) => setRePassword(e.target.value)}
-              type='password'
-              placeholder='Password'
-              className='divBox'
+              type="password"
+              placeholder="Password"
+              className="divBox"
             />
           </div>
           <br />
           <br />
-          <input type='submit' value='Submit' id='submit' />
+          <input type="submit" value="Submit" id="submit" />
         </form>
       </div>
       <div id="message">
         <h4> Password must contain the following:</h4>
-        <p id="letter" className="invalid">One <b>lowercase</b> letter</p>
-        <p id="capital" className="invalid">One <b>uppercase</b> letter</p>
-        <p id="number" className="invalid">One <b>number</b></p>
-        <p id="length" className="invalid">Minimum <b>8 characters</b></p>
+        <p id="letter" className="invalid">
+          One <b>lowercase</b> letter
+        </p>
+        <p id="capital" className="invalid">
+          One <b>uppercase</b> letter
+        </p>
+        <p id="number" className="invalid">
+          One <b>number</b>
+        </p>
+        <p id="length" className="invalid">
+          Minimum <b>8 characters</b>
+        </p>
       </div>
       <br />
       <br />
-      <p> Already have an account?
-        {' '}
-        <Link to="/login">
-          Log In
-        </Link>
+      <p>
+        {" "}
+        Already have an account? <Link to="/login">Log In</Link>
       </p>
     </div>
   );

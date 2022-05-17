@@ -18,41 +18,47 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
-*/
+ */
 
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
-    //const navigate = useNavigate();
+  //const navigate = useNavigate();
 
-    const [email, setEmail] = useState('Undefined');
-    const [title, setTitle] = useState('Undefined');
-    const [name, setName] = useState('Undefined');
-    const [fullName, setFullName] = useState('Undefined');
-    const [bio, setBio] = useState('Undefined');
+  const [email, setEmail] = useState("Undefined");
+  const [title, setTitle] = useState("Undefined");
+  const [name, setName] = useState("Undefined");
+  const [fullName, setFullName] = useState("Undefined");
+  const [bio, setBio] = useState("Undefined");
 
-    async function populateQuote() {
-        const response = await fetch(`${window._env_.API_REF}/profile`, {
-            headers: {
-                //'x-access-token': localStorage.getItem('token'),
-            },
-        })
+  async function populateQuote() {
+    const response = await fetch(
+      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/profile`,
+      {
+        headers: {
+          //'x-access-token': localStorage.getItem('token'),
+        },
+      }
+    );
 
-        const data = await response.json();
+    const data = await response.json();
 
-        if (response.status === 200) {
-            setEmail(data.email);
-            setName(data.name);
-            setTitle(data.title);
-            setFullName(data.fullName);
-            setBio(data.bio);
-        } else {
-            alert("At least one field in JSON is undefined, line 50, profileInfo.js: " + data.error);
-        }
+    if (response.status === 200) {
+      setEmail(data.email);
+      setName(data.name);
+      setTitle(data.title);
+      setFullName(data.fullName);
+      setBio(data.bio);
+    } else {
+      alert(
+        "At least one field in JSON is undefined, line 50, profileInfo.js: " +
+          data.error
+      );
     }
+  }
 
-    /*
+  /*
     useEffect(() => {
         const token = localStorage.getItem('token')
         if (token){
@@ -68,16 +74,16 @@ const Profile = () => {
     }, []);
     */
 
-    return ( 
-        <div >
-            <h3>{fullName || ''}</h3>
-            <h4>{name}</h4>
-            <p> {email} </p>
-            <p> {title || ''} </p>
-            <br />
-            <p> {bio || ''} </p>
-        </div>
-    )
-}
+  return (
+    <div>
+      <h3>{fullName || ""}</h3>
+      <h4>{name}</h4>
+      <p> {email} </p>
+      <p> {title || ""} </p>
+      <br />
+      <p> {bio || ""} </p>
+    </div>
+  );
+};
 
 export default Profile;

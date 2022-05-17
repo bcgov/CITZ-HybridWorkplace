@@ -15,7 +15,7 @@
 //
 
 import Button from "@mui/material/Button";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 //import { ThemeProvider, createTheme } from '@mui/material/styles';
 //import { red, green } from '@mui/material/colors';
@@ -38,36 +38,38 @@ const JoinButton = (props) => {
   useEffect(() => {
     //const token = localStorage.getItem('token');
     //if (token) {
-      //const user = jwt_decode(token)
-      //if (!user) {
-        //localStorage.removeItem('token')
-      //} else {
-        fetch(`${process.env.API_REF}/community`,
-          {
-            headers: {
-              //'x-access-token': localStorage.getItem('token'),
-            },
-          }).then(res => res.json())
-          .then(data => {
-            setCommunitiesList(data.communities);
-            if ((communitiesList[0]).includes(props.name)) {
-              setFlag(true);
-            } else {
-              setFlag(false);
-            }
-          })
-      //}
+    //const user = jwt_decode(token)
+    //if (!user) {
+    //localStorage.removeItem('token')
+    //} else {
+    fetch(
+      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/community`,
+      {
+        headers: {
+          //'x-access-token': localStorage.getItem('token'),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setCommunitiesList(data.communities);
+        if (communitiesList[0].includes(props.name)) {
+          setFlag(true);
+        } else {
+          setFlag(false);
+        }
+      });
+    //}
     //}
   }, []);
 
   const handleClick = () => {
-
-    setFlag(!flag)
+    setFlag(!flag);
 
     if (!flag) {
       //FIX ME: SET JOIN IN COMMUNITY > MEMBERS, and PROFILE > COMMUNITIES
       /*
-      fetch(`${process.env.API_REF}/community`, {
+      fetch(`http://${window._env_.API_REF}:${window._env_.API_PORT}/api/community`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -81,7 +83,7 @@ const JoinButton = (props) => {
     } else {
       //FIX ME: SET LEAVE COMMUNITY IN COMMUNITY > MEMBERS, and PROFILE > COMMUNITIES
       /*
-      fetch(`${window._env_.API_REF}/profile`, {
+      fetch(`http://${window._env_.API_REF}:${window._env_.API_PORT}/api/profile`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -95,18 +97,18 @@ const JoinButton = (props) => {
       });
       */
     }
-  }
+  };
 
   return (
     <Button
       onClick={handleClick}
       variant="contained"
-      color={flag === true ? 'error' : 'success'}
+      color={flag === true ? "error" : "success"}
       size="small"
     >
       {flag ? "Remove" : "Join"}
     </Button>
   );
-}
+};
 
 export default JoinButton;

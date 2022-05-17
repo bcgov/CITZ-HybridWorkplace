@@ -18,67 +18,68 @@
  * Application entry point
  * @author [Zach Bourque](zachbourque01@gmai.com)
  * @module
-*/
+ */
 
-const GET_POSTS = 'CITZ-HYBRIDWORKPLACE/POST/GET_COMMUNITIES';
-const ADD_POST = 'CITZ-HYBRIDWORKPLACE/POST/ADD_COMMUNITY';
+const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_COMMUNITIES";
+const ADD_POST = "CITZ-HYBRIDWORKPLACE/POST/ADD_COMMUNITY";
 
 export const getPosts = () => (dispatch) => {
-    fetch(`${window._env_.API_REF}/post`)
-        .then(res => res.json())
-        .then(posts => dispatch({
-            type: GET_POSTS,
-            payload: posts
-        }))
-        .catch(error => {
-            console.error(error)
-        })
-}
+  fetch(`http://${window._env_.API_REF}:${window._env_.API_PORT}/api/post`)
+    .then((res) => res.json())
+    .then((posts) =>
+      dispatch({
+        type: GET_POSTS,
+        payload: posts,
+      })
+    )
+    .catch((error) => {
+      console.error(error);
+    });
+};
 
 export const createPost = (postData) => (dispatch) => {
-
-    fetch(`${window._env_.API_REF}/post`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            title: postData.title,
-            message: postData.message,
-            creator: postData.creator,
-            community: postData.community
-        }),
-    })
-        .then(res => res.json())
-        .then(post => (
-            dispatch({
-                type: ADD_POST,
-                payload: post
-            })
-        ))
-        .catch(error => {
-            console.error(error)
-        })
-}
+  fetch(`http://${window._env_.API_REF}:${window._env_.API_PORT}/api/post`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      title: postData.title,
+      message: postData.message,
+      creator: postData.creator,
+      community: postData.community,
+    }),
+  })
+    .then((res) => res.json())
+    .then((post) =>
+      dispatch({
+        type: ADD_POST,
+        payload: post,
+      })
+    )
+    .catch((error) => {
+      console.error(error);
+    });
+};
 
 const initialState = {
-    items: [], //communitys
-    item: {} //single community
-}
+  items: [], //communitys
+  item: {}, //single community
+};
 
 export function postReducer(state = initialState, action) {
-    switch (action.type) {
-        case GET_POSTS:
-            return {
-                ...state,
-                items: action.payload
-            }
-        case ADD_POST:
-            return {
-                ...state,
-                items: [...state.items, action.payload]
-            }
-        default:
-            return state;
-    }
+  switch (action.type) {
+    case GET_POSTS:
+      return {
+        ...state,
+        items: action.payload,
+      };
+    case ADD_POST:
+      return {
+        ...state,
+        items: [...state.items, action.payload],
+      };
+    default:
+      return state;
+  }
 }

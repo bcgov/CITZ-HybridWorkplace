@@ -18,46 +18,52 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
-*/
+ */
 
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-import '../views/Styles/editprofile.css';
+import "../views/Styles/editprofile.css";
 
 const EditProfile = () => {
-    //const navigate = useNavigate();
+  //const navigate = useNavigate();
 
-    const [email, setEmail] = useState('Undefined');
-    const [title, setTitle] = useState('Undefined');
-    const [name, setName] = useState('Undefined');
-    const [fullName, setFullName] = useState('Undefined');
-    const [bio, setBio] = useState('Undefined');
-    const [tempFullName, setTempFullName] = useState('Undefined');
-    const [temptitle, setTempTitle] = useState('Undefined');
-    const [tempBio, setTempBio] = useState('Undefined');
+  const [email, setEmail] = useState("Undefined");
+  const [title, setTitle] = useState("Undefined");
+  const [name, setName] = useState("Undefined");
+  const [fullName, setFullName] = useState("Undefined");
+  const [bio, setBio] = useState("Undefined");
+  const [tempFullName, setTempFullName] = useState("Undefined");
+  const [temptitle, setTempTitle] = useState("Undefined");
+  const [tempBio, setTempBio] = useState("Undefined");
 
-    async function populateProfile() {
-        const response = await fetch(`${window._env_.API_REF}/profile`, {
-            //headers: {
-            //    'x-access-token': localStorage.getItem('token'),
-            //},
-        });
+  async function populateProfile() {
+    const response = await fetch(
+      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/profile`,
+      {
+        //headers: {
+        //    'x-access-token': localStorage.getItem('token'),
+        //},
+      }
+    );
 
-        const data = await response.json();
+    const data = await response.json();
 
-        if (response.status === 200) {
-            setEmail(data.email);
-            setName(data.name);
-            setTitle(data.title);
-            setFullName(data.fullName);
-            setBio(data.bio);
-        } else {
-            alert("At least one field in JSON is undefined, line 56, editProfile.js: " + data.error);
-        }
+    if (response.status === 200) {
+      setEmail(data.email);
+      setName(data.name);
+      setTitle(data.title);
+      setFullName(data.fullName);
+      setBio(data.bio);
+    } else {
+      alert(
+        "At least one field in JSON is undefined, line 56, editProfile.js: " +
+          data.error
+      );
     }
+  }
 
-    /*
+  /*
     useEffect(() => {
         const token = localStorage.getItem('token')
         if (token){
@@ -72,120 +78,140 @@ const EditProfile = () => {
     }, []);
     */
 
-    async function updateTitle(event){
-        event.preventDefault()
-        const response = await fetch(`${window._env_.API_REF}/profile`, {
-           method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                //'x-access-token': localStorage.getItem('token'),
-            },
-            body: JSON.stringify({
-                title: temptitle,
-            }),
-        })
-
-        const data = await response.json();
-
-        if(response.status === 200){
-            setTitle(temptitle);
-         }else{
-            alert("At least one field in JSON is undefined, line 93, editProfile.js: " + data.error);
-        }
-    } 
-
-    async function updateFullName(event){
-        event.preventDefault()
-        const response = await fetch(`${window._env_.API_REF}/profile`, {
-           method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                //'x-access-token': localStorage.getItem('token'),
-            },
-            body: JSON.stringify({
-                fullName: tempFullName,
-            }),
-        });
-
-        const data = await response.json();
-
-        if (response.status === 200) {
-             setFullName(tempFullName);
-        } else {
-            alert("At least one field in JSON is undefined, line 114, editProfile.js: " + data.error);
-        }
-    } 
-
-    async function updateBio(event){
-        event.preventDefault()
-        const response = await fetch(`${window._env_.API_REF}/profile`, {
-           method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                //'x-access-token': localStorage.getItem('token'),
-            },
-            body: JSON.stringify({
-                bio: tempBio,
-            }),
-        })
-
-        const data = await response.json();
-
-        if (response.status === 200) {
-            setBio(tempBio);
-        } else {
-            alert("At least one field in JSON is undefined, line 137, editProfile.js: " + data.error);
-        }
-    } 
-
-    return (
-        <div id='eprofile'>
-            <h2>Edit your profile</h2>
-            <p>ID: {name}</p>
-            <p>Email: {email} </p>
-            <form onSubmit={updateFullName}>
-            <label htmlFor='fullname'>Full Name: </label>
-            <br/>
-            <input 
-                type='text' 
-                placeholder={fullName}
-                id='fullname'
-                value={tempFullName} 
-                onChange={(e) => setTempFullName(e.target.value)} 
-            />
-            <input type='submit' value='✓' id='check'/>
-            </form>
-            <form onSubmit={updateTitle}>
-            <br/>
-            <label htmlFor='title'>Title: </label>
-            <br/>
-            <input 
-                type='text' 
-                placeholder={title}
-                id='title'
-                value={temptitle} 
-                onChange={(e) => setTempTitle(e.target.value) }
-            />
-            <input type='submit' value='✓' id='check'/>
-            </form>
-            <form onSubmit={updateBio}>
-            <br/>
-            <label htmlFor='bio'>Bio: </label>
-            <br/>
-            <textarea 
-                placeholder={bio}
-                id='bio'
-                value={tempBio} 
-                onChange={(e) => setTempBio(e.target.value) }
-            />
-            <input type='submit' value='✓' id='check' />
-            </form>
-            <Link to="/profile/:id">
-            <button type='button' className='LogInbutton'>Done</button>
-        </Link>
-        <br/>
-        </div>
+  async function updateTitle(event) {
+    event.preventDefault();
+    const response = await fetch(
+      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/profile`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          //'x-access-token': localStorage.getItem('token'),
+        },
+        body: JSON.stringify({
+          title: temptitle,
+        }),
+      }
     );
-}
+
+    const data = await response.json();
+
+    if (response.status === 200) {
+      setTitle(temptitle);
+    } else {
+      alert(
+        "At least one field in JSON is undefined, line 93, editProfile.js: " +
+          data.error
+      );
+    }
+  }
+
+  async function updateFullName(event) {
+    event.preventDefault();
+    const response = await fetch(
+      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/profile`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          //'x-access-token': localStorage.getItem('token'),
+        },
+        body: JSON.stringify({
+          fullName: tempFullName,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.status === 200) {
+      setFullName(tempFullName);
+    } else {
+      alert(
+        "At least one field in JSON is undefined, line 114, editProfile.js: " +
+          data.error
+      );
+    }
+  }
+
+  async function updateBio(event) {
+    event.preventDefault();
+    const response = await fetch(
+      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/profile`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          //'x-access-token': localStorage.getItem('token'),
+        },
+        body: JSON.stringify({
+          bio: tempBio,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.status === 200) {
+      setBio(tempBio);
+    } else {
+      alert(
+        "At least one field in JSON is undefined, line 137, editProfile.js: " +
+          data.error
+      );
+    }
+  }
+
+  return (
+    <div id="eprofile">
+      <h2>Edit your profile</h2>
+      <p>ID: {name}</p>
+      <p>Email: {email} </p>
+      <form onSubmit={updateFullName}>
+        <label htmlFor="fullname">Full Name: </label>
+        <br />
+        <input
+          type="text"
+          placeholder={fullName}
+          id="fullname"
+          value={tempFullName}
+          onChange={(e) => setTempFullName(e.target.value)}
+        />
+        <input type="submit" value="✓" id="check" />
+      </form>
+      <form onSubmit={updateTitle}>
+        <br />
+        <label htmlFor="title">Title: </label>
+        <br />
+        <input
+          type="text"
+          placeholder={title}
+          id="title"
+          value={temptitle}
+          onChange={(e) => setTempTitle(e.target.value)}
+        />
+        <input type="submit" value="✓" id="check" />
+      </form>
+      <form onSubmit={updateBio}>
+        <br />
+        <label htmlFor="bio">Bio: </label>
+        <br />
+        <textarea
+          placeholder={bio}
+          id="bio"
+          value={tempBio}
+          onChange={(e) => setTempBio(e.target.value)}
+        />
+        <input type="submit" value="✓" id="check" />
+      </form>
+      <Link to="/profile/:id">
+        <button type="button" className="LogInbutton">
+          Done
+        </button>
+      </Link>
+      <br />
+    </div>
+  );
+};
 
 export default EditProfile;

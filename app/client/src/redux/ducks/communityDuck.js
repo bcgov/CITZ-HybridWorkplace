@@ -20,61 +20,62 @@
  * @module
  */
 
-const GET_COMMUNITIES = 'GET_COMMUNITIES';
-const ADD_COMMUNITY = 'ADD_COMMUNITY';
+const GET_COMMUNITIES = "GET_COMMUNITIES";
+const ADD_COMMUNITY = "ADD_COMMUNITY";
 
 export const getCommunities = () => (dispatch) => {
-    fetch(`${window._env_.API_REF}/community`)
-        .then(res => res.json())
-        .then(communities => dispatch({
-            type: GET_COMMUNITIES,
-            payload: communities
-        }));
-
-}
-
+  fetch(`http://${window._env_.API_REF}:${window._env_.API_PORT}/api/community`)
+    .then((res) => res.json())
+    .then((communities) =>
+      dispatch({
+        type: GET_COMMUNITIES,
+        payload: communities,
+      })
+    );
+};
 
 export const createCommunity = (communityData) => (dispatch) => {
-
-    fetch(`${window._env_.API_REF}/community`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            title: communityData.title,
-            description: communityData.description,
-            creator: communityData.creator
-        }),
-    })
-        .then(res => res.json())
-        .then(community =>
-            dispatch({
-                type: ADD_COMMUNITY,
-                payload: community
-            }));
-
-}
-
+  fetch(
+    `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/community`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: communityData.title,
+        description: communityData.description,
+        creator: communityData.creator,
+      }),
+    }
+  )
+    .then((res) => res.json())
+    .then((community) =>
+      dispatch({
+        type: ADD_COMMUNITY,
+        payload: community,
+      })
+    );
+};
 
 const initialState = {
-    items: [], //communitys
-    item: {} //single community
-}
+  items: [], //communitys
+  item: {}, //single community
+};
 
 export function communityReducer(state = initialState, action) {
-    switch (action.type) {
-        case GET_COMMUNITIES:
-            return {
-                ...state,
-                items: action.payload
-            }
-        case ADD_COMMUNITY:
-            return {
-                ...state,
-                items: [...state.items, action.payload]
-            }
-        default:
-            return state;
-    }
+  switch (action.type) {
+    case GET_COMMUNITIES:
+      return {
+        ...state,
+        items: action.payload,
+      };
+    case ADD_COMMUNITY:
+      return {
+        ...state,
+        items: [...state.items, action.payload],
+      };
+    default:
+      return state;
+  }
 }
