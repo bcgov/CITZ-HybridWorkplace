@@ -18,44 +18,44 @@
  * Application entry point
  * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
-*/
+ */
 
-require('dotenv').config();
-const express = require('express');
+require("dotenv").config();
+const express = require("express");
+const bcrypt = require("bcryptjs"); // hashing passwords
+
 const router = express.Router();
 
-const bcrypt = require('bcryptjs'); //hashing passwords
+const generateToken = require("../middleware/generateToken");
+const generateRefreshToken = require("../middleware/generateRefreshToken");
 
-const generateToken = require('../middleware/generateToken');
-const generateRefreshToken = require('../middleware/generateRefreshToken');
+const User = require("../models/user.model");
+const Tokens = require("../models/refreshTokens.model");
 
-const User = require('../models/user.model');
-const Tokens = require('../models/refreshTokens.model');
- 
 // Login
-router.post('/', async (req, res) => {
-    try {
-        const user = await User.findOne({
-            name: req.body.name,
-        });
+router.post("/", async (req, res) => {
+  try {
+    const user = await User.findOne({
+      name: req.body.name,
+    });
 
-        if (!user) return res.sendStatus(404);
+    if (!user) return res.sendStatus(404);
 
-        const isPasswordValid = await bcrypt.compare(
-            req.body.password,
-            user.password
-        );
+    const isPasswordValid = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
 
-        if (isPasswordValid) {
-            const token = generateToken(user);
-            const refreshToken = generateRefreshToken(user);
-            await Tokens.create({ token: refreshToken, user: user.name });
-            return res.status(201).json({ token: token, refreshToken: refreshToken });
-        }
-        return res.status(400).send('Bad Request.');
-    } catch (err) {
-        return res.status(400).send('Bad Request: ' + err);
+    if (isPasswordValid) {
+      const token = generateToken(user);
+      const refreshToken = generateRefreshToken(user);
+      await Tokens.create({ token: refreshToken, user: user.name });
+      return res.status(201).json({ token, refreshToken });
     }
+    return res.status(400).send("Bad Request.");
+  } catch (err) {
+    return res.status(400).send(`Bad Request: ${err}`);
+  }
 });
 
 module.exports = router;
