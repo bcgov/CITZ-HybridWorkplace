@@ -3,7 +3,7 @@ name: TEST Deploy of SLAM Frontend Application Image
 on: workflow_dispatch
    
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
