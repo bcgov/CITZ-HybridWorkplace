@@ -19,22 +19,23 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
- const mongoose = require('mongoose')
 
- const Post = new mongoose.Schema(
-     {
-         title: { type: String, required: true},
-         message: { type: String},
-         creator: { type: String},
-         community: { 
-             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Community'
-            },
-        flagged: {type: Boolean},
-     },
-     { collection: 'post-data' }
- )
- 
- const model = mongoose.model('PostData', Post)
- 
- module.exports = model
+const mongoose = require("mongoose");
+
+const Post = new mongoose.Schema(
+  {
+    title: { type: String, required: true },
+    message: { type: String },
+    creator: { type: String },
+    community: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Community",
+    },
+    flagged: { type: Boolean },
+  },
+  { collection: "post" }
+);
+
+const model = mongoose.model("Post", Post);
+
+module.exports = model;
