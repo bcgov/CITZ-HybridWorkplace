@@ -59,7 +59,6 @@ router.post("/", async (req, res) => {
       // Send JWT Refresh Cookie (HTTPOnly - JS can't touch)
       res.status(201).cookie("jwt", refreshToken, {
         httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000,
       });
 
       // Send JWT

@@ -15,6 +15,8 @@ const logoutRouter = require("./routes/logout");
 const healthCheckRouter = require("./routes/healthCheck");
 const tokenRouter = require("./routes/token");
 
+const authenticateToken = require("./middleware/authenticateToken");
+
 const app = express();
 
 // Express middleware
@@ -36,11 +38,15 @@ app.get("/", (req, res) => res.send("Node.js Server is live!"));
 // Routes
 app.use("/api/register", registerRouter);
 app.use("/api/login", loginRouter);
+app.use("/api/logout", logoutRouter);
+app.use("/api/token", tokenRouter);
+
+// Authenticate following routes
+app.use(authenticateToken);
+
 app.use("/api/community", communityRouter);
 app.use("/api/post", postRouter);
 app.use("/api/profile", profileRouter);
-app.use("/api/logout", logoutRouter);
 app.use("/api/health", healthCheckRouter);
-app.use("/api/token", tokenRouter);
 
 module.exports = app;
