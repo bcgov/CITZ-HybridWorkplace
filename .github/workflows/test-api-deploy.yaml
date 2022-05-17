@@ -26,11 +26,13 @@ jobs:
       - name: Deploy to TEST
         env:
           NAMESPACE: "${{ secrets.OPENSHIFT_TEST_NAMESPACE }}"
-          APPLICATION_NAME: "${{ secrets.APPLICATION_NAME }}"
+          APPLICATION_NAME: "${{ secrets.API_APPLICATION_NAME }}"
           LICENSE_PLATE: "${{ secrets.LICENSE_PLATE }}"
-          ENVIRONMENT: "${{ secrets.TEST_ENVIRONMENT }}"
-        run: |  
-          ./.github/helpers/deploy-api.sh
+          ENVIRONMENT: "${{ secrets.ENVIRONMENT }}"
+          IMAGE_TAG: latest
+          DEPLOYMENT_CONFIG: api-dc.yaml
+        run: |
+          ./.github/helpers/deploy.sh 
           
       - name: Health Check TEST deployment
         env:
