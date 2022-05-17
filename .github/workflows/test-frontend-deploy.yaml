@@ -40,4 +40,4 @@ jobs:
           LICENSE_PLATE: "${{ secrets.LICENSE_PLATE }}"
           ENVIRONMENT: "${{ secrets.TEST_ENVIRONMENT }}"
         run: |  
-          ./.github/helpers/application-health.sh
+          ./.github/helpers/application_health.sh
