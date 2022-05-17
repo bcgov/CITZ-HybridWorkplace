@@ -51,19 +51,4 @@ router.get("/", async (req, res) => {
   );
 });
 
-/*
-router.post("/", async (req, res) => {
-  const refreshToken = req.body.token;
-  if (refreshToken == null) return res.sendStatus(401);
-  if (!(await Tokens.exists({ token: refreshToken })))
-    return res.status(403).send("Not Authorized.");
-  jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
-    if (err) return res.status(403).send("Not Authorized.");
-    const token = generateToken({ name: user.name, password: user.password });
-    return res.json({ token });
-  });
-  return res.sendStatus(400);
-});
-*/
-
 module.exports = router;
