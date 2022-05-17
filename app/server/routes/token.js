@@ -27,13 +27,36 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 
 const generateToken = require("../middleware/generateToken");
-const Tokens = require("../models/refreshTokens.model");
+const User = require("../models/user.model");
 
+router.get("/", async (req, res) => {
+  // Get refresh token from cookies
+  if (!(req.cookies && req.cookies.jwt)) return res.sendStatus(401);
+  const refreshToken = req.cookies.jwt;
+
+  // Check refresh token exists
+  const user = await User.findOne({ refresh_token: refreshToken });
+  if (!user) return res.status(403).send("Forbidden.");
+
+  jwt.verify(
+    refreshToken,
+    process.env.JWT_REFRESH_SECRET,
+    (err, decodedUser) => {
+      // Check decoded user is the same as user holding token in db
+      if (err || decodedUser.name !== user.name)
+        return res.status(403).send("Forbidden.");
+      const token = generateToken({ name: user.name });
+      return res.json({ token });
+    }
+  );
+});
+
+/*
 router.post("/", async (req, res) => {
   const refreshToken = req.body.token;
   if (refreshToken == null) return res.sendStatus(401);
-  const tokenExists = await Tokens.exists({ token: refreshToken });
-  if (!tokenExists) return res.status(403).send("Not Authorized.");
+  if (!(await Tokens.exists({ token: refreshToken })))
+    return res.status(403).send("Not Authorized.");
   jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
     if (err) return res.status(403).send("Not Authorized.");
     const token = generateToken({ name: user.name, password: user.password });
@@ -41,5 +64,6 @@ router.post("/", async (req, res) => {
   });
   return res.sendStatus(400);
 });
+*/
 
 module.exports = router;

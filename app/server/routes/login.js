@@ -30,7 +30,6 @@ const generateToken = require("../middleware/generateToken");
 const generateRefreshToken = require("../middleware/generateRefreshToken");
 
 const User = require("../models/user.model");
-const Tokens = require("../models/refreshTokens.model");
 
 // Login
 router.post("/", async (req, res) => {
@@ -47,10 +46,24 @@ router.post("/", async (req, res) => {
     );
 
     if (isPasswordValid) {
+      // Create JWTs
       const token = generateToken(user);
       const refreshToken = generateRefreshToken(user);
-      await Tokens.create({ token: refreshToken, user: user.name });
-      return res.status(201).json({ token, refreshToken });
+
+      // Add or replace refresh token to db
+      await User.updateOne(
+        { user: user.name },
+        { refresh_token: refreshToken }
+      );
+
+      // Send JWT Refresh Cookie (HTTPOnly - JS can't touch)
+      res.status(201).cookie("jwt", refreshToken, {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+
+      // Send JWT
+      return res.status(201).json({ token });
     }
     return res.status(400).send("Bad Request.");
   } catch (err) {

@@ -19,24 +19,29 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
-const mongoose = require('mongoose')
+
+const mongoose = require("mongoose");
 
 const User = new mongoose.Schema(
-	{
-		name: { type: String, required: true, unique: true },
-		email: { type: String, required: true, unique: true },
-		password: { type: String, required: true },
-		fullName: {type: String},
-		title: {type: String},
-		bio: {type: String},
-		darkMode: {type: Boolean},
-		communities: [{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Communities'}],
-	},
-	{ collection: 'user-data' }
-)
+  {
+    name: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    refresh_token: { type: String },
+    first_name: { type: String },
+    last_name: { type: String },
+    title: { type: String },
+    bio: { type: String },
+    communities: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Communities",
+      },
+    ],
+  },
+  { collection: "user" }
+);
 
-const model = mongoose.model('UserData', User)
+const model = mongoose.model("User", User);
 
-module.exports = model
+module.exports = model;

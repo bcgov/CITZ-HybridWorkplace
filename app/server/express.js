@@ -1,8 +1,9 @@
 // mongodb connection via mongoose
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
-const db = require("./db");
+require("./db");
 
 // route imports
 const communityRouter = require("./routes/community");
@@ -19,6 +20,7 @@ const app = express();
 // Express middleware
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser());
 app.use(
   rateLimit({
     windowMs: 60 * 1000, // 1 minute
@@ -32,11 +34,11 @@ app.use(
 app.get("/", (req, res) => res.send("Node.js Server is live!"));
 
 // Routes
+app.use("/api/register", registerRouter);
+app.use("/api/login", loginRouter);
 app.use("/api/community", communityRouter);
 app.use("/api/post", postRouter);
 app.use("/api/profile", profileRouter);
-app.use("/api/register", registerRouter);
-app.use("/api/login", loginRouter);
 app.use("/api/logout", logoutRouter);
 app.use("/api/health", healthCheckRouter);
 app.use("/api/token", tokenRouter);

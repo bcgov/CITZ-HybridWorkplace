@@ -1,15 +1,13 @@
+/* eslint-disable no-undef */
 // Create DB and collection
-db = new Mongo().getDB("TheNeighborhood");
+db = new Mongo().getDB("TheNeighbourhood");
 
-db.createUser(
-  {
-    user: 'db-admin',
-    pwd: 'db-admin',
-    roles: [{ role: 'readWrite', db: 'TheNeighborhood' }],
-  },
-);
+db.createUser({
+  user: "db-admin",
+  pwd: "db-admin",
+  roles: [{ role: "readWrite", db: "TheNeighbourhood" }],
+});
 
-db.createCollection("user-data", { capped: false });
-db.createCollection("community-data", { capped: false });
-db.createCollection("post-data", { capped: false });
-db.createCollection("refreshTokens", { capped: false });
+db.createCollection("user", { capped: false });
+db.createCollection("community", { capped: false });
+db.createCollection("post", { capped: false });
