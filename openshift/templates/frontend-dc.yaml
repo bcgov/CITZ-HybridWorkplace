@@ -60,6 +60,10 @@ objects:
         containers:
           - name: ${APPLICATION_NAME}
             image: '${APPLICATION_NAME}:${IMAGE_TAG}'
+            ports:
+              - name: http
+                containerPort: 8080
+                protocol: TCP
             env:
               - name: API_REF
                 value: hwp-express-api:5000/api
