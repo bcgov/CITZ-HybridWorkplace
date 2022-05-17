@@ -1,4 +1,4 @@
-name: PROD Deploy of SLAM Frontend Application Image 
+name: PROD Deploy of HWP Frontend Application Image 
 
 on: workflow_dispatch
    
