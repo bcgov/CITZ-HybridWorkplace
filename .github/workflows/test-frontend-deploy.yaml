@@ -1,4 +1,4 @@
-name: TEST Deploy of SLAM Frontend Application Image 
+name: TEST Deploy of HWP Frontend Application Image 
 
 on: workflow_dispatch
    
