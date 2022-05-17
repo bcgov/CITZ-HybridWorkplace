@@ -28,7 +28,7 @@ jobs:
           NAMESPACE: "${{ secrets.OPENSHIFT_TEST_NAMESPACE }}"
           APPLICATION_NAME: "${{ secrets.API_APPLICATION_NAME }}"
           LICENSE_PLATE: "${{ secrets.LICENSE_PLATE }}"
-          ENVIRONMENT: "${{ secrets.ENVIRONMENT }}"
+          ENVIRONMENT: "${{ secrets.TEST_ENVIRONMENT }}"
           IMAGE_TAG: latest
           DEPLOYMENT_CONFIG: api-dc.yaml
         run: |
