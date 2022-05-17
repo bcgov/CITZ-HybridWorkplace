@@ -24,11 +24,15 @@ const express = require("express");
 
 const router = express.Router();
 
-const Tokens = require('../models/refreshTokens.model');
+const jwt = require("jsonwebtoken");
 
-router.delete('/', async (req, res) => {
-    await Tokens.findOneAndDelete({ token: req.body.token });
-    res.sendStatus(204);
+const Tokens = require("../models/refreshTokens.model");
+
+router.delete("/", async (req, res) => {
+  const user = jwt.verify(req.body.token, process.env.JWT_REFRESH_SECRET);
+  await Tokens.deleteMany({ user: user.name });
+  console.log(await Tokens.find());
+  return res.sendStatus(204);
 });
 
 module.exports = router;
