@@ -18,26 +18,27 @@
  * Application entry point
  * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
-*/
+ */
 
-require('dotenv').config();
-const express = require('express');
-const jwt = require('jsonwebtoken');
+require("dotenv").config();
+const express = require("express");
+const jwt = require("jsonwebtoken");
 const router = express.Router();
 
-const generateToken = require('../middleware/generateToken');
+const generateToken = require("../middleware/generateToken");
 
-const Tokens = require('../models/refreshTokens.model');
+const Tokens = require("../models/refreshTokens.model");
 
-router.post('/', async (req, res) => {
-    const refreshToken = req.body.token;
-    if (refreshToken == null) return res.sendStatus(401);
-    if (!Tokens.exists({ token: refreshToken })) return res.status(403).send('Not Authorized.');
-    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
-        if (err) return res.status(403).send('Not Authorized.');
-        const token = generateToken({ name: user.name, password: user.password });
-        res.json({ token: token });
-    })
+router.post("/", async (req, res) => {
+  const refreshToken = req.body.token;
+  if (refreshToken == null) return res.sendStatus(401);
+  const tokenExists = await Tokens.exists({ token: refreshToken });
+  if (!tokenExists) return res.status(403).send("Not Authorized.");
+  jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
+    if (err) return res.status(403).send("Not Authorized.");
+    const token = generateToken({ name: user.name, password: user.password });
+    res.json({ token: token });
+  });
 });
 
 module.exports = router;
