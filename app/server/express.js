@@ -47,14 +47,6 @@ app.use(authenticateToken);
 app.use("/api/community", communityRouter);
 app.use("/api/post", postRouter);
 app.use("/api/profile", profileRouter);
-<<<<<<< HEAD
 app.use("/api/health", healthCheckRouter);
-=======
-app.use("/api/register", registerRouter);
-app.use("/api/login", loginRouter);
-app.use("/api/logout", logoutRouter);
-app.use("/api/health", healthCheckRouter);
-app.use("/api/token", tokenRouter);
->>>>>>> 8894ed5 (ESLint Prettier fixes)
 
 module.exports = app;
