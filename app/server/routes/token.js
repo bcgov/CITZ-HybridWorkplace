@@ -23,10 +23,10 @@
 require("dotenv").config();
 const express = require("express");
 const jwt = require("jsonwebtoken");
+
 const router = express.Router();
 
 const generateToken = require("../middleware/generateToken");
-
 const Tokens = require("../models/refreshTokens.model");
 
 router.post("/", async (req, res) => {
@@ -37,8 +37,9 @@ router.post("/", async (req, res) => {
   jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
     if (err) return res.status(403).send("Not Authorized.");
     const token = generateToken({ name: user.name, password: user.password });
-    res.json({ token: token });
+    return res.json({ token });
   });
+  return res.sendStatus(400);
 });
 
 module.exports = router;

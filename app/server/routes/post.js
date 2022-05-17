@@ -24,23 +24,26 @@ const express = require("express");
 
 const router = express.Router();
 
-const Post = require('../models/post.model');
-const authenticateToken = require('../middleware/authenticateToken');
+const Post = require("../models/post.model");
+const authenticateToken = require("../middleware/authenticateToken");
 
 // Create post
-router.post('/', authenticateToken, async (req, res) => {
-    try {
-        const post = await Post.create({
-            title: req.body.title,
-            message: req.body.message,
-            creator: req.user.name,
-        });
-       
-        return res.status(201).json(post);
-    } catch (err) {
-        return res.status(400)
-        .send('Bad Request. The Post in the body of the Request is either missing or malformed. ' + err);
-    }
+router.post("/", authenticateToken, async (req, res) => {
+  try {
+    const post = await Post.create({
+      title: req.body.title,
+      message: req.body.message,
+      creator: req.user.name,
+    });
+
+    return res.status(201).json(post);
+  } catch (err) {
+    return res
+      .status(400)
+      .send(
+        `Bad Request. The Post in the body of the Request is either missing or malformed. ${err}`
+      );
+  }
 });
 
 // Get all posts
