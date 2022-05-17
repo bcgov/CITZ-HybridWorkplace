@@ -25,10 +25,9 @@ const express = require("express");
 const router = express.Router();
 
 const Post = require("../models/post.model");
-const authenticateToken = require("../middleware/authenticateToken");
 
 // Create post
-router.post("/", authenticateToken, async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const post = await Post.create({
       title: req.body.title,
