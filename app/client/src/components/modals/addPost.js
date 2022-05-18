@@ -18,115 +18,122 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
-*/
+ */
 
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import './addPost.css';
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import "./addPost.css";
 
-import Paper from '@mui/material/Paper';
-import { Button } from '@mui/material';
+import Paper from "@mui/material/Paper";
+import { Button } from "@mui/material";
 
-import { getCommunities } from '../../redux/ducks/communityDuck';
-import { createPost } from '../../redux/ducks/postDuck';
+import { getCommunities } from "../../redux/ducks/communityDuck";
+import { createPost } from "../../redux/ducks/postDuck";
 
 const CreatePost = (props) => {
+  const [title, setTitle] = useState("Undefined");
+  const [message, setMessage] = useState("Undefined");
 
-    const [title, setTitle] = useState('Undefined');
-    const [message, setMessage] = useState('Undefined');
+  const userInfo = () => {
+    fetch(
+      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/profile`,
+      {
+        headers: {
+          //'x-access-token': localStorage.getItem('token'),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => setCreator(data.name));
+  };
 
-    const userInfo = () => {
-        fetch(`${window._env_.API_REF}/profile`, {
-           headers: {
-               //'x-access-token': localStorage.getItem('token'),
-           },
-       })
-       .then(res => res.json())
-       .then(data => setCreator(data.name));
-   }
+  const [creator, setCreator] = useState(userInfo() ?? "undefined");
+  const [community, setCommunity] = useState("Undefined");
 
-    const [creator, setCreator] = useState(userInfo() ?? 'undefined');
-    const [community, setCommunity] = useState('Undefined');
+  useEffect(() => {
+    props.getCommunities();
+  }, []);
 
-    useEffect(() => {
-        props.getCommunities();
-    }, []);
-    
-    const registerPost = (event) => {
-        event.preventDefault();
-        const post = {
-            title: title, 
-            message: message,
-            creator: creator,
-            community: community
-        };
-        props.createPost(post);
-        window.location.reload();
-    }
+  const registerPost = (event) => {
+    event.preventDefault();
+    const post = {
+      title: title,
+      message: message,
+      creator: creator,
+      community: community,
+    };
+    props.createPost(post);
+    window.location.reload();
+  };
 
-    const onTitleChange = (event) => {
-        setTitle(event.target.value);
-    }
+  const onTitleChange = (event) => {
+    setTitle(event.target.value);
+  };
 
-    const onMessageChange = (event) => {
-        setMessage(event.target.value);
-    }
+  const onMessageChange = (event) => {
+    setMessage(event.target.value);
+  };
 
-    const onCommunityClick = (id) => {
-        setCommunity(id);
-    }
+  const onCommunityClick = (id) => {
+    setCommunity(id);
+  };
 
-    return (
-        <div className={`modal ${props.show ? 'show' : ''}`} onClick={props.onClose}>
-            <div className='modalWrap' onClick={e => e.stopPropagation()}>
-                 <Paper  >
-                <br />
-                <h1>Add Post</h1>
-                <form onSubmit={registerPost}>
-                    <input 
-                        onChange={onTitleChange}
-                        type='text'
-                        name='title'
-                        placeholder='Title'
-                    />
-                    <br/>
-                    <textarea 
-                        onChange={onMessageChange}
-                        type='text'
-                        name='message'
-                        placeholder='Message'
-                    />
-                    <br/>
-                    <p>Choose a Community:</p>
-                    { props.communities.map(community => (
-                        <div key={community._id}>
-                        <Button onClick={() => onCommunityClick(community._id)}>{community.title} </Button>
-                        
-                        </div>))}
-                    <input type='submit' value='Submit' id='submit' />
-                </form>
-                <br/>            
-                </Paper>
-                <br />
-                <br />
-            </div> 
-        </div>	
-    );
-}
+  return (
+    <div
+      className={`modal ${props.show ? "show" : ""}`}
+      onClick={props.onClose}
+    >
+      <div className="modalWrap" onClick={(e) => e.stopPropagation()}>
+        <Paper>
+          <br />
+          <h1>Add Post</h1>
+          <form onSubmit={registerPost}>
+            <input
+              onChange={onTitleChange}
+              type="text"
+              name="title"
+              placeholder="Title"
+            />
+            <br />
+            <textarea
+              onChange={onMessageChange}
+              type="text"
+              name="message"
+              placeholder="Message"
+            />
+            <br />
+            <p>Choose a Community:</p>
+            {props.communities.map((community) => (
+              <div key={community._id}>
+                <Button onClick={() => onCommunityClick(community._id)}>
+                  {community.title}{" "}
+                </Button>
+              </div>
+            ))}
+            <input type="submit" value="Submit" id="submit" />
+          </form>
+          <br />
+        </Paper>
+        <br />
+        <br />
+      </div>
+    </div>
+  );
+};
 
 CreatePost.propTypes = {
-    getCommunities: PropTypes.func.isRequired, 
-    communities: PropTypes.array.isRequired
-}
+  getCommunities: PropTypes.func.isRequired,
+  communities: PropTypes.array.isRequired,
+};
 
-const mapStateToProps = state => ({
-    communities: state.communities.items 
-
+const mapStateToProps = (state) => ({
+  communities: state.communities.items,
 });
 
-export default connect(mapStateToProps, { getCommunities, createPost })(CreatePost);
-
+export default connect(mapStateToProps, { getCommunities, createPost })(
+  CreatePost
+);
 
 // class CreatePost extends Component {
 //     constructor(props) {
@@ -146,14 +153,14 @@ export default connect(mapStateToProps, { getCommunities, createPost })(CreatePo
 //     registerPost(event) {
 //         event.preventDefault();
 //         const post = {
-//             title: this.state.title, 
+//             title: this.state.title,
 //             message: this.state.message,
 //             creator: this.state.creator,
 //             community: this.state.community,
 //         };
 //         console.log(post)
 //         this.props.createPost(post);
-//         window.location.reload() 
+//         window.location.reload()
 //       }
 
 //       onChange(event){
@@ -163,7 +170,7 @@ export default connect(mapStateToProps, { getCommunities, createPost })(CreatePo
 //       }
 
 //       userInfo() {
-        
+
 //          fetch(`${process.env.API_REF}/profile`, {
 //             headers: {
 //                 'x-access-token': localStorage.getItem('token'),
@@ -172,7 +179,7 @@ export default connect(mapStateToProps, { getCommunities, createPost })(CreatePo
 
 //         .then(res => res.json())
 //          .then(data => this.state.creator = data.name);
-      
+
 //     }
 //     componentDidMount(){
 //         this.props.getCommunities();
@@ -188,7 +195,7 @@ export default connect(mapStateToProps, { getCommunities, createPost })(CreatePo
 //         // const communityItems = this.props.communities.map(community => (
 //         //     <div key={community._id}>
 //         //        <Button onClick={this.setCommunity(community._id)}>{community.title} </Button>
-               
+
 //         //     </div>
 //         // ))
 //      return (
@@ -198,16 +205,16 @@ export default connect(mapStateToProps, { getCommunities, createPost })(CreatePo
 //                 <br />
 //                 <h1>Add Post</h1>
 //                 <form onSubmit={this.registerPost}>
-//                     <input 
-                        
+//                     <input
+
 //                         onChange={this.onChange}
 //                         type='text'
 //                         name='title'
 //                         placeholder='Title'
 //                     />
 //                     <br/>
-//                     <textarea 
-                        
+//                     <textarea
+
 //                         onChange={this.onChange}
 //                         type='text'
 //                         name='message'
@@ -218,29 +225,29 @@ export default connect(mapStateToProps, { getCommunities, createPost })(CreatePo
 //                     { this.props.communities.map(community => (
 //                         <div key={community._id}>
 //                         <Button onClick={() => this.setCommunity(community._id)}>{community.title} </Button>
-                        
+
 //                         </div>))}
 //                     <input type='submit' value='Submit' id='submit' />
 //                 </form>
-                
+
 //                 <br/>
-                
+
 //                 </Paper>
 //                 <br />
 //                 <br />
-//             </div> 
-//          </div>	
+//             </div>
+//          </div>
 //      )
 //  }
 // }
 
 // CreatePost.propTypes = {
-//     getCommunities: PropTypes.func.isRequired, 
+//     getCommunities: PropTypes.func.isRequired,
 //     communities: PropTypes.array.isRequired
 // }
 
 // const mapStateToProps = state => ({
-//     communities: state.communities.items 
+//     communities: state.communities.items
 
 // });
 

@@ -1,4 +1,5 @@
 [![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://github.com/bcgov/citz-HybridWorkplace)
+
 # CITZ HybridWorkplace
 
 ## Project Introduction
@@ -15,7 +16,7 @@ This is the project repo for the 2022 CITZ IMB "Hybrid Workplace" product. We ar
 
 ## Problem Statement
 
-The RISE  team provides a forum for the exchange of information and best practices for  civil servants wishing to improve their leadership skills. Particpants need a platform for curated resources that are easy to locate, can be commented on and discussed. Currently there are a number of different tools that fill parts of the identified need which leads to more duplication and over time a lack of use and orphaned information.
+The RISE team provides a forum for the exchange of information and best practices for civil servants wishing to improve their leadership skills. Particpants need a platform for curated resources that are easy to locate, can be commented on and discussed. Currently there are a number of different tools that fill parts of the identified need which leads to more duplication and over time a lack of use and orphaned information.
 
 ## Hypothesis
 
@@ -41,27 +42,38 @@ TBD
 ## Running the Application
 
 ### Build
+
 1. Navigate to project root directory.
 2. Use the command: `docker-compose up --build`.
 3. The containers for the client, server, and database should now be running.
 
 ### Teardown
+
 1. Navigate to the project root directory
 2. Use the command: `docker-compose down -v`.
-  - Note: the `-v` flag tells docker to dispose of the volumes associated with the containers.
+
+- Note: the `-v` flag tells docker to dispose of the volumes associated with the containers.
+
 3. The containers for the client, server, and database should now be stopped and removed, along with their volumes.
 
 ## Services
 
-frontend -> accessible at [http://localhost](http://localhost)
+frontend -> accessible at [http://localhost:8080](http://localhost:8080)
 api -> accessible at [http://localhost:5000/api](http://localhost:5000/api)
 mongo db -> instance available at exposed port 27017
 
 ## Mongo Configuration
+
 To change the name of the database you must change the current database name 'TheNeighborhood'
 in the following files: ./mongo/init/create-db.js , ./mongo/init/init-db.sh , .env
+
+## Env Variable Configuration
+
+The .env file must be created by using .env-template as a template.
+MONGO_ROOT_USERNAME and MONGO_ROOT_PASSWORD are used when logging into the mongo CLI
+MONGO_DB_USERNAME and MONGO_DB_PASSWORD are used when the
+api connects to the database in app/server/db.js
 
 ## Documentation
 
 Click [here](https://github.com/bcgov/citz-hybridworkplace/wiki) to view the project documentation.
-

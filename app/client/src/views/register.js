@@ -38,17 +38,20 @@ function App() {
       alert("Password's do not match, please try again");
     }
 
-    const response = await fetch(`${window._env_.API_REF}/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        email,
-        password,
-      }),
-    });
+    const response = await fetch(
+      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/register`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      }
+    );
 
     if (response.status === 403) {
       alert(response.body);
