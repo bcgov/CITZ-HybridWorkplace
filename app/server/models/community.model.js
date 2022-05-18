@@ -26,7 +26,7 @@ const Community = new mongoose.Schema(
   {
     title: { type: String, required: true, unique: true },
     description: { type: String },
-    creator: { type: String },
+    creator: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     members: [
       {
         type: mongoose.Schema.Types.ObjectId,
