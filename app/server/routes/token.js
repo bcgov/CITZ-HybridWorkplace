@@ -38,17 +38,11 @@ router.get("/", async (req, res) => {
   const user = await User.findOne({ refresh_token: refreshToken });
   if (!user) return res.status(403).send("Forbidden.");
 
-  jwt.verify(
-    refreshToken,
-    process.env.JWT_REFRESH_SECRET,
-    (err, decodedUser) => {
-      // Check decoded user is the same as user holding token in db
-      if (err || decodedUser.name !== user.name)
-        return res.status(403).send("Forbidden.");
-      const token = generateToken({ name: user.name });
-      return res.json({ token });
-    }
-  );
+  jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err) => {
+    if (err) return res.status(403).send("Forbidden.");
+    const token = generateToken({ name: user.name });
+    return res.json({ token });
+  });
 });
 
 module.exports = router;
