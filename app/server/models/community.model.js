@@ -16,7 +16,7 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
  */
 
@@ -26,7 +26,7 @@ const Community = new mongoose.Schema(
   {
     title: { type: String, required: true, unique: true },
     description: { type: String },
-    creator: { type: String },
+    creator: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     members: [
       {
         type: mongoose.Schema.Types.ObjectId,

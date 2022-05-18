@@ -56,7 +56,7 @@ router.post("/", async (req, res) => {
         { refresh_token: refreshToken }
       );
 
-      // Send JWT Refresh Cookie (HTTPOnly - JS can't touch)
+      // Create JWT Refresh Cookie (HTTPOnly - JS can't touch)
       res.cookie("jwt", refreshToken, {
         httpOnly: true,
       });

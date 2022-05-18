@@ -21,10 +21,9 @@
  */
 
 const express = require("express");
+const bcrypt = require("bcryptjs"); // hashing passwords
 
 const router = express.Router();
-
-const bcrypt = require("bcryptjs"); // hashing passwords
 
 const User = require("../models/user.model");
 
@@ -40,7 +39,7 @@ router.post("/", async (req, res) => {
     )
       return res.status(403).send("IDIR or email already exists.");
 
-    const user = await User.create({
+    await User.create({
       name: req.body.name,
       email: req.body.email,
       password: hashedPassword,

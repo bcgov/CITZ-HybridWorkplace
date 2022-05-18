@@ -27,15 +27,21 @@ const router = express.Router();
 const User = require("../models/user.model");
 
 // Get user's profile
-// FIX ME
 router.get("/", async (req, res) => {
   try {
-    // FIX ME: DEFINE USER
-    const user = await User.findOne({ name: req.user.name }).exec();
+    const user = await User.findOne({ name: req.user.name });
 
-    if (!user) return res.sendStatus(404);
+    if (!user) return res.status(404).send("User not found.");
 
-    return res.status(200).json(user);
+    return res.status(200).json({
+      name: user.name,
+      email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      bio: user.bio,
+      title: user.title,
+      quote: user.quote,
+    });
   } catch (err) {
     return res
       .status(400)
@@ -46,17 +52,26 @@ router.get("/", async (req, res) => {
 });
 
 // Edit user's profile
-// FIX ME: AUTH
 router.patch("/", async (req, res) => {
   try {
-    // FIX ME: AUTH USER IS OWNER OF PROFILE
-    const user = await User.findOne({ name: req.body.name }).exec();
+    const user = await User.findOne({ name: req.user.name });
 
-    if (!user) return res.sendStatus(404);
+    if (!user) return res.status(404).send("User not found.");
 
-    // Save updates
-    await user.save();
-    return res.status(204).send("Updated profile.");
+    await User.updateOne(
+      { name: user.name },
+      {
+        $set: {
+          first_name: req.body.first_name,
+          last_name: req.body.last_name,
+          title: req.body.title,
+          bio: req.body.bio,
+          quote: req.body.quote,
+        },
+      }
+    );
+
+    return res.sendStatus(204);
   } catch (err) {
     return res
       .status(400)
@@ -71,12 +86,16 @@ router.get("/:name", async (req, res) => {
   try {
     const user = await User.findOne({ name: req.params.name }).exec();
 
-    if (!user) return res.sendStatus(404);
+    if (!user) return res.status(404).send("User not found.");
 
-    // FIX ME: UPDATE SCHEMA/DATA MODEL
     return res.status(200).json({
       name: user.name,
       email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      bio: user.bio,
+      title: user.title,
+      quote: user.quote,
     });
   } catch (err) {
     return res
