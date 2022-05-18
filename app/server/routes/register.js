@@ -19,11 +19,8 @@
  * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
  */
-<<<<<<< HEAD
 
 const express = require("express");
-=======
->>>>>>> 96fddc2 ([refs hwp-277] Docker Hotloading)
 
 const router = express.Router();
 
@@ -32,11 +29,7 @@ const bcrypt = require("bcryptjs"); // hashing passwords
 const User = require("../models/user.model");
 
 // Register User
-<<<<<<< HEAD
 router.post("/", async (req, res) => {
-=======
-router.post('/', async (req, res) => {
->>>>>>> 96fddc2 ([refs hwp-277] Docker Hotloading)
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
@@ -45,11 +38,7 @@ router.post('/', async (req, res) => {
         $or: [{ name: req.body.name }, { email: req.body.email }],
       })
     )
-<<<<<<< HEAD
       return res.status(403).send("IDIR or email already exists.");
-=======
-      res.status(403).send('IDIR or email already exists.');
->>>>>>> 96fddc2 ([refs hwp-277] Docker Hotloading)
 
     const user = await User.create({
       name: req.body.name,
@@ -57,15 +46,9 @@ router.post('/', async (req, res) => {
       password: hashedPassword,
     });
 
-<<<<<<< HEAD
     return res.status(201).send("Registered.");
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);
-=======
-    res.status(201).send('Registered.');
-  } catch (err) {
-    res.status(400).send('Bad Request: ' + err);
->>>>>>> 96fddc2 ([refs hwp-277] Docker Hotloading)
   }
 });
 

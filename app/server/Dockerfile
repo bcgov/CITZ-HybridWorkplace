@@ -14,6 +14,6 @@ COPY app/server/package*.json ./
 
 RUN npm ci --only=production
 
-COPY app/server/. .
+COPY app/server/. ./
 
 CMD ["node", "index.js"]
