@@ -58,7 +58,7 @@ TBD
 
 ## Services
 
-frontend -> accessible at [http://localhost:8080/hwp](http://localhost:8080/hwp)
+frontend -> accessible at [http://localhost:8080](http://localhost:8080)
 api -> accessible at [http://localhost:5000/api](http://localhost:5000/api)
 mongo db -> instance available at exposed port 27017
 
