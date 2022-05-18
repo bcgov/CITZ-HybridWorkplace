@@ -18,31 +18,30 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
-*/
+ */
 
-import './App.css';
+import "./App.css";
 
-import React, { useState, useEffect } from 'react';
-import Routes from './routes';
-import Container from '@mui/material/Container';
+import React, { useState, useEffect } from "react";
+import Routes from "./routes";
+import Container from "@mui/material/Container";
 
-import { Provider } from 'react-redux';
-import store from './store';
+import { Provider } from "react-redux";
+import store from "./store";
 
-import Footer from './layout/footer';
-import Header from './layout/header';
+import Footer from "./layout/footer";
+import Header from "./layout/header";
 
-import Paper from '@mui/material/Paper';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import Paper from "@mui/material/Paper";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-function App(){
-
+function App() {
   //const [darkMode, setDarkMode] = useState(false);
 
   //mode: darkMode ? 'dark' : 'light'
   const theme = createTheme({
     palette: {
-      mode: 'light'
+      mode: "light",
     },
   });
 
@@ -71,23 +70,23 @@ useEffect(() => {
 }, [])
 */
 
-//<Header darkMode={darkMode} setDarkMode={setDarkMode} />
- 
+  //<Header darkMode={darkMode} setDarkMode={setDarkMode} />
+
   return (
     <ThemeProvider theme={theme}>
-    <Paper style={{ minHeight: '100vh'}}>
-    <Provider store={store}>
-    <div> 
-      <Header />
-      <div className="App"> 
-        <Container>
-          <Routes />
-        </Container>
-      </div> 
-      < Footer />
-    </div>
-    </Provider>
-    </Paper>
+      <Paper style={{ minHeight: "100vh" }}>
+        <Provider store={store}>
+          <div>
+            <Header />
+            <div className="App">
+              <Container>
+                <Routes />
+              </Container>
+            </div>
+            <Footer />
+          </div>
+        </Provider>
+      </Paper>
     </ThemeProvider>
   );
 }

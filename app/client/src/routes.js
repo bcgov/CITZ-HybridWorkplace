@@ -43,16 +43,16 @@ class App extends Component {
     return (
       <div className="Routes">
         <Routes>
-          <Route path="/hwp/" exact element={<Register />} />
-          <Route path="/hwp/login" exact element={<Login />} />
-          <Route path="/hwp/hwp/home" exact element={<Home />} />
-          <Route path="/hwp/about" exact element={<About />} />
-          <Route path="/hwp/profile/:id" element={<ProfilePage />} />
-          <Route path="/hwp/profile/:id/edit" element={<EditProfile />} />
-          <Route path="/hwp/createCommunity" element={<CreateCommunity />} />
-          <Route path="/hwp/communities" element={<CommunitiesPage />} />
-          <Route path="/hwp/newCommunity" element={<NewCommunity />} />
-          <Route path="/hwp/posts" element={<Posts />} />
+          <Route path="/" exact element={<Register />} />
+          <Route path="/login" exact element={<Login />} />
+          <Route path="/home" exact element={<Home />} />
+          <Route path="/about" exact element={<About />} />
+          <Route path="/profile/:id" element={<ProfilePage />} />
+          <Route path="/profile/:id/edit" element={<EditProfile />} />
+          <Route path="/createCommunity" element={<CreateCommunity />} />
+          <Route path="/communities" element={<CommunitiesPage />} />
+          <Route path="/newCommunity" element={<NewCommunity />} />
+          <Route path="/posts" element={<Posts />} />
         </Routes>
       </div>
     );

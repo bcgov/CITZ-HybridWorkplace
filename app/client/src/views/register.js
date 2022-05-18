@@ -125,7 +125,7 @@ function App() {
   return (
     <div className="Register">
       <div id="register">
-        <h1> Sign Up</h1>
+        <h1>Sign Up</h1>
         <br />
         <form onSubmit={registerUser}>
           <div className="inputWrap">
