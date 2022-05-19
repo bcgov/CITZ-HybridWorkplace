@@ -22,39 +22,19 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import { connect } from "react-redux";
+import { login } from "../redux/ducks/authDuck";
 import "../views/Styles/login.css";
 
-function App() {
+function App(props) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  //FIX ME: AUTH
   async function loginUser(event) {
     event.preventDefault();
-    const response = await fetch(
-      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/login`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          password,
-        }),
-      }
-    );
-
-    //const data = await response.json();
-
-    //FIX ME: AUTH
-    if (response.status === 201) {
-      navigate("/home");
-    } else {
-      alert("Please check your username and password and try again");
-    }
+    const successful = await props.login(name, password);
+    if (successful === true) navigate("/");
   }
 
   return (
@@ -103,4 +83,4 @@ function App() {
   );
 }
 
-export default App;
+export default connect(null, { login })(App);

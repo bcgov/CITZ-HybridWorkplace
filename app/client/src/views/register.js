@@ -22,10 +22,11 @@
 
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-
+import { connect } from "react-redux";
+import { register } from "../redux/ducks/authDuck";
 import "../views/Styles/register.css";
 
-function App() {
+function App(props) {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -37,29 +38,8 @@ function App() {
     if (password !== rePassword) {
       alert("Password's do not match, please try again");
     }
-
-    const response = await fetch(
-      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/register`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-        }),
-      }
-    );
-
-    if (response.status === 403) {
-      alert(response.body);
-    } else if (response.status === 201) {
-      navigate("/login");
-    } else {
-      alert("Bad Request.");
-    }
+    const successful = await props.register(name, email, password);
+    if (successful === true) navigate("/login");
   }
 
   async function PasswordRequirment() {
@@ -212,4 +192,4 @@ function App() {
   );
 }
 
-export default App;
+export default connect(null, { register })(App);
