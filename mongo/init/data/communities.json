@@ -1,9 +1,16 @@
 [
-    {
-        "title" : "Welcome",
-        "description" : "Say hi!",
-        "creator" : "",
-        "members" : [ ],
-        "__v" : 0
-    }
+  {
+    "title": "Welcome",
+    "description": "Say hi!",
+    "creator": "",
+    "members": [],
+    "__v": 0
+  },
+  {
+    "title": "Test",
+    "description": "Many wow",
+    "creator": "",
+    "members": [],
+    "__v": 0
+  }
 ]

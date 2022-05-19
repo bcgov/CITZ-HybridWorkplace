@@ -4,11 +4,12 @@ services:
   ###                                     MONGO DB                                          ###
   #############################################################################################
   mongodb:
-    image: "mongo:latest"
+    image: "mongo:4.2.20"
     container_name: "mongodb"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_DATABASE_NAME=${MONGO_DATABASE_NAME:-TheNeighbourhood}
     volumes:
       - ./mongo/init:/docker-entrypoint-initdb.d
       - ./mongo/init/data:/tmp/data
@@ -17,6 +18,12 @@ services:
       - ${MONGO_PORT:-27017}:${MONGO_PORT:-27017}
     networks:
       - hwp-network
+    healthcheck:
+      test: echo 'db.runCommand({serverStatus:1}).ok' | mongo admin -u ${MONGO_ROOT_USERNAME} -p ${MONGO_ROOT_PASSWORD} --quiet | grep 1
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
   #############################################################################################
   ###                                     React Frontend                                    ###
@@ -54,7 +61,8 @@ services:
       - .:/usr/src/app/
     command: nodemon -L /usr/src/app/app/server/index.js
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
 
 networks:
   hwp-network:
