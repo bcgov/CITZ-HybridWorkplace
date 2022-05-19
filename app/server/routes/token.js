@@ -40,7 +40,7 @@ router.get("/", async (req, res) => {
 
   jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err) => {
     if (err) return res.status(403).send("Forbidden.");
-    const token = generateToken({ name: user.name });
+    const token = generateToken(user);
     return res.json({ token });
   });
 });
