@@ -1,5 +1,15 @@
 # Description
 
+**REQUIRES**:
+**####################################################**
+
+- [ ] Requires an update to the .env file
+- [ ] Requires adding a file listed in the .gitignore
+
+If there are any requirements for the developer to make after this PR is merged please list them here.
+
+**####################################################**
+
 This PR includes the following proposed change(s):
 
 - {List all the changes, if possible add the jira ticket #}
