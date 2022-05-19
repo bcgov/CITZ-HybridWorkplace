@@ -9,3 +9,22 @@ If you want to run the server without nodemon, then use: `npm start`
 Having to restart the server after every change can be tedious. We use nodemon to automatically restart the server and show our most recent changes.
 
 To run the server locally with nodemon, type this into the terminal: `npm run dev`
+
+## Setting Version
+
+Set the current used version in the .env file with API_VERSION or
+leave API_VERSION empty and use the 'Accept-version' header in your api calls.
+
+NOTE: Using the header method, you can only set the version once and will need to
+restart the server to change the version again, BUT it is still required that you
+use the header in every api call you make.
+
+## Creating New Versions
+
+- Create new versions by making a new version directory in ./routes
+- Import the new routes into ./express.js
+- In ./express.js, copy the 'useV1()' function under the 'Version 1 routes' comment.
+  Paste underneath, change the function name appropriately, and replace the routes.
+- In ./express.js, add the version inside of the 'routesVersioning()' call,
+  which is near the bottom of the file under the 'Route to version' comment.
+  Be sure to call the function you just created.
