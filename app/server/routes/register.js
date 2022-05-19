@@ -26,6 +26,7 @@ const bcrypt = require("bcryptjs"); // hashing passwords
 const router = express.Router();
 
 const User = require("../models/user.model");
+const Community = require("../models/community.model");
 
 // Register User
 router.post("/", async (req, res) => {
@@ -39,11 +40,20 @@ router.post("/", async (req, res) => {
     )
       return res.status(403).send("IDIR or email already exists.");
 
-    await User.create({
+    const user = await User.create({
       name: req.body.name,
       email: req.body.email,
       password: hashedPassword,
     });
+
+    await Community.updateOne(
+      { title: "Welcome" },
+      {
+        $push: {
+          members: user.id,
+        },
+      }
+    );
 
     return res.status(201).send("Registered.");
   } catch (err) {
