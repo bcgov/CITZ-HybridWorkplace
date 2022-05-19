@@ -64,8 +64,12 @@ mongo db -> instance available at exposed port 27017
 
 ## Mongo Configuration
 
-To change the name of the database you must change the current database name 'TheNeighborhood'
-in the following files: ./mongo/init/create-db.js , ./mongo/init/init-db.sh , .env
+To change the name of the database you must change the current database name 'TheNeighbourhood'
+in the following files: ./mongo/init/create-db.js , .env
+
+## Removing Local MongoDB Data
+
+To 'RESET' your local database, delete everything inside the ./mongo/data directory.
 
 ## Env Variable Configuration
 
