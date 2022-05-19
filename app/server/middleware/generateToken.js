@@ -20,25 +20,23 @@
  * @module
  */
 
-const express = require("express");
-
-const router = express.Router();
-
+require("dotenv").config();
 const jwt = require("jsonwebtoken");
 
-const User = require("../models/user.model");
+function generateToken(user) {
+  return jwt.sign(
+    {
+      name: user.name,
+      email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      title: user.title,
+      bio: user.bio,
+      quote: user.quote,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_TOKEN_EXPIRY }
+  );
+}
 
-// FIX ME: ON CLIENT delete token on logout
-router.get("/", async (req, res) => {
-  // Get refresh token from cookies
-  if (!(req.cookies && req.cookies.jwt)) return res.sendStatus(401);
-  const refreshToken = req.cookies.jwt;
-
-  // Verify token
-  const user = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-  await User.updateOne({ user: user.name }, { refresh_token: "" });
-  res.clearCookie("jwt", { httpOnly: true });
-  res.sendStatus(204);
-});
-
-module.exports = router;
+module.exports = generateToken;

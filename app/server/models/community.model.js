@@ -16,25 +16,28 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
  */
- const mongoose = require('mongoose')
 
- const Community = new mongoose.Schema(
-     {
-         title: { type: String, required: true, unique: true},
-         description: { type: String},
-         creator: { type: String},
-         members: [{ 
-             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
-            }],
-        flagged: {type: Boolean},
-     },
-     { collection: 'community-data' }
- )
- 
- const model = mongoose.model('CommunityData', Community)
- 
- module.exports = model
+const mongoose = require("mongoose");
+
+const Community = new mongoose.Schema(
+  {
+    title: { type: String, required: true, unique: true },
+    description: { type: String },
+    creator: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    members: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    flagged: { type: Boolean },
+  },
+  { collection: "community" }
+);
+
+const model = mongoose.model("Community", Community);
+
+module.exports = model;

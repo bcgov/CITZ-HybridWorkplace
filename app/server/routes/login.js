@@ -20,11 +20,14 @@
  * @module
  */
 
+require("dotenv").config();
 const express = require("express");
+const bcrypt = require("bcryptjs"); // hashing passwords
 
 const router = express.Router();
 
-const bcrypt = require("bcryptjs"); // hashing passwords
+const generateToken = require("../middleware/generateToken");
+const generateRefreshToken = require("../middleware/generateRefreshToken");
 
 const User = require("../models/user.model");
 
@@ -35,7 +38,7 @@ router.post("/", async (req, res) => {
       name: req.body.name,
     });
 
-    if (!user) return res.sendStatus(404);
+    if (!user) return res.status(404).send("User not found.");
 
     const isPasswordValid = await bcrypt.compare(
       req.body.password,
@@ -43,9 +46,25 @@ router.post("/", async (req, res) => {
     );
 
     if (isPasswordValid) {
-      return res.status(201).send("Success, but no token set up.");
+      // Create JWTs
+      const token = generateToken(user);
+      const refreshToken = generateRefreshToken(user);
+
+      // Add or replace refresh token to db
+      await User.updateOne(
+        { user: user.name },
+        { refresh_token: refreshToken }
+      );
+
+      // Create JWT Refresh Cookie (HTTPOnly - JS can't touch)
+      res.cookie("jwt", refreshToken, {
+        httpOnly: true,
+      });
+
+      // Send JWT
+      return res.status(201).json({ token, refreshToken });
     }
-    return res.status(400).send("Bad Request.");
+    return res.status(400).send("Bad Request");
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);
   }

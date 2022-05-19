@@ -25,14 +25,26 @@ const express = require("express");
 const router = express.Router();
 
 const Community = require("../models/community.model");
+const User = require("../models/user.model");
 
 // Create community
 router.post("/", async (req, res) => {
   try {
+    const user = await User.findOne({ name: req.user.name });
+
+    if (!user) return res.status(404).send("User not found.");
+
     if (await Community.exists({ title: req.body.title })) {
       return res.status(403).send("Community already exists.");
     }
-    const community = await Community.create(req.body);
+
+    const community = await Community.create({
+      title: req.body.title,
+      description: req.body.description,
+      creator: user.id,
+      members: [user.id],
+    });
+
     return res.status(201).json(community);
   } catch (err) {
     return res
@@ -44,10 +56,14 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Get all communities
+// Get all communities you are a part of
 router.get("/", async (req, res) => {
   try {
-    const communities = await Community.find({}, "", {
+    const user = await User.findOne({ name: req.user.name });
+
+    if (!user) return res.status(404).send("User not found.");
+
+    const communities = await Community.find({ members: user.id }, "", {
       sort: { _id: -1 },
     }).exec();
 

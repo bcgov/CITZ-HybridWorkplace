@@ -21,12 +21,12 @@
  */
 
 const express = require("express");
+const bcrypt = require("bcryptjs"); // hashing passwords
 
 const router = express.Router();
 
-const bcrypt = require("bcryptjs"); // hashing passwords
-
 const User = require("../models/user.model");
+const Community = require("../models/community.model");
 
 // Register User
 router.post("/", async (req, res) => {
@@ -45,6 +45,15 @@ router.post("/", async (req, res) => {
       email: req.body.email,
       password: hashedPassword,
     });
+
+    await Community.updateOne(
+      { title: "Welcome" },
+      {
+        $push: {
+          members: user.id,
+        },
+      }
+    );
 
     return res.status(201).send("Registered.");
   } catch (err) {

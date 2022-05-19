@@ -20,25 +20,27 @@
  * @module
  */
 
-const express = require("express");
-
-const router = express.Router();
-
+require("dotenv").config();
 const jwt = require("jsonwebtoken");
+const asyncHandler = require("express-async-handler");
 
-const User = require("../models/user.model");
+const authenticateToken = asyncHandler(async (req, res, next) => {
+  try {
+    // Get token from header
+    const token =
+      req.headers.authorization && req.headers.authorization.split(" ")[1];
+    if (token == null) return res.status(401).send("Not Authorized.");
 
-// FIX ME: ON CLIENT delete token on logout
-router.get("/", async (req, res) => {
-  // Get refresh token from cookies
-  if (!(req.cookies && req.cookies.jwt)) return res.sendStatus(401);
-  const refreshToken = req.cookies.jwt;
-
-  // Verify token
-  const user = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-  await User.updateOne({ user: user.name }, { refresh_token: "" });
-  res.clearCookie("jwt", { httpOnly: true });
-  res.sendStatus(204);
+    // Verify token
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+      if (err) return res.status(403).send("Forbidden.");
+      req.user = user;
+      next();
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(401).send("Not Authorized.");
+  }
 });
 
-module.exports = router;
+module.exports = authenticateToken;
