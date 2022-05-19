@@ -5,15 +5,15 @@ const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
 require("./db");
 
-// route imports
-const communityRouter = require("./routes/community");
-const postRouter = require("./routes/post");
-const profileRouter = require("./routes/profile");
-const registerRouter = require("./routes/register");
-const loginRouter = require("./routes/login");
-const logoutRouter = require("./routes/logout");
-const healthCheckRouter = require("./routes/healthCheck");
-const tokenRouter = require("./routes/token");
+// Version 1 route imports
+const communityRouterV1 = require("./routes/v1/community");
+const postRouterV1 = require("./routes/v1/post");
+const profileRouterV1 = require("./routes/v1/profile");
+const registerRouterV1 = require("./routes/v1/register");
+const loginRouterV1 = require("./routes/v1/login");
+const logoutRouterV1 = require("./routes/v1/logout");
+const healthCheckRouterV1 = require("./routes/v1/healthCheck");
+const tokenRouterV1 = require("./routes/v1/token");
 
 const authenticateToken = require("./middleware/authenticateToken");
 
