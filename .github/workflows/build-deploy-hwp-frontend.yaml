@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "src/app/client/**"
+      - "app/client/**"
   workflow_dispatch:
 
 concurrency:
