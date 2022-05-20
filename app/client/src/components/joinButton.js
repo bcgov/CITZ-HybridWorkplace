@@ -43,7 +43,7 @@ const JoinButton = (props) => {
     //localStorage.removeItem('token')
     //} else {
     fetch(
-      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/community`,
+      `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/community`,
       {
         headers: {
           //'x-access-token': localStorage.getItem('token'),
@@ -69,7 +69,7 @@ const JoinButton = (props) => {
     if (!flag) {
       //FIX ME: SET JOIN IN COMMUNITY > MEMBERS, and PROFILE > COMMUNITIES
       /*
-      fetch(`http://${window._env_.API_REF}:${window._env_.API_PORT}/api/community`, {
+      fetch(`http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/community`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ const JoinButton = (props) => {
     } else {
       //FIX ME: SET LEAVE COMMUNITY IN COMMUNITY > MEMBERS, and PROFILE > COMMUNITIES
       /*
-      fetch(`http://${window._env_.API_REF}:${window._env_.API_PORT}/api/profile`, {
+      fetch(`http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/profile`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

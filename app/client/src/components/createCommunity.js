@@ -18,36 +18,36 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
-*/
+ */
 
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
-import { createCommunity } from '../redux/ducks/communityDuck';
+import { createCommunity } from "../redux/ducks/communityDuck";
 
 const CreateCommunity = () => {
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [name, setName] = useState('Undefined');
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [name, setName] = useState("Undefined");
 
-    async function registerCommunity(event) {
-        event.preventDefault();
-        const community = {
-            title: title,
-            description: description,
-            creator: name
-        };
-        dispatch(createCommunity(community));
-        navigate('/home');
-    }
+  async function registerCommunity(event) {
+    event.preventDefault();
+    const community = {
+      title: title,
+      description: description,
+      creator: name,
+    };
+    dispatch(createCommunity(community));
+    navigate("/home");
+  }
 
-    /*
+  /*
     async function userInfo() {
 
-        const response = await fetch(`${window._env_.API_REF}/profile`, {
+        const response = await fetch(`${window._env_.REACT_APP_API_REF}/profile`, {
             //headers: {
             //    'x-access-token': localStorage.getItem('token'),
             //},
@@ -74,28 +74,28 @@ const CreateCommunity = () => {
     }, []);
     */
 
-    return (
-        <div>
-            <h1>Create Community</h1>
-            <form onSubmit={registerCommunity}>
-                <input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    type='text'
-                    placeholder='Title'
-                />
-                <br />
-                <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    type='text'
-                    placeholder='Description'
-                />
-                <br />
-                <input type='submit' value='Submit' id='submit' />
-            </form>
-        </div>
-    )
-}
+  return (
+    <div>
+      <h1>Create Community</h1>
+      <form onSubmit={registerCommunity}>
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          type="text"
+          placeholder="Title"
+        />
+        <br />
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          type="text"
+          placeholder="Description"
+        />
+        <br />
+        <input type="submit" value="Submit" id="submit" />
+      </form>
+    </div>
+  );
+};
 
 export default CreateCommunity;

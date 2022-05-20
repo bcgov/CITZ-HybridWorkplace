@@ -37,7 +37,7 @@ const CreatePost = (props) => {
 
   const userInfo = () => {
     fetch(
-      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/profile`,
+      `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/profile`,
       {
         headers: {
           //'x-access-token': localStorage.getItem('token'),
@@ -171,7 +171,7 @@ export default connect(mapStateToProps, { getCommunities, createPost })(
 
 //       userInfo() {
 
-//          fetch(`${process.env.API_REF}/profile`, {
+//          fetch(`${process.env.REACT_APP_API_REF}/profile`, {
 //             headers: {
 //                 'x-access-token': localStorage.getItem('token'),
 //             },

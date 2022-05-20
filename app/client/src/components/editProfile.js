@@ -39,7 +39,7 @@ const EditProfile = () => {
 
   async function populateProfile() {
     const response = await fetch(
-      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/profile`,
+      `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/profile`,
       {
         //headers: {
         //    'x-access-token': localStorage.getItem('token'),
@@ -81,7 +81,7 @@ const EditProfile = () => {
   async function updateTitle(event) {
     event.preventDefault();
     const response = await fetch(
-      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/profile`,
+      `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/profile`,
       {
         method: "POST",
         headers: {
@@ -109,7 +109,7 @@ const EditProfile = () => {
   async function updateFullName(event) {
     event.preventDefault();
     const response = await fetch(
-      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/profile`,
+      `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/profile`,
       {
         method: "POST",
         headers: {
@@ -137,7 +137,7 @@ const EditProfile = () => {
   async function updateBio(event) {
     event.preventDefault();
     const response = await fetch(
-      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/profile`,
+      `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/profile`,
       {
         method: "POST",
         headers: {
