@@ -21,8 +21,8 @@ jobs:
       - name: Make envfile
         uses: SpicyPizza/create-envfile@v1.3
         with:
-          API_REF: 'hwp-express-api'
-          API_PORT: 5000
+          envkey_API_REF: 'hwp-express-api'
+          envkey_API_PORT: 5000
 
       - name: Cluster Login
         uses: redhat-developer/openshift-actions@v1.1
