@@ -45,7 +45,12 @@ jobs:
       - name: Docker Push Version
         run: |
           docker push ${{ secrets.OPENSHIFT4_REACT_PUBLIC_IMAGE_REPOSITORY }}:latest
-          
+            
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    
       - name: Cluster Login
         uses: redhat-developer/openshift-actions@v1.1
         with:
@@ -54,10 +59,6 @@ jobs:
           cmd: |
             'version'
             
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
       - name: Deploy to DEV
         env:
           NAMESPACE: "${{ secrets.OPENSHIFT_DEV_NAMESPACE }}"
