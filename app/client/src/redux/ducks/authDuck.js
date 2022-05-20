@@ -25,7 +25,7 @@ export const login = (name, password) => async (dispatch) => {
   let successful = true;
   try {
     const res = await fetch(
-      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/login`,
+      `${window._env_.API_REF}:${window._env_.API_PORT}/api/login`,
       {
         method: "POST",
         headers: {
@@ -64,7 +64,7 @@ export const register = (name, email, password) => async (dispatch) => {
   let successful = true;
   try {
     const res = await fetch(
-      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/register`,
+      `${window._env_.API_REF}:${window._env_.API_PORT}/api/register`,
       {
         method: "POST",
         headers: {
