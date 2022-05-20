@@ -20,17 +20,19 @@
  * @module
  */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import {BrowserRouter} from 'react-router-dom';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import App from "./App";
+import { BrowserRouter } from "react-router-dom";
 
-require('dotenv').config()
+require("dotenv").config();
 
 // TODO: Possible try catch for empty process.env
-if(window._env_.API_REF === "") {
-  window._env_ = process?.env
+if (window._env_.REACT_APP_API_REF === "") {
+  window._env_ = process?.env;
+  window._env_.API_REF = window._env_.REACT_APP_API_REF;
+  window._env_.API_PORT = window._env_.REACT_APP_API_PORT;
 }
 
 ReactDOM.render(
@@ -39,5 +41,5 @@ ReactDOM.render(
       <App />
     </BrowserRouter>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
