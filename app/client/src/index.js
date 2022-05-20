@@ -26,6 +26,8 @@ import './index.css';
 import App from './App';
 import {BrowserRouter} from 'react-router-dom';
 
+require('dotenv').config()
+
 // TODO: Possible try catch for empty process.env
 if(window._env_.API_REF === "") {
   window._env_ = process?.env
