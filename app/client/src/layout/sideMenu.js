@@ -18,40 +18,39 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
-*/
+ */
 
-import React from 'react';
-import {Link} from 'react-router-dom';
-import './sideMenu.css';
-import Menu from './icons/menuLogo.svg';
-import House from '@mui/icons-material/House'
-import Person from '@mui/icons-material/Person'
-import HelpCenter from '@mui/icons-material/HelpCenter'
-import LogOut from '@mui/icons-material/Logout'
+import React from "react";
+import { Link } from "react-router-dom";
+import "./sideMenu.css";
+import Menu from "./icons/menuLogo.svg";
+import House from "@mui/icons-material/House";
+import Person from "@mui/icons-material/Person";
+import HelpCenter from "@mui/icons-material/HelpCenter";
+import LogOut from "@mui/icons-material/Logout";
 //import DarkMode from '@mui/icons-material/DarkMode'
-import Group from '@mui/icons-material/Group'
+import Group from "@mui/icons-material/Group";
 
 //import {logOff} from '../components/logout';
 
 // props: {darkMode, setDarkMode}
 // <li onClick={updateDarkMode} id='DMode'><DarkMode />  Dark Mode</li>
 const SideMenu = () => {
-  async function openSlideMenu(){
-    document.getElementById('menu').style.width = '250px';
-    document.getElementById('menu').style.marginLeft = '250px';  
-  }  
+  async function openSlideMenu() {
+    document.getElementById("menu").style.width = "250px";
+    document.getElementById("menu").style.marginLeft = "250px";
+  }
 
-  async function closeSlideMenu(){
-    
-    document.getElementById('menu').style.width = '0px';
-    document.getElementById('menu').style.marginLeft = '0px';
+  async function closeSlideMenu() {
+    document.getElementById("menu").style.width = "0px";
+    document.getElementById("menu").style.marginLeft = "0px";
   }
 
   /*
   async function updateDarkMode(event){
     event.preventDefault()
     setDarkMode(!darkMode)
-    const req = await fetch(`${window._env_.API_REF}/editprofile`, {
+    const req = await fetch(`${window._env_.REACT_APP_API_REF}/editprofile`, {
        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -65,35 +64,57 @@ const SideMenu = () => {
   */
 
   // Logout
-  async function logOff(){
-    fetch(`${window._env_.API_REF}/logout`, {
-      
-    });
+  async function logOff() {
+    fetch(`${window._env_.REACT_APP_API_REF}/logout`, {});
   }
 
   return (
-    <div id='content'>
-      <span className='slide'>
+    <div id="content">
+      <span className="slide">
         <a href="#" onClick={openSlideMenu}>
-          <img src={Menu} id='Menu' alt="Profile" /> 
-        </a> 
+          <img src={Menu} id="Menu" alt="Profile" />
+        </a>
       </span>
 
-      <div id='menu' className='nav'>
-        <a href="#" className='close' onClick={closeSlideMenu} >
+      <div id="menu" className="nav">
+        <a href="#" className="close" onClick={closeSlideMenu}>
           ✖
         </a>
         <ul>
-            <li><Link to='/home' ><House /> Home</Link></li>
-            <li><Link to='./profile/:id' ><Person />  Profile</Link></li>
-            <li><Link to='./communities' ><Group />  Communities</Link></li>
-            <li><Link to='./posts' ><Group />  Posts</Link></li>
-            <li><Link to='./about' ><HelpCenter />  About</Link></li>
-            <li onClick={logOff}><Link to='./login' ><LogOut /> Log Off</Link></li>  
+          <li>
+            <Link to="/home">
+              <House /> Home
+            </Link>
+          </li>
+          <li>
+            <Link to="./profile/:id">
+              <Person /> Profile
+            </Link>
+          </li>
+          <li>
+            <Link to="./communities">
+              <Group /> Communities
+            </Link>
+          </li>
+          <li>
+            <Link to="./posts">
+              <Group /> Posts
+            </Link>
+          </li>
+          <li>
+            <Link to="./about">
+              <HelpCenter /> About
+            </Link>
+          </li>
+          <li onClick={logOff}>
+            <Link to="./login">
+              <LogOut /> Log Off
+            </Link>
+          </li>
         </ul>
       </div>
     </div>
-  )
-}
-  
+  );
+};
+
 export default SideMenu;

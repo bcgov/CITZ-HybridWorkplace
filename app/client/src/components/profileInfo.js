@@ -34,7 +34,7 @@ const Profile = () => {
 
   async function populateQuote() {
     const response = await fetch(
-      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/profile`,
+      `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/profile`,
       {
         headers: {
           //'x-access-token': localStorage.getItem('token'),

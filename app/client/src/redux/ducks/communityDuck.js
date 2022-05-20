@@ -24,7 +24,9 @@ const GET_COMMUNITIES = "GET_COMMUNITIES";
 const ADD_COMMUNITY = "ADD_COMMUNITY";
 
 export const getCommunities = () => (dispatch) => {
-  fetch(`http://${window._env_.API_REF}:${window._env_.API_PORT}/api/community`)
+  fetch(
+    `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/community`
+  )
     .then((res) => res.json())
     .then((communities) =>
       dispatch({
@@ -36,7 +38,7 @@ export const getCommunities = () => (dispatch) => {
 
 export const createCommunity = (communityData) => (dispatch) => {
   fetch(
-    `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/community`,
+    `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/community`,
     {
       method: "POST",
       headers: {
