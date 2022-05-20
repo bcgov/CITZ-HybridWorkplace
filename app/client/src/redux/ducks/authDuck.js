@@ -21,22 +21,24 @@ const SET_ACCESS_TOKEN = "CITZ-HYBRIDWORKPLACE/AUTH/SET_ACCESS_TOKEN";
 const SET_REFRESH_TOKEN = "CITZ-HYBRIDWORKPLACE/AUTH/SET_REFRESH_TOKEN";
 const LOGIN = "CITZ-HYBRIDWORKPLACE/AUTH/LOGIN";
 
+const apiURI =
+  window._env_.API_REF === ""
+    ? `${process.env.REACT_APP_API_REF}`
+    : `${window._env_.API_REF}:${window._env_.API_PORT}`;
+
 export const login = (name, password) => async (dispatch) => {
   let successful = true;
   try {
-    const res = await fetch(
-      `${window._env_.API_REF}:${window._env_.API_PORT}/api/login`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          password,
-        }),
-      }
-    );
+    const res = await fetch(`${apiURI}/api/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        password,
+      }),
+    });
 
     if (!res.ok) {
       throw new Error(res.status + " " + res.statusText);
@@ -63,20 +65,17 @@ export const login = (name, password) => async (dispatch) => {
 export const register = (name, email, password) => async (dispatch) => {
   let successful = true;
   try {
-    const res = await fetch(
-      `${window._env_.API_REF}:${window._env_.API_PORT}/api/register`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-        }),
-      }
-    );
+    const res = await fetch(`${apiURI}/api/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+      }),
+    });
 
     if (!res.ok) throw new Error(res.status + " " + res.statusText);
   } catch (err) {
