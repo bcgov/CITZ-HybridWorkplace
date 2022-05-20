@@ -68,7 +68,7 @@ jobs:
           LICENSE_PLATE: "${{ secrets.LICENSE_PLATE }}"
           ENVIRONMENT: "${{ secrets.ENVIRONMENT }}"
           IMAGE_TAG: latest
-          DEPLOYMENT_CONFIG: api-dc.yaml
+          DEPLOYMENT_CONFIG: frontend-dc.yaml
         run: |
           ./.github/helpers/deploy.sh 
 
