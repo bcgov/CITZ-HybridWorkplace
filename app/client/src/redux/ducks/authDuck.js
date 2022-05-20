@@ -21,10 +21,10 @@ const SET_ACCESS_TOKEN = "CITZ-HYBRIDWORKPLACE/AUTH/SET_ACCESS_TOKEN";
 const SET_REFRESH_TOKEN = "CITZ-HYBRIDWORKPLACE/AUTH/SET_REFRESH_TOKEN";
 const LOGIN = "CITZ-HYBRIDWORKPLACE/AUTH/LOGIN";
 
-const apiURI =
-  window._env_.API_REF === ""
-    ? `${process.env.REACT_APP_API_REF}`
-    : `${window._env_.API_REF}:${window._env_.API_PORT}`;
+const apiURI = process.env.REACT_APP_API_REF;
+//  window._env_.API_REF === ""
+//    ? `${process.env.REACT_APP_API_REF}`
+//    : `${window._env_.API_REF}:${window._env_.API_PORT}`;
 
 export const login = (name, password) => async (dispatch) => {
   let successful = true;
