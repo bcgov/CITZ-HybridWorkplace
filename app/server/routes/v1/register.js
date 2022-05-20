@@ -25,8 +25,8 @@ const bcrypt = require("bcryptjs"); // hashing passwords
 
 const router = express.Router();
 
-const User = require("../models/user.model");
-const Community = require("../models/community.model");
+const User = require("../../models/user.model");
+const Community = require("../../models/community.model");
 
 // Register User
 router.post("/", async (req, res) => {

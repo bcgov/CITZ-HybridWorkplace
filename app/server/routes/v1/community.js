@@ -24,8 +24,8 @@ const express = require("express");
 
 const router = express.Router();
 
-const Community = require("../models/community.model");
-const User = require("../models/user.model");
+const Community = require("../../models/community.model");
+const User = require("../../models/user.model");
 
 // Create community
 router.post("/", async (req, res) => {

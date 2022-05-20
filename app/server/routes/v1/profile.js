@@ -24,7 +24,7 @@ const express = require("express");
 
 const router = express.Router();
 
-const User = require("../models/user.model");
+const User = require("../../models/user.model");
 
 // Get user's profile
 router.get("/", async (req, res) => {

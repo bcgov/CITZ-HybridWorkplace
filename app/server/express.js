@@ -2,18 +2,19 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const routesVersioning = require("express-routes-versioning")();
 const rateLimit = require("express-rate-limit");
 require("./db");
 
-// route imports
-const communityRouter = require("./routes/community");
-const postRouter = require("./routes/post");
-const profileRouter = require("./routes/profile");
-const registerRouter = require("./routes/register");
-const loginRouter = require("./routes/login");
-const logoutRouter = require("./routes/logout");
-const healthCheckRouter = require("./routes/healthCheck");
-const tokenRouter = require("./routes/token");
+// Version 1 route imports
+const communityRouterV1 = require("./routes/v1/community");
+const postRouterV1 = require("./routes/v1/post");
+const profileRouterV1 = require("./routes/v1/profile");
+const registerRouterV1 = require("./routes/v1/register");
+const loginRouterV1 = require("./routes/v1/login");
+const logoutRouterV1 = require("./routes/v1/logout");
+const healthCheckRouterV1 = require("./routes/v1/healthCheck");
+const tokenRouterV1 = require("./routes/v1/token");
 
 const authenticateToken = require("./middleware/authenticateToken");
 
@@ -35,18 +36,44 @@ app.use(
 // Routing
 app.get("/", (req, res) => res.send("Node.js Server is live!"));
 
-// Routes
-app.use("/api/register", registerRouter);
-app.use("/api/login", loginRouter);
-app.use("/api/logout", logoutRouter);
-app.use("/api/token", tokenRouter);
+// Versioning
+app.use((req, res, next) => {
+  if (process.env.API_VERSION !== "") {
+    req.version = `${process.env.API_VERSION}.0.0`;
+  }
+  next();
+});
 
-// Authenticate following routes
-app.use(authenticateToken);
+function NoMatchFoundCallback(req, res) {
+  res.status(404).send("Version not found.");
+}
 
-app.use("/api/community", communityRouter);
-app.use("/api/post", postRouter);
-app.use("/api/profile", profileRouter);
-app.use("/api/health", healthCheckRouter);
+// Version 1 routes
+function useV1(req, res, next) {
+  // Routes
+  app.use("/api/register", registerRouterV1);
+  app.use("/api/login", loginRouterV1);
+  app.use("/api/logout", logoutRouterV1);
+  app.use("/api/token", tokenRouterV1);
+
+  app.use("/api/community", authenticateToken, communityRouterV1);
+  app.use("/api/post", authenticateToken, postRouterV1);
+  app.use("/api/profile", authenticateToken, profileRouterV1);
+  app.use("/api/health", authenticateToken, healthCheckRouterV1);
+
+  next();
+}
+
+// Route to version
+app.use(
+  "/api",
+  routesVersioning(
+    {
+      // prettier-ignore
+      "1.0.0": useV1,
+    },
+    NoMatchFoundCallback
+  )
+);
 
 module.exports = app;

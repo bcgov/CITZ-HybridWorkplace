@@ -26,10 +26,10 @@ const bcrypt = require("bcryptjs"); // hashing passwords
 
 const router = express.Router();
 
-const generateToken = require("../middleware/generateToken");
-const generateRefreshToken = require("../middleware/generateRefreshToken");
+const generateToken = require("../../middleware/generateToken");
+const generateRefreshToken = require("../../middleware/generateRefreshToken");
 
-const User = require("../models/user.model");
+const User = require("../../models/user.model");
 
 // Login
 router.post("/", async (req, res) => {
