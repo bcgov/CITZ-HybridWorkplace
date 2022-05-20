@@ -35,15 +35,17 @@ const CreatePost = (props) => {
   const [title, setTitle] = useState("Undefined");
   const [message, setMessage] = useState("Undefined");
 
+  const apiURI =
+    window._env_.API_REF === ""
+      ? `${process.env.REACT_APP_API_REF}`
+      : `${window._env_.API_REF}:${window._env_.API_PORT}`;
+
   const userInfo = () => {
-    fetch(
-      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/profile`,
-      {
-        headers: {
-          //'x-access-token': localStorage.getItem('token'),
-        },
-      }
-    )
+    fetch(`${apiURI}/api/profile`, {
+      headers: {
+        //'x-access-token': localStorage.getItem('token'),
+      },
+    })
       .then((res) => res.json())
       .then((data) => setCreator(data.name));
   };

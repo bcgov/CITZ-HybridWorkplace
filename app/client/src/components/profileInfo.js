@@ -23,6 +23,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+const apiURI =
+  window._env_.API_REF === ""
+    ? `${process.env.REACT_APP_API_REF}`
+    : `${window._env_.API_REF}:${window._env_.API_PORT}`;
+
 const Profile = () => {
   //const navigate = useNavigate();
 
@@ -33,14 +38,11 @@ const Profile = () => {
   const [bio, setBio] = useState("Undefined");
 
   async function populateQuote() {
-    const response = await fetch(
-      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/profile`,
-      {
-        headers: {
-          //'x-access-token': localStorage.getItem('token'),
-        },
-      }
-    );
+    const response = await fetch(`${apiURI}/api/profile`, {
+      headers: {
+        //'x-access-token': localStorage.getItem('token'),
+      },
+    });
 
     const data = await response.json();
 

@@ -31,6 +31,11 @@ import React, { useEffect, useState } from "react";
 //   },
 // });
 
+const apiURI =
+  window._env_.API_REF === ""
+    ? `${process.env.REACT_APP_API_REF}`
+    : `${window._env_.API_REF}:${window._env_.API_PORT}`;
+
 const JoinButton = (props) => {
   const [flag, setFlag] = useState(false);
   const [communitiesList, setCommunitiesList] = useState([{}]);
@@ -42,14 +47,11 @@ const JoinButton = (props) => {
     //if (!user) {
     //localStorage.removeItem('token')
     //} else {
-    fetch(
-      `http://${window._env_.API_REF}:${window._env_.API_PORT}/api/community`,
-      {
-        headers: {
-          //'x-access-token': localStorage.getItem('token'),
-        },
-      }
-    )
+    fetch(`${apiURI}/api/community`, {
+      headers: {
+        //'x-access-token': localStorage.getItem('token'),
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         setCommunitiesList(data.communities);
