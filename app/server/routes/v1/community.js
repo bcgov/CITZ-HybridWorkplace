@@ -27,6 +27,52 @@ const router = express.Router();
 const Community = require("../../models/community.model");
 const User = require("../../models/user.model");
 
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    Community:
+ *      type: object
+ *      properties:
+ *        title:
+ *          type: string
+ *          example: Welcome
+ *        description:
+ *          type: string
+ *          example: Welcome to TheNeighbourhood
+ *        creator:
+ *          type: string
+ *        members:
+ *          type: array
+ *      required:
+ *        - title
+ *    User:
+ *      type: object
+ *      properties:
+ *        name:
+ *          type: string
+ *          example: Sarah
+ *        password:
+ *          type: string
+ *          writeOnly: true
+ *      required:
+ *        - name
+ *        - password
+ * paths:
+ *  /api/community:
+ *    post:
+ *      tags:
+ *        - Community
+ *      summary: Create community
+ *      responses:
+ *        '404':
+ *          description: User not found.
+ *        '403':
+ *          description: Community already exists.
+ *        '201':
+ *          description: Community successfully created.
+ */
+
 // Create community
 router.post("/", async (req, res) => {
   try {

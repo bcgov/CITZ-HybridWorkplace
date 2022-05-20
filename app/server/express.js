@@ -1,10 +1,14 @@
 // mongodb connection via mongoose
+require("./db");
+
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const routesVersioning = require("express-routes-versioning")();
 const rateLimit = require("express-rate-limit");
-require("./db");
+
+const swaggerUI = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
 
 // Version 1 route imports
 const communityRouterV1 = require("./routes/v1/community");
@@ -18,7 +22,23 @@ const tokenRouterV1 = require("./routes/v1/token");
 
 const authenticateToken = require("./middleware/authenticateToken");
 
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "CITZ HybridWorkplace",
+      version: process.env.API_VERSION || "undefined",
+      description: "API Documentation",
+    },
+  },
+  apis: [`${__dirname}/routes/v1/*.js`],
+};
+
+const specs = swaggerJsDoc(swaggerOptions);
+
 const app = express();
+
+app.use("/doc", swaggerUI.serve, swaggerUI.setup(specs));
 
 // Express middleware
 app.use(express.json());
@@ -55,11 +75,11 @@ function useV1(req, res, next) {
   app.use("/api/login", loginRouterV1);
   app.use("/api/logout", logoutRouterV1);
   app.use("/api/token", tokenRouterV1);
+  app.use("/api/health", healthCheckRouterV1);
 
   app.use("/api/community", authenticateToken, communityRouterV1);
   app.use("/api/post", authenticateToken, postRouterV1);
   app.use("/api/profile", authenticateToken, profileRouterV1);
-  app.use("/api/health", authenticateToken, healthCheckRouterV1);
 
   next();
 }
