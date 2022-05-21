@@ -32,7 +32,7 @@ import { getCommunities } from "../../redux/ducks/communityDuck";
 import { createPost } from "../../redux/ducks/postDuck";
 
 const apiURI =
-  window._env_.LOCAL_DEV === ""
+  window._env_.REACT_APP_LOCAL_DEV === ""
     ? `${window._env_.REACT_APP_API_REF}`
     : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
 

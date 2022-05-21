@@ -26,7 +26,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "../views/Styles/editprofile.css";
 
 const apiURI =
-  window._env_.LOCAL_DEV === ""
+  window._env_.REACT_APP_LOCAL_DEV === ""
     ? `${window._env_.REACT_APP_API_REF}`
     : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
 
