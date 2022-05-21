@@ -23,7 +23,7 @@ const LOGIN = "CITZ-HYBRIDWORKPLACE/AUTH/LOGIN";
 
 const apiURI =
   window._env_.REACT_APP_LOCAL_DEV === ""
-    ? `${window._env_.REACT_APP_API_REF}`
+    ? `${process.env.REACT_APP_API_REF}`
     : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
 
 export const login = (name, password) => async (dispatch) => {
