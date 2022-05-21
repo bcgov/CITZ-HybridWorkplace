@@ -31,14 +31,14 @@ import { Button } from "@mui/material";
 import { getCommunities } from "../../redux/ducks/communityDuck";
 import { createPost } from "../../redux/ducks/postDuck";
 
-const CreatePost = (props) => {
-  const [title, setTitle] = useState("Undefined");
-  const [message, setMessage] = useState("Undefined");
-
-  const apiURI =
+const apiURI =
     window._env_.API_REF === ""
       ? `${process.env.REACT_APP_API_REF}`
       : `${window._env_.API_REF}:${window._env_.API_PORT}`;
+
+const CreatePost = (props) => {
+  const [title, setTitle] = useState("Undefined");
+  const [message, setMessage] = useState("Undefined");
 
   const userInfo = () => {
     fetch(`${apiURI}/api/profile`, {
@@ -173,7 +173,7 @@ export default connect(mapStateToProps, { getCommunities, createPost })(
 
 //       userInfo() {
 
-//          fetch(`${process.env.API_REF}/profile`, {
+//          fetch(`${process.env.REACT_APP_API_REF}/profile`, {
 //             headers: {
 //                 'x-access-token': localStorage.getItem('token'),
 //             },

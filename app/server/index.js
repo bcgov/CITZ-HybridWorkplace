@@ -1,7 +1,7 @@
 require("dotenv").config();
 const app = require("./express");
 
-const port = process.env.API_PORT;
+const port = process.env.REACT_APP_API_PORT;
 
 app.listen(port, (err) => {
   if (err) console.log(err);

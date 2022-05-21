@@ -56,7 +56,7 @@ services:
     networks:
       - hwp-network
     ports:
-      - ${API_PORT:-5000}:${API_PORT:-5000}
+      - ${REACT_APP_API_PORT:-5000}:${REACT_APP_API_PORT:-5000}
     volumes:
       - .:/usr/src/app/
     command: nodemon -L /usr/src/app/app/server/index.js
