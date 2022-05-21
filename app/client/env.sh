@@ -12,7 +12,7 @@ echo "window._env_ = {" >> ./env-config.js
 while read -r line || [[ -n "$line" ]];
 do
   # Split env variables by character `=`
-  if printf '%s\n' "$line" | grep -q -e '='; then
+  if printf '%s\n' "$line" | grep -q -e '=' && printf '%s\n' "$line" | grep -q -e 'REACT_APP_'; then
     varname=$(printf '%s\n' "$line" | sed -e 's/=.*//')
     varvalue=$(printf '%s\n' "$line" | sed -e 's/^[^=]*=//')
   else
