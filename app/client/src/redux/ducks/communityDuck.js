@@ -24,9 +24,9 @@ const GET_COMMUNITIES = "GET_COMMUNITIES";
 const ADD_COMMUNITY = "ADD_COMMUNITY";
 
 const apiURI =
-  window._env_.API_REF === ""
-    ? `${process.env.REACT_APP_API_REF}`
-    : `${window._env_.API_REF}:${window._env_.API_PORT}`;
+  window._env_.LOCAL_DEV === ""
+    ? `${window._env_.REACT_APP_API_REF}`
+    : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
 
 export const getCommunities = () => (dispatch) => {
   fetch(`${apiURI}/api/community`)

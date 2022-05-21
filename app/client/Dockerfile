@@ -30,7 +30,7 @@ COPY --from=build /usr/src/app/client/build .
 RUN rm /etc/nginx/conf.d/default.conf
 COPY app/client/nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY app/client/./env.sh .
+COPY app/client/env.sh .
 
 # Copy env file, default .env-template
 COPY $env .env
