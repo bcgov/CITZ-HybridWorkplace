@@ -25,6 +25,11 @@ import { Link, useNavigate } from "react-router-dom";
 
 import "../views/Styles/editprofile.css";
 
+const apiURI =
+  window._env_.API_REF === ""
+    ? `${process.env.REACT_APP_API_REF}`
+    : `${window._env_.API_REF}:${window._env_.API_PORT}`;
+
 const EditProfile = () => {
   //const navigate = useNavigate();
 
@@ -38,14 +43,11 @@ const EditProfile = () => {
   const [tempBio, setTempBio] = useState("Undefined");
 
   async function populateProfile() {
-    const response = await fetch(
-      `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/profile`,
-      {
-        //headers: {
-        //    'x-access-token': localStorage.getItem('token'),
-        //},
-      }
-    );
+    const response = await fetch(`${apiURI}/api/profile`, {
+      //headers: {
+      //    'x-access-token': localStorage.getItem('token'),
+      //},
+    });
 
     const data = await response.json();
 
@@ -80,19 +82,16 @@ const EditProfile = () => {
 
   async function updateTitle(event) {
     event.preventDefault();
-    const response = await fetch(
-      `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/profile`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          //'x-access-token': localStorage.getItem('token'),
-        },
-        body: JSON.stringify({
-          title: temptitle,
-        }),
-      }
-    );
+    const response = await fetch(`${apiURI}/api/profile`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        //'x-access-token': localStorage.getItem('token'),
+      },
+      body: JSON.stringify({
+        title: temptitle,
+      }),
+    });
 
     const data = await response.json();
 
@@ -108,19 +107,16 @@ const EditProfile = () => {
 
   async function updateFullName(event) {
     event.preventDefault();
-    const response = await fetch(
-      `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/profile`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          //'x-access-token': localStorage.getItem('token'),
-        },
-        body: JSON.stringify({
-          fullName: tempFullName,
-        }),
-      }
-    );
+    const response = await fetch(`${apiURI}/api/profile`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        //'x-access-token': localStorage.getItem('token'),
+      },
+      body: JSON.stringify({
+        fullName: tempFullName,
+      }),
+    });
 
     const data = await response.json();
 
@@ -136,19 +132,16 @@ const EditProfile = () => {
 
   async function updateBio(event) {
     event.preventDefault();
-    const response = await fetch(
-      `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/profile`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          //'x-access-token': localStorage.getItem('token'),
-        },
-        body: JSON.stringify({
-          bio: tempBio,
-        }),
-      }
-    );
+    const response = await fetch(`${apiURI}/api/profile`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        //'x-access-token': localStorage.getItem('token'),
+      },
+      body: JSON.stringify({
+        bio: tempBio,
+      }),
+    });
 
     const data = await response.json();
 

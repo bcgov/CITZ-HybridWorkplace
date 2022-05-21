@@ -31,19 +31,21 @@ import { Button } from "@mui/material";
 import { getCommunities } from "../../redux/ducks/communityDuck";
 import { createPost } from "../../redux/ducks/postDuck";
 
+const apiURI =
+    window._env_.API_REF === ""
+      ? `${process.env.REACT_APP_API_REF}`
+      : `${window._env_.API_REF}:${window._env_.API_PORT}`;
+
 const CreatePost = (props) => {
   const [title, setTitle] = useState("Undefined");
   const [message, setMessage] = useState("Undefined");
 
   const userInfo = () => {
-    fetch(
-      `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/profile`,
-      {
-        headers: {
-          //'x-access-token': localStorage.getItem('token'),
-        },
-      }
-    )
+    fetch(`${apiURI}/api/profile`, {
+      headers: {
+        //'x-access-token': localStorage.getItem('token'),
+      },
+    })
       .then((res) => res.json())
       .then((data) => setCreator(data.name));
   };

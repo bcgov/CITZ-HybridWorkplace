@@ -23,10 +23,13 @@
 const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_COMMUNITIES";
 const ADD_POST = "CITZ-HYBRIDWORKPLACE/POST/ADD_COMMUNITY";
 
+const apiURI =
+  window._env_.API_REF === ""
+    ? `${process.env.REACT_APP_API_REF}`
+    : `${window._env_.API_REF}:${window._env_.API_PORT}`;
+
 export const getPosts = () => (dispatch) => {
-  fetch(
-    `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/post`
-  )
+  fetch(`${apiURI}/api/post`)
     .then((res) => res.json())
     .then((posts) =>
       dispatch({
@@ -40,21 +43,18 @@ export const getPosts = () => (dispatch) => {
 };
 
 export const createPost = (postData) => (dispatch) => {
-  fetch(
-    `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/post`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title: postData.title,
-        message: postData.message,
-        creator: postData.creator,
-        community: postData.community,
-      }),
-    }
-  )
+  fetch(`${apiURI}/api/post`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      title: postData.title,
+      message: postData.message,
+      creator: postData.creator,
+      community: postData.community,
+    }),
+  })
     .then((res) => res.json())
     .then((post) =>
       dispatch({
