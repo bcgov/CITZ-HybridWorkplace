@@ -37,7 +37,6 @@ const User = require("../../models/user.model");
  *      summary: Create community
  *      parameters:
  *        - in: RequestBody
- *          name: title
  *          $ref: '#/components/schemas/Community/properties/title'
  *          required: true
  *        - in: RequestBody
@@ -99,7 +98,6 @@ router.post("/", async (req, res) => {
  *        '404':
  *          description: User not found.
  *        '200':
- *          description: Community successfully created.
  *          content:
  *            application/json:
  *              schema:
@@ -127,6 +125,30 @@ router.get("/", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * paths:
+ *  /api/community/{title}:
+ *    get:
+ *      tags:
+ *        - Community
+ *      summary: Get community by title
+ *      parameters:
+ *        - in: path
+ *          $ref: '#/components/schemas/Community/properties/title'
+ *          required: true
+ *      responses:
+ *        '404':
+ *          description: Community not found.
+ *        '200':
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/Community'
+ *        '400':
+ *          description: Bad Request.
+ */
+
 // Get community by title
 router.get("/:title", async (req, res) => {
   try {
@@ -142,12 +164,40 @@ router.get("/:title", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * paths:
+ *  /api/community/{title}:
+ *    patch:
+ *      tags:
+ *        - Community
+ *      summary: Edit community by title
+ *      parameters:
+ *        - in: path
+ *          $ref: '#/components/schemas/Community/properties/title'
+ *          required: true
+ *        - in: RequestBody
+ *          $ref: '#/components/schemas/Community/properties/title'
+ *        - in: RequestBody
+ *          $ref: '#/components/schemas/Community/properties/description'
+ *      responses:
+ *        '404':
+ *          description: Community not found.
+ *        '200':
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/Community'
+ *        '400':
+ *          description: Bad Request.
+ */
+
 // Edit community by title
-// FIX ME: AUTH
+// TODO: AUTH AND FIX PATCH (look in profile.js)
 router.patch("/:title", async (req, res) => {
   try {
     // FIX ME: AUTH USER IS MODERATOR
-    const community = await Community.findOneById({
+    const community = await Community.findOne({
       title: req.params.title,
     }).exec();
 
@@ -161,8 +211,29 @@ router.patch("/:title", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * paths:
+ *  /api/community/{title}:
+ *    delete:
+ *      tags:
+ *        - Community
+ *      summary: Delete community by title
+ *      parameters:
+ *        - in: path
+ *          $ref: '#/components/schemas/Community/properties/title'
+ *          required: true
+ *      responses:
+ *        '404':
+ *          description: Community not found.
+ *        '200':
+ *          description: Community removed.
+ *        '400':
+ *          description: Bad Request.
+ */
+
 // Remove community by title
-// FIX ME: AUTH
+// TODO: AUTH
 router.delete("/:title", async (req, res) => {
   try {
     const community = await Community.deleteOne({
@@ -171,7 +242,7 @@ router.delete("/:title", async (req, res) => {
 
     if (!community) return res.sendStatus(404);
 
-    // FIX ME: AUTH ONLY MODERATORS OF COMMUNITY
+    // TODO: AUTH ONLY MODERATORS OF COMMUNITY
     return res.status(200).send("Community removed.");
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);

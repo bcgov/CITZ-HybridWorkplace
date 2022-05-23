@@ -25,8 +25,6 @@ const authenticateToken = require("./middleware/authenticateToken");
 const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
-    url: "http://localhost:5000",
-    basePath: "/api",
     info: {
       title: "CITZ HybridWorkplace",
       version: process.env.API_VERSION || "undefined",
