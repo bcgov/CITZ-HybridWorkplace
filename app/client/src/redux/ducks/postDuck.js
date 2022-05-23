@@ -23,48 +23,67 @@
 const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_COMMUNITIES";
 const ADD_POST = "CITZ-HYBRIDWORKPLACE/POST/ADD_COMMUNITY";
 
+const noTokenText = "Trying to access accessToken, no accessToken in store"
+
 const apiURI =
   window._env_.REACT_APP_LOCAL_DEV === ""
     ? `${window._env_.REACT_APP_API_REF}`
     : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
 
-export const getPosts = () => (dispatch) => {
-  fetch(`${apiURI}/api/post`)
-    .then((res) => res.json())
-    .then((posts) =>
-      dispatch({
-        type: GET_POSTS,
-        payload: posts,
+export const getPosts = () => async (dispatch, getState) => {
+  let successful = true
+
+  try {
+    const token = getState().auth.accessToken
+    if (!token) throw new Error(noTokenText)
+
+    const response = await fetch(`${apiURI}/api/post`,
+      {
+        headers: {
+          "authorization": `Bearer ${token}`
+        }
       })
-    )
-    .catch((error) => {
-      console.error(error);
-    });
+    if (!response.ok) throw new Error(`${response.status} ${response.statusText}`)
+
+    const posts = await response.json()
+
+    dispatch({
+      type: GET_POSTS,
+      payload: posts
+    })
+  } catch (err) {
+    console.error(err)
+    successful = false
+  } finally {
+    return successful
+  }
 };
 
-export const createPost = (postData) => (dispatch) => {
-  fetch(`${apiURI}/api/post`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      title: postData.title,
-      message: postData.message,
-      creator: postData.creator,
-      community: postData.community,
-    }),
-  })
-    .then((res) => res.json())
-    .then((post) =>
-      dispatch({
-        type: ADD_POST,
-        payload: post,
-      })
-    )
-    .catch((error) => {
-      console.error(error);
-    });
+export const createPost = (postData) => async (dispatch, getState) => {
+  let successful = true
+  try {
+    const token = getState().auth.accessToken
+    if (!token) throw new Error(noTokenText)
+
+    fetch(`${apiURI}/api/post`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        title: postData.title,
+        message: postData.message,
+        creator: postData.creator,
+        community: postData.community,
+      }),
+    })
+  } catch (err) {
+    console.error(err)
+    successful = false
+  } finally {
+    return successful
+  }
 };
 
 const initialState = {

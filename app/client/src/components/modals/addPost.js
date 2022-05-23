@@ -66,7 +66,6 @@ const CreatePost = (props) => {
       community: community,
     };
     props.createPost(post);
-    window.location.reload();
   };
 
   const onTitleChange = (event) => {

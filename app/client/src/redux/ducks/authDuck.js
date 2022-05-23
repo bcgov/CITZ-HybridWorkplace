@@ -46,14 +46,14 @@ export const login = (name, password) => async (dispatch) => {
 
     /* Below is Commented out as backend token auth is not yet implemented*/
 
-    // const data = await res.json();
+    const data = await res.json();
 
-    // dispatch({
-    //   type: LOGIN,
-    //   payload: data,
-    // });
+    dispatch({
+      type: LOGIN,
+      payload: data,
+    });
 
-    // document.cookie = `refreshToken=${data.refreshToken}`;
+    //document.cookie = `refreshToken=${data.refreshToken}`;
   } catch (err) {
     console.error(err);
     successful = false;
@@ -85,6 +85,11 @@ export const register = (name, email, password) => async (dispatch) => {
     return successful;
   }
 };
+
+export const testStore = () => (dispatch, getState) => {
+  console.log(getState())
+  console.log('Logging')
+}
 
 const initialState = {
   refreshToken: "",
