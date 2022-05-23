@@ -31,7 +31,7 @@ const swaggerOptions = {
       description: "API Documentation",
     },
   },
-  apis: [`${__dirname}/routes/v1/*.js`],
+  apis: [`${__dirname}/routes/v1/*.js`, `${__dirname}/models/*.js`],
 };
 
 const specs = swaggerJsDoc(swaggerOptions);

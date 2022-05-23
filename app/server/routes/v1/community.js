@@ -29,41 +29,19 @@ const User = require("../../models/user.model");
 
 /**
  * @swagger
- * components:
- *  schemas:
- *    Community:
- *      type: object
- *      properties:
- *        title:
- *          type: string
- *          example: Welcome
- *        description:
- *          type: string
- *          example: Welcome to TheNeighbourhood
- *        creator:
- *          type: string
- *        members:
- *          type: array
- *      required:
- *        - title
- *    User:
- *      type: object
- *      properties:
- *        name:
- *          type: string
- *          example: Sarah
- *        password:
- *          type: string
- *          writeOnly: true
- *      required:
- *        - name
- *        - password
  * paths:
  *  /api/community:
  *    post:
  *      tags:
  *        - Community
  *      summary: Create community
+ *      parameters:
+ *        - title: title
+ *          in: query
+ *          required: true
+ *        - description: description
+ *          in: query
+ *          required: true
  *      responses:
  *        '404':
  *          description: User not found.
@@ -71,6 +49,8 @@ const User = require("../../models/user.model");
  *          description: Community already exists.
  *        '201':
  *          description: Community successfully created.
+ *        '400':
+ *          description: Bad Request.
  */
 
 // Create community
@@ -101,6 +81,27 @@ router.post("/", async (req, res) => {
       );
   }
 });
+
+/**
+ * @swagger
+ * paths:
+ *  /api/community:
+ *    get:
+ *      tags:
+ *        - Community
+ *      summary: Get all communities the user is a part of
+ *      responses:
+ *        '404':
+ *          description: User not found.
+ *        '200':
+ *          description: Community successfully created.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/../../models/community.model.js/components/schemas/Community'
+ *        '400':
+ *          description: Bad Request.
+ */
 
 // Get all communities you are a part of
 router.get("/", async (req, res) => {

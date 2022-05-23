@@ -20,6 +20,27 @@
  * @module
  */
 
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    Community:
+ *      type: object
+ *      properties:
+ *        title:
+ *          type: string
+ *          example: Welcome
+ *        description:
+ *          type: string
+ *          example: Welcome to TheNeighbourhood
+ *        creator:
+ *          type: string
+ *        members:
+ *          type: array
+ *      required:
+ *        - title
+ */
+
 const mongoose = require("mongoose");
 
 const Community = new mongoose.Schema(

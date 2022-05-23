@@ -20,6 +20,26 @@
  * @module
  */
 
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    Post:
+ *      type: object
+ *      properties:
+ *        title:
+ *          type: string
+ *          example: What is DevOps?
+ *        message:
+ *          type: string
+ *        creator:
+ *          type: string
+ *        community:
+ *          type: string
+ *      required:
+ *        - title
+ */
+
 const mongoose = require("mongoose");
 
 const Post = new mongoose.Schema(

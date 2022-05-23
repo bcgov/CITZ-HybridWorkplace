@@ -20,6 +20,42 @@
  * @module
  */
 
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    User:
+ *      type: object
+ *      properties:
+ *        name:
+ *          type: string
+ *          example: sarah
+ *        email:
+ *          type: string
+ *          example: sarah@gov.bc.ca
+ *        password:
+ *          type: string
+ *          writeOnly: true
+ *        first_name:
+ *          type: string
+ *          example: Sarah
+ *        last_name:
+ *          type: string
+ *          example: Grace
+ *        title:
+ *          type: string
+ *          example: Jr. Software Engineer
+ *        bio:
+ *          type: string
+ *          example: Hi I'm new! Just moved from the Ottawa
+ *        communities:
+ *          type: array
+ *      required:
+ *        - name
+ *        - email
+ *        - password
+ */
+
 const mongoose = require("mongoose");
 
 const User = new mongoose.Schema(
