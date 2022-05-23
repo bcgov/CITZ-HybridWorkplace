@@ -16,7 +16,7 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
  */
 
@@ -29,13 +29,15 @@
  *      properties:
  *        title:
  *          type: string
+ *          description: Title of the post.
  *          example: What is DevOps?
  *        message:
  *          type: string
+ *          description: Body of the post.
  *        creator:
- *          type: string
+ *          $ref: '#/components/schemas/User/properties/id'
  *        community:
- *          type: string
+ *          $ref: '#/components/schemas/Community/properties/title'
  *      required:
  *        - title
  */

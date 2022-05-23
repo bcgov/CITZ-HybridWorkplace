@@ -36,11 +36,12 @@ const User = require("../../models/user.model");
  *        - Community
  *      summary: Create community
  *      parameters:
- *        - title: title
- *          in: query
+ *        - in: RequestBody
+ *          name: title
+ *          $ref: '#/components/schemas/Community/properties/title'
  *          required: true
- *        - description: description
- *          in: query
+ *        - in: RequestBody
+ *          $ref: '#/components/schemas/Community/properties/description'
  *          required: true
  *      responses:
  *        '404':
@@ -49,6 +50,10 @@ const User = require("../../models/user.model");
  *          description: Community already exists.
  *        '201':
  *          description: Community successfully created.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/Community'
  *        '400':
  *          description: Bad Request.
  */
@@ -98,7 +103,7 @@ router.post("/", async (req, res) => {
  *          content:
  *            application/json:
  *              schema:
- *                $ref: '#/../../models/community.model.js/components/schemas/Community'
+ *                $ref: '#/components/schemas/Community'
  *        '400':
  *          description: Bad Request.
  */

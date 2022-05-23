@@ -29,14 +29,21 @@
  *      properties:
  *        title:
  *          type: string
+ *          name: title
+ *          description: Title of the community.
  *          example: Welcome
  *        description:
  *          type: string
+ *          name: description
+ *          description: Description of the community.
  *          example: Welcome to TheNeighbourhood
  *        creator:
- *          type: string
+ *          $ref: '#/components/schemas/User/properties/id'
  *        members:
  *          type: array
+ *          description: Users that have joined the community.
+ *          items:
+ *            - $ref: '#/components/schemas/User'
  *      required:
  *        - title
  */

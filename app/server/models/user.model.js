@@ -16,7 +16,7 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
  */
 
@@ -27,29 +27,42 @@
  *    User:
  *      type: object
  *      properties:
+ *        id:
+ *          type: string
+ *          description: Used as a reference to creator of a post or community.
  *        name:
  *          type: string
+ *          description: User's IDIR username.
  *          example: sarah
  *        email:
  *          type: string
+ *          description: User's email address.
  *          example: sarah@gov.bc.ca
  *        password:
  *          type: string
+ *          description: User's password.
  *          writeOnly: true
  *        first_name:
  *          type: string
+ *          description: User's first name (set in profile).
  *          example: Sarah
  *        last_name:
  *          type: string
+ *          description: User's last name (set in profile).
  *          example: Grace
  *        title:
  *          type: string
+ *          description: User's title (set in profile).
  *          example: Jr. Software Engineer
  *        bio:
  *          type: string
+ *          description: User's profile bio (set in profile).
  *          example: Hi I'm new! Just moved from the Ottawa
  *        communities:
  *          type: array
+ *          description: Communities User has joined.
+ *          items:
+ *            - $ref: '#/components/schemas/Community'
  *      required:
  *        - name
  *        - email
