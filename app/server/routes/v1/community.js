@@ -206,17 +206,14 @@ router.get("/:title", async (req, res) => {
  *      responses:
  *        '404':
  *          description: Community not found.
- *        '200':
- *          content:
- *            application/json:
- *              schema:
- *                $ref: '#/components/schemas/Community'
+ *        '204':
+ *          description: Community successfully edited.
  *        '400':
  *          description: Bad Request.
  */
 
 // Edit community by title
-// TODO: AUTH AND FIX PATCH (look in profile.js)
+// TODO: AUTH
 router.patch("/:title", async (req, res) => {
   try {
     // FIX ME: AUTH USER IS MODERATOR
@@ -226,9 +223,21 @@ router.patch("/:title", async (req, res) => {
 
     if (!community) return res.sendStatus(404);
 
-    // Update post
-    await community.save();
-    return res.status(200).json(community);
+    // eslint-disable-next-line prefer-const
+    let query = { $set: {} };
+
+    Object.keys(req.body).forEach((key) => {
+      // if the field in req.body exists, update/set it
+      if (community[key] && community[key] !== req.body[key]) {
+        query.$set[key] = req.body[key];
+      } else if (!community[key]) {
+        query.$set[key] = req.body[key];
+      }
+    });
+
+    await Community.updateOne({ title: req.params.title }, query).exec();
+
+    return res.sendStatus(204);
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);
   }

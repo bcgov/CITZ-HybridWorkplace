@@ -151,7 +151,7 @@ router.get("/", async (req, res) => {
 // Get post by id
 router.get("/:id", async (req, res) => {
   try {
-    const post = await Post.findOneById({ _id: req.params.id }).exec();
+    const post = await Post.findOne({ _id: req.params.id }).exec();
 
     if (!post) return res.status(404).send("Post not found.");
 
@@ -177,17 +177,19 @@ router.get("/:id", async (req, res) => {
  *          name: id
  *          schema:
  *            $ref: "#/components/schemas/Post/properties/id"
+ *      requestBody:
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              $ref: '#/components/schemas/Post'
  *      responses:
  *        '404':
  *          description: User not found. OR Post not found.
  *        '401':
  *          description: Not Authorized. Only creator of post can edit post.
- *        '200':
+ *        '204':
  *          description: Post successfully edited.
- *          content:
- *            application/json:
- *              schema:
- *                $ref: '#/components/schemas/Post'
  *        '400':
  *          description: Bad Request.
  */
@@ -200,7 +202,7 @@ router.patch("/:id", async (req, res) => {
 
     if (!user) return res.status(404).send("User not found.");
 
-    const post = await Post.findOneById({ _id: req.params.id }).exec();
+    const post = await Post.findOne({ _id: req.params.id }).exec();
 
     if (!post) return res.sendStatus(404);
     if (post.creator !== user.id)
@@ -208,9 +210,21 @@ router.patch("/:id", async (req, res) => {
         .status(401)
         .send("Not Authorized. Only creator of post can edit post.");
 
-    // Update post
-    await post.save();
-    return res.status(200).json(post);
+    // eslint-disable-next-line prefer-const
+    let query = { $set: {} };
+
+    Object.keys(req.body).forEach((key) => {
+      // if the field in req.body exists, update/set it
+      if (post[key] && post[key] !== req.body[key]) {
+        query.$set[key] = req.body[key];
+      } else if (!post[key]) {
+        query.$set[key] = req.body[key];
+      }
+    });
+
+    await Post.updateOne({ _id: req.params.id }, query).exec();
+
+    return res.sendStatus(204);
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);
   }
@@ -255,7 +269,7 @@ router.delete("/:id", async (req, res) => {
 
     if (!user) return res.status(404).send("User not found.");
 
-    const post = await Post.findByIdAndDelete({ _id: req.params.id }).exec();
+    const post = await Post.findOneAndDelete({ _id: req.params.id }).exec();
 
     if (!post) return res.sendStatus(404);
 

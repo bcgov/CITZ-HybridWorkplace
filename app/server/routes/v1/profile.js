@@ -29,7 +29,7 @@ const User = require("../../models/user.model");
 /**
  * @swagger
  * paths:
- *  /api/post:
+ *  /api/profile:
  *    get:
  *      security:
  *        - bearerAuth: []
@@ -44,20 +44,22 @@ const User = require("../../models/user.model");
  *          content:
  *            application/json:
  *              schema:
- *                name:
- *                  $ref: '#/components/schemas/User/properties/name'
- *                email:
- *                  $ref: '#/components/schemas/User/properties/email'
- *                first_name:
- *                  $ref: '#/components/schemas/User/properties/first_name'
- *                last_name:
- *                  $ref: '#/components/schemas/User/properties/last_name'
- *                bio:
- *                  $ref: '#/components/schemas/User/properties/bio'
- *                title:
- *                  $ref: '#/components/schemas/User/properties/title'
- *                quote:
- *                  $ref: '#/components/schemas/User/properties/quote'
+ *                type: object
+ *                properties:
+ *                  name:
+ *                    $ref: '#/components/schemas/User/properties/name'
+ *                  email:
+ *                    $ref: '#/components/schemas/User/properties/email'
+ *                  first_name:
+ *                    $ref: '#/components/schemas/User/properties/first_name'
+ *                  last_name:
+ *                    $ref: '#/components/schemas/User/properties/last_name'
+ *                  bio:
+ *                    $ref: '#/components/schemas/User/properties/bio'
+ *                  title:
+ *                    $ref: '#/components/schemas/User/properties/title'
+ *                  quote:
+ *                    $ref: '#/components/schemas/User/properties/quote'
  *        '400':
  *          description: Bad Request.
  */
@@ -90,7 +92,7 @@ router.get("/", async (req, res) => {
 /**
  * @swagger
  * paths:
- *  /api/post:
+ *  /api/profile:
  *    patch:
  *      security:
  *        - bearerAuth: []
@@ -133,18 +135,19 @@ router.patch("/", async (req, res) => {
 
     if (!user) return res.status(404).send("User not found.");
 
-    await User.updateOne(
-      { name: user.name },
-      {
-        $set: {
-          first_name: req.body.first_name,
-          last_name: req.body.last_name,
-          title: req.body.title,
-          bio: req.body.bio,
-          quote: req.body.quote,
-        },
+    // eslint-disable-next-line prefer-const
+    let query = { $set: {} };
+
+    Object.keys(req.body).forEach((key) => {
+      // if the field in req.body exists, update/set it
+      if (user[key] && user[key] !== req.body[key]) {
+        query.$set[key] = req.body[key];
+      } else if (!user[key]) {
+        query.$set[key] = req.body[key];
       }
-    );
+    });
+
+    await User.updateOne({ name: req.user.name }, query).exec();
 
     return res.sendStatus(204);
   } catch (err) {
@@ -159,7 +162,7 @@ router.patch("/", async (req, res) => {
 /**
  * @swagger
  * paths:
- *  /api/post/{name}:
+ *  /api/profile/{name}:
  *    get:
  *      security:
  *        - bearerAuth: []
@@ -180,20 +183,22 @@ router.patch("/", async (req, res) => {
  *          content:
  *            application/json:
  *              schema:
- *                name:
- *                  $ref: '#/components/schemas/User/properties/name'
- *                email:
- *                  $ref: '#/components/schemas/User/properties/email'
- *                first_name:
- *                  $ref: '#/components/schemas/User/properties/first_name'
- *                last_name:
- *                  $ref: '#/components/schemas/User/properties/last_name'
- *                bio:
- *                  $ref: '#/components/schemas/User/properties/bio'
- *                title:
- *                  $ref: '#/components/schemas/User/properties/title'
- *                quote:
- *                  $ref: '#/components/schemas/User/properties/quote'
+ *                type: object
+ *                properties:
+ *                  name:
+ *                    $ref: '#/components/schemas/User/properties/name'
+ *                  email:
+ *                    $ref: '#/components/schemas/User/properties/email'
+ *                  first_name:
+ *                    $ref: '#/components/schemas/User/properties/first_name'
+ *                  last_name:
+ *                    $ref: '#/components/schemas/User/properties/last_name'
+ *                  bio:
+ *                    $ref: '#/components/schemas/User/properties/bio'
+ *                  title:
+ *                    $ref: '#/components/schemas/User/properties/title'
+ *                  quote:
+ *                    $ref: '#/components/schemas/User/properties/quote'
  *        '400':
  *          description: Bad Request.
  */
