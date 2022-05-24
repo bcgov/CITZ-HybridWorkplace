@@ -45,14 +45,15 @@ export const login = (name, password) => async (dispatch) => {
 
     /* Below is Commented out as backend token auth is not yet implemented*/
 
-    // const data = await res.json();
+    const data = await res.json();
 
-    // dispatch({
-    //   type: LOGIN,
-    //   payload: data,
-    // });
+    dispatch({
+      type: LOGIN,
+      payload: data,
+    });
 
-    // document.cookie = `refreshToken=${data.refreshToken}`;
+    //TODO: Implement httpOnly cookie
+    document.cookie = `refreshToken=${data.refreshToken}`;
   } catch (err) {
     console.error(err);
     successful = false;
