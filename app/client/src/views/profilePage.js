@@ -22,6 +22,7 @@
 
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import "./Styles/profile.css";
 
@@ -52,13 +53,14 @@ const Profile = () => {
         }
     }, []);
     */
+  let { id } = useParams()
 
   return (
     <Box sx={{ alignItems: "stretch" }}>
       <Grid container spacing={2}>
         <Grid item xs={2}>
           <AccountCircle style={{ width: "100%", height: "40%" }} />
-          <ProfileInfo />
+          <ProfileInfo name={id} />
           <br />
           <br />
           <Link to="./edit" style={{ textDecoration: "none" }}>

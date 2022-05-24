@@ -31,26 +31,11 @@ import { Button } from "@mui/material";
 import { getCommunities } from "../../redux/ducks/communityDuck";
 import { createPost } from "../../redux/ducks/postDuck";
 
-const apiURI =
-  window._env_.REACT_APP_LOCAL_DEV === ""
-    ? `${window._env_.REACT_APP_API_REF}`
-    : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
-
 const CreatePost = (props) => {
   const [title, setTitle] = useState("Undefined");
   const [message, setMessage] = useState("Undefined");
 
-  const userInfo = () => {
-    fetch(`${apiURI}/api/profile`, {
-      headers: {
-        //'x-access-token': localStorage.getItem('token'),
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => setCreator(data.name));
-  };
-
-  const [creator, setCreator] = useState(userInfo() ?? "undefined");
+  const [creator, setCreator] = useState(props.auth.user.name);
   const [community, setCommunity] = useState("Undefined");
 
   useEffect(() => {
@@ -105,10 +90,11 @@ const CreatePost = (props) => {
             />
             <br />
             <p>Choose a Community:</p>
-            {props.communities.map((community) => (
-              <div key={community._id}>
-                <Button onClick={() => onCommunityClick(community._id)}>
-                  {community.title}{" "}
+            {props.communities.map((comm) => (
+              <div key={comm._id}>
+                {/* TODO: change button input for choosing community to radio  */}
+                <Button onClick={() => onCommunityClick(comm._id)} variant={`${comm._id === community ? 'contained' : 'outlined'}`}>
+                  {comm.title}{" "}
                 </Button>
               </div>
             ))}
@@ -130,126 +116,9 @@ CreatePost.propTypes = {
 
 const mapStateToProps = (state) => ({
   communities: state.communities.items,
+  auth: state.auth
 });
 
 export default connect(mapStateToProps, { getCommunities, createPost })(
   CreatePost
 );
-
-// class CreatePost extends Component {
-//     constructor(props) {
-//         super(props);
-//         this.state = {
-//           title: '',
-//           message: '',
-//           creator: this.userInfo(),
-//           community: '',
-//         };
-//         this.registerPost = this.registerPost.bind(this);
-//         this.userInfo = this.userInfo.bind(this);
-//         this.onChange = this.onChange.bind(this);
-//         this.setCommunity = this.setCommunity.bind(this);
-
-//     }
-//     registerPost(event) {
-//         event.preventDefault();
-//         const post = {
-//             title: this.state.title,
-//             message: this.state.message,
-//             creator: this.state.creator,
-//             community: this.state.community,
-//         };
-//         console.log(post)
-//         this.props.createPost(post);
-//         window.location.reload()
-//       }
-
-//       onChange(event){
-//           event.preventDefault();
-
-//           this.setState({[event.target.name]: event.target.value})
-//       }
-
-//       userInfo() {
-
-//          fetch(`${process.env.REACT_APP_API_REF}/profile`, {
-//             headers: {
-//                 'x-access-token': localStorage.getItem('token'),
-//             },
-//         })
-
-//         .then(res => res.json())
-//          .then(data => this.state.creator = data.name);
-
-//     }
-//     componentDidMount(){
-//         this.props.getCommunities();
-//     }
-
-//     setCommunity(id){
-//         console.log('clicked' + id)
-//         this.setState({community: id})
-//         console.log(this.state.community + this.state.message)
-//     }
-
-//     render(){
-//         // const communityItems = this.props.communities.map(community => (
-//         //     <div key={community._id}>
-//         //        <Button onClick={this.setCommunity(community._id)}>{community.title} </Button>
-
-//         //     </div>
-//         // ))
-//      return (
-//          <div className={`modal ${this.props.show ? 'show' : ''}`} onClick={this.props.onClose}>
-//              <div className='modalWrap' onClick={e => e.stopPropagation()}>
-//                  <Paper  >
-//                 <br />
-//                 <h1>Add Post</h1>
-//                 <form onSubmit={this.registerPost}>
-//                     <input
-
-//                         onChange={this.onChange}
-//                         type='text'
-//                         name='title'
-//                         placeholder='Title'
-//                     />
-//                     <br/>
-//                     <textarea
-
-//                         onChange={this.onChange}
-//                         type='text'
-//                         name='message'
-//                         placeholder='Message'
-//                     />
-//                     <br/>
-//                     <p>Choose a Community:</p>
-//                     { this.props.communities.map(community => (
-//                         <div key={community._id}>
-//                         <Button onClick={() => this.setCommunity(community._id)}>{community.title} </Button>
-
-//                         </div>))}
-//                     <input type='submit' value='Submit' id='submit' />
-//                 </form>
-
-//                 <br/>
-
-//                 </Paper>
-//                 <br />
-//                 <br />
-//             </div>
-//          </div>
-//      )
-//  }
-// }
-
-// CreatePost.propTypes = {
-//     getCommunities: PropTypes.func.isRequired,
-//     communities: PropTypes.array.isRequired
-// }
-
-// const mapStateToProps = state => ({
-//     communities: state.communities.items
-
-// });
-
-//  export default connect(mapStateToProps, { getCommunities, createPost })(CreatePost);

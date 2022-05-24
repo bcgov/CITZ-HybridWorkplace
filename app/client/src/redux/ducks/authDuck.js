@@ -52,7 +52,8 @@ export const login = (name, password) => async (dispatch) => {
       payload: data,
     });
 
-    //document.cookie = `refreshToken=${data.refreshToken}`;
+    //TODO: Implement httpOnly cookie
+    document.cookie = `refreshToken=${data.refreshToken}`;
   } catch (err) {
     console.error(err);
     successful = false;

@@ -64,7 +64,7 @@ export const createPost = (postData) => async (dispatch, getState) => {
     const token = getState().auth.accessToken;
     if (!token) throw new Error(noTokenText);
 
-    fetch(`${apiURI}/api/post`, {
+    const response = await fetch(`${apiURI}/api/post`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

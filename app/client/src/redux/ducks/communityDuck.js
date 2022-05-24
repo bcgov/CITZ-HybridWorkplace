@@ -93,8 +93,11 @@ export const createCommunity = (communityData) => async (dispatch, getState) => 
   } finally {
     return successful
   }
-
 };
+
+export const joinCommunity = (communityId) => (dispatch, getState) => {
+  //TODO: Implement join community
+}
 
 const initialState = {
   items: [], //communitys
