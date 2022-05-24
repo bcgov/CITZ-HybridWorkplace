@@ -54,6 +54,10 @@ const swaggerOptions = {
         name: "Post",
         description: "View, create, edit, and delete posts.",
       },
+      {
+        name: "Profile",
+        description: "View and edit profile settings.",
+      },
     ],
   },
   apis: [

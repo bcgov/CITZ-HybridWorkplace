@@ -26,6 +26,42 @@ const router = express.Router();
 
 const User = require("../../models/user.model");
 
+/**
+ * @swagger
+ * paths:
+ *  /api/post:
+ *    get:
+ *      security:
+ *        - bearerAuth: []
+ *      tags:
+ *        - Profile
+ *      summary: Get user's profile.
+ *      responses:
+ *        '404':
+ *          description: User not found.
+ *        '200':
+ *          description: Successfully found user.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                name:
+ *                  $ref: '#/components/schemas/User/properties/name'
+ *                email:
+ *                  $ref: '#/components/schemas/User/properties/email'
+ *                first_name:
+ *                  $ref: '#/components/schemas/User/properties/first_name'
+ *                last_name:
+ *                  $ref: '#/components/schemas/User/properties/last_name'
+ *                bio:
+ *                  $ref: '#/components/schemas/User/properties/bio'
+ *                title:
+ *                  $ref: '#/components/schemas/User/properties/title'
+ *                quote:
+ *                  $ref: '#/components/schemas/User/properties/quote'
+ *        '400':
+ *          description: Bad Request.
+ */
+
 // Get user's profile
 router.get("/", async (req, res) => {
   try {
@@ -50,6 +86,45 @@ router.get("/", async (req, res) => {
       );
   }
 });
+
+/**
+ * @swagger
+ * paths:
+ *  /api/post:
+ *    patch:
+ *      security:
+ *        - bearerAuth: []
+ *      tags:
+ *        - Profile
+ *      summary: Edit user's profile.
+ *      requestBody:
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                name:
+ *                  $ref: '#/components/schemas/User/properties/name'
+ *                email:
+ *                  $ref: '#/components/schemas/User/properties/email'
+ *                first_name:
+ *                  $ref: '#/components/schemas/User/properties/first_name'
+ *                last_name:
+ *                  $ref: '#/components/schemas/User/properties/last_name'
+ *                bio:
+ *                  $ref: '#/components/schemas/User/properties/bio'
+ *                title:
+ *                  $ref: '#/components/schemas/User/properties/title'
+ *                quote:
+ *                  $ref: '#/components/schemas/User/properties/quote'
+ *      responses:
+ *        '404':
+ *          description: User not found.
+ *        '204':
+ *          description: Profile successfully edited.
+ *        '400':
+ *          description: Bad Request.
+ */
 
 // Edit user's profile
 router.patch("/", async (req, res) => {
@@ -81,7 +156,49 @@ router.patch("/", async (req, res) => {
   }
 });
 
-// Get user profile from name
+/**
+ * @swagger
+ * paths:
+ *  /api/post/{name}:
+ *    get:
+ *      security:
+ *        - bearerAuth: []
+ *      tags:
+ *        - Profile
+ *      summary: Get user profile by name.
+ *      parameters:
+ *        - in: path
+ *          name: name
+ *          required: true
+ *          schema:
+ *            $ref: '#/components/schemas/User/properties/name'
+ *      responses:
+ *        '404':
+ *          description: User not found.
+ *        '200':
+ *          description: Successfully found user.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                name:
+ *                  $ref: '#/components/schemas/User/properties/name'
+ *                email:
+ *                  $ref: '#/components/schemas/User/properties/email'
+ *                first_name:
+ *                  $ref: '#/components/schemas/User/properties/first_name'
+ *                last_name:
+ *                  $ref: '#/components/schemas/User/properties/last_name'
+ *                bio:
+ *                  $ref: '#/components/schemas/User/properties/bio'
+ *                title:
+ *                  $ref: '#/components/schemas/User/properties/title'
+ *                quote:
+ *                  $ref: '#/components/schemas/User/properties/quote'
+ *        '400':
+ *          description: Bad Request.
+ */
+
+// Get user profile by name
 router.get("/:name", async (req, res) => {
   try {
     const user = await User.findOne({ name: req.params.name }).exec();
