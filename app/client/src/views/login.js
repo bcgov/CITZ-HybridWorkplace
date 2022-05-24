@@ -34,7 +34,7 @@ function App(props) {
   async function loginUser(event) {
     event.preventDefault();
     const successful = await props.login(name, password);
-    if (successful === true) navigate("/");
+    if (successful === true) navigate("/home");
   }
 
   return (
