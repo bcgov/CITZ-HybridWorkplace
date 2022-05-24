@@ -28,6 +28,36 @@ const router = express.Router();
 const User = require("../../models/user.model");
 const Community = require("../../models/community.model");
 
+/**
+ * @swagger
+ * paths:
+ *  /api/register:
+ *    post:
+ *      tags:
+ *        - Auth
+ *      summary: Register for an account.
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                name:
+ *                  $ref: '#/components/schemas/User/properties/name'
+ *                email:
+ *                  $ref: '#/components/schemas/User/properties/email'
+ *                password:
+ *                  $ref: '#/components/schemas/User/properties/password'
+ *      responses:
+ *        '403':
+ *          description: Forbidden (IDIR or email already exists).
+ *        '201':
+ *          description: Registered.
+ *        '400':
+ *          description: Bad Request.
+ */
+
 // Register User
 router.post("/", async (req, res) => {
   try {

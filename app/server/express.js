@@ -28,12 +28,23 @@ const swaggerOptions = {
     info: {
       title: "CITZ HybridWorkplace",
       version: process.env.API_VERSION || "undefined",
-      description: "API Documentation",
+      description: `API Documentation
+      \n\n## AUTH: 
+      This API uses JWT tokens for authentication. Start by using the register endpoint, or if you already have an account, the login endpoint. 
+      \n\n- After logging in, copy the access token from the response. 
+      \n\n- Click on the **'Authorize'** button, paste the token into the field under **'bearerAuth'**, and click **'Authorize'**. 
+      \n\n- Repeat these steps but with the refresh token, and paste into the field under **'cookieAuth'**. 
+      \n\n- Now you will have limited access to the endpoints that require authentication (indicated by a lock icon). 
+      \n\n- You will not have any indication for when your token expires, except that requests will return a **'Forbidden'** response. 
+      \n\n- When this happens, you will be required to use the token endpoint, copy the access token in the response, and paste it into the field under **'bearerAuth'**.`,
     },
     tags: [
       {
+        name: "API",
+      },
+      {
         name: "Auth",
-        description: "Login, logout, and refresh access token.",
+        description: "Login, logout, register, and refresh access token.",
       },
       {
         name: "Community",
@@ -62,6 +73,10 @@ app.use("/doc", swaggerUI.serve, swaggerUI.setup(specs));
  *      type: http
  *      scheme: bearer
  *      bearerFormat: JWT
+ *    cookieAuth:
+ *      type: apiKey
+ *      in: cookie
+ *      name: jwt
  */
 
 // Express middleware

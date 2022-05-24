@@ -56,7 +56,7 @@ const User = require("../../models/user.model");
  *        '403':
  *          description: Community already exists.
  *        '201':
- *          description: Sucessfully logged in.
+ *          description: Successfully logged in.
  *          content:
  *            application/json:
  *              schema:
@@ -75,7 +75,6 @@ const User = require("../../models/user.model");
 // Login
 router.post("/", async (req, res) => {
   try {
-    console.log(req.body);
     const user = await User.findOne({
       name: req.body.name,
     });

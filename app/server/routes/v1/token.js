@@ -29,20 +29,53 @@ const router = express.Router();
 const generateToken = require("../../middleware/generateToken");
 const User = require("../../models/user.model");
 
+/**
+ * @swagger
+ * paths:
+ *  /api/token:
+ *    get:
+ *      security:
+ *        - cookieAuth: []
+ *      tags:
+ *        - Auth
+ *      summary: Use refresh token to retreive a new access token.
+ *      responses:
+ *        '401':
+ *          description: Unauthorized (missing cookie).
+ *        '403':
+ *          description: Forbidden (Refresh token no longer valid).
+ *        '200':
+ *          description: Success.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  token:
+ *                    type: string
+ *                    description: Access token with short expiry.
+ *        '400':
+ *          description: Bad Request.
+ */
+
 router.get("/", async (req, res) => {
-  // Get refresh token from cookies
-  if (!(req.cookies && req.cookies.jwt)) return res.sendStatus(401);
-  const refreshToken = req.cookies.jwt;
+  try {
+    // Get refresh token from cookies
+    if (!(req.cookies && req.cookies.jwt)) return res.sendStatus(401);
+    const refreshToken = req.cookies.jwt;
 
-  // Check refresh token exists
-  const user = await User.findOne({ refresh_token: refreshToken });
-  if (!user) return res.status(403).send("Forbidden.");
+    // Check refresh token exists
+    const user = await User.findOne({ refresh_token: refreshToken });
+    if (!user) return res.status(403).send("Forbidden.");
 
-  jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err) => {
-    if (err) return res.status(403).send("Forbidden.");
-    const token = generateToken(user);
-    return res.json({ token });
-  });
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err) => {
+      if (err) return res.status(403).send("Forbidden.");
+      const token = generateToken(user);
+      return res.status(200).json({ token });
+    });
+  } catch (err) {
+    return res.status(400).send(`Bad Request: ${err}`);
+  }
 });
 
 module.exports = router;

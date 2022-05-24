@@ -24,6 +24,19 @@ const express = require("express");
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * paths:
+ *  /api/health:
+ *    get:
+ *      tags:
+ *        - API
+ *      summary: Returns "API is running!" if the endpoint is working.
+ *      responses:
+ *        '200':
+ *          description: API is running!
+ */
+
 router.get("/", async (req, res) => res.status(200).send("API is running!"));
 
 module.exports = router;
