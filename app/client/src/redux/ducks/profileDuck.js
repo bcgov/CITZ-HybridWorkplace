@@ -22,58 +22,56 @@
 
 const SET_USER = "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_USER";
 
-const noTokenText = "Trying to access accessToken, no accessToken in store"
+const noTokenText = "Trying to access accessToken, no accessToken in store";
 
-const apiURI =
-    window._env_.REACT_APP_LOCAL_DEV === ""
-        ? `${window._env_.REACT_APP_API_REF}`
-        : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
+const apiURI = !window._env_.REACT_APP_LOCAL_DEV
+  ? `${window._env_.REACT_APP_API_REF}`
+  : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
 
 export const getProfile = (name) => async (dispatch, getState) => {
-    let successful = true
-    try {
-        const token = getState().auth.accessToken
-        if (!token) throw new Error(noTokenText)
+  let successful = true;
+  try {
+    const token = getState().auth.accessToken;
+    if (!token) throw new Error(noTokenText);
 
-        const response = await fetch(`${apiURI}/api/profile`, {
-            headers: {
-                "authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                name
-            })
-        })
+    const response = await fetch(`${apiURI}/api/profile`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        name,
+      }),
+    });
 
-        if (!response.ok) {
-            throw new Error(`${response.status} ${response.statusText}`)
-        }
-
-        const user = await response.json()
-
-        dispatch({
-            type: SET_USER,
-            payload: user,
-        })
-
-    } catch (err) {
-        console.error(err)
-        successful = false
-    } finally {
-        return successful
+    if (!response.ok) {
+      throw new Error(`${response.status} ${response.statusText}`);
     }
+
+    const user = await response.json();
+
+    dispatch({
+      type: SET_USER,
+      payload: user,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
 };
 
 const initialState = {
-    user: {}, //single profile
+  user: {}, //single profile
 };
 
 export function profileReducer(state = initialState, action) {
-    switch (action.type) {
-        case SET_USER:
-            return {
-                user: action.payload,
-            };
-        default:
-            return state;
-    }
+  switch (action.type) {
+    case SET_USER:
+      return {
+        user: action.payload,
+      };
+    default:
+      return state;
+  }
 }

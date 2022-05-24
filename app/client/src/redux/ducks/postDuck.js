@@ -77,6 +77,16 @@ export const createPost = (postData) => async (dispatch, getState) => {
         community: postData.community,
       }),
     });
+
+    if (!response.ok)
+      throw new Error(`${response.status} ${response.statusText}`);
+
+    const data = await response.json();
+
+    dispatch({
+      type: ADD_POST,
+      payload: data,
+    });
   } catch (err) {
     console.error(err);
     successful = false;
