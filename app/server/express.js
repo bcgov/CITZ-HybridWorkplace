@@ -71,7 +71,7 @@ const specs = swaggerJsDoc(swaggerOptions);
 
 const app = express();
 
-app.use("/doc", swaggerUI.serve, swaggerUI.setup(specs));
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 
 /**
  * @swagger
