@@ -13,7 +13,7 @@ To run the server locally with nodemon, type this into the terminal: `npm run de
 ## API Documentation
 
 The API is documented using Swagger (OpenAPI v3.0.0).\
-Open [http://localhost:5000/doc](http://localhost:5000/doc) to view it in your browser.
+Open [http://localhost:5000/api-docs](http://localhost:5000/api-docs) to view it in your browser.
 
 The basic setup for swagger is done in ./express.js\
 Data model documentation is done in the ./models/_.model.js files.\
