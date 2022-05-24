@@ -75,6 +75,7 @@ jobs:
           ENVIRONMENT: "${{ secrets.ENVIRONMENT }}"
           IMAGE_TAG: latest
           DEPLOYMENT_CONFIG: frontend-dc.yaml
+          API_REFERENCE: "${{ secrets.DEV_API_REFERENCE }}"
         run: |
           ./.github/helpers/deploy.sh 
 
