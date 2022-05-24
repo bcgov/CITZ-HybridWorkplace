@@ -26,9 +26,11 @@ import { combineReducers } from "redux";
 import { communityReducer } from "./ducks/communityDuck";
 import { postReducer } from "./ducks/postDuck";
 import { authReducer } from "./ducks/authDuck";
+import { profileReducer } from "./ducks/profileDuck";
 
 export default combineReducers({
   communities: communityReducer,
   posts: postReducer,
   auth: authReducer,
+  profile: profileReducer
 });

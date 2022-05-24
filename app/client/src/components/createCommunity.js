@@ -44,36 +44,6 @@ const CreateCommunity = () => {
     navigate("/home");
   }
 
-  /*
-    async function userInfo() {
-
-        const response = await fetch(`${window._env_.REACT_APP_API_REF}/profile`, {
-            //headers: {
-            //    'x-access-token': localStorage.getItem('token'),
-            //},
-        });
-
-        if (response.status === 200) {
-            setName(data.name);
-        } else {
-            alert("At least one field in JSON is undefined, line 59, createCommunity.js: " + data.error);
-        }
-    }
-
-    useEffect(() => {
-        const token = localStorage.getItem('token')
-        if (token) {
-            const user = jwt_decode(token);
-            if (!user) {
-                //localStorage.removeItem('token')
-                navigate('/login');
-            } else {
-                userInfo();
-            }
-        }
-    }, []);
-    */
-
   return (
     <div>
       <h1>Create Community</h1>

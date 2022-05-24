@@ -42,43 +42,6 @@ const EditProfile = () => {
   const [temptitle, setTempTitle] = useState("Undefined");
   const [tempBio, setTempBio] = useState("Undefined");
 
-  async function populateProfile() {
-    const response = await fetch(`${apiURI}/api/profile`, {
-      //headers: {
-      //    'x-access-token': localStorage.getItem('token'),
-      //},
-    });
-
-    const data = await response.json();
-
-    if (response.status === 200) {
-      setEmail(data.email);
-      setName(data.name);
-      setTitle(data.title);
-      setFullName(data.fullName);
-      setBio(data.bio);
-    } else {
-      alert(
-        "At least one field in JSON is undefined, line 56, editProfile.js: " +
-          data.error
-      );
-    }
-  }
-
-  /*
-    useEffect(() => {
-        const token = localStorage.getItem('token')
-        if (token){
-            const user = jwt_decode(token)
-            if(!user){
-                localStorage.removeItem('token')
-                navigate('/login')
-            }else{
-                populateProfile()
-            }
-        }
-    }, []);
-    */
 
   async function updateTitle(event) {
     event.preventDefault();
@@ -100,7 +63,7 @@ const EditProfile = () => {
     } else {
       alert(
         "At least one field in JSON is undefined, line 93, editProfile.js: " +
-          data.error
+        data.error
       );
     }
   }
@@ -125,7 +88,7 @@ const EditProfile = () => {
     } else {
       alert(
         "At least one field in JSON is undefined, line 114, editProfile.js: " +
-          data.error
+        data.error
       );
     }
   }
@@ -150,7 +113,7 @@ const EditProfile = () => {
     } else {
       alert(
         "At least one field in JSON is undefined, line 137, editProfile.js: " +
-          data.error
+        data.error
       );
     }
   }

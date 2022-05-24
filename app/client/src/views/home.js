@@ -34,7 +34,6 @@ import Posts from '../components/postsList';
 import PostModal from '../components/modals/addPost';
 
 const Home = () => {
-    //const navigate = useNavigate();
     const [show, setShow] = useState(false);
 
     /*

@@ -21,71 +21,40 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { connect } from 'react-redux';
+import { getProfile } from "../redux/ducks/profileDuck";
+import PropTypes from 'prop-types'
 
-const apiURI =
-  window._env_.REACT_APP_LOCAL_DEV === ""
-    ? `${window._env_.REACT_APP_API_REF}`
-    : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
+const Profile = (props) => {
 
-const Profile = () => {
-  //const navigate = useNavigate();
-
-  const [email, setEmail] = useState("Undefined");
-  const [title, setTitle] = useState("Undefined");
-  const [name, setName] = useState("Undefined");
-  const [fullName, setFullName] = useState("Undefined");
-  const [bio, setBio] = useState("Undefined");
-
-  async function populateQuote() {
-    const response = await fetch(`${apiURI}/api/profile`, {
-      headers: {
-        //'x-access-token': localStorage.getItem('token'),
-      },
-    });
-
-    const data = await response.json();
-
-    if (response.status === 200) {
-      setEmail(data.email);
-      setName(data.name);
-      setTitle(data.title);
-      setFullName(data.fullName);
-      setBio(data.bio);
-    } else {
-      alert(
-        "At least one field in JSON is undefined, line 50, profileInfo.js: " +
-          data.error
-      );
-    }
-  }
-
-  /*
-    useEffect(() => {
-        const token = localStorage.getItem('token')
-        if (token){
-            const user = jwt_decode(token)
-            if(!user){
-                localStorage.removeItem('token')
-                navigate('/login')
-            }else{
-                 
-                populateQuote()
-            }
-        }
-    }, []);
-    */
+  useEffect(() => {
+    props.getProfile(props.name)
+  })
 
   return (
     <div>
-      <h3>{fullName || ""}</h3>
-      <h4>{name}</h4>
-      <p> {email} </p>
-      <p> {title || ""} </p>
+      <h3>{props.profile.name || ""}</h3>
+      <h4>{props.profile.first_name + ' ' + props.profile.last_name}</h4>
+      <p> {props.profile.email} </p>
+      <p> {props.profile.title || ""} </p>
       <br />
-      <p> {bio || ""} </p>
+      <p> {props.profile.bio || ""} </p>
     </div>
   );
 };
 
-export default Profile;
+Profile.propTypes = {
+  getProfile: PropTypes.func.isRequired,
+  profile: PropTypes.array.isRequired
+}
+
+const mapStateToProps = state => ({
+  profile: state.profile.user
+});
+
+const mapActionsToProps = {
+  getProfile
+}
+
+export default connect(mapStateToProps, mapActionsToProps)(Profile);
+

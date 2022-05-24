@@ -65,7 +65,7 @@ export const createPost = (postData) => async (dispatch, getState) => {
     const token = getState().auth.accessToken
     if (!token) throw new Error(noTokenText)
 
-    fetch(`${apiURI}/api/post`, {
+    const response = await fetch(`${apiURI}/api/post`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -78,6 +78,16 @@ export const createPost = (postData) => async (dispatch, getState) => {
         community: postData.community,
       }),
     })
+
+    if (!response.ok) throw new Error(`${response.status} ${response.statusText}`)
+
+    const data = await response.json()
+
+    dispatch({
+      type: ADD_POST,
+      payload: data
+    })
+
   } catch (err) {
     console.error(err)
     successful = false

@@ -16,89 +16,18 @@
 
 import Button from "@mui/material/Button";
 import React, { useEffect, useState } from "react";
-
-//import { ThemeProvider, createTheme } from '@mui/material/styles';
-//import { red, green } from '@mui/material/colors';
-
-// const theme = createTheme({
-//   palette: {
-//     primary: {
-//       main: '#f44336',
-//     },
-//     secondary: {
-//       main: green[600],
-//     },
-//   },
-// });
-
-const apiURI =
-  window._env_.REACT_APP_LOCAL_DEV === ""
-    ? `${window._env_.REACT_APP_API_REF}`
-    : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
+import { connect } from "react-redux";
+import { PropTypes } from "prop-types"
+import { joinCommunity } from "../redux/ducks/communityDuck"
 
 const JoinButton = (props) => {
   const [flag, setFlag] = useState(false);
-  const [communitiesList, setCommunitiesList] = useState([{}]);
 
-  useEffect(() => {
-    //const token = localStorage.getItem('token');
-    //if (token) {
-    //const user = jwt_decode(token)
-    //if (!user) {
-    //localStorage.removeItem('token')
-    //} else {
-    fetch(`${apiURI}/api/community`, {
-      headers: {
-        //'x-access-token': localStorage.getItem('token'),
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setCommunitiesList(data.communities);
-        if (communitiesList[0].includes(props.name)) {
-          setFlag(true);
-        } else {
-          setFlag(false);
-        }
-      });
-    //}
-    //}
-  }, []);
 
   const handleClick = () => {
     setFlag(!flag);
+    props.joinCommunity(props.name)
 
-    if (!flag) {
-      //FIX ME: SET JOIN IN COMMUNITY > MEMBERS, and PROFILE > COMMUNITIES
-      /*
-      fetch(`http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/community`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          //'x-access-token': localStorage.getItem('token'),
-        },
-        body: JSON.stringify({
-          community: props.title,
-        }),
-      });
-      */
-    } else {
-      //FIX ME: SET LEAVE COMMUNITY IN COMMUNITY > MEMBERS, and PROFILE > COMMUNITIES
-      /*
-      fetch(`http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api/profile`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          //'x-access-token': localStorage.getItem('token'),
-        },
-        body: {
-          communities: [
-            {}
-          ]
-        },
-      });
-      */
-    }
   };
 
   return (
@@ -113,4 +42,14 @@ const JoinButton = (props) => {
   );
 };
 
-export default JoinButton;
+JoinButton.propTypes = {
+  joinCommunity: PropTypes.func.isRequired,
+}
+
+const mapStateToProps = state => ({});
+
+const mapActionsToProps = {
+  joinCommunity
+}
+
+export default connect(mapStateToProps, mapActionsToProps)(JoinButton);
