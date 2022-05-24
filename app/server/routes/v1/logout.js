@@ -28,7 +28,24 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../../models/user.model");
 
-// FIX ME: ON CLIENT delete token on logout
+/**
+ * @swagger
+ * paths:
+ *  /api/logout:
+ *    get:
+ *      security:
+ *        - cookieAuth: []
+ *      tags:
+ *        - Auth
+ *      summary: Log out of account.
+ *      responses:
+ *        '401':
+ *          description: Unauthorized (missing cookie).
+ *        '204':
+ *          description: Successfully logged out.
+ */
+
+// TODO: ON CLIENT delete token on logout
 router.get("/", async (req, res) => {
   // Get refresh token from cookies
   if (!(req.cookies && req.cookies.jwt)) return res.sendStatus(401);

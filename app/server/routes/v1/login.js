@@ -31,6 +31,47 @@ const generateRefreshToken = require("../../middleware/generateRefreshToken");
 
 const User = require("../../models/user.model");
 
+/**
+ * @swagger
+ * paths:
+ *  /api/login:
+ *    post:
+ *      tags:
+ *        - Auth
+ *      summary: Login into account.
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                name:
+ *                  $ref: '#/components/schemas/User/properties/name'
+ *                password:
+ *                  $ref: '#/components/schemas/User/properties/password'
+ *      responses:
+ *        '404':
+ *          description: User not found.
+ *        '403':
+ *          description: Community already exists.
+ *        '201':
+ *          description: Successfully logged in.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  token:
+ *                    type: string
+ *                    description: Access token with short expiry.
+ *                  refresh_token:
+ *                    type: string
+ *                    description: Refresh token with longer expiry.
+ *        '400':
+ *          description: Bad Request.
+ */
+
 // Login
 router.post("/", async (req, res) => {
   try {
