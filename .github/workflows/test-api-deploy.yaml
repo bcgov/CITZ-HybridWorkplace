@@ -29,6 +29,7 @@ jobs:
           APPLICATION_NAME: "${{ secrets.API_APPLICATION_NAME }}"
           LICENSE_PLATE: "${{ secrets.LICENSE_PLATE }}"
           ENVIRONMENT: "${{ secrets.TEST_ENVIRONMENT }}"
+          API_REFERENCE: "${{ secrets.DEV_API_REFERENCE }}"
           DEPLOYMENT_CONFIG: api-dc.yaml
         run: |
           ./.github/helpers/deploy.sh 
