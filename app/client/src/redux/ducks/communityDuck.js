@@ -23,81 +23,82 @@
 const SET_COMMUNITIES = "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_COMMUNITIES";
 const ADD_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/ADD_COMMUNITY";
 
-const noTokenText = "Trying to access accessToken, no accessToken in store"
+const noTokenText = "Trying to access accessToken, no accessToken in store";
 
 const apiURI = !window._env_.REACT_APP_LOCAL_DEV
   ? `${window._env_.REACT_APP_API_REF}`
   : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
 
 export const getCommunities = () => async (dispatch, getState) => {
-  let successful = true
+  let successful = true;
   try {
-    const token = getState().auth.accessToken
-    if (!token) throw new Error(noTokenText)
+    const token = getState().auth.accessToken;
+    if (!token) throw new Error(noTokenText);
 
     const response = await fetch(`${apiURI}/api/community`, {
       headers: {
-        "authorization": `Bearer ${token}`
-      }
-    })
+        authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`)
+      throw new Error(`${response.status} ${response.statusText}`);
     }
 
-    const communities = await response.json()
+    const communities = await response.json();
 
     dispatch({
       type: SET_COMMUNITIES,
       payload: communities,
-    })
-
+    });
   } catch (err) {
-    console.error(err)
-    successful = false
+    console.error(err);
+    successful = false;
   } finally {
-    return successful
+    return successful;
   }
 };
 
-export const createCommunity = (communityData) => async (dispatch, getState) => {
-  let successful = true
-  try {
-    const token = getState().auth.accessToken
-    if (!token) throw new Error(noTokenText)
+export const createCommunity =
+  (communityData) => async (dispatch, getState) => {
+    let successful = true;
+    try {
+      const token = getState().auth.accessToken;
+      if (!token) throw new Error(noTokenText);
 
-    const response = await fetch(`${apiURI}/api/community`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        title: communityData.title,
-        description: communityData.description,
-        creator: communityData.creator,
-      }),
-    })
+      const response = await fetch(`${apiURI}/api/community`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title: communityData.title,
+          description: communityData.description,
+          creator: communityData.creator,
+        }),
+      });
 
-    if (!response.ok) throw new Error(`${response.status} ${response.statusText}`)
+      if (!response.ok)
+        throw new Error(`${response.status} ${response.statusText}`);
 
-    const community = await response.json()
+      const community = await response.json();
 
-    dispatch({
-      type: ADD_COMMUNITY,
-      payload: community,
-    })
-  } catch (err) {
-    console.error(err)
-    successful = false
-  } finally {
-    return successful
-  }
-};
+      dispatch({
+        type: ADD_COMMUNITY,
+        payload: community,
+      });
+    } catch (err) {
+      console.error(err);
+      successful = false;
+    } finally {
+      return successful;
+    }
+  };
 
 export const joinCommunity = (communityId) => (dispatch, getState) => {
   //TODO: Implement join community
-}
+};
 
 const initialState = {
   items: [], //communitys
