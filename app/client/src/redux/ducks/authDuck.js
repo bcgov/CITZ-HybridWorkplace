@@ -87,11 +87,6 @@ export const register = (name, email, password) => async (dispatch) => {
   }
 };
 
-export const testStore = () => (dispatch, getState) => {
-  console.log(getState())
-  console.log('Logging')
-}
-
 const initialState = {
   refreshToken: "",
   accessToken: "",
