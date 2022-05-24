@@ -27,6 +27,9 @@
  *    Post:
  *      type: object
  *      properties:
+ *        id:
+ *          type: string
+ *          description: Used to identify a specific post.
  *        title:
  *          type: string
  *          description: Title of the post.

@@ -36,7 +36,7 @@ const User = require("../../models/user.model");
  *        - bearerAuth: []
  *      tags:
  *        - Community
- *      summary: Create community
+ *      summary: Create community.
  *      requestBody:
  *        required: true
  *        content:
@@ -101,7 +101,7 @@ router.post("/", async (req, res) => {
  *        - bearerAuth: []
  *      tags:
  *        - Community
- *      summary: Get all communities the user is a part of
+ *      summary: Get all communities the user is a part of.
  *      responses:
  *        '404':
  *          description: User not found.
@@ -142,7 +142,7 @@ router.get("/", async (req, res) => {
  *        - bearerAuth: []
  *      tags:
  *        - Community
- *      summary: Get community by title
+ *      summary: Get community by title.
  *      parameters:
  *        - in: path
  *          required: true
@@ -185,7 +185,7 @@ router.get("/:title", async (req, res) => {
  *        - bearerAuth: []
  *      tags:
  *        - Community
- *      summary: Edit community by title
+ *      summary: Edit community by title.
  *      parameters:
  *        - in: path
  *          required: true
@@ -243,7 +243,7 @@ router.patch("/:title", async (req, res) => {
  *        - bearerAuth: []
  *      tags:
  *        - Community
- *      summary: Delete community by title
+ *      summary: Delete community by title.
  *      parameters:
  *        - in: path
  *          required: true

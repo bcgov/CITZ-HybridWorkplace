@@ -30,7 +30,7 @@ const swaggerOptions = {
       version: process.env.API_VERSION || "undefined",
       description: `API Documentation
       \n\n## AUTH: 
-      This API uses JWT tokens for authentication. Start by using the register endpoint, or if you already have an account, the login endpoint. 
+      This API uses JWT tokens for authentication. Start by registering, or if you already have an account, the logging in. 
       \n\n- After logging in, copy the access token from the response. 
       \n\n- Click on the **'Authorize'** button, paste the token into the field under **'bearerAuth'**, and click **'Authorize'**. 
       \n\n- Repeat these steps but with the refresh token, and paste into the field under **'cookieAuth'**. 
@@ -49,6 +49,10 @@ const swaggerOptions = {
       {
         name: "Community",
         description: "View, create, edit, and delete communities.",
+      },
+      {
+        name: "Post",
+        description: "View, create, edit, and delete posts.",
       },
     ],
   },
