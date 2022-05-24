@@ -32,16 +32,26 @@ const User = require("../../models/user.model");
  * paths:
  *  /api/community:
  *    post:
+ *      security:
+ *        - bearerAuth: []
  *      tags:
  *        - Community
  *      summary: Create community
+ *      consumes:
+ *        - application/json
+ *      produces:
+ *        - application/json
  *      parameters:
- *        - in: RequestBody
- *          $ref: '#/components/schemas/Community/properties/title'
+ *        - in: body
  *          required: true
- *        - in: RequestBody
- *          $ref: '#/components/schemas/Community/properties/description'
+ *          name: title
+ *          schema:
+ *            $ref: '#/components/schemas/Community/properties/title'
+ *        - in: body
  *          required: true
+ *          name: description
+ *          schema:
+ *            $ref: '#/components/schemas/Community/properties/description'
  *      responses:
  *        '404':
  *          description: User not found.
@@ -91,9 +101,13 @@ router.post("/", async (req, res) => {
  * paths:
  *  /api/community:
  *    get:
+ *      security:
+ *        - bearerAuth: []
  *      tags:
  *        - Community
  *      summary: Get all communities the user is a part of
+ *      produces:
+ *        - application/json
  *      responses:
  *        '404':
  *          description: User not found.
@@ -130,13 +144,19 @@ router.get("/", async (req, res) => {
  * paths:
  *  /api/community/{title}:
  *    get:
+ *      security:
+ *        - bearerAuth: []
  *      tags:
  *        - Community
  *      summary: Get community by title
+ *      produces:
+ *        - application/json
  *      parameters:
  *        - in: path
- *          $ref: '#/components/schemas/Community/properties/title'
  *          required: true
+ *          name: title
+ *          schema:
+ *            $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
  *          description: Community not found.
@@ -167,19 +187,31 @@ router.get("/:title", async (req, res) => {
 /**
  * @swagger
  * paths:
- *  /api/community/{title}:
+ *  /api/community/{currTitle}:
  *    patch:
+ *      security:
+ *        - bearerAuth: []
  *      tags:
  *        - Community
  *      summary: Edit community by title
+ *      consumes:
+ *        - application/json
+ *      produces:
+ *        - application/json
  *      parameters:
  *        - in: path
- *          $ref: '#/components/schemas/Community/properties/title'
  *          required: true
- *        - in: RequestBody
- *          $ref: '#/components/schemas/Community/properties/title'
- *        - in: RequestBody
- *          $ref: '#/components/schemas/Community/properties/description'
+ *          name: currTitle
+ *          schema:
+ *            $ref: '#/components/schemas/Community/properties/title'
+ *        - in: body
+ *          name: title
+ *          schema:
+ *            $ref: '#/components/schemas/Community/properties/title'
+ *        - in: body
+ *          name: description
+ *          schema:
+ *            $ref: '#/components/schemas/Community/properties/description'
  *      responses:
  *        '404':
  *          description: Community not found.
@@ -216,13 +248,17 @@ router.patch("/:title", async (req, res) => {
  * paths:
  *  /api/community/{title}:
  *    delete:
+ *      security:
+ *        - bearerAuth: []
  *      tags:
  *        - Community
  *      summary: Delete community by title
  *      parameters:
  *        - in: path
- *          $ref: '#/components/schemas/Community/properties/title'
  *          required: true
+ *          name: title
+ *          schema:
+ *            $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
  *          description: Community not found.

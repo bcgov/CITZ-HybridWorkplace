@@ -29,12 +29,10 @@
  *      properties:
  *        title:
  *          type: string
- *          name: title
  *          description: Title of the community.
  *          example: Welcome
  *        description:
  *          type: string
- *          name: description
  *          description: Description of the community.
  *          example: Welcome to TheNeighbourhood
  *        creator:

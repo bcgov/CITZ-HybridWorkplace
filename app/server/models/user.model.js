@@ -41,7 +41,7 @@
  *        password:
  *          type: string
  *          description: User's password.
- *          writeOnly: true
+ *          minimum: 8
  *        first_name:
  *          type: string
  *          description: User's first name (set in profile).

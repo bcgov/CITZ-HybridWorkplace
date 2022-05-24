@@ -30,8 +30,22 @@ const swaggerOptions = {
       version: process.env.API_VERSION || "undefined",
       description: "API Documentation",
     },
+    tags: [
+      {
+        name: "Auth",
+        description: "Login, logout, and refresh access token.",
+      },
+      {
+        name: "Community",
+        description: "View, create, edit, and delete communities.",
+      },
+    ],
   },
-  apis: [`${__dirname}/routes/v1/*.js`, `${__dirname}/models/*.js`],
+  apis: [
+    `${__dirname}/express.js`,
+    `${__dirname}/routes/v1/*.js`,
+    `${__dirname}/models/*.js`,
+  ],
 };
 
 const specs = swaggerJsDoc(swaggerOptions);
@@ -39,6 +53,16 @@ const specs = swaggerJsDoc(swaggerOptions);
 const app = express();
 
 app.use("/doc", swaggerUI.serve, swaggerUI.setup(specs));
+
+/**
+ * @swagger
+ * components:
+ *  securitySchemes:
+ *    bearerAuth:
+ *      type: http
+ *      scheme: bearer
+ *      bearerFormat: JWT
+ */
 
 // Express middleware
 app.use(express.json());
