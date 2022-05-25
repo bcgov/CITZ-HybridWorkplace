@@ -8,3 +8,6 @@ node_modules
 .env
 /mongo/data
 app/client/env-config.js
+
+#VS Code Config
+.vscode
