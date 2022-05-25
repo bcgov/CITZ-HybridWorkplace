@@ -20,83 +20,67 @@
  * @module
  */
 
-import { useState } from 'react'
-import {Link, useNavigate} from 'react-router-dom'
-import '../views/Styles/login.css'
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { connect } from "react-redux";
+import { login } from "../redux/ducks/authDuck";
+import "../views/Styles/login.css";
 
-function App() {
-	const [name, setName] = useState('')
-	const [password, setPassword] = useState('')
-	const navigate = useNavigate();
-	async function loginUser(event) {
-		event.preventDefault()
-		const response = await fetch(`${window._env_.API_REF}/login`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				name,
-				password,
-			}),
-		})
-		
-		const data = await response.json()
+function App(props) {
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-		 if (data.user) {
-		 	localStorage.setItem('token', data.user)
-		 	alert('Login Successful')
-		 	navigate('/home')
-		 } else {
-		 	alert('Please check your username and password and try again')
-		 }
-	}
+  async function loginUser(event) {
+    event.preventDefault();
+    const successful = await props.login(name, password);
+    if (successful === true) navigate("/home");
+  }
 
-	return (
-		<div className='LogIn'>
-			<h1>Login</h1>
-			<br/>
-			<form onSubmit={loginUser}>
-			
-				<div className="inputWrap">
-				<label>IDIR:</label>
-				<br/>
-				<input
-					value={name}
-					onChange={(e) => setName(e.target.value)}
-					type="name"
-					placeholder="ID"
-					className='divBox' 
-				/>
-				</div>
-				<br />
-				
-				<div className="inputWrap">
-				<label>Password:</label>
-				<br/>
-				<input
-					value={password}
-					onChange={(e) => setPassword(e.target.value)}
-					type="password"
-					placeholder="Password"
-					className='divBox' 
-				/>
-				</div>
-				<br />
-				<br/>
-				<input type="submit" value="Submit" id='submit'/>
-			</form>
-			<Link to="/" id='link'>
-              Forgot Password?
-        	</Link>
-			<br/>
-			<br/>
-			<br/>
-			<Link to="/" id='link'>
-              Sign Up
-        	</Link>
-		</div>
-	)
+  return (
+    <div className="LogIn">
+      <h1>Login</h1>
+      <br />
+      <form onSubmit={loginUser}>
+        <div className="inputWrap">
+          <label>IDIR:</label>
+          <br />
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            type="name"
+            placeholder="ID"
+            className="divBox"
+          />
+        </div>
+        <br />
+
+        <div className="inputWrap">
+          <label>Password:</label>
+          <br />
+          <input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            placeholder="Password"
+            className="divBox"
+          />
+        </div>
+        <br />
+        <br />
+        <input type="submit" value="Submit" id="submit" />
+      </form>
+      <Link to="/" id="link">
+        Forgot Password?
+      </Link>
+      <br />
+      <br />
+      <br />
+      <Link to="/" id="link">
+        Sign Up
+      </Link>
+    </div>
+  );
 }
 
-export default App
+export default connect(null, { login })(App);

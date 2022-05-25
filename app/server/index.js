@@ -1,9 +1,9 @@
-require('dotenv').config();
-const app =require('./express.js');
+require("dotenv").config();
+const app = require("./express");
 
-const port = process.env.API_PORT || 5000;
+const port = process.env.REACT_APP_API_PORT;
 
-app.listen(port, (err) => { 
-  if (err) console.log(err); 
-  console.info(`Server started on port ${port}.`); 
+app.listen(port, (err) => {
+  if (err) console.log(err);
+  console.info(`Server started on port ${port}.`);
 });

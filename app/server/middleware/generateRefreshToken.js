@@ -16,15 +16,20 @@
 
 /**
  * Application entry point
- * @author [Zach Bourque](zachbourque01@gmail.com)
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
  */
 
- const express = require('express');
- const router = express.Router();
+require("dotenv").config();
+const jwt = require("jsonwebtoken");
 
-router.get('/', async (req, res) => {
-    return res.status(200).send('API is running!')
-});
+function generateRefreshToken(user) {
+  return jwt.sign(
+    {
+      name: user.name,
+    },
+    process.env.JWT_REFRESH_SECRET
+  );
+}
 
- module.exports = router;
+module.exports = generateRefreshToken;

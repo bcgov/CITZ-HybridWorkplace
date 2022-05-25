@@ -16,25 +16,51 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
  */
- const mongoose = require('mongoose')
 
- const Post = new mongoose.Schema(
-     {
-         title: { type: String, required: true},
-         message: { type: String},
-         creator: { type: String},
-         community: { 
-             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Community'
-            },
-        flagged: {type: Boolean},
-     },
-     { collection: 'post-data' }
- )
- 
- const model = mongoose.model('PostData', Post)
- 
- module.exports = model
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    Post:
+ *      type: object
+ *      properties:
+ *        id:
+ *          type: string
+ *          description: Used to identify a specific post.
+ *        title:
+ *          type: string
+ *          description: Title of the post.
+ *          example: What is DevOps?
+ *        message:
+ *          type: string
+ *          description: Body of the post.
+ *        creator:
+ *          $ref: '#/components/schemas/User/properties/id'
+ *        community:
+ *          $ref: '#/components/schemas/Community/properties/title'
+ *      required:
+ *        - title
+ */
+
+const mongoose = require("mongoose");
+
+const Post = new mongoose.Schema(
+  {
+    title: { type: String, required: true },
+    message: { type: String },
+    creator: { type: String },
+    community: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Community",
+    },
+    flagged: { type: Boolean },
+  },
+  { collection: "post" }
+);
+
+const model = mongoose.model("Post", Post);
+
+module.exports = model;

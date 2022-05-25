@@ -16,18 +16,27 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
  */
 
- const express = require('express');
- const router = express.Router();
- 
+require("dotenv").config();
+const jwt = require("jsonwebtoken");
 
-router.get('/', async (req, res) => {
- req.session = null;
- req.headers['x-access-token'] = null
- 
-})
+function generateToken(user) {
+  return jwt.sign(
+    {
+      name: user.name,
+      email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      title: user.title,
+      bio: user.bio,
+      quote: user.quote,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_TOKEN_EXPIRY }
+  );
+}
 
-module.exports = router;
+module.exports = generateToken;

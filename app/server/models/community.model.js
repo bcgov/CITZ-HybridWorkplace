@@ -16,25 +16,54 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
  */
- const mongoose = require('mongoose')
 
- const Community = new mongoose.Schema(
-     {
-         title: { type: String, required: true, unique: true},
-         description: { type: String},
-         creator: { type: String},
-         members: [{ 
-             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
-            }],
-        flagged: {type: Boolean},
-     },
-     { collection: 'community-data' }
- )
- 
- const model = mongoose.model('CommunityData', Community)
- 
- module.exports = model
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    Community:
+ *      type: object
+ *      properties:
+ *        title:
+ *          type: string
+ *          description: Title of the community.
+ *          example: Welcome
+ *        description:
+ *          type: string
+ *          description: Description of the community.
+ *          example: Welcome to TheNeighbourhood
+ *        creator:
+ *          $ref: '#/components/schemas/User/properties/id'
+ *        members:
+ *          type: array
+ *          description: Users that have joined the community.
+ *          items:
+ *            - $ref: '#/components/schemas/User'
+ *      required:
+ *        - title
+ */
+
+const mongoose = require("mongoose");
+
+const Community = new mongoose.Schema(
+  {
+    title: { type: String, required: true, unique: true },
+    description: { type: String },
+    creator: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    members: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    flagged: { type: Boolean },
+  },
+  { collection: "community" }
+);
+
+const model = mongoose.model("Community", Community);
+
+module.exports = model;

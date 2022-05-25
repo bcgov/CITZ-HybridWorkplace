@@ -19,82 +19,53 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
-import React, { useEffect, useState } from 'react'
-import jwt_decode from "jwt-decode";
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { createCommunity } from '../redux/ducks/communityDuck';
+
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
+import { createCommunity } from "../redux/ducks/communityDuck";
 
 const CreateCommunity = () => {
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [name, setName] = useState('');
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [name, setName] = useState("Undefined");
 
-    async function registerCommunity(event) {
-        event.preventDefault();
-        const community = {
-            title: title,
-            description: description,
-            creator: name
-        };
-        dispatch(createCommunity(community));
-        navigate('/home')
-    }
+  async function registerCommunity(event) {
+    event.preventDefault();
+    const community = {
+      title: title,
+      description: description,
+      creator: name,
+    };
+    dispatch(createCommunity(community));
+    navigate("/home");
+  }
 
-    async function userInfo() {
-
-        const req = await fetch(`${window._env_.API_REF}/profile`, {
-            headers: {
-                'x-access-token': localStorage.getItem('token'),
-            },
-        })
-
-        const data = await req.json()
-        if (data.status === 'ok') {
-            setName(data.name)
-        } else {
-            alert(data.error)
-        }
-    }
-
-    useEffect(() => {
-        const token = localStorage.getItem('token')
-        if (token) {
-            const user = jwt_decode(token)
-            if (!user) {
-                localStorage.removeItem('token')
-                navigate('/login')
-            } else {
-                userInfo();
-
-            }
-        }
-    }, [])
-
-    return (
-        <div>
-            <h1>Create Community</h1>
-            <form onSubmit={registerCommunity}>
-                <input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    type='text'
-                    placeholder='Title'
-                />
-                <br />
-                <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    type='text'
-                    placeholder='Description'
-                />
-                <br />
-                <input type='submit' value='Submit' id='submit' />
-            </form>
-        </div>
-    )
-}
+  return (
+    <div>
+      <h1>Create Community</h1>
+      <form onSubmit={registerCommunity}>
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          type="text"
+          placeholder="Title"
+        />
+        <br />
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          type="text"
+          placeholder="Description"
+        />
+        <br />
+        <input type="submit" value="Submit" id="submit" />
+      </form>
+    </div>
+  );
+};
 
 export default CreateCommunity;

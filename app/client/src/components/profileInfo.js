@@ -19,60 +19,42 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
- import React, { useEffect, useState } from 'react'
- import jwt_decode from "jwt-decode";
- import { useNavigate } from 'react-router-dom';
 
- const Profile = () => {
-    const navigate = useNavigate();
-    const [email, setEmail] = useState('')
-    const [title, setTitle] = useState('')
-    const [name, setName] = useState('')
-    const [fullName, setFullName] = useState('')
-    const [bio, setBio] = useState('')
+import React, { useEffect, useState } from "react";
+import { connect } from 'react-redux';
+import { getProfile } from "../redux/ducks/profileDuck";
+import PropTypes from 'prop-types'
 
-    async function populateQuote() {
-        const req = await fetch(`${window._env_.API_REF}/profile`, {
-            headers: {
-                'x-access-token': localStorage.getItem('token'),
-            },
-        })
+const Profile = (props) => {
 
-        const data = await req.json()
-        if(data.status === 'ok'){
-            setEmail(data.email)
-            setName(data.name)
-            setTitle(data.title)
-            setFullName(data.fullName)
-            setBio(data.bio)
-        }else{
-            alert(data.error)
-        }
-    }
-    useEffect(() => {
-        const token = localStorage.getItem('token')
-        if (token){
-            const user = jwt_decode(token)
-            if(!user){
-                localStorage.removeItem('token')
-                navigate('/login')
-            }else{
-                 
-                populateQuote()
-            }
-        }
-    }, [])
+  useEffect(() => {
+    props.getProfile(props.name)
+  })
 
+  return (
+    <div>
+      <h3>{props.profile.name || ""}</h3>
+      <h4>{props.profile.first_name + ' ' + props.profile.last_name}</h4>
+      <p> {props.profile.email} </p>
+      <p> {props.profile.title || ""} </p>
+      <br />
+      <p> {props.profile.bio || ""} </p>
+    </div>
+  );
+};
 
-     return ( 
-        <div >
-            <h3>{fullName || ''}</h3>
-            <h4>{name}</h4>
-            <p> {email} </p>
-            <p> {title || ''} </p>
-            <br />
-            <p> {bio || ''} </p>
-        </div>
-     )
- }
- export default Profile;
+Profile.propTypes = {
+  getProfile: PropTypes.func.isRequired,
+  profile: PropTypes.array.isRequired
+}
+
+const mapStateToProps = state => ({
+  profile: state.profile.user
+});
+
+const mapActionsToProps = {
+  getProfile
+}
+
+export default connect(mapStateToProps, mapActionsToProps)(Profile);
+

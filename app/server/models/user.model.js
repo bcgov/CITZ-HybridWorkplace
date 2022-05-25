@@ -16,27 +16,84 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
  */
-const mongoose = require('mongoose')
+
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    User:
+ *      type: object
+ *      properties:
+ *        id:
+ *          type: string
+ *          description: Used as a reference to creator of a post or community.
+ *        name:
+ *          type: string
+ *          description: User's IDIR username.
+ *          example: sarah
+ *        email:
+ *          type: string
+ *          description: User's email address.
+ *          example: sarah@gov.bc.ca
+ *        password:
+ *          type: string
+ *          description: User's password.
+ *          minimum: 8
+ *        first_name:
+ *          type: string
+ *          description: User's first name (set in profile).
+ *          example: Sarah
+ *        last_name:
+ *          type: string
+ *          description: User's last name (set in profile).
+ *          example: Grace
+ *        title:
+ *          type: string
+ *          description: User's title (set in profile).
+ *          example: Jr. Software Engineer
+ *        bio:
+ *          type: string
+ *          description: User's profile bio (set in profile).
+ *          example: Hi I'm new! Just moved from the Ottawa
+ *        quote:
+ *          type: string
+ *          description: User's profile quote (set in profile).
+ *        communities:
+ *          type: array
+ *          description: Communities User has joined.
+ *          items:
+ *            - $ref: '#/components/schemas/Community'
+ *      required:
+ *        - name
+ *        - email
+ *        - password
+ */
+
+const mongoose = require("mongoose");
 
 const User = new mongoose.Schema(
-	{
-		name: { type: String, required: true, unique: true },
-		email: { type: String, required: true, unique: true },
-		password: { type: String, required: true },
-		fullName: {type: String},
-		title: {type: String},
-		bio: {type: String},
-		darkMode: {type: Boolean},
-		communities: [{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Communities'}],
-	},
-	{ collection: 'user-data' }
-)
+  {
+    name: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    refresh_token: { type: String },
+    first_name: { type: String },
+    last_name: { type: String },
+    title: { type: String },
+    bio: { type: String },
+    communities: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Communities",
+      },
+    ],
+  },
+  { collection: "user" }
+);
 
-const model = mongoose.model('UserData', User)
+const model = mongoose.model("User", User);
 
-module.exports = model
+module.exports = model;

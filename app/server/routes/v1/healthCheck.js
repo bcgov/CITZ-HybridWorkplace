@@ -16,34 +16,27 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Zach Bourque](zachbourque01@gmail.com)
  * @module
  */
 
-const express = require('express');
+const express = require("express");
+
 const router = express.Router();
 
-const User = require('../models/user.model')
-const bcrypt = require('bcryptjs') //encrypting passwords
+/**
+ * @swagger
+ * paths:
+ *  /api/health:
+ *    get:
+ *      tags:
+ *        - API
+ *      summary: Returns "API is running!" if the endpoint is working.
+ *      responses:
+ *        '200':
+ *          description: API is running!
+ */
 
- 
-router.post('/', async (req, res) => {
-
-     try {
-         const newPassword = await bcrypt.hash(req.body.password, 10)
-         
-         await User.create ({
-             name: req.body.name,
-             email: req.body.email,
-             password: newPassword,
-         })
-        
-         res.json({ status: 'ok' })
-     } catch (err) {
-        console.log('Register error: ' + err);
-        res.json({ status: 'error', error: 'Duplicate email' })
-         
-     }
- })
+router.get("/", async (req, res) => res.status(200).send("API is running!"));
 
 module.exports = router;

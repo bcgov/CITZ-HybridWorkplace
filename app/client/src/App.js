@@ -20,35 +20,34 @@
  * @module
  */
 
+import "./App.css";
 
-import './App.css';
+import React, { useState, useEffect } from "react";
+import Routes from "./routes";
+import Container from "@mui/material/Container";
 
-import React, { Component, useState, useEffect } from 'react';
-import Routes from './routes';
-import Container from '@mui/material/Container';
+import { Provider } from "react-redux";
+import store from "./store";
 
-import { Provider } from 'react-redux';
-import store from './store';
+import Footer from "./layout/footer";
+import Header from "./layout/header";
 
-import Footer from './layout/footer'
-import Header from './layout/header';
+import Paper from "@mui/material/Paper";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-import Paper from '@mui/material/Paper'
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+function App() {
+  //const [darkMode, setDarkMode] = useState(false);
 
-
-
-function App(){
-  const [darkMode, setDarkMode] = useState(false)
-
+  //mode: darkMode ? 'dark' : 'light'
   const theme = createTheme({
     palette: {
-      mode: darkMode ? 'dark' : 'light'
+      mode: "light",
     },
   });
 
+  /*
   async function populateDark() {
-    const req = await fetch(`${window._env_.API_REF}/editprofile`, {
+    const req = await fetch(`${window._env_.REACT_APP_API_REF}/editprofile`, {
         headers: {
             'x-access-token': localStorage.getItem('token'),
         },
@@ -69,23 +68,25 @@ function App(){
 useEffect(() => {
      populateDark()
 }, [])
+*/
 
-  
+  //<Header darkMode={darkMode} setDarkMode={setDarkMode} />
+
   return (
     <ThemeProvider theme={theme}>
-    <Paper style={{ minHeight: '100vh'}}>
-    <Provider store={store}>
-    <div> 
-      <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-      <div className="App"> 
-        <Container>
-          <Routes />
-        </Container>
-      </div> 
-      < Footer />
-    </div>
-    </Provider>
-    </Paper>
+      <Paper style={{ minHeight: "100vh" }}>
+        <Provider store={store}>
+          <div>
+            <Header />
+            <div className="App">
+              <Container>
+                <Routes />
+              </Container>
+            </div>
+            <Footer />
+          </div>
+        </Provider>
+      </Paper>
     </ThemeProvider>
   );
 }

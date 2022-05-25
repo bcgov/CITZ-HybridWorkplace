@@ -21,8 +21,9 @@
  */
 
 import React, { useState } from 'react';
-import Posts from '../components/postsList';
-import PostModal from '../components/modals/addPost'
+
+import PostsList from '../components/postsList';
+import PostModal from '../components/modals/addPost';
 
 const PostsPage = () => {
 
@@ -31,14 +32,12 @@ const PostsPage = () => {
     return (
         <div>
             <h1>Posts</h1>
-            <Posts />
+            <PostsList />
             <br />
             <button onClick={() => setShow(true)}>Add Post</button>
-
             <PostModal onClose={() => setShow(false)} show={show} />
-
         </div>
-    )
+    );
 }
 
 export default PostsPage;

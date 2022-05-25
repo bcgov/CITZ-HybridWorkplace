@@ -18,26 +18,26 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
- */
-import React, { useEffect, useState } from 'react'
-import jwt_decode from "jwt-decode";
+*/
+
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Posts from '../components/postsList';
+
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 
-import Communities from '../components/joinCommunitiesList'
-
-import PostModal from '../components/modals/addPost'
-import Typography from '@mui/material/Typography'
+import Communities from '../components/joinCommunitiesList';
+import Posts from '../components/postsList';
+import PostModal from '../components/modals/addPost';
 
 const Home = () => {
-    const navigate = useNavigate();
     const [show, setShow] = useState(false);
-    useEffect(() => {
 
+    /*
+    useEffect(() => {
         const token = localStorage.getItem('token')
         if (token) {
             const user = jwt_decode(token)
@@ -46,9 +46,8 @@ const Home = () => {
                 navigate('/login')
             }
         }
-
-    }, [])
-
+    }, []);
+    */
 
     return (
         <div>
@@ -91,6 +90,7 @@ const Home = () => {
                         </Box>
                         <Communities />
                         <Link to='/createCommunity' style={{ textDecoration: 'none' }}>
+
                             <Box
                                 sx={{
                                     backgroundColor: '#036',
@@ -102,18 +102,14 @@ const Home = () => {
                                 }}
                             >
                                 <Typography variant='h6' component='h5'>+ Create Community</Typography>
-
-
-
                             </Box>
+
                         </Link>
                     </Paper>
                 </Grid>
             </Grid>
-
-
         </div>
-    )
+    );
 }
 
-export default Home
+export default Home;

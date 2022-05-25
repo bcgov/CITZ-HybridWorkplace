@@ -20,13 +20,17 @@
  * @module
  */
 
-import { combineReducers } from 'redux';
-import { communityReducer } from './ducks/communityDuck';
-import { postReducer } from './ducks/postDuck'
+import { combineReducers } from "redux";
+
+// Ducks
+import { communityReducer } from "./ducks/communityDuck";
+import { postReducer } from "./ducks/postDuck";
+import { authReducer } from "./ducks/authDuck";
+import { profileReducer } from "./ducks/profileDuck";
 
 export default combineReducers({
-    communities: communityReducer,
-    posts: postReducer
-    //can add as many as you want
-    //reducers are where state goes.
-})
+  communities: communityReducer,
+  posts: postReducer,
+  auth: authReducer,
+  profile: profileReducer
+});
