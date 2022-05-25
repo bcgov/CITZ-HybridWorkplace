@@ -2,7 +2,7 @@ const endpoint = 'https://hwp-express-api-d63404-dev.apps.silver.devops.gov.bc.c
 const supertest = require('supertest');
 const request = supertest(endpoint);
 
-function login(){
+async function login(){
     let response = await request.post('/')
         .send({
             "name": "test",
