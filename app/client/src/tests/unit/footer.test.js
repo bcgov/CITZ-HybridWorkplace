@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import '../index.css';
-import App from '../App';
+import App from '../../App';
 import {BrowserRouter} from 'react-router-dom';
 import UserEvent from '@testing-library/user-event';
 
