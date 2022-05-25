@@ -14,6 +14,5 @@ describe('Testing that api exists and returns response', () => {
         let response = await request.get('/');
         expect(response.ok).toBe(true);
         expect(response.status).toBe(200);
-        // expect(response.body.messege).toBe('API is running!');
     });
 });
