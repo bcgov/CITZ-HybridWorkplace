@@ -29,3 +29,41 @@ describe('Testing optimal inputs for login', () => {
         expect(typeof refreshToken).toBe('string');
     });
 });
+
+describe('Testing sub-optimal login input', () => {
+    test('API refuses login with bad name credential - returns 404', async () => {
+        let response = await request.post('/')
+        .send({
+            "name": "notauser",
+            "password": "Test123!"
+        });
+        expect(response.status).toBe(404);
+    });
+
+    test('API refuses login with bad password credential - returns 400', async () => {
+        let response = await request.post('/')
+        .send({
+            "name": "test",
+            "password": "Test123@"
+        });
+        expect(response.status).toBe(400);
+    });
+
+    test('API refuses login with bad name and password credential - returns 404', async () => {
+        let response = await request.post('/')
+        .send({
+            "name": "notauser",
+            "password": "Test1###"
+        });
+        expect(response.status).toBe(404);
+    });
+
+    test('API refuses login with empty credentials - returns 404', async () => {
+        let response = await request.post('/')
+        .send({
+            "name": "",
+            "password": ""
+        });
+        expect(response.status).toBe(404);
+    });
+});
