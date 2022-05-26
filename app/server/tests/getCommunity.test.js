@@ -1,4 +1,4 @@
-const endpoint = `http://${window._env_.REACT_APP_API_REF}/api`;
+const endpoint = `http://${window._env_.REACT_APP_API_REF}`;
 const supertest = require('supertest');
 const request = supertest(endpoint);
 var token = '';
