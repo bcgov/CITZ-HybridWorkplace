@@ -41,6 +41,7 @@
  *        password:
  *          type: string
  *          description: User's password.
+ *          example: VerySecure123
  *          minimum: 8
  *        first_name:
  *          type: string
@@ -65,7 +66,7 @@
  *          type: array
  *          description: Communities User has joined.
  *          items:
- *            - $ref: '#/components/schemas/Community'
+ *            - $ref: '#/components/schemas/Community/properties/title'
  *      required:
  *        - name
  *        - email
@@ -84,12 +85,7 @@ const User = new mongoose.Schema(
     last_name: { type: String },
     title: { type: String },
     bio: { type: String },
-    communities: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Communities",
-      },
-    ],
+    communities: [{ type: String }],
   },
   { collection: "user" }
 );

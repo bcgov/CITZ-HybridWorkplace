@@ -52,10 +52,7 @@ const Post = new mongoose.Schema(
     title: { type: String, required: true },
     message: { type: String },
     creator: { type: String },
-    community: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Community",
-    },
+    community: { type: String },
     flagged: { type: Boolean },
   },
   { collection: "post" }
