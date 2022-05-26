@@ -50,9 +50,7 @@ const Community = require("../../models/community.model");
  *                  $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
- *          description: User not found.
- *        '404':
- *          description: Community not found.
+ *          description: User or Community not found.
  *        '201':
  *          description: Post successfully created.
  *          content:
