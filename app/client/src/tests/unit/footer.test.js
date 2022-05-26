@@ -33,4 +33,3 @@ describe('Testing footer elements', () => {
       expect(copyrightLink).toBeInTheDocument();
     });
   });
-  
