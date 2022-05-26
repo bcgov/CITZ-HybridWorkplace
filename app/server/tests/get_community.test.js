@@ -1,4 +1,4 @@
-const endpoint = 'https://hwp-express-api-d63404-dev.apps.silver.devops.gov.bc.ca/api';
+const endpoint = `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}/api`;
 const supertest = require('supertest');
 const request = supertest(endpoint);
 var token = '';
