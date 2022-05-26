@@ -3,7 +3,7 @@
     Endpoint is /api/register
 */
 
-const endpoint = 'https://hwp-express-api-d63404-dev.apps.silver.devops.gov.bc.ca/api';
+const endpoint = process.env.API_REF;
 const supertest = require('supertest');
 const request = supertest(endpoint);
 
