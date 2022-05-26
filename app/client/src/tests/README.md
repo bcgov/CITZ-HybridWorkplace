@@ -16,10 +16,3 @@ While the test watcher is running, tests will re-run if any change to code is de
 New tests are to be included in the ```app/client/src/tests``` folder. 
 All files that are to be included in testing require a .test.js file extension. Otherwise they will not be detected by the test runner.
 Test files should be named appropriately based on the aspect of the application they are testing. (e.g. header.test.js for Header-related testing)
-
-## Current Status
-
-### 2022-05-13
-Some minor front-end tests have been added so far. 
-Issues with further testing include difficulty in targeting elements with no identifying attributes nor visible text.
-Environment variables currently not working with testing setup. Manual changes needed.

@@ -7,7 +7,7 @@ import UserEvent from '@testing-library/user-event';
 import { unmountComponentAtNode } from 'react-dom';
 
 /*
-  Setup of DOM container
+  Tests front-end components of login/register area only. No communication with API.
 */
 
 let container = null;
