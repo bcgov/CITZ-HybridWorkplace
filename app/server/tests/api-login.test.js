@@ -1,4 +1,4 @@
-const endpoint = 'https://hwp-express-api-d63404-dev.apps.silver.devops.gov.bc.ca/api/login';
+const endpoint = 'https://hwp-express-api-d63404-dev.apps.silver.devops.gov.bc.ca/api';
 const supertest = require('supertest');
 const request = supertest(endpoint);
 
@@ -6,7 +6,7 @@ describe('Testing optimal inputs for login', () => {
     //name is for the IDIR input
 
     test('Test account can log in', async () => {
-        let response = await request.post('/')
+        let response = await request.post('/login')
         .send({
             "name": "test",
             "password": "Test123!"
@@ -15,7 +15,7 @@ describe('Testing optimal inputs for login', () => {
     });
 
     test('Token and refresh token are received upon login', async () => {
-        let response = await request.post('/')
+        let response = await request.post('/login')
         .send({
             "name": "test",
             "password": "Test123!"
@@ -32,7 +32,7 @@ describe('Testing optimal inputs for login', () => {
 
 describe('Testing sub-optimal login input', () => {
     test('API refuses login with bad name credential - returns 404', async () => {
-        let response = await request.post('/')
+        let response = await request.post('/login')
         .send({
             "name": "notauser",
             "password": "Test123!"
@@ -41,7 +41,7 @@ describe('Testing sub-optimal login input', () => {
     });
 
     test('API refuses login with bad password credential - returns 400', async () => {
-        let response = await request.post('/')
+        let response = await request.post('/login')
         .send({
             "name": "test",
             "password": "Test123@"
@@ -50,7 +50,7 @@ describe('Testing sub-optimal login input', () => {
     });
 
     test('API refuses login with bad name and password credential - returns 404', async () => {
-        let response = await request.post('/')
+        let response = await request.post('/login')
         .send({
             "name": "notauser",
             "password": "Test1###"
@@ -59,7 +59,7 @@ describe('Testing sub-optimal login input', () => {
     });
 
     test('API refuses login with empty credentials - returns 404', async () => {
-        let response = await request.post('/')
+        let response = await request.post('/login')
         .send({
             "name": "",
             "password": ""
