@@ -1,7 +1,12 @@
-const endpoint = 'https://hwp-express-api-d63404-dev.apps.silver.devops.gov.bc.ca/api';
+require('dotenv').config();
 const supertest = require('supertest');
+
+const endpoint = process.env.REACT_APP_API_REF;
 const request = supertest(endpoint);
 var token = '';
+
+const welcomeCommunityTitle = "Welcome";
+const welcomeCommunityDescript = "Test";
 
 
 describe('Testing the get communities function without logging in', () => {
@@ -64,10 +69,19 @@ describe('Testing the get communities function after logging in', () => {
 
     expect(response.status).toBe(200);
   });
+
+  test('API returns the "Welcome" community in its response body', async () => {
+    let response = await request
+      .get('/community')
+      .set({authorization: `Bearer ${token}`})
+
+    expect(" " + response.text+ " ").toContain(welcomeCommunityDescript);
+    expect(" " + response.text + " ").toContain(welcomeCommunityTitle);
+  });
 });
 
 
-describe('Testing the get communities function after loggin in, but without token', () => {
+describe('Testing the get communities function after logging in, but without token', () => {
 
   test('API returns unsuccessful response', async () => {
     let response = await request
@@ -93,7 +107,7 @@ describe('Testing the get communities function after loggin in, but without toke
 
 
 
-describe('Testing the get communities function after loggin in, but with wrong token', () => {
+describe('Testing the get communities function after logging in, but with wrong token', () => {
 
   test('API returns unsuccessful response', async () => {
     let response = await request
