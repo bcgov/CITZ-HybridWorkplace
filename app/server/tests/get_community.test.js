@@ -67,7 +67,7 @@ describe('Testing the get communities function after logging in', () => {
 });
 
 
-describe('Testing the get communities function after loggin in, but without token', () => {
+describe('Testing the get communities function after logging in, but without token', () => {
 
   test('API returns unsuccessful response', async () => {
     let response = await request
