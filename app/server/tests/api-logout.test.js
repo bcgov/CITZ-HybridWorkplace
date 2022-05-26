@@ -29,7 +29,7 @@ describe('Testing logout endpoint', () => {
     });
 
     //TODO: Update this? Currently fails because that same cookie is live after logout. Could be used to refresh token.
-    xtest('Logging out with a previously used cookie - should not return 204', async () => {
+    test('Logging out with a previously used cookie - should not return 204', async () => {
         let response = await request.get('/logout')
             .set('accept', `*/*`)
             .set('Cookie', `jwt=${loginResponse.body.refreshToken}`);
@@ -37,8 +37,8 @@ describe('Testing logout endpoint', () => {
         expect(response.status).not.toBe(204);
     });
 
-    //TODO: Currently returns 502. 
-    xtest('Logging out with an invalid cookie - returns 401', async () => {
+    //TODO: Currently returns 502, but why?
+    test('Logging out with an invalid cookie - returns 401', async () => {
         let response = await request.get('/logout')
             .set('accept', `*/*`)
             .set('Cookie', `jwt=dsjfklsi3hkj3l24hkl32hjk324hjk324hjk324hu32njk32`);
