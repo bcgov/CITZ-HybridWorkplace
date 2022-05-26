@@ -22,7 +22,8 @@ describe('Testing sending of refresh token', () => {
         expect(response.status).toBe(200);
     });
 
-    test('Sending token without authorization fails', async () => {
+    // Sometimes passes, but no idea why.
+    test('Sending token without authorization fails - should not return 200', async () => {
         let response = await request.get('/token')
             .set('Cookie', `jwt=${loginResponse.body.refreshToken}`);
 
