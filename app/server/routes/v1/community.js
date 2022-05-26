@@ -81,6 +81,15 @@ router.post("/", async (req, res) => {
       members: [user.id],
     });
 
+    await User.updateOne(
+      { name: user.name },
+      {
+        $push: {
+          communities: community.title,
+        },
+      }
+    );
+
     return res.status(201).json(community);
   } catch (err) {
     return res

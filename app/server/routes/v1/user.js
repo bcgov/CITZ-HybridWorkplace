@@ -29,13 +29,13 @@ const User = require("../../models/user.model");
 /**
  * @swagger
  * paths:
- *  /api/profile:
+ *  /api/user:
  *    get:
  *      security:
  *        - bearerAuth: []
  *      tags:
- *        - Profile
- *      summary: Get user's profile.
+ *        - User
+ *      summary: Get user.
  *      responses:
  *        '404':
  *          description: User not found.
@@ -64,7 +64,7 @@ const User = require("../../models/user.model");
  *          description: Bad Request.
  */
 
-// Get user's profile
+// Get user
 router.get("/", async (req, res) => {
   try {
     const user = await User.findOne({ name: req.user.name });
@@ -92,13 +92,13 @@ router.get("/", async (req, res) => {
 /**
  * @swagger
  * paths:
- *  /api/profile:
+ *  /api/user:
  *    patch:
  *      security:
  *        - bearerAuth: []
  *      tags:
- *        - Profile
- *      summary: Edit user's profile.
+ *        - User
+ *      summary: Edit user.
  *      requestBody:
  *        content:
  *          application/json:
@@ -123,12 +123,12 @@ router.get("/", async (req, res) => {
  *        '404':
  *          description: User not found.
  *        '204':
- *          description: Profile successfully edited.
+ *          description: User successfully edited.
  *        '400':
  *          description: Bad Request.
  */
 
-// Edit user's profile
+// Edit user
 router.patch("/", async (req, res) => {
   try {
     const user = await User.findOne({ name: req.user.name });
@@ -162,13 +162,13 @@ router.patch("/", async (req, res) => {
 /**
  * @swagger
  * paths:
- *  /api/profile/{name}:
+ *  /api/user/{name}:
  *    get:
  *      security:
  *        - bearerAuth: []
  *      tags:
- *        - Profile
- *      summary: Get user profile by name.
+ *        - User
+ *      summary: Get user by name.
  *      parameters:
  *        - in: path
  *          name: name
@@ -203,7 +203,7 @@ router.patch("/", async (req, res) => {
  *          description: Bad Request.
  */
 
-// Get user profile by name
+// Get user by name
 router.get("/:name", async (req, res) => {
   try {
     const user = await User.findOne({ name: req.params.name }).exec();
@@ -219,6 +219,55 @@ router.get("/:name", async (req, res) => {
       title: user.title,
       quote: user.quote,
     });
+  } catch (err) {
+    return res
+      .status(400)
+      .send(
+        `Bad Request. The User in the params of the Request is either missing or malformed. ${err}`
+      );
+  }
+});
+
+/**
+ * @swagger
+ * paths:
+ *  /api/user/{name}:
+ *    delete:
+ *      security:
+ *        - bearerAuth: []
+ *      tags:
+ *        - User
+ *      summary: Remove user by name.
+ *      parameters:
+ *        - in: path
+ *          name: name
+ *          required: true
+ *          schema:
+ *            $ref: '#/components/schemas/User/properties/name'
+ *      responses:
+ *        '404':
+ *          description: User not found.
+ *        '401':
+ *          description: Not Authorized. Must be user to delete user.
+ *        '204':
+ *          description: Successfully removed user.
+ *        '400':
+ *          description: Bad Request.
+ */
+
+// Remove user by name
+router.delete("/:name", async (req, res) => {
+  try {
+    const user = await User.findOne({ name: req.params.name }).exec();
+
+    if (!user) return res.status(404).send("User not found.");
+
+    if (user.name !== req.user.name)
+      return res.status(401).send("Not Authorized.");
+
+    await User.deleteOne({ name: user.name }).exec();
+
+    return res.sendStatus(204);
   } catch (err) {
     return res
       .status(400)
