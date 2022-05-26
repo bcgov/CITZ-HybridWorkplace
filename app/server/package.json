@@ -34,6 +34,7 @@
     "verbose": true,
     "collectCoverage": false,
     "coverageDirectory": "./tests/coverage",
-    "rootDir": "./"
+    "rootDir": "./",
+    "setupFiles": ["dotenv/config"]
   }
 }
