@@ -50,7 +50,9 @@ const Community = require("../../models/community.model");
  *                  $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
- *          description: User or community not found.
+ *          description: User not found.
+ *        '404':
+ *          description: Community not found.
  *        '201':
  *          description: Post successfully created.
  *          content:
@@ -67,8 +69,8 @@ router.post("/", async (req, res) => {
     const user = await User.findOne({ name: req.user.name });
     const community = await Community.findOne({ title: req.body.community });
 
-    if (!user || !community)
-      return res.status(404).send("User or community not found.");
+    if (!user) return res.status(404).send("User not found.");
+    if (!community) return res.status(404).send("Community not found.");
 
     const post = await Post.create({
       title: req.body.title,
