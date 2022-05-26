@@ -61,8 +61,8 @@ const CreatePost = (props) => {
     setMessage(event.target.value);
   };
 
-  const onCommunityClick = (id) => {
-    setCommunity(id);
+  const onCommunityClick = (commTitle) => {
+    setCommunity(commTitle);
   };
 
   return (
@@ -93,7 +93,7 @@ const CreatePost = (props) => {
             {props.communities.map((comm) => (
               <div key={comm._id}>
                 {/* TODO: change button input for choosing community to radio  */}
-                <Button onClick={() => onCommunityClick(comm._id)} variant={`${comm._id === community ? 'contained' : 'outlined'}`}>
+                <Button onClick={() => onCommunityClick(comm.title)} variant={`${comm.title === community ? 'contained' : 'outlined'}`}>
                   {comm.title}{" "}
                 </Button>
               </div>
