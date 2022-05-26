@@ -133,3 +133,4 @@ describe('Testing the get communities function after logging in, but with wrong 
     expect(response.text).toBe("Forbidden.");
   });
 });
+
