@@ -103,7 +103,7 @@ describe('Testing the get communities function after loggin in, but with wrong t
     expect(response.ok).toBe(false);
   });
 
-  test('API returns code 401', async () => {
+  test('API returns code 403', async () => {
     let response = await request
       .get('/community')
       .set({authorization: `Bearer ${token}11`})
