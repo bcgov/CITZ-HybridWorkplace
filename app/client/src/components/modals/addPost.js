@@ -42,7 +42,7 @@ const CreatePost = (props) => {
     props.getCommunities();
   }, []);
 
-  const registerPost = (event) => {
+  const registerPost = async (event) => {
     event.preventDefault();
     const post = {
       title: title,
@@ -50,7 +50,15 @@ const CreatePost = (props) => {
       creator: creator,
       community: community,
     };
-    props.createPost(post);
+
+    const successful = await props.createPost(post)
+    if (successful === true) {
+      //TODO: Convert the input fields to MUI inputs that will allow for binding
+      // setTitle("")
+      // setMessage("")
+      // setCommunity("")
+      props.onClose()
+    }
   };
 
   const onTitleChange = (event) => {
