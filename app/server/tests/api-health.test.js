@@ -3,7 +3,7 @@
     Endpoint is /api/health
 */
 
-const endpoint = 'https://hwp-express-api-d63404-dev.apps.silver.devops.gov.bc.ca/api/health';
+const endpoint = process.env.API_REF;
 const supertest = require('supertest');
 const request = supertest(endpoint);
 
@@ -11,7 +11,7 @@ const request = supertest(endpoint);
 
 describe('Testing that api exists and returns response', () => {
     test('API returns code 200', async () => {
-        let response = await request.get('/');
+        let response = await request.get('/health');
         expect(response.ok).toBe(true);
         expect(response.status).toBe(200);
     });

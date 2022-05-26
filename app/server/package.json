@@ -32,8 +32,9 @@
   },
   "jest": {
     "verbose": true,
-    "collectCoverage": true,
+    "collectCoverage": false,
     "coverageDirectory": "./tests/coverage",
-    "rootDir": "./"
+    "rootDir": "./",
+    "setupFiles": ["dotenv/config"]
   }
 }
