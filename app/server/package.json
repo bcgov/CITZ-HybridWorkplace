@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
@@ -25,5 +25,16 @@
     "nodemon": "^2.0.15",
     "swagger-jsdoc": "^6.2.1",
     "swagger-ui-express": "^4.4.0"
+  },
+  "devDependencies": {
+    "jest": "^28.1.0",
+    "supertest": "^6.2.3"
+  },
+  "jest": {
+    "verbose": true,
+    "collectCoverage": false,
+    "coverageDirectory": "./tests/coverage",
+    "rootDir": "./",
+    "setupFiles": ["dotenv/config"]
   }
 }

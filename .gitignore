@@ -7,3 +7,6 @@ node_modules
 .pnp.js
 .env
 /mongo/data
+
+#VS Code Config
+.vscode
