@@ -23,6 +23,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { TextField } from "@mui/material";
 import "./addPost.css";
 
 import Paper from "@mui/material/Paper";
@@ -32,11 +33,11 @@ import { getCommunities } from "../../redux/ducks/communityDuck";
 import { createPost } from "../../redux/ducks/postDuck";
 
 const CreatePost = (props) => {
-  const [title, setTitle] = useState("Undefined");
-  const [message, setMessage] = useState("Undefined");
+  const [title, setTitle] = useState("");
+  const [message, setMessage] = useState("");
 
   const [creator, setCreator] = useState(props.auth.user.name);
-  const [community, setCommunity] = useState("Undefined");
+  const [community, setCommunity] = useState("");
 
   useEffect(() => {
     props.getCommunities();
@@ -53,10 +54,9 @@ const CreatePost = (props) => {
 
     const successful = await props.createPost(post)
     if (successful === true) {
-      //TODO: Convert the input fields to MUI inputs that will allow for binding
-      // setTitle("")
-      // setMessage("")
-      // setCommunity("")
+      setTitle("")
+      setMessage("")
+      setCommunity("")
       props.onClose()
     }
   };
@@ -83,18 +83,19 @@ const CreatePost = (props) => {
           <br />
           <h1>Add Post</h1>
           <form onSubmit={registerPost}>
-            <input
+            <TextField
               onChange={onTitleChange}
-              type="text"
               name="title"
               placeholder="Title"
+              value={title}
             />
             <br />
-            <textarea
+            <TextField
               onChange={onMessageChange}
-              type="text"
               name="message"
               placeholder="Message"
+              multiline
+              value={message}
             />
             <br />
             <p>Choose a Community:</p>
