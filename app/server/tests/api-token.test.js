@@ -21,4 +21,20 @@ describe('Testing sending of refresh token', () => {
         expect(typeof response).toBe('object');
         expect(response.status).toBe(200);
     });
+
+    test('Sending token without authorization fails', async () => {
+        let response = await request.get('/token')
+            .set('Cookie', `jwt=${loginResponse.body.refreshToken}`);
+
+        expect(typeof response).toBe('object');
+        expect(response.status).not.toBe(200);
+    });
+
+    test('Sending token without cookie fails - returns 401', async () => {
+        let response = await request.get('/token')
+            .set('Authorization', `bearer ${loginResponse.body.token}`);
+
+        expect(typeof response).toBe('object');
+        expect(response.status).toBe(401);
+    });
 });
