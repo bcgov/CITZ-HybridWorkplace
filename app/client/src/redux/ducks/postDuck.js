@@ -33,7 +33,9 @@ export const getPosts = () => async (dispatch, getState) => {
   let successful = true;
 
   try {
-    const token = getState().auth.accessToken;
+    const authState = getState().auth
+    const token = authState.accessToken;
+
     if (!token) throw new Error(noTokenText);
 
     const response = await fetch(`${apiURI}/api/post`, {
@@ -61,7 +63,9 @@ export const getPosts = () => async (dispatch, getState) => {
 export const createPost = (postData) => async (dispatch, getState) => {
   let successful = true;
   try {
-    const token = getState().auth.accessToken;
+    const authState = getState().auth
+    const token = authState.accessToken;
+
     if (!token) throw new Error(noTokenText);
 
     const response = await fetch(`${apiURI}/api/post`, {

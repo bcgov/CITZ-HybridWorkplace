@@ -23,6 +23,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { TextField } from "@mui/material";
 import "./addPost.css";
 
 import Paper from "@mui/material/Paper";
@@ -32,17 +33,17 @@ import { getCommunities } from "../../redux/ducks/communityDuck";
 import { createPost } from "../../redux/ducks/postDuck";
 
 const CreatePost = (props) => {
-  const [title, setTitle] = useState("Undefined");
-  const [message, setMessage] = useState("Undefined");
+  const [title, setTitle] = useState("");
+  const [message, setMessage] = useState("");
 
   const [creator, setCreator] = useState(props.auth.user.name);
-  const [community, setCommunity] = useState("Undefined");
+  const [community, setCommunity] = useState("");
 
   useEffect(() => {
     props.getCommunities();
   }, []);
 
-  const registerPost = (event) => {
+  const registerPost = async (event) => {
     event.preventDefault();
     const post = {
       title: title,
@@ -50,7 +51,14 @@ const CreatePost = (props) => {
       creator: creator,
       community: community,
     };
-    props.createPost(post);
+
+    const successful = await props.createPost(post)
+    if (successful === true) {
+      setTitle("")
+      setMessage("")
+      setCommunity("")
+      props.onClose()
+    }
   };
 
   const onTitleChange = (event) => {
@@ -61,8 +69,8 @@ const CreatePost = (props) => {
     setMessage(event.target.value);
   };
 
-  const onCommunityClick = (id) => {
-    setCommunity(id);
+  const onCommunityClick = (commTitle) => {
+    setCommunity(commTitle);
   };
 
   return (
@@ -75,25 +83,26 @@ const CreatePost = (props) => {
           <br />
           <h1>Add Post</h1>
           <form onSubmit={registerPost}>
-            <input
+            <TextField
               onChange={onTitleChange}
-              type="text"
               name="title"
               placeholder="Title"
+              value={title}
             />
             <br />
-            <textarea
+            <TextField
               onChange={onMessageChange}
-              type="text"
               name="message"
               placeholder="Message"
+              multiline
+              value={message}
             />
             <br />
             <p>Choose a Community:</p>
             {props.communities.map((comm) => (
               <div key={comm._id}>
                 {/* TODO: change button input for choosing community to radio  */}
-                <Button onClick={() => onCommunityClick(comm._id)} variant={`${comm._id === community ? 'contained' : 'outlined'}`}>
+                <Button onClick={() => onCommunityClick(comm.title)} variant={`${comm.title === community ? 'contained' : 'outlined'}`}>
                   {comm.title}{" "}
                 </Button>
               </div>
