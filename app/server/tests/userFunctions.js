@@ -74,11 +74,16 @@ class UserFunctions{
     }
 
     // Retrieves a new token for an existing user
-    async token(name, password){
+    async tokenByCreds(name, password){
         let loginResponse = await this.login(name, password);
         let tokenResponse = await request.get('/token')
-            .set('Authorization', `bearer ${ loginResponse.body.token }`)
             .set('Cookie', `jwt=${ loginResponse.body.refreshToken }`);
+        return tokenResponse;
+    }
+
+    async tokenByCookie(cookie){
+        let tokenResponse = await request.get('/token')
+            .set('Cookie', `jwt=${ cookie }`);
         return tokenResponse;
     }
 }

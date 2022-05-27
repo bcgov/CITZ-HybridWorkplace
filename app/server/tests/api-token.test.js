@@ -1,41 +1,35 @@
-const endpoint = process.env.API_REF;
-const supertest = require('supertest');
-const request = supertest(endpoint);
+const { UserFunctions } = require('./userFunctions')
 
+let users = new UserFunctions(); // build class for user actions
 
-describe('Testing sending of refresh token', () => {
+describe('Testing requesting of new token', () => {
     let loginResponse;
     beforeAll(async () => {
-        loginResponse = await request.post('/login')
-        .send({
-            "name": "test",
-            "password": "Test123!"
-        });
+        loginResponse = await users.login('test', 'Test123!');
     });
     
-    test('Sending refresh token returns new auth token - returns 200', async () => {
-        let response = await request.get('/token')
-            .set('Authorization', `bearer ${loginResponse.body.token}`)
-            .set('Cookie', `jwt=${loginResponse.body.refreshToken}`);
-
-        expect(typeof response).toBe('object');
+    test('Requesting with refresh token returns new token - returns 200', async () => {
+        let response = await users.tokenByCookie(loginResponse.body.refreshToken);
         expect(response.status).toBe(200);
     });
 
-    // Sometimes passes, but no idea why.
-    test('Sending token without authorization fails - should not return 200', async () => {
-        let response = await request.get('/token')
-            .set('Cookie', `jwt=${loginResponse.body.refreshToken}`);
-
-        expect(typeof response).toBe('object');
+    test('Requesting token a second time does not return new token - should not return 200', async () => {
+        let response = await users.tokenByCookie(loginResponse.body.refreshToken);
         expect(response.status).not.toBe(200);
     });
 
-    test('Sending token without cookie fails - returns 401', async () => {
-        let response = await request.get('/token')
-            .set('Authorization', `bearer ${loginResponse.body.token}`);
-
-        expect(typeof response).toBe('object');
+    test('Requesting token with blank cookie fails - returns 401', async () => {
+        let response = await users.tokenByCookie('');
         expect(response.status).toBe(401);
+    });
+
+    test('Requesting token with null cookie fails - returns 403', async () => {
+        let response = await users.tokenByCookie(null);
+        expect(response.status).toBe(403);
+    });
+
+    test('Requesting token with imitated cookie fails - returns 403', async () => {
+        let response = await users.tokenByCookie('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoic2FyYWgiLCJpYXQiOjE2NTM2ODU2OTR9.W8wMCMY-Dgq37Pc1EtguciHkn8C07wZrsChiyyJhQJI');
+        expect(response.status).toBe(403);
     });
 });
