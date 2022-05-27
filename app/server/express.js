@@ -13,7 +13,7 @@ const swaggerJsDoc = require("swagger-jsdoc");
 // Version 1 route imports
 const communityRouterV1 = require("./routes/v1/community");
 const postRouterV1 = require("./routes/v1/post");
-const profileRouterV1 = require("./routes/v1/profile");
+const userRouterV1 = require("./routes/v1/user");
 const registerRouterV1 = require("./routes/v1/register");
 const loginRouterV1 = require("./routes/v1/login");
 const logoutRouterV1 = require("./routes/v1/logout");
@@ -30,10 +30,9 @@ const swaggerOptions = {
       version: process.env.API_VERSION || "undefined",
       description: `API Documentation
       \n\n## AUTH: 
-      This API uses JWT tokens for authentication. Start by registering, or if you already have an account, the logging in. 
+      This API uses JWT tokens for authentication. Start by registering, or if you already have an account, logging in. 
       \n\n- After logging in, copy the access token from the response. 
       \n\n- Click on the **'Authorize'** button, paste the token into the field under **'bearerAuth'**, and click **'Authorize'**. 
-      \n\n- Repeat these steps but with the refresh token, and paste into the field under **'cookieAuth'**. 
       \n\n- Now you will have limited access to the endpoints that require authentication (indicated by a lock icon). 
       \n\n- You will not have any indication for when your token expires, except that requests will return a **'Forbidden'** response. 
       \n\n- When this happens, you will be required to use the token endpoint, copy the access token in the response, and paste it into the field under **'bearerAuth'**.`,
@@ -55,14 +54,14 @@ const swaggerOptions = {
         description: "View, create, edit, and delete posts.",
       },
       {
-        name: "Profile",
-        description: "View and edit profile settings.",
+        name: "User",
+        description: "View and edit user settings.",
       },
     ],
   },
   apis: [
     `${__dirname}/express.js`,
-    `${__dirname}/routes/v1/*.js`,
+    `${__dirname}/routes/v${process.env.API_VERSION}/*.js`,
     `${__dirname}/models/*.js`,
   ],
 };
@@ -81,10 +80,6 @@ app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
  *      type: http
  *      scheme: bearer
  *      bearerFormat: JWT
- *    cookieAuth:
- *      type: apiKey
- *      in: cookie
- *      name: jwt
  */
 
 // Express middleware
@@ -126,7 +121,7 @@ function useV1(req, res, next) {
 
   app.use("/api/community", authenticateToken, communityRouterV1);
   app.use("/api/post", authenticateToken, postRouterV1);
-  app.use("/api/profile", authenticateToken, profileRouterV1);
+  app.use("/api/user", authenticateToken, userRouterV1);
 
   next();
 }

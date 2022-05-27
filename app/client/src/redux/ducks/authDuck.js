@@ -17,6 +17,8 @@
  * @module
  */
 
+import jwtDecode from "jwt-decode";
+
 const SET_ACCESS_TOKEN = "CITZ-HYBRIDWORKPLACE/AUTH/SET_ACCESS_TOKEN";
 const SET_REFRESH_TOKEN = "CITZ-HYBRIDWORKPLACE/AUTH/SET_REFRESH_TOKEN";
 const LOGIN = "CITZ-HYBRIDWORKPLACE/AUTH/LOGIN";
@@ -43,9 +45,9 @@ export const login = (name, password) => async (dispatch) => {
       throw new Error(res.status + " " + res.statusText);
     }
 
-    /* Below is Commented out as backend token auth is not yet implemented*/
-
     const data = await res.json();
+    const decodedToken = jwtDecode(data.token)
+    data.user = { name: decodedToken.name, email: decodedToken.email }
 
     dispatch({
       type: LOGIN,
@@ -106,9 +108,9 @@ export function authReducer(state = initialState, action) {
       };
     case LOGIN:
       return {
-        ...state,
         accessToken: action.payload.token,
         refreshToken: action.payload.refreshToken,
+        user: { name: action.payload.user.name, email: action.payload.user.email }
       };
     default:
       return state;

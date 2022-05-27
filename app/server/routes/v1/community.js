@@ -48,6 +48,8 @@ const User = require("../../models/user.model");
  *                  $ref: '#/components/schemas/Community/properties/title'
  *                description:
  *                  $ref: '#/components/schemas/Community/properties/description'
+ *                rules:
+ *                  $ref: '#/components/schemas/Community/properties/rules'
  *      responses:
  *        '404':
  *          description: User not found.
@@ -77,9 +79,19 @@ router.post("/", async (req, res) => {
     const community = await Community.create({
       title: req.body.title,
       description: req.body.description,
-      creator: user.id,
+      creator: user.name,
       members: [user.id],
+      rules: req.body.rules,
     });
+
+    await User.updateOne(
+      { name: user.name },
+      {
+        $push: {
+          communities: community.title,
+        },
+      }
+    );
 
     return res.status(201).json(community);
   } catch (err) {
@@ -104,7 +116,7 @@ router.post("/", async (req, res) => {
  *      summary: Get all communities the user is a part of.
  *      responses:
  *        '404':
- *          description: User not found.
+ *          description: User or Community not found.
  *        '200':
  *          content:
  *            application/json:
@@ -125,7 +137,7 @@ router.get("/", async (req, res) => {
       sort: { _id: -1 },
     }).exec();
 
-    if (!communities) return res.sendStatus(404);
+    if (!communities) return res.status(404).send("Community not found.");
 
     return res.status(200).json(communities);
   } catch (err) {
@@ -168,7 +180,7 @@ router.get("/:title", async (req, res) => {
       title: req.params.title,
     }).exec();
 
-    if (!community) return res.sendStatus(404);
+    if (!community) return res.status(404).send("Community not found.");
 
     return res.status(200).json(community);
   } catch (err) {
@@ -205,7 +217,9 @@ router.get("/:title", async (req, res) => {
  *                  $ref: '#/components/schemas/Community/properties/description'
  *      responses:
  *        '404':
- *          description: Community not found.
+ *          description: Community or User not found.
+ *        '403':
+ *          description: Forbidden. Must be creator of community.
  *        '204':
  *          description: Community successfully edited.
  *        '400':
@@ -216,12 +230,19 @@ router.get("/:title", async (req, res) => {
 // TODO: AUTH
 router.patch("/:title", async (req, res) => {
   try {
-    // FIX ME: AUTH USER IS MODERATOR
+    // TODO: AUTH USER IS MODERATOR
+    const user = await User.findOne({ name: req.user.name });
+
+    if (!user) return res.status(404).send("User not found.");
+
     const community = await Community.findOne({
       title: req.params.title,
     }).exec();
 
-    if (!community) return res.sendStatus(404);
+    if (!community) return res.status(404).send("Community not found.");
+
+    if (user.name !== community.creator)
+      return res.status(403).send("Forbidden. Must be creator of community.");
 
     // eslint-disable-next-line prefer-const
     let query = { $set: {} };
@@ -235,7 +256,7 @@ router.patch("/:title", async (req, res) => {
       }
     });
 
-    await Community.updateOne({ title: req.params.title }, query).exec();
+    await Community.updateOne({ title: community.title }, query).exec();
 
     return res.sendStatus(204);
   } catch (err) {
@@ -261,7 +282,9 @@ router.patch("/:title", async (req, res) => {
  *            $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
- *          description: Community not found.
+ *          description: Community or User not found.
+ *        '403':
+ *          description: Forbidden. Must be creator of community.
  *        '200':
  *          description: Community removed.
  *        '400':
@@ -272,14 +295,247 @@ router.patch("/:title", async (req, res) => {
 // TODO: AUTH
 router.delete("/:title", async (req, res) => {
   try {
-    const community = await Community.deleteOne({
+    const user = await User.findOne({ name: req.user.name });
+
+    if (!user) return res.status(404).send("User not found.");
+
+    const community = await Community.findOne({
       title: req.params.title,
     }).exec();
 
-    if (!community) return res.sendStatus(404);
+    if (!community) return res.status(404).send("Community not found.");
+
+    if (user.name !== community.creator)
+      return res.status(403).send("Forbidden. Must be creator of community.");
+
+    await Community.deleteOne({
+      title: req.params.title,
+    }).exec();
 
     // TODO: AUTH ONLY MODERATORS OF COMMUNITY
     return res.status(200).send("Community removed.");
+  } catch (err) {
+    return res.status(400).send(`Bad Request: ${err}`);
+  }
+});
+
+/**
+ * @swagger
+ * paths:
+ *  /api/community/join/{title}:
+ *    patch:
+ *      security:
+ *        - bearerAuth: []
+ *      tags:
+ *        - Community
+ *      summary: Join community by title.
+ *      parameters:
+ *        - in: path
+ *          required: true
+ *          name: title
+ *          schema:
+ *            $ref: '#/components/schemas/Community/properties/title'
+ *      responses:
+ *        '404':
+ *          description: User or Community not found.
+ *        '204':
+ *          description: Successfully joined community.
+ *        '400':
+ *          description: Bad Request.
+ */
+
+// Join community by title
+router.patch("/join/:title", async (req, res) => {
+  try {
+    const user = await User.findOne({ name: req.user.name });
+
+    if (!user) return res.status(404).send("User not found.");
+
+    const community = await Community.findOne({
+      title: req.params.title,
+    }).exec();
+
+    if (!community) return res.status(404).send("Community not found.");
+
+    await Community.updateOne(
+      { title: community.title },
+      { $push: { members: user.id } }
+    );
+
+    await User.updateOne(
+      { name: user.name },
+      {
+        $push: {
+          communities: community.title,
+        },
+      }
+    );
+
+    return res.sendStatus(204);
+  } catch (err) {
+    return res.status(400).send(`Bad Request: ${err}`);
+  }
+});
+
+/**
+ * @swagger
+ * paths:
+ *  /api/community/leave/{title}:
+ *    delete:
+ *      security:
+ *        - bearerAuth: []
+ *      tags:
+ *        - Community
+ *      summary: Leave community by title.
+ *      parameters:
+ *        - in: path
+ *          required: true
+ *          name: title
+ *          schema:
+ *            $ref: '#/components/schemas/Community/properties/title'
+ *      responses:
+ *        '404':
+ *          description: User or Community not found.
+ *        '204':
+ *          description: Successfully left community.
+ *        '400':
+ *          description: Bad Request.
+ */
+
+// Leave community by title
+router.delete("/leave/:title", async (req, res) => {
+  try {
+    const user = await User.findOne({ name: req.user.name });
+
+    if (!user) return res.status(404).send("User not found.");
+
+    const community = await Community.findOne({
+      title: req.params.title,
+    }).exec();
+
+    if (!community) return res.status(404).send("Community not found.");
+
+    await Community.updateOne(
+      { title: community.title },
+      { $pull: { members: user.id } }
+    );
+
+    await User.updateOne(
+      { name: user.name },
+      {
+        $pull: {
+          communities: community.title,
+        },
+      }
+    );
+
+    return res.sendStatus(204);
+  } catch (err) {
+    return res.status(400).send(`Bad Request: ${err}`);
+  }
+});
+
+/**
+ * @swagger
+ * paths:
+ *  /api/community/rules/{title}:
+ *    put:
+ *      security:
+ *        - bearerAuth: []
+ *      tags:
+ *        - Community
+ *      summary: Set community rules by title.
+ *      parameters:
+ *        - in: path
+ *          required: true
+ *          name: title
+ *          schema:
+ *            $ref: '#/components/schemas/Community/properties/title'
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                rules:
+ *                  $ref: '#/components/schemas/Community/properties/rules'
+ *      responses:
+ *        '404':
+ *          description: Community or User not found.
+ *        '403':
+ *          description: Forbidden. Must be creator of community.
+ *        '204':
+ *          description: Successfully set rules.
+ *        '400':
+ *          description: Bad Request.
+ */
+
+// Set community rules by title
+router.put("/rules/:title", async (req, res) => {
+  try {
+    const user = await User.findOne({ name: req.user.name });
+
+    if (!user) return res.status(404).send("User not found.");
+
+    const community = await Community.findOne({
+      title: req.params.title,
+    }).exec();
+
+    if (!community) return res.status(404).send("Community not found.");
+
+    if (user.name !== community.creator)
+      return res.status(403).send("Forbidden. Must be creator of community.");
+
+    await Community.updateOne(
+      { title: req.params.title },
+      { $set: { rules: req.body.rules } }
+    ).exec();
+
+    return res.sendStatus(204);
+  } catch (err) {
+    return res.status(400).send(`Bad Request: ${err}`);
+  }
+});
+
+/**
+ * @swagger
+ * paths:
+ *  /api/community/rules/{title}:
+ *    get:
+ *      security:
+ *        - bearerAuth: []
+ *      tags:
+ *        - Community
+ *      summary: Get community rules by title.
+ *      parameters:
+ *        - in: path
+ *          required: true
+ *          name: title
+ *          schema:
+ *            $ref: '#/components/schemas/Community/properties/title'
+ *      responses:
+ *        '404':
+ *          description: Community not found.
+ *        '200':
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/Community/properties/rules'
+ *        '400':
+ *          description: Bad Request.
+ */
+
+// Get community rules by title
+router.get("/rules/:title", async (req, res) => {
+  try {
+    const community = await Community.findOne({
+      title: req.params.title,
+    }).exec();
+
+    if (!community) return res.status(404).send("Community not found.");
+
+    return res.status(200).json(community.rules);
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);
   }
