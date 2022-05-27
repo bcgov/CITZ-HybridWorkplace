@@ -104,9 +104,6 @@ describe('Testing the get communities function after logging in, but without tok
     expect(response.text).toBe("Not Authorized.");
   });
 });
-
-
-
 describe('Testing the get communities function after logging in, but with wrong token', () => {
 
   test('API returns unsuccessful response', async () => {
