@@ -1,7 +1,7 @@
 require('dotenv').config();
 const supertest = require('supertest');
 
-const endpoint = process.env.REACT_APP_API_REF;
+const endpoint = process.env.API_REF;
 const request = supertest(endpoint);
 var token = '';
 
