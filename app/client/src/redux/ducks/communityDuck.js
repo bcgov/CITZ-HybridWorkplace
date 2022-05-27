@@ -63,7 +63,9 @@ export const createCommunity =
   (communityData) => async (dispatch, getState) => {
     let successful = true;
     try {
-      const token = getState().auth.accessToken;
+      const authState = getState().auth;
+      const token = authState.accessToken;
+      const name = authState.user.name;
       if (!token) throw new Error(noTokenText);
 
       const response = await fetch(`${apiURI}/api/community`, {
@@ -75,7 +77,7 @@ export const createCommunity =
         body: JSON.stringify({
           title: communityData.title,
           description: communityData.description,
-          creator: communityData.creator,
+          creator: name,
         }),
       });
 

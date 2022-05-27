@@ -18,98 +18,106 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
-*/
+ */
 
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 
-import Communities from '../components/joinCommunitiesList';
-import Posts from '../components/postsList';
-import PostModal from '../components/modals/addPost';
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import Communities from "../components/joinCommunitiesList";
+import Posts from "../components/postsList";
+import PostModal from "../components/modals/addPostModal";
+import CommunityModal from "../components/modals/addCommunityModal";
 
 const Home = () => {
-    const [show, setShow] = useState(false);
+  const [show, setShow] = useState(false);
 
-    /*
-    useEffect(() => {
-        const token = localStorage.getItem('token')
-        if (token) {
-            const user = jwt_decode(token)
-            if (!user) {
-                localStorage.removeItem('token')
-                navigate('/login')
-            }
-        }
-    }, []);
-    */
+  const [createCommunityOpen, setCreateCommunityOpen] = useState(false);
 
-    return (
-        <div>
-            <Grid container spacing={2}>
+  const openDialog = () => setCreateCommunityOpen(true);
 
-                <Grid item xs={8}>
-                    <Paper>
-                        <Box
-                            sx={{
-                                backgroundColor: '#036',
-                                color: 'white',
-                                px: 1,
-                                py: 0.5,
-                                textAlign: 'center',
-                                display: 'flex',
-                            }}
-                        >
-                            <Typography variant='h6' component='h5'> Posts </Typography>
-                            <Button onClick={() => setShow(true)}> Add Post </Button>
+  const closeDialog = (value) => setCreateCommunityOpen(false);
 
-                            <PostModal onClose={() => setShow(false)} show={show} />
+  return (
+    <div>
+      <Grid container spacing={2}>
+        <Grid item xs={8}>
+          <Paper>
+            <Box
+              sx={{
+                backgroundColor: "#036",
+                color: "white",
+                px: 1,
+                py: 0.5,
+                textAlign: "center",
+                display: "flex",
+              }}
+            >
+              <Typography variant="h6" component="h5">
+                {" "}
+                Posts{" "}
+              </Typography>
+              <Button onClick={() => setShow(true)}> Add Post </Button>
 
-                        </Box>
-                        <Posts />
-                    </Paper>
-                </Grid>
-                <Grid item xs={4}>
-                    <Paper>
-                        <Box
-                            sx={{
-                                backgroundColor: '#036',
-                                color: 'white',
-                                px: 1,
-                                py: 0.5,
-                                textAlign: 'center',
-                            }}
-                        >
-                            <Typography variant='h6' component='h5'>Communities</Typography>
+              <PostModal onClose={() => setShow(false)} show={show} />
+            </Box>
+            <Posts />
+          </Paper>
+        </Grid>
+        <Grid item xs={4}>
+          <Paper>
+            <Box
+              sx={{
+                backgroundColor: "#036",
+                color: "white",
+                px: 1,
+                py: 0.5,
+                textAlign: "center",
+              }}
+            >
+              <Typography variant="h6" component="h5">
+                Communities
+              </Typography>
+            </Box>
+            <Communities />
+            <Box
+              sx={{
+                backgroundColor: "#036",
+                color: "white",
+                px: 1,
+                py: 0.5,
+                textAlign: "center",
+              }}
+            >
+              <Button variant="text" onClick={openDialog}>
+                + Create Community
+              </Button>
+              <CommunityModal
+                onClose={closeDialog}
+                open={createCommunityOpen}
+              />
+            </Box>
+          </Paper>
+        </Grid>
+      </Grid>
+    </div>
+  );
+};
 
-                        </Box>
-                        <Communities />
-                        <Link to='/createCommunity' style={{ textDecoration: 'none' }}>
+Home.propTypes = {
+  getCommunities: PropTypes.func.isRequired,
+  communities: PropTypes.array.isRequired,
+};
 
-                            <Box
-                                sx={{
-                                    backgroundColor: '#036',
-                                    color: 'white',
-                                    px: 1,
-                                    py: 0.5,
-                                    textAlign: 'center',
+const mapStateToProps = (state) => ({
+  communities: state.communities.items,
+});
 
-                                }}
-                            >
-                                <Typography variant='h6' component='h5'>+ Create Community</Typography>
-                            </Box>
-
-                        </Link>
-                    </Paper>
-                </Grid>
-            </Grid>
-        </div>
-    );
-}
-
-export default Home;
+export default connect(mapStateToProps, {})(Home);

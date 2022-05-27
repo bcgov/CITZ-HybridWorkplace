@@ -22,31 +22,32 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 import { createCommunity } from "../redux/ducks/communityDuck";
+import { Button } from "@mui/material";
 
-const CreateCommunity = () => {
+const CreateCommunity = (props) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [name, setName] = useState("Undefined");
+  const [createCommunityLoading, setCreateCommunityLoading] = useState(false);
 
-  async function registerCommunity(event) {
-    event.preventDefault();
+  async function registerCommunity() {
+    setCreateCommunityLoading(true);
     const community = {
       title: title,
       description: description,
-      creator: name,
     };
-    dispatch(createCommunity(community));
-    navigate("/home");
+    const successful = await props.createCommunity(community);
+    setCreateCommunityLoading(false);
+    if (successful === true) {
+      navigate("/home");
+    }
   }
 
   return (
     <div>
-      <h1>Create Community</h1>
       <form onSubmit={registerCommunity}>
         <input
           value={title}
@@ -62,10 +63,23 @@ const CreateCommunity = () => {
           placeholder="Description"
         />
         <br />
-        <input type="submit" value="Submit" id="submit" />
+        <Button
+          variant="contained"
+          loading={createCommunityLoading}
+          id="submit"
+          onClick={registerCommunity}
+        >
+          Submit
+        </Button>
       </form>
     </div>
   );
 };
 
-export default CreateCommunity;
+CreateCommunity.propTypes = {
+  createCommunity: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({});
+
+export default connect(mapStateToProps, { createCommunity })(CreateCommunity);
