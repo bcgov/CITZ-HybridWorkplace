@@ -32,9 +32,6 @@ describe('Testing the get communities function without logging in', () => {
       expect(response.text).toBe("Not Authorized.");
     });
 });
-
-
-
 describe('Testing login for test user', () => {
 
   test('Test account can log in', async () => {
