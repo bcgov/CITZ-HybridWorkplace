@@ -31,6 +31,7 @@ const CreateCommunity = (props) => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [rules, setRules] = useState("");
   const [createCommunityLoading, setCreateCommunityLoading] = useState(false);
 
   async function registerCommunity() {
@@ -38,6 +39,7 @@ const CreateCommunity = (props) => {
     const community = {
       title: title,
       description: description,
+      rules: rules,
     };
     const successful = await props.createCommunity(community);
     setCreateCommunityLoading(false);
@@ -61,6 +63,12 @@ const CreateCommunity = (props) => {
           onChange={(e) => setDescription(e.target.value)}
           type="text"
           placeholder="Description"
+        />
+        <input
+          value={rules}
+          onChange={(e) => setRules(e.target.value)}
+          type="text"
+          placeholder="Rules"
         />
         <br />
         <Button

@@ -78,6 +78,7 @@ export const createCommunity =
           title: communityData.title,
           description: communityData.description,
           creator: name,
+          rules: communityData.rules,
         }),
       });
 
