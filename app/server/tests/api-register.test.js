@@ -28,7 +28,7 @@ describe('Testing optimal inputs for register', () => {
     });
 });
 
-describe('Testing sub-optimal inputs for register', () => {
+describe('Testing sub-optimal inputs for register - all return 400', () => {
     afterAll(async () => {
         await users.deleteUsers();
     });
