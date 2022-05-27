@@ -2,9 +2,6 @@
     Testing ability to register user accounts.
 */
 
-const endpoint = process.env.API_REF;
-const supertest = require('supertest');
-const request = supertest(endpoint);
 const { UserFunctions } = require('./userFunctions')
 const { password, name, email } = require('./randomizer');
 
