@@ -79,8 +79,6 @@ describe('Testing the get communities function after logging in', () => {
     expect(" " + response.text + " ").toContain(welcomeCommunityTitle);
   });
 });
-
-
 describe('Testing the get communities function after logging in, but without token', () => {
 
   test('API returns unsuccessful response', async () => {
