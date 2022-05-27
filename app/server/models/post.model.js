@@ -41,8 +41,14 @@
  *          $ref: '#/components/schemas/User/properties/id'
  *        community:
  *          $ref: '#/components/schemas/Community/properties/title'
+ *        pinned:
+ *          type: boolean
+ *          description: Pinned posts show at the top of the feed. Limit 3 per community.
  *      required:
  *        - title
+ *        - message
+ *        - creator
+ *        - community
  */
 
 const mongoose = require("mongoose");
@@ -50,10 +56,10 @@ const mongoose = require("mongoose");
 const Post = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    message: { type: String },
-    creator: { type: String },
-    community: { type: String },
-    flagged: { type: Boolean },
+    message: { type: String, required: true },
+    creator: { type: String, required: true },
+    community: { type: String, required: true },
+    pinned: { type: Boolean },
   },
   { collection: "post" }
 );
