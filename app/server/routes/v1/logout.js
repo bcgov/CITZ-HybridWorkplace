@@ -75,7 +75,7 @@ router.get("/", async (req, res) => {
     res.clearCookie("jwt", { httpOnly: true });
     res.sendStatus(204);
   } catch (err) {
-    return res.status(400).send("Bad Request.");
+    return res.status(400).send(`Bad Request: ${err}`);
   }
 });
 
