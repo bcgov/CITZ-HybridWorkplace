@@ -49,9 +49,6 @@ describe('Testing login for test user', () => {
       expect(response.status).toBe(201);
   });
 });
-
-
-
 describe('Testing the get communities function after logging in', () => {
 
   test('API returns successful response', async () => {
