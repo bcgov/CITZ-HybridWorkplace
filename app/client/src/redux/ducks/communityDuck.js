@@ -77,7 +77,6 @@ export const createCommunity =
         body: JSON.stringify({
           title: communityData.title,
           description: communityData.description,
-          creator: name,
           rules: communityData.rules,
         }),
       });
