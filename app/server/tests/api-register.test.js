@@ -1,53 +1,60 @@
 /*  
     Testing ability to register user accounts.
-    Endpoint is /api/register
 */
 
 const endpoint = process.env.API_REF;
 const supertest = require('supertest');
 const request = supertest(endpoint);
-const RandExp = require('randexp');
-const UserFunctions = require('./userFunctions')
+const { UserFunctions } = require('./userFunctions')
+const { password, name, email } = require('./randomizer');
 
-let user = new UserFunctions();
+let users = new UserFunctions(); // build class for user actions
 
 describe('Testing optimal inputs for register', () => {
-    //name is for the IDIR input
-
-    // Try to insert fake user if it's not already done.
-    beforeAll(async () => {
-        await user.register('Zack Galafianakis', 'zgalafianakis@gov.bc.ca', 'MyDogHasFleas1!');
-    });
-
     // Clean up
     afterAll(async () => {
-        await user.deleteUsers();
+        await users.deleteUsers();
     });
 
     test('new users are registered successfully - returns 201', async () => {
-        //generate random name and password 
-        let name = (Math.random() + 1).toString(36).substring(2);
-        let password = new RandExp(/^[\w\W]{8,}$/);
-
-        let response = await user.register(name, name, password.gen());
-
+        let response = await users.register(name.gen(), email.gen(), password.gen());
         expect(response.status).toBe(201);
     });
 
     test('user attempts to register with name and password already used - returns 403', async () => {
-        let response = await user.register('Zack Galafianakis', 'zgalafianakis@gov.bc.ca', 'MyDogHasFleas1!');
-        expect(response.status).toBe(403); //user already exists
+        await users.register('Zack Galafianakis', 'zgalafianakis@gov.bc.ca', 'MyDogHasFleas1!');
+        let response = await users.register('Zack Galafianakis', 'zgalafianakis@gov.bc.ca', 'MyDogHasFleas1!');
+        expect(response.status).toBe(403); // user already exists
     });
 });
 
 describe('Testing sub-optimal inputs for register', () => {
-    test('api rejects registration if password doesn\'t meet specifications', () => {
-
+    afterAll(async () => {
+        await users.deleteUsers();
     });
 
-    test('api rejects registration if email is not valid', () => {
+    test('api rejects registration if password doesn\'t meet character specifications', async () => {
+        let response = await users.register(name.gen(), email.gen(), 'badpasswo1!');
+        expect(response.status).toBe(400);
+    });
 
+    test('api rejects registration if password doesn\'t meet number specifications', async () => {
+        let response = await users.register(name.gen(), email.gen(), 'B!adpassword');
+        expect(response.status).toBe(400);
+    });
+
+    test('api rejects registration if password doesn\'t meet symbol specifications', async () => {
+        let response = await users.register(name.gen(), email.gen(), 'Badpassword1');
+        expect(response.status).toBe(400);
+    });
+
+    test('api rejects registration if password doesn\'t meet length specifications', async () => {
+        let response = await users.register(name.gen(), email.gen(), 'hi');
+        expect(response.status).toBe(400);
+    });
+
+    test('api rejects registration if email is not valid', async () => {
+        let response = await users.register(name.gen(), 'amazingemail', password.gen());
+        expect(response.status).toBe(400);
     });
 });
-
-//TODO: test about registering with password tooo short
