@@ -34,8 +34,6 @@ const User = require("../../models/user.model");
  * paths:
  *  /api/token:
  *    get:
- *      security:
- *        - cookieAuth: []
  *      tags:
  *        - Auth
  *      summary: Use refresh token to retreive a new access token.

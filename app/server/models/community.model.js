@@ -42,8 +42,14 @@
  *          description: Users that have joined the community.
  *          items:
  *            - $ref: '#/components/schemas/User'
+ *        rules:
+ *          type: string
+ *          description: Community rules set by moderators
  *      required:
  *        - title
+ *        - description
+ *        - creator
+ *        - rules
  */
 
 const mongoose = require("mongoose");
@@ -51,15 +57,15 @@ const mongoose = require("mongoose");
 const Community = new mongoose.Schema(
   {
     title: { type: String, required: true, unique: true },
-    description: { type: String },
-    creator: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    description: { type: String, required: true },
+    creator: { type: String, required: true },
     members: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
     ],
-    flagged: { type: Boolean },
+    rules: { type: String, required: true },
   },
   { collection: "community" }
 );
