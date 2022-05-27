@@ -21,12 +21,7 @@ Endpoint documentation is done in the ./routes/v1/_.js files.
 
 ## Setting Version
 
-Set the current used version in the .env file with API_VERSION or
-leave API_VERSION empty and use the 'Accept-version' header in your api calls.
-
-NOTE: Using the header method, you can only set the version once and will need to
-restart the server to change the version again, BUT it is still required that you
-use the header in every api call you make.
+Set the current used version in the .env file with API_VERSION.
 
 ## Creating New Versions
 

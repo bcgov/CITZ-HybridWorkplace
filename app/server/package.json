@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "jest": "^28.1.0",
+    "randexp": "^0.5.3",
     "supertest": "^6.2.3"
   },
   "jest": {
@@ -35,6 +36,8 @@
     "collectCoverage": false,
     "coverageDirectory": "./tests/coverage",
     "rootDir": "./",
-    "setupFiles": ["dotenv/config"]
+    "setupFiles": [
+      "dotenv/config"
+    ]
   }
 }
