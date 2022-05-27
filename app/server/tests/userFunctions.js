@@ -58,11 +58,18 @@ class UserFunctions{
     }
 
     // Logs out an existing user
-    async logout(name, password){
+    async logoutByCreds(name, password){
         let loginResponse = await this.login(name, password);
         let logoutResponse = await request.get('/logout')
             .set('accept', `*/*`)
             .set('Cookie', `jwt=${ loginResponse.body.refreshToken }`);
+        return logoutResponse;
+    }
+
+    async logoutByCookie(cookie){
+        let logoutResponse = await request.get('/logout')
+            .set('accept', `*/*`)
+            .set('Cookie', `jwt=${ cookie }`);
         return logoutResponse;
     }
 
