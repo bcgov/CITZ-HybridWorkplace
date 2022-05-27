@@ -29,10 +29,9 @@ jobs:
           APPLICATION_NAME: "${{ secrets.API_APPLICATION_NAME }}"
           LICENSE_PLATE: "${{ secrets.LICENSE_PLATE }}"
           ENVIRONMENT: "${{ secrets.PROD_ENVIRONMENT }}"
-          API_REFERENCE: "${{ secrets.PROD_API_REFERENCE }}"
           DEPLOYMENT_CONFIG: api-dc.yaml
         run: |
-          ./.github/helpers/deploy.sh 
+          ./.github/helpers/deploy-api.sh 
           
       - name: Health Check PROD deployment
         env:

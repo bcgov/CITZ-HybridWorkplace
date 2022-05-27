@@ -23,6 +23,7 @@ const router = express.Router();
 
 const Post = require("../../models/post.model");
 const User = require("../../models/user.model");
+const Community = require("../../models/community.model");
 
 /**
  * @swagger
@@ -49,7 +50,7 @@ const User = require("../../models/user.model");
  *                  $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
- *          description: User not found.
+ *          description: User or Community not found.
  *        '201':
  *          description: Post successfully created.
  *          content:
@@ -64,13 +65,16 @@ const User = require("../../models/user.model");
 router.post("/", async (req, res) => {
   try {
     const user = await User.findOne({ name: req.user.name });
+    const community = await Community.findOne({ title: req.body.community });
 
     if (!user) return res.status(404).send("User not found.");
+    if (!community) return res.status(404).send("Community not found.");
 
     const post = await Post.create({
       title: req.body.title,
       message: req.body.message,
       creator: user.id,
+      community: req.body.community,
     });
 
     return res.status(201).json(post);
@@ -92,7 +96,7 @@ router.post("/", async (req, res) => {
  *        - bearerAuth: []
  *      tags:
  *        - Post
- *      summary: Get all posts.
+ *      summary: Get all posts from communities user is apart of.
  *      responses:
  *        '404':
  *          description: Posts not found.
@@ -106,10 +110,19 @@ router.post("/", async (req, res) => {
  *          description: Bad Request.
  */
 
-// Get all posts
+// Get all posts from communities user is apart of
 router.get("/", async (req, res) => {
   try {
-    const posts = await Post.find({}, "", { sort: { _id: -1 } }).exec();
+    const user = await User.findOne({ name: req.user.name });
+
+    if (!user) return res.status(404).send("User not found.");
+
+    // If post belongs to community listed in user.communities
+    const posts = await Post.find(
+      { community: { $in: user.communities } },
+      "",
+      { sort: { _id: -1 } }
+    ).exec();
 
     if (!posts) return res.status(404).send("Posts not found.");
 
