@@ -53,9 +53,11 @@
  *              tag:
  *                type: string
  *                example: Informative
- *              count:
- *                type: number
- *                example: 1
+ *              taggedBy:
+ *                type: array
+ *                description: Users that have tagged the post.
+ *                items:
+ *                  - $ref: '#/components/schemas/User'
  *      required:
  *        - title
  *        - message
@@ -72,7 +74,17 @@ const Post = new mongoose.Schema(
     creator: { type: String, required: true },
     community: { type: String, required: true },
     pinned: { type: Boolean },
-    tags: [{ tag: String, count: Number }],
+    tags: [
+      {
+        tag: String,
+        taggedBy: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+          },
+        ],
+      },
+    ],
   },
   { collection: "post" }
 );

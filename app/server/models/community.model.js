@@ -45,6 +45,18 @@
  *        rules:
  *          type: string
  *          description: Community rules set by moderators
+ *        tags:
+ *          type: array
+ *          description: Tags set on posts in the community.
+ *          items:
+ *            type: object
+ *            properties:
+ *              tag:
+ *                type: string
+ *                example: Informative
+ *              count:
+ *                type: number
+ *                example: 1
  *      required:
  *        - title
  *        - description
@@ -66,6 +78,7 @@ const Community = new mongoose.Schema(
       },
     ],
     rules: { type: String, required: true },
+    tags: [{ tag: String, count: Number }],
   },
   { collection: "community" }
 );

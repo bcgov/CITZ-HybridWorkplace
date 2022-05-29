@@ -395,7 +395,7 @@ router.delete("/:id", async (req, res) => {
 /**
  * @swagger
  * paths:
- *  /api/post/{id}/tags:
+ *  /api/post/tags/{id}:
  *    get:
  *      security:
  *        - bearerAuth: []
@@ -422,7 +422,7 @@ router.delete("/:id", async (req, res) => {
  */
 
 // Get post tags by post id
-router.get("/:id/tags", async (req, res) => {
+router.get("/tags/:id", async (req, res) => {
   try {
     const post = await Post.findOne({ _id: req.params.id }).exec();
 
@@ -437,68 +437,87 @@ router.get("/:id/tags", async (req, res) => {
 /**
  * @swagger
  * paths:
- *  /api/post/{id}/tags/{tag}:
+ *  /api/post/tags/{id}:
  *    post:
  *      security:
  *        - bearerAuth: []
  *      tags:
  *        - Post
- *      summary: Create post tag by post id
+ *      summary: Tag post by id
  *      parameters:
  *        - in: path
  *          required: true
  *          name: id
  *          schema:
  *            $ref: "#/components/schemas/Post/properties/id"
- *        - in: path
+ *        - in: query
  *          required: true
  *          name: tag
  *          schema:
  *            $ref: '#/components/schemas/Post/properties/tags/items/properties/tag'
  *      responses:
  *        '404':
- *          description: User not found. OR Post not found.
- *        '401':
- *          description: Not Authorized. Only creator of post can edit post.
+ *          description: User not found. OR Post not found. OR Tag not found in query.
  *        '403':
- *          description: Forbidden. A community can't have more than 7 tags. OR Forbidden. No duplicate tags.
+ *          description: Forbidden. Tag must be used by community. OR Forbidden. Limit 1 tag per user, per post.
  *        '204':
- *          description: Post successfully edited.
+ *          description: Successfully created tag.
  *        '400':
  *          description: Bad Request.
  */
 
-// Create post tag by post id
-router.post("/:id/tags/:tag", async (req, res) => {
+// Tag post by id
+router.post("/tags/:id", async (req, res) => {
   try {
-    // TODO: MODERATORS CAN EDIT POST TOO
     const user = await User.findOne({ name: req.user.name });
     const post = await Post.findOne({ _id: req.params.id }).exec();
 
     if (!user) return res.status(404).send("User not found.");
     if (!post) return res.status(404).send("Post not found.");
+    if (!req.query.tag) return res.status(404).send("Tag not found in query.");
 
-    if (post.creator !== user.id)
-      return res
-        .status(401)
-        .send("Not Authorized. Only creator of post can edit post.");
+    // Check community has tag
+    if (
+      !(await Community.exists({
+        title: post.community,
+        "tags.tag": req.query.tag,
+      }))
+    )
+      return res.status(403).send("Forbidden. Tag must be used by community.");
 
+    // Check duplicate tag
     if (
       await Post.exists({
-        _id: req.params.id,
-        "tags.tag": req.params.tag,
+        _id: post.id,
+        "tags.taggedBy": user.id,
       })
     )
-      return res.status(403).send("Forbidden. No duplicate tags.");
+      return res.status(403).send("Forbidden. Limit 1 tag per user, per post.");
 
-    if (await Post.exists({ _id: req.params.id, tags: { $size: 7 } }))
-      return res
-        .status(403)
-        .send("Forbidden. A post can't have more than 7 tags.");
+    // If tag isn't set on post
+    if (
+      !(await Post.exists({
+        _id: post.id,
+        "tags.tag": req.query.tag,
+      }))
+    ) {
+      // Create tag
+      await Post.updateOne(
+        { _id: post.id },
+        { $push: { tags: { tag: req.query.tag } } }
+      );
+    }
 
+    // Add user to taggedBy
     await Post.updateOne(
-      { _id: post.id },
-      { $push: { tags: { tag: req.params.tag, count: 0 } } }
+      { _id: post.id, tags: { $elemMatch: { tag: req.query.tag } } },
+      { $addToSet: { "tags.$.taggedBy": [user.id] } }
+    );
+
+    // Increment tag count in community
+    await Community.updateOne(
+      { title: post.community, tags: { $elemMatch: { tag: req.query.tag } } },
+      { $inc: { "tags.$.count": 1 } }
     );
 
     return res.sendStatus(204);
@@ -510,7 +529,7 @@ router.post("/:id/tags/:tag", async (req, res) => {
 /**
  * @swagger
  * paths:
- *  /api/post/{id}/tags/{tag}:
+ *  /api/post/tags/{id}:
  *    delete:
  *      security:
  *        - bearerAuth: []
@@ -523,26 +542,26 @@ router.post("/:id/tags/:tag", async (req, res) => {
  *          name: id
  *          schema:
  *            $ref: "#/components/schemas/Post/properties/id"
- *        - in: path
+ *        - in: query
  *          required: true
  *          name: tag
  *          schema:
  *            $ref: '#/components/schemas/Post/properties/tags/items/properties/tag'
  *      responses:
  *        '404':
- *          description: User not found. OR Post not found.
+ *          description: User not found. OR Post not found. OR Tag not found in query.
  *        '401':
  *          description: Not Authorized. Only creator of post can edit post.
  *        '403':
  *          description: Forbidden. A community can't have more than 7 tags. OR Forbidden. No duplicate tags.
  *        '204':
- *          description: Post successfully edited.
+ *          description: Successfully removed tag.
  *        '400':
  *          description: Bad Request.
  */
 
 // Remove post tag by post id
-router.delete("/:id/tags/:tag", async (req, res) => {
+router.delete("/tags/:id", async (req, res) => {
   try {
     // TODO: MODERATORS CAN EDIT POST TOO
     const user = await User.findOne({ name: req.user.name });
@@ -550,6 +569,7 @@ router.delete("/:id/tags/:tag", async (req, res) => {
 
     if (!user) return res.status(404).send("User not found.");
     if (!post) return res.status(404).send("Post not found.");
+    if (!req.query.tag) return res.status(404).send("Tag not found in query.");
 
     if (post.creator !== user.id)
       return res
@@ -558,7 +578,7 @@ router.delete("/:id/tags/:tag", async (req, res) => {
 
     await Post.updateOne(
       { _id: post.id },
-      { $pull: { tags: { tag: req.params.tag } } }
+      { $pull: { tags: { tag: req.query.tag } } }
     );
 
     return res.sendStatus(204);
