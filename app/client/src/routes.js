@@ -49,7 +49,6 @@ class App extends Component {
           <Route path="/about" exact element={<About />} />
           <Route path="/profile/:id" element={<ProfilePage />} />
           <Route path="/profile/:id/edit" element={<EditProfile />} />
-          <Route path="/createCommunity" element={<CreateCommunity />} />
           <Route path="/communities" element={<CommunitiesPage />} />
           <Route path="/newCommunity" element={<NewCommunity />} />
           <Route path="/posts" element={<Posts />} />

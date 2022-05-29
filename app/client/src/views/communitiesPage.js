@@ -18,23 +18,31 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
-*/
+ */
 
-import { Link } from 'react-router-dom';
-import Communities from '../components/communitiesList';
+import { Button } from "@mui/material";
+import { useState } from "react";
+import Communities from "../components/communitiesList";
+import AddCommunity from "../components/modals/addCommunityModal";
 
 const CommunitiesPage = () => {
-    return (
-        <div>
-            <h1>Communities</h1>
-            <Communities/>
-            <br />
-            <Link to='/createCommunity'>
-                <button >Create New Community</button>
-            </Link>
+  const [createCommunityOpen, setCreateCommunityOpen] = useState(false);
 
-        </div>
-    )
-}
+  const openDialog = () => setCreateCommunityOpen(true);
+
+  const closeDialog = (value) => setCreateCommunityOpen(false);
+
+  return (
+    <div>
+      <h1>Communities</h1>
+      <Communities />
+      <br />
+      <AddCommunity onClose={closeDialog} open={createCommunityOpen} />
+      <Button variant="contained" onClick={openDialog}>
+        Create Community
+      </Button>
+    </div>
+  );
+};
 
 export default CommunitiesPage;
