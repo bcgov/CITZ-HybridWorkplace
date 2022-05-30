@@ -91,19 +91,23 @@ router.post("/", async (req, res) => {
       const token = generateToken(user);
       const refreshToken = generateRefreshToken(user);
 
+      const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+
       // Add or replace refresh token to db
       await User.updateOne(
         { user: user.name },
-        { refresh_token: refreshToken }
+        { refresh_token: hashedRefreshToken }
       );
 
       // Create JWT Refresh Cookie (HTTPOnly - JS can't touch)
       res.cookie("jwt", refreshToken, {
         httpOnly: true,
+        secure: true,
+        sameSite: "None",
       });
 
       // Send JWT
-      return res.status(201).json({ token, refreshToken });
+      return res.status(201).json({ token });
     }
     return res.status(400).send("Bad Request");
   } catch (err) {

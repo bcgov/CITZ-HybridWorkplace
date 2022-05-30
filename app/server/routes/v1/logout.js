@@ -25,6 +25,7 @@ const express = require("express");
 const router = express.Router();
 
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs"); // hashing
 
 const User = require("../../models/user.model");
 
@@ -68,11 +69,17 @@ router.get("/", async (req, res) => {
     const user = await User.findOne({ name: tokenUser.name });
     if (!user) return res.status(404).send("User not found.");
 
-    if (refreshToken !== user.refresh_token)
+    // Compare refreshToken to user.refresh_token from db
+    const isRefreshTokenValid = await bcrypt.compare(
+      refreshToken,
+      user.refresh_token
+    );
+
+    if (!isRefreshTokenValid)
       return res.status(401).send("Unauthorized. Invalid token.");
 
     await User.updateOne({ name: user.name }, { refresh_token: "" });
-    res.clearCookie("jwt", { httpOnly: true });
+    res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "None" });
     res.sendStatus(204);
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);
