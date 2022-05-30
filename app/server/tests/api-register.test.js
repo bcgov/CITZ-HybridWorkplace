@@ -2,8 +2,8 @@
     Testing ability to register user accounts.
 */
 
-const { UserFunctions } = require('./userFunctions')
-const { password, name, email } = require('./randomizer');
+const { UserFunctions } = require('./functions/authFunctions')
+const { password, name, email } = require('./functions/randomizer');
 
 let users = new UserFunctions(); // build class for user actions
 
