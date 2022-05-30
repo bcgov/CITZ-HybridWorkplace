@@ -25,7 +25,7 @@ describe('Testing the get community by title function with the "Welcome" communi
 });
 
 
-describe('Testing login for test user', () => {
+describe('Logging in the test user', () => {
   test('Test account can log in', async () => {
     let response = await user.loginUser('test','Test123!');
     token = response.body.token;
@@ -70,6 +70,22 @@ describe('Testing the get community function with the "Welcome" communityafter l
 
 
 describe('Testing the get community function with the "Welcome" community after logging in, but with wrong token', () => {
+  let response = '';
+
+  beforeAll(async() => {
+    response = await community.getCommunitybyTitle(welcomeCommunityTitle,token + '11');
+  });
+
+  test('API returns a unsuccessful response - code 403', () => {
+    expect(response.status).toBe(403);
+  });
+
+  test('API returns description -  "Forbidden."',() => {
+    expect(response.text).toBe("Forbidden.");
+  });
+});
+
+describe('Testing the get community function with the "Welcome" community after logging in, but with null as the token', () => {
   let response = '';
 
   beforeAll(async() => {
