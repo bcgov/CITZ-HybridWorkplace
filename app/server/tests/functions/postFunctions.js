@@ -16,7 +16,7 @@ function getAllPosts(token){
         .set({authorization: `Bearer ${token}`});
 } 
 
-function getPost(id,token){
+function getPost(id, token){
     return request
         .get(`/post/${id}`)
         .set({authorization: `Bearer ${token}`});
