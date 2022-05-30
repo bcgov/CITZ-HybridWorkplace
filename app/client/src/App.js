@@ -85,18 +85,6 @@ useEffect(() => {
             </div>
             <Footer />
           </div>
-          {store.getState().alerts?.errors?.map((item) => (
-            <div>
-              <h1>{item}</h1>
-              {console.log(item)}
-            </div>
-          ))}
-          {store.getState().alerts?.successes?.map((item) => (
-            <div>
-              <h1>{item}</h1>
-              {console.log(item)}
-            </div>
-          ))}
         </Provider>
       </Paper>
     </ThemeProvider>
