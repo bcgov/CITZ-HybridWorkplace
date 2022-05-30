@@ -47,6 +47,20 @@ class AuthFunctions{
         return loginResponse;
     }
 
+    // Tries to log in user with less secure configs
+    async loginInsecure(name, password){
+        let loginResponse = await request.post('/login')
+            .set('accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .set('Credentials', 'Include')
+            .set('Cookie', 'samesite=lax; path=./')
+            .send({
+                "name": name,
+                "password": password
+            });
+        return loginResponse;
+    }
+
     // Deletes an existing user
     async delete(name, password){
         let loginResponse = await this.login(name, password);
@@ -57,7 +71,7 @@ class AuthFunctions{
         return deleteResponse;
     }
 
-    // Logs out an existing user
+    // TODO: Logs out an existing user - needs update
     async logout(name, password){
         let loginResponse = await this.login(name, password);
         let logoutResponse = await request.get('/logout')
@@ -66,7 +80,7 @@ class AuthFunctions{
         return logoutResponse;
     }
 
-    // Retrieves a new token for an existing user
+    // TODO: Retrieves a new token for an existing user - needs update
     async token(name, password){
         let loginResponse = await this.login(name, password);
         let tokenResponse = await request.get('/token')
