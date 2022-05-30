@@ -2,7 +2,7 @@ const endpoint = process.env.API_REF;
 const supertest = require('supertest');
 const request = supertest(endpoint);
 
-class UserFunctions{
+class AuthFunctions{
     registerList; // Tracks registered users for later clean up.
 
     constructor(){
@@ -76,4 +76,4 @@ class UserFunctions{
     }
 }
 
-module.exports = { UserFunctions };
+module.exports = { AuthFunctions };

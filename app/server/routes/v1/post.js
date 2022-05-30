@@ -51,6 +51,8 @@ const Community = require("../../models/community.model");
  *      responses:
  *        '404':
  *          description: User or Community not found.
+ *        '403':
+ *          description: Forbidden. Community can't have more than 3 pinned posts.
  *        '201':
  *          description: Post successfully created.
  *          content:
@@ -70,11 +72,20 @@ router.post("/", async (req, res) => {
     if (!user) return res.status(404).send("User not found.");
     if (!community) return res.status(404).send("Community not found.");
 
+    if (
+      req.body.pinned === true &&
+      (await Post.count({ community: community.title, pinned: true })) >= 3
+    )
+      return res
+        .status(403)
+        .send("Forbidden. Community can't have more than 3 pinned posts.");
+
     const post = await Post.create({
       title: req.body.title,
       message: req.body.message,
       creator: user.id,
       community: req.body.community,
+      pinned: req.body.pinned || false,
     });
 
     return res.status(201).json(post);
@@ -121,7 +132,7 @@ router.get("/", async (req, res) => {
     const posts = await Post.find(
       { community: { $in: user.communities } },
       "",
-      { sort: { _id: -1 } }
+      { sort: { pinned: -1, _id: -1 } }
     ).exec();
 
     if (!posts) return res.status(404).send("Posts not found.");
@@ -177,6 +188,54 @@ router.get("/:id", async (req, res) => {
 /**
  * @swagger
  * paths:
+ *  /api/post/community/{title}:
+ *    get:
+ *      security:
+ *        - bearerAuth: []
+ *      tags:
+ *        - Post
+ *      summary: Get all posts from community title.
+ *      parameters:
+ *        - in: path
+ *          required: true
+ *          name: title
+ *          schema:
+ *            $ref: "#/components/schemas/Community/properties/title"
+ *      responses:
+ *        '404':
+ *          description: Posts not found. OR Community not found.
+ *        '200':
+ *          description: Posts successfully found.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/Post'
+ *        '400':
+ *          description: Bad Request.
+ */
+
+// Get all posts from community title
+router.get("/community/:title", async (req, res) => {
+  try {
+    const community = await Community.findOne({ title: req.params.title });
+
+    if (!community) return res.status(404).send("Community not found.");
+
+    const posts = await Post.find({ community: community.title }, "", {
+      sort: { pinned: -1, _id: -1 },
+    }).exec();
+
+    if (!posts) return res.status(404).send("Posts not found.");
+
+    return res.status(200).json(posts);
+  } catch (err) {
+    return res.status(400).send(`Bad Request: ${err}`);
+  }
+});
+
+/**
+ * @swagger
+ * paths:
  *  /api/post/{id}:
  *    patch:
  *      security:
@@ -195,12 +254,22 @@ router.get("/:id", async (req, res) => {
  *          application/json:
  *            schema:
  *              type: object
- *              $ref: '#/components/schemas/Post'
+ *              properties:
+ *                title:
+ *                  $ref: '#/components/schemas/Post/properties/title'
+ *                message:
+ *                  $ref: '#/components/schemas/Post/properties/message'
+ *                community:
+ *                  $ref: '#/components/schemas/Community/properties/title'
+ *                pinned:
+ *                  $ref: '#/components/schemas/Post/properties/pinned'
  *      responses:
  *        '404':
- *          description: User not found. OR Post not found.
+ *          description: User not found. OR Post not found. OR Community not found.
  *        '401':
  *          description: Not Authorized. Only creator of post can edit post.
+ *        '403':
+ *          description: Forbidden. Community can't have more than 3 pinned posts. OR Forbidden. Can't edit creator of a post.
  *        '204':
  *          description: Post successfully edited.
  *        '400':
@@ -223,12 +292,35 @@ router.patch("/:id", async (req, res) => {
         .status(401)
         .send("Not Authorized. Only creator of post can edit post.");
 
+    if (req.body.pinned === true && req.body.community) {
+      // pinned and community set in patch
+
+      const community = await Community.findOne({ title: req.body.community });
+      if (!community) return res.status(404).send("Community not found.");
+
+      if (
+        (await Post.count({ community: req.body.community, pinned: true })) >= 3
+      )
+        return res
+          .status(403)
+          .send("Forbidden. Community can't have more than 3 pinned posts.");
+    } else if (req.body.pinned === true && !req.body.community) {
+      // pinned set in patch, but not community
+      if ((await Post.count({ community: post.community, pinned: true })) >= 3)
+        return res
+          .status(403)
+          .send("Forbidden. Community can't have more than 3 pinned posts.");
+    }
+
     // eslint-disable-next-line prefer-const
     let query = { $set: {} };
 
     Object.keys(req.body).forEach((key) => {
-      // if the field in req.body exists, update/set it
+      if (key === "creator")
+        return res.status(403).send("Forbidden. Can't edit creator of a post.");
+
       if (post[key] && post[key] !== req.body[key]) {
+        // if the field in req.body exists, update/set it
         query.$set[key] = req.body[key];
       } else if (!post[key]) {
         query.$set[key] = req.body[key];
