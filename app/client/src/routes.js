@@ -38,6 +38,7 @@ import EditProfile from "./components/editProfile";
 import CreateCommunity from "./components/createCommunity";
 import NewCommunity from "./components/newCommunity";
 
+<<<<<<< HEAD
 class App extends Component {
   render() {
     return (
@@ -59,3 +60,47 @@ class App extends Component {
 }
 
 export default App;
+=======
+//Redux
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { Alert } from "@mui/material";
+
+const App = (props) => {
+  return (
+    <div className="Routes">
+      <Routes>
+        <Route path="/" exact element={<Register />} />
+        <Route path="/login" exact element={<Login />} />
+        <Route path="/home" exact element={<Home />} />
+        <Route path="/about" exact element={<About />} />
+        <Route path="/profile/:id" element={<ProfilePage />} />
+        <Route path="/profile/:id/edit" element={<EditProfile />} />
+        <Route path="/createCommunity" element={<CreateCommunity />} />
+        <Route path="/communities" element={<CommunitiesPage />} />
+        <Route path="/newCommunity" element={<NewCommunity />} />
+        <Route path="/posts" element={<Posts />} />
+      </Routes>
+      <div style={{ bottom: 0, right: 0 }}>
+        {props.alerts.errors.map((item) => (
+          <Alert severity="error">{item}</Alert>
+        ))}
+        {props.alerts.warnings.map((item) => (
+          <Alert severity="warning">{item}</Alert>
+        ))}
+        {props.alerts.successes.map((item) => (
+          <Alert severity="success">{item}</Alert>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const mapStateToProps = (state) => ({
+  alerts: state.alerts,
+});
+
+const mapActionsToProps = {};
+
+export default connect(mapStateToProps, mapActionsToProps)(App);
+>>>>>>> 0cd7cc8... Added alerts to the screen
