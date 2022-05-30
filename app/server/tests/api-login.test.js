@@ -1,7 +1,6 @@
-const { UserFunctions } = require('./userFunctions')
-const { password, name, email } = require('./randomizer');
+const { AuthFunctions } = require('./functions/authFunctions')
 
-let users = new UserFunctions(); // build class for user actions
+let users = new AuthFunctions(); // build class for user actions
 
 describe('Testing optimal inputs for login', () => {
     let response;
