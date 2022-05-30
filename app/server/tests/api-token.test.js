@@ -1,6 +1,6 @@
-const { UserFunctions } = require('./userFunctions')
+const { AuthFunctions } = require('./functions/authFunctions')
 
-let users = new UserFunctions(); // build class for user actions
+let users = new AuthFunctions(); // build class for user actions
 
 describe('Testing requesting of new token', () => {
     let loginResponse;
