@@ -195,12 +195,18 @@ router.get("/:id", async (req, res) => {
  *      tags:
  *        - Post
  *      summary: Get all posts from community title.
+ *      description: Optional query param 'tag' only returns posts tagged with 'tag'.
  *      parameters:
  *        - in: path
  *          required: true
  *          name: title
  *          schema:
  *            $ref: "#/components/schemas/Community/properties/title"
+ *        - in: query
+ *          required: false
+ *          name: tag
+ *          schema:
+ *            $ref: "#/components/schemas/Community/properties/tags/items/properties/tag"
  *      responses:
  *        '404':
  *          description: Posts not found. OR Community not found.
@@ -214,16 +220,30 @@ router.get("/:id", async (req, res) => {
  *          description: Bad Request.
  */
 
-// Get all posts from community title
+// Get all posts from community title (Optional query param 'tag' only returns posts tagged with 'tag')
 router.get("/community/:title", async (req, res) => {
   try {
     const community = await Community.findOne({ title: req.params.title });
 
     if (!community) return res.status(404).send("Community not found.");
 
-    const posts = await Post.find({ community: community.title }, "", {
-      sort: { pinned: -1, _id: -1 },
-    }).exec();
+    let posts;
+
+    if (req.query.tag) {
+      // Return community posts by tag set in query
+      posts = await Post.find(
+        { community: community.title, "tags.tag": req.query.tag },
+        "",
+        {
+          sort: { pinned: -1, _id: -1 },
+        }
+      ).exec();
+    } else {
+      // Return all community posts
+      posts = await Post.find({ community: community.title }, "", {
+        sort: { pinned: -1, _id: -1 },
+      }).exec();
+    }
 
     if (!posts) return res.status(404).send("Posts not found.");
 
