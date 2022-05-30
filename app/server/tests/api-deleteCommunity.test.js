@@ -6,7 +6,8 @@ const newCommunityTitle = "hello delete";
 const newCommunityDescript = "world delete";
 const newCommunityRules = "rules delete";
 
-describe('Testing the delete communities function without logging in', () => {
+// Testing the delete communities function without logging in
+describe('Delete Communities - Without Login', () => {
   let response = '';
   
   beforeAll(async() => {
@@ -33,7 +34,8 @@ describe('Logging in the test user', () => {
 });
 
 
-describe('Testing the delete communities function after logging in', () => {
+// Testing the delete communities function after logging in
+describe('Delete Communities - After Login', () => {
   let response = '';
   
   beforeAll(async() => {
@@ -51,7 +53,8 @@ describe('Testing the delete communities function after logging in', () => {
 });
 
 
-describe('Testing the delete communities function after logging in, but without token', () => {
+// Testing the delete communities function after logging in, but without token
+describe('Delete Communities - After Login, without token', () => {
   let response = '';
   
   beforeAll(async() => {
@@ -69,14 +72,14 @@ describe('Testing the delete communities function after logging in, but without 
 });
 
 
-describe('Testing the delete communities function after logging in, but with wrong token', () => {
+// Testing the delete communities function after logging in, but with wrong token
+describe('Delete Communities - After Login, with modified token', () => {
   let response = '';
   
   beforeAll(async() => {
     await community.createCommunity(newCommunityTitle,newCommunityDescript,newCommunityRules,token + "11");
     response = await community.deleteCommunity(newCommunityTitle,token+ "11");
   });
-
 
   test('API returns a unsuccessful response - code 403', () => {
     expect(response.status).toBe(403);

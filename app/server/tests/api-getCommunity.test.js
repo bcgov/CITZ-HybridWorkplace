@@ -5,7 +5,9 @@ const welcomeCommunityTitle = "Welcome";
 const welcomeCommunityDescript = "Test";
 let token = '';
 
-describe('Testing the get communities function without logging in', () => {
+
+// Testing the get communities function without logging in
+describe('Get Communities - Without Login', () => {
   let response = '';
 
   beforeAll(async() => {
@@ -21,6 +23,7 @@ describe('Testing the get communities function without logging in', () => {
   });
 });
 
+
 describe('Logging in the test user', () => {
 
   test('Test account can log in', async () => {
@@ -30,7 +33,9 @@ describe('Logging in the test user', () => {
   });
 });
 
-describe('Testing the get communities function after logging in', () => {
+
+// Testing the get communities function after logging in
+describe('Get Communities - After Login', () => {
   let response = '';
 
   beforeAll(async() => {
@@ -46,7 +51,10 @@ describe('Testing the get communities function after logging in', () => {
     expect(" " + response.text + " ").toContain(welcomeCommunityTitle);
   });
 });
-describe('Testing the get communities function after logging in, but without token', () => {
+
+
+//Testing the get communities function after logging in, but without token
+describe('Get Communities - After Login, without token', () => {
   let response = '';
 
   beforeAll(async() => {
@@ -66,7 +74,9 @@ describe('Testing the get communities function after logging in, but without tok
   });
 });
 
-describe('Testing the get communities function after logging in, but with wrong token', () => {
+
+// Testing the get communities function after logging in, but with wrong token
+describe('Get Communities - After Login, with modified token', () => {
   let response = '';
 
   beforeAll(async() => {
