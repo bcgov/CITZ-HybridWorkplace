@@ -44,6 +44,20 @@
  *        pinned:
  *          type: boolean
  *          description: Pinned posts show at the top of the feed. Limit 3 per community.
+ *        tags:
+ *          type: array
+ *          description: Tags set by users to describe post.
+ *          items:
+ *            type: object
+ *            properties:
+ *              tag:
+ *                type: string
+ *                example: Informative
+ *              taggedBy:
+ *                type: array
+ *                description: Users that have tagged the post.
+ *                items:
+ *                  - $ref: '#/components/schemas/User'
  *      required:
  *        - title
  *        - message
@@ -60,6 +74,17 @@ const Post = new mongoose.Schema(
     creator: { type: String, required: true },
     community: { type: String, required: true },
     pinned: { type: Boolean },
+    tags: [
+      {
+        tag: String,
+        taggedBy: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+          },
+        ],
+      },
+    ],
   },
   { collection: "post" }
 );
