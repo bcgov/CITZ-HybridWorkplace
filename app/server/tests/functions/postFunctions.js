@@ -22,7 +22,7 @@ function getPost(id, token){
         .set({authorization: `Bearer ${token}`});
 } 
 
-function editPost(newTitle,newDescript,token){
+function editPost(newTitle, newDescript, token){
     return request
         .patch(`/post/${id}`)
         .set({authorization: `Bearer ${token}`})
