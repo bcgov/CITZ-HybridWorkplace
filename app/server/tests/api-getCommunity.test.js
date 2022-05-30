@@ -21,15 +21,14 @@ describe('Testing the get communities function without logging in', () => {
   });
 });
 
-
 describe('Logging in the test user', () => {
+
   test('Test account can log in', async () => {
     let response = await user.loginUser('test','Test123!');
     token = response.body.token;
     expect(response.status).toBe(201);
   });
 });
-
 
 describe('Testing the get communities function after logging in', () => {
   let response = '';
@@ -47,8 +46,6 @@ describe('Testing the get communities function after logging in', () => {
     expect(" " + response.text + " ").toContain(welcomeCommunityTitle);
   });
 });
-
-
 describe('Testing the get communities function after logging in, but without token', () => {
   let response = '';
 
@@ -68,7 +65,6 @@ describe('Testing the get communities function after logging in, but without tok
     expect(response.text).toBe("Not Authorized.");
   });
 });
-
 
 describe('Testing the get communities function after logging in, but with wrong token', () => {
   let response = '';

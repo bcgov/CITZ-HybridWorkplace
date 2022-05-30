@@ -85,6 +85,15 @@ router.post("/", async (req, res) => {
       }
     );
 
+    await User.updateOne(
+      { name: req.body.name },
+      {
+        $push: {
+          communities: "Welcome",
+        },
+      }
+    );
+
     return res.status(201).send("Registered.");
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);
