@@ -22,6 +22,7 @@ import jwtDecode from "jwt-decode";
 const SET_ACCESS_TOKEN = "CITZ-HYBRIDWORKPLACE/AUTH/SET_ACCESS_TOKEN";
 const SET_REFRESH_TOKEN = "CITZ-HYBRIDWORKPLACE/AUTH/SET_REFRESH_TOKEN";
 const LOGIN = "CITZ-HYBRIDWORKPLACE/AUTH/LOGIN";
+const LOGOUT = "CITZ-HYBRIDWORKPLACE/AUTH/LOGOUT";
 
 const apiURI = !window._env_.REACT_APP_LOCAL_DEV
   ? `${window._env_.REACT_APP_API_REF}`
@@ -32,6 +33,7 @@ export const login = (name, password) => async (dispatch) => {
   try {
     const res = await fetch(`${apiURI}/api/login`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -46,16 +48,13 @@ export const login = (name, password) => async (dispatch) => {
     }
 
     const data = await res.json();
-    const decodedToken = jwtDecode(data.token)
-    data.user = { name: decodedToken.name, email: decodedToken.email }
+    const decodedToken = jwtDecode(data.token);
+    data.user = { name: decodedToken.name, email: decodedToken.email };
 
     dispatch({
       type: LOGIN,
       payload: data,
     });
-
-    //TODO: Implement httpOnly cookie
-    document.cookie = `refreshToken=${data.refreshToken}`;
   } catch (err) {
     console.error(err);
     successful = false;
@@ -88,6 +87,29 @@ export const register = (name, email, password) => async (dispatch) => {
   }
 };
 
+export const logout = () => async (dispatch) => {
+  let successful = true;
+  try {
+    const res = await fetch(`${apiURI}/api/logout`, {
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) throw new Error(res.status + " " + res.statusText);
+
+    dispatch({
+      type: LOGOUT,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
 const initialState = {
   refreshToken: "",
   accessToken: "",
@@ -110,8 +132,13 @@ export function authReducer(state = initialState, action) {
       return {
         accessToken: action.payload.token,
         refreshToken: action.payload.refreshToken,
-        user: { name: action.payload.user.name, email: action.payload.user.email }
+        user: {
+          name: action.payload.user.name,
+          email: action.payload.user.email,
+        },
       };
+    case LOGOUT:
+      return initialState;
     default:
       return state;
   }

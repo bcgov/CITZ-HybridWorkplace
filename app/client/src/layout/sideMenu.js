@@ -19,7 +19,8 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
-
+import { connect } from "react-redux";
+import { logout } from "../redux/ducks/authDuck";
 import React from "react";
 import { Link } from "react-router-dom";
 import "./sideMenu.css";
@@ -28,14 +29,9 @@ import House from "@mui/icons-material/House";
 import Person from "@mui/icons-material/Person";
 import HelpCenter from "@mui/icons-material/HelpCenter";
 import LogOut from "@mui/icons-material/Logout";
-//import DarkMode from '@mui/icons-material/DarkMode'
 import Group from "@mui/icons-material/Group";
 
-//import {logOff} from '../components/logout';
-
-// props: {darkMode, setDarkMode}
-// <li onClick={updateDarkMode} id='DMode'><DarkMode />  Dark Mode</li>
-const SideMenu = () => {
+const SideMenu = (props) => {
   async function openSlideMenu() {
     document.getElementById("menu").style.width = "250px";
     document.getElementById("menu").style.marginLeft = "250px";
@@ -46,26 +42,9 @@ const SideMenu = () => {
     document.getElementById("menu").style.marginLeft = "0px";
   }
 
-  /*
-  async function updateDarkMode(event){
-    event.preventDefault()
-    setDarkMode(!darkMode)
-    const req = await fetch(`${window._env_.REACT_APP_API_REF}/editprofile`, {
-       method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'x-access-token': localStorage.getItem('token'),
-        },
-        body: JSON.stringify({
-            darkMode: darkMode,
-        }),
-    })
-  }
-  */
-
   // Logout
   async function logOff() {
-    fetch(`${window._env_.REACT_APP_API_REF}/logout`, {});
+    props.logout();
   }
 
   return (
@@ -117,4 +96,8 @@ const SideMenu = () => {
   );
 };
 
-export default SideMenu;
+const mapStateToProps = (state) => ({});
+
+const mapDispatchToProps = { logout };
+
+export default connect(mapStateToProps, mapDispatchToProps)(SideMenu);
