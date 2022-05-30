@@ -2,7 +2,7 @@ const { AuthFunctions } = require('./functions/authFunctions')
 
 let users = new AuthFunctions(); // build class for user actions
 
-describe('Testing optimal inputs for login', () => {
+describe('Testing inputs that are expected to succeed login', () => {
     let response;
 
     beforeAll(async () => {
@@ -26,7 +26,7 @@ describe('Testing optimal inputs for login', () => {
     });
 });
 
-describe('Testing sub-optimal login input', () => {
+describe('Testing inputs that are expected to fail login', () => {
     test('API refuses login with bad name credential - returns 404', async () => {
         let response = await users.login('notauser', 'Test123!');
         expect(response.status).toBe(404);
