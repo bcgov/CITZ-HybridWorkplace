@@ -63,3 +63,4 @@ function getRulesForCommunity(title,token){
 module.exports = {getCommunities, getCommunitybyTitle,createCommunity,deleteCommunity,
     patchCommunitybyTitle,joinCommunitybyTitle,leaveCommunitybyTitle,setRulesForCommunity,
     getRulesForCommunity };
+    
