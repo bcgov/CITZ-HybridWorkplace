@@ -35,4 +35,4 @@ function deletePost(token){
         .set({authorization: `Bearer ${token}`});
 }
 
-module.exports = {createPost,getAllPosts,getPost,editPost,deletePost};
+module.exports = {createPost, getAllPosts, getPost, editPost, deletePost};
