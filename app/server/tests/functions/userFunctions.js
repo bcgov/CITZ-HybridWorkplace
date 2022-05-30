@@ -8,8 +8,8 @@ function getUser(token){
         .set('Authorization', `bearer ${ token }`);
 }
 
-function editUser(token, name, email, first_name, last_name, bio, title, quote){
-    let body = { name: name };
+function editUserByFields(token, email, first_name, last_name, bio, title, quote){
+    let body = { };
 
     if (email) body.email = email;
     if (first_name) body.first_name = first_name;
@@ -25,16 +25,24 @@ function editUser(token, name, email, first_name, last_name, bio, title, quote){
         .send(body);
 }
 
-function getUserByName(name){
+function editUserByObject(token, body){
+    return request.patch('/user')
+        .set('accept', 'application/json')
+        .set('content-type', 'application/json')
+        .set('Authorization', `bearer ${ token }`)
+        .send(body);
+}
+
+function getUserByName(token, name){
     return request.get(`/user/${ name }`)
         .set('accept', 'application/json')
         .set('Authorization', `bearer ${ token }`);
 }
 
-function deleteUserByName(name){
+function deleteUserByName(token, name){
     return request.delete(`/user/${ name }`)
         .set('accept', 'application/json')
         .set('Authorization', `bearer ${ token }`);
 }
 
-module.exports = { getUser, editUser, getUserByName, deleteUserByName };
+module.exports = { getUser, editUserByFields, editUserByObject, getUserByName, deleteUserByName };
