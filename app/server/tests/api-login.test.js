@@ -2,6 +2,7 @@ const { AuthFunctions } = require('./functions/authFunctions')
 
 let users = new AuthFunctions(); // build class for user actions
 
+// Successful login is defined by both a 201 status code return and the receipt of both tokens
 describe('Testing inputs that are expected to succeed login', () => {
     let response;
 
@@ -15,17 +16,18 @@ describe('Testing inputs that are expected to succeed login', () => {
         expect(response.status).toBe(201);
     });
 
-    test('Token and refresh token are received upon login', () => {
+    test('Token is received upon login, but refreshToken is not', () => {
         let token = response.body.token;
-        let refreshToken = response.body.refreshToken;
-
         expect(token).toBeTruthy();
         expect(typeof token).toBe('string');
-        expect(refreshToken).toBeTruthy();
-        expect(typeof refreshToken).toBe('string');
+
+        // Refresh token is not in body
+        let refreshToken = response.body.refreshToken;
+        expect(refreshToken).toBeFalsy();
     });
 });
 
+// Failed login is defined by any other outcome other than the successful one defined above
 describe('Testing inputs that are expected to fail login', () => {
     test('API refuses login with bad name credential - returns 404', async () => {
         let response = await users.login('notauser', 'Test123!');
