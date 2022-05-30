@@ -64,54 +64,54 @@ objects:
                 - secretRef:
                     name: mongo-connection-string
               env:
-            - name: MONGO_URI
-              valueFrom:
-                secretKeyRef:
-                  name: mongo-connection-string
-                  key: MONGO_URI
-            - name: API_VERSION
-              value: '1'
-            - name: MONGO_REF
-              value: mongodb
-            - name: MONGO_PORT
-              value: '27017'
-            - name: MONGO_DB_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: mongodb
-                  key: database-user
-            - name: MONGO_DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mongodb
-                  key: database-password
-            - name: MONGO_DATABASE_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: mongodb
-                  key: database-name
-            - name: JWT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: hwp-jwt
-                  key: JWT_SECRET
-            - name: JWT_REFRESH_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: hwp-jwt
-                  key: JWT_REFRESH_SECRET
-            - name: JWT_TOKEN_EXPIRY
-              valueFrom:
-                secretKeyRef:
-                  name: hwp-jwt
-                  key: JWT_TOKEN_EXPIRY
-            - name: REACT_APP_API_PORT
-              value: '5000'
-            - name: FRONTEND_REF
-              valueFrom:
-                secretKeyRef:
-                  name: url-values
-                  key: FRONTEND_REF
+                - name: MONGO_URI
+                  valueFrom:
+                    secretKeyRef:
+                      name: mongo-connection-string
+                      key: MONGO_URI
+                - name: API_VERSION
+                  value: '1'
+                - name: MONGO_REF
+                  value: mongodb
+                - name: MONGO_PORT
+                  value: '27017'
+                - name: MONGO_DB_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: mongodb
+                      key: database-user
+                - name: MONGO_DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: mongodb
+                      key: database-password
+                - name: MONGO_DATABASE_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: mongodb
+                      key: database-name
+                - name: JWT_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: hwp-jwt
+                      key: JWT_SECRET
+                - name: JWT_REFRESH_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: hwp-jwt
+                      key: JWT_REFRESH_SECRET
+                - name: JWT_TOKEN_EXPIRY
+                  valueFrom:
+                    secretKeyRef:
+                      name: hwp-jwt
+                      key: JWT_TOKEN_EXPIRY
+                - name: REACT_APP_API_PORT
+                  value: '5000'
+                - name: FRONTEND_REF
+                  valueFrom:
+                    secretKeyRef:
+                      name: url-values
+                      key: FRONTEND_REF
               resources: {}
               terminationMessagePath: /dev/termination-log
               terminationMessagePolicy: File
