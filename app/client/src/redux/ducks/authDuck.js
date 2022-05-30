@@ -59,10 +59,6 @@ export const login = (name, password) => async (dispatch) => {
   } catch (err) {
     console.error(err);
     successful = false;
-<<<<<<< HEAD
-=======
-    createError("Invalid Username/Password")(dispatch);
->>>>>>> 0cd7cc8... Added alerts to the screen
   } finally {
     return successful;
   }
