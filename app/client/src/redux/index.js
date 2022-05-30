@@ -27,10 +27,12 @@ import { communityReducer } from "./ducks/communityDuck";
 import { postReducer } from "./ducks/postDuck";
 import { authReducer } from "./ducks/authDuck";
 import { profileReducer } from "./ducks/profileDuck";
+import { alertReducer } from "./ducks/alertDuck";
 
 export default combineReducers({
   communities: communityReducer,
   posts: postReducer,
   auth: authReducer,
-  profile: profileReducer
+  profile: profileReducer,
+  alerts: alertReducer,
 });
