@@ -1,124 +1,87 @@
-require('dotenv').config();
-const supertest = require('supertest');
-
-const endpoint = process.env.REACT_APP_API_REF;
-const request = supertest(endpoint);
-var token = '';
+var community = require('./functions/communityFunctions.js');
+var user = require('./functions/userFunctions.js');
 
 const welcomeCommunityTitle = "Welcome";
 const welcomeCommunityDescript = "Test";
-
+let token = '';
 
 describe('Testing the get communities function without logging in', () => {
+  let response = '';
 
-    test('API returns unsuccessful response', async () => {
-      let response = await request
-       .get('/community')
+  beforeAll(async() => {
+    response = await community.getCommunities('');
+  });
 
-      expect(response.ok).toBe(false);
-    });
+  test('API returns a unsuccessful response - code 401', () => {
+    expect(response.status).toBe(401);
+  });
 
-    test('API returns code 401', async () => {
-      let response = await request
-        .get('/community')
-
-      expect(response.status).toBe(401);
-    });
-
-    test('API returns description "Not Authorized."', async () => {
-      let response = await request
-        .get('/community')
-
-      expect(response.text).toBe("Not Authorized.");
-    });
+  test('API returns description - "Not Authorized."', () => {
+    expect(response.text).toBe("Not Authorized.");
+  });
 });
-describe('Testing login for test user', () => {
+
+describe('Logging in the test user', () => {
 
   test('Test account can log in', async () => {
-      let response = await request
-        .post('/login')
-        .send({
-            "name": "test",
-            "password": "Test123!"
-        });
-
-      token = response.body.token;
-      expect(response.status).toBe(201);
+    let response = await user.loginUser('test','Test123!');
+    token = response.body.token;
+    expect(response.status).toBe(201);
   });
 });
+
 describe('Testing the get communities function after logging in', () => {
+  let response = '';
 
-  test('API returns successful response', async () => {
-    let response = await request
-      .get('/community')
-      .set({authorization: `Bearer ${token}`})
-
-    expect(response.ok).toBe(true);
+  beforeAll(async() => {
+    response = await community.getCommunities(token);
   });
 
-  test('API returns code 200 (successful)', async () => {
-    let response = await request
-      .get('/community')
-      .set({authorization: `Bearer ${token}`})
-
+  test('API returns a successful response - code 201', () => {
     expect(response.status).toBe(200);
   });
 
-  test('API returns the "Welcome" community in its response body', async () => {
-    let response = await request
-      .get('/community')
-      .set({authorization: `Bearer ${token}`})
-
+  test('API returns the "Welcome" community description and title in its response body', () => {
     expect(" " + response.text+ " ").toContain(welcomeCommunityDescript);
     expect(" " + response.text + " ").toContain(welcomeCommunityTitle);
   });
 });
 describe('Testing the get communities function after logging in, but without token', () => {
+  let response = '';
 
-  test('API returns unsuccessful response', async () => {
-    let response = await request
-      .get('/community')
+  beforeAll(async() => {
+    response = await community.getCommunities('');
+  });
 
+  test('API returns unsuccessful response', () => {
     expect(response.ok).toBe(false);
   });
 
-  test('API returns code 401', async () => {
-    let response = await request
-      .get('/community')
-
+  test('API returns a unsuccessful response - code 401', () => {
     expect(response.status).toBe(401);
   });
 
-  test('API returns description "Not Authorized."', async () => {
-    let response = await request
-      .get('/community')
-
+  test('API returns description - "Not Authorized."', () => {
     expect(response.text).toBe("Not Authorized.");
   });
 });
+
 describe('Testing the get communities function after logging in, but with wrong token', () => {
+  let response = '';
 
-  test('API returns unsuccessful response', async () => {
-    let response = await request
-      .get('/community')
-      .set({authorization: `Bearer ${token}11`})
+  beforeAll(async() => {
+    response = await community.getCommunities(token + '11');
+  });
 
+  test('API returns unsuccessful response', () => {
     expect(response.ok).toBe(false);
   });
 
-  test('API returns code 403', async () => {
-    let response = await request
-      .get('/community')
-      .set({authorization: `Bearer ${token}11`})
-
+  test('API returns a unsuccessful response - code 403', () => {
     expect(response.status).toBe(403);
   });
 
-  test('API returns description "Forbidden."', async () => {
-    let response = await request
-      .get('/community')
-      .set({authorization: `Bearer ${token}11`})
-
+  test('API returns description -  "Forbidden."', () => {
     expect(response.text).toBe("Forbidden.");
   });
 });
