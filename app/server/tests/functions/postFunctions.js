@@ -1,4 +1,3 @@
-require('dotenv').config();
 const supertest = require('supertest');
 const endpoint = process.env.API_REF;
 const request = supertest(endpoint);
