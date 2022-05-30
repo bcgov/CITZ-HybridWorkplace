@@ -11,7 +11,7 @@ const newCommunityDescript = "world";
 const newCommunityRules = "rules";
 let user = new AuthFunctions();
 
-describe('Testing the create community function without logging in', () => {
+describe('Create Community - Without login', () => {
   let response = '';
 
   beforeAll(async() => {
@@ -41,7 +41,7 @@ describe('Logging in the test user', () => {
 });
 
 
-describe('Testing the create community function after logging in', () => {
+describe('Create Community - With login', () => {
   let response = '';
 
   beforeAll(async() => {
@@ -62,7 +62,7 @@ describe('Testing the create community function after logging in', () => {
   });
 });
 
-describe('Testing the create community function after logging in, but is a duplicate community', () => {
+describe('Create Community - With login, but community already exists', () => {
   let response = '';
 
   beforeAll(async() => {
@@ -79,7 +79,7 @@ describe('Testing the create community function after logging in, but is a dupli
 });
 
 
-describe('Testing the create community function after logging in, but without token', () => {
+describe('Create Community - With login, no token', () => {
   let response = '';
 
   beforeAll(async() => {
@@ -100,7 +100,7 @@ describe('Testing the create community function after logging in, but without to
 });
 
 
-describe('Testing the create community function after logging in, but with wrong token', () => {
+describe('Create Community - With login, modified token', () => {
   let response = '';
 
   beforeAll(async() => {
