@@ -13,7 +13,7 @@ describe('Testing requesting of new token', () => {
         expect(response.status).toBe(200);
     });
 
-    test('Requesting token a second time does not return new token - should not return 200', async () => {
+    test('Requesting token a second time with same refreshToken does not return new token - should not return 200', async () => {
         let response = await users.tokenByCookie(loginResponse.body.refreshToken);
         expect(response.status).not.toBe(200);
     });
