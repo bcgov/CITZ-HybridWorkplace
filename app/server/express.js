@@ -82,9 +82,20 @@ app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
  *      bearerFormat: JWT
  */
 
+// Cors origin
+const corsOrigin = !process.env.REACT_APP_LOCAL_DEV
+  ? process.env.FRONTEND_REF
+  : `http://${process.env.FRONTEND_REF}:${process.env.FRONTEND_PORT}`;
+
 // Express middleware
 app.use(express.json());
-app.use(cors());
+// TODO: Remove hard-coding, set env variable for openshift
+app.use(
+  cors({
+    origin: corsOrigin,
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 app.use(
   rateLimit({
