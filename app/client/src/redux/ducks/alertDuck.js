@@ -24,11 +24,20 @@ const SET_ERROR = "CITZ-HYBRIDWORKPLACE/ALERT/SET_ERROR";
 const SET_WARNING = "CITZ-HYBRIDWORKPLACE/ALERT/SET_WARNING";
 const SET_SUCCESS = "CITZ-HYBRIDWORKPLACE/ALERT/SET_SUCCESS";
 
+const REMOVE_ERROR = "CITZ-HYBRIDWORKPLACE/ALERT/REMOVE_ERROR";
+const REMOVE_WARNING = "CITZ-HYBRIDWORKPLACE/ALERT/REMOVE_WARNING";
+const REMOVE_SUCCESS = "CITZ-HYBRIDWORKPLACE/ALERT/REMOVE_SUCCESS";
+
 export const createError = (errorText) => (dispatch) => {
   dispatch({
     type: SET_ERROR,
     payload: errorText,
   });
+  setTimeout(() => {
+    dispatch({
+      type: REMOVE_ERROR,
+    });
+  }, 2000);
 };
 
 export const createWarning = (errorText) => (dispatch) => {
@@ -36,6 +45,12 @@ export const createWarning = (errorText) => (dispatch) => {
     type: SET_WARNING,
     payload: errorText,
   });
+
+  setTimeout(() => {
+    dispatch({
+      type: REMOVE_WARNING,
+    });
+  }, 2000);
 };
 
 export const createSuccess = (errorText) => (dispatch) => {
@@ -43,6 +58,11 @@ export const createSuccess = (errorText) => (dispatch) => {
     type: SET_SUCCESS,
     payload: errorText,
   });
+  setTimeout(() => {
+    dispatch({
+      type: REMOVE_SUCCESS,
+    });
+  }, 2000);
 };
 
 const initialState = {
@@ -67,6 +87,27 @@ export function alertReducer(state = initialState, action) {
       return {
         ...state,
         successes: [...state.successes, action.payload],
+      };
+    case REMOVE_ERROR:
+      const tempErrors = state.errors;
+      tempErrors.shift();
+      return {
+        ...state,
+        errors: [...tempErrors],
+      };
+    case REMOVE_WARNING:
+      let tempWarnings = state.warnings;
+      tempWarnings.shift();
+      return {
+        ...state,
+        warnings: [...tempWarnings],
+      };
+    case REMOVE_SUCCESS:
+      const tempSuccesses = state.successes;
+      tempSuccesses.shift();
+      return {
+        ...state,
+        successes: [...tempSuccesses],
       };
     default:
       return state;
