@@ -1,9 +1,10 @@
-var community = require('./functions/communityFunctions.js');
-var user = require('./functions/userFunctions.js');
+let community = require('./functions/communityFunctions.js');
+let { AuthFunctions } = require('./functions/authFunctions.js');
 
 const welcomeCommunityTitle = "Welcome";
 const welcomeCommunityDescript = "Test";
 let token = '';
+let user = new AuthFunctions();
 
 describe('Testing the get communities function without logging in', () => {
   let response = '';
@@ -24,7 +25,7 @@ describe('Testing the get communities function without logging in', () => {
 describe('Logging in the test user', () => {
 
   test('Test account can log in', async () => {
-    let response = await user.loginUser('test','Test123!');
+    let response = await user.login('test','Test123!');
     token = response.body.token;
     expect(response.status).toBe(201);
   });
