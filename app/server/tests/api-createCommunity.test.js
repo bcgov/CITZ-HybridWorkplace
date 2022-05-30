@@ -15,11 +15,11 @@ describe('Testing the create community function without logging in', () => {
   let response = '';
 
   beforeAll(async() => {
-    response = await community.createCommunity(newCommunityTitle,newCommunityDescript,newCommunityRules,'');
+    response = await community.createCommunity(newCommunityTitle, newCommunityDescript, newCommunityRules, '');
   });
 
   afterAll(async() => {
-    response = await community.deleteCommunity(newCommunityTitle,'');
+    response = await community.deleteCommunity(newCommunityTitle, '');
   });
   
   test('API returns a unsuccessful response - code 401', () => {
@@ -34,7 +34,7 @@ describe('Testing the create community function without logging in', () => {
 
 describe('Logging in the test user', () => {
   test('Test account can log in', async () => {
-    let response = await user.login('test','Test123!');
+    let response = await user.login('test', 'Test123!');
     token = response.body.token;
     expect(response.status).toBe(201);
   });
@@ -45,11 +45,11 @@ describe('Testing the create community function after logging in', () => {
   let response = '';
 
   beforeAll(async() => {
-    response = await community.createCommunity(newCommunityTitle,newCommunityDescript,newCommunityRules,token);
+    response = await community.createCommunity(newCommunityTitle, newCommunityDescript, newCommunityRules, token);
   });
 
   afterAll(async() => {
-    response = await community.deleteCommunity(newCommunityTitle,token);
+    response = await community.deleteCommunity(newCommunityTitle, token);
   });
 
   test('API returns a successful response - code 201', () => {
@@ -66,7 +66,7 @@ describe('Testing the create community function after logging in, but is a dupli
   let response = '';
 
   beforeAll(async() => {
-    response = await community.createCommunity(welcomeCommunityTitle,welcomeCommunityDescript,welcomeCommunityRules,token);
+    response = await community.createCommunity(welcomeCommunityTitle, welcomeCommunityDescript, welcomeCommunityRules, token);
   });
   
   test('API returns a unsuccessful response - code 403', () => {
@@ -83,11 +83,11 @@ describe('Testing the create community function after logging in, but without to
   let response = '';
 
   beforeAll(async() => {
-    response = await community.createCommunity(newCommunityDescript,newCommunityDescript,'');
+    response = await community.createCommunity(newCommunityDescript, newCommunityDescript, '');
   });
 
   afterAll(async() => {
-    response = await community.deleteCommunity(newCommunityTitle,'');
+    response = await community.deleteCommunity(newCommunityTitle, '');
   });
 
   test('API will return an unsuccessful response - error code 403', () => {
@@ -104,11 +104,11 @@ describe('Testing the create community function after logging in, but with wrong
   let response = '';
 
   beforeAll(async() => {
-    response = await community.createCommunity(newCommunityTitle,newCommunityDescript,token + '11');
+    response = await community.createCommunity(newCommunityTitle, newCommunityDescript, token + '11');
   });
 
   afterAll(async() => {
-    response = await community.deleteCommunity(newCommunityTitle,token + '11');
+    response = await community.deleteCommunity(newCommunityTitle, token + '11');
   });
 
   test('API will return an unsuccessful response - error code 403', () => {
