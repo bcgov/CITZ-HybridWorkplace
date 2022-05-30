@@ -25,7 +25,7 @@ describe('Testing the get community by title function with the "Welcome" communi
 });
 
 
-describe('Logging in the test user', () => {
+describe('Logging in as the test user', () => {
   test('Test account can log in', async () => {
     let response = await user.loginUser('test','Test123!');
     token = response.body.token;
