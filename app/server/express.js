@@ -33,7 +33,6 @@ const swaggerOptions = {
       This API uses JWT tokens for authentication. Start by registering, or if you already have an account, logging in. 
       \n\n- After logging in, copy the access token from the response. 
       \n\n- Click on the **'Authorize'** button, paste the token into the field under **'bearerAuth'**, and click **'Authorize'**. 
-      \n\n- Repeat these steps but with the refresh token, and paste into the field under **'cookieAuth'**. 
       \n\n- Now you will have limited access to the endpoints that require authentication (indicated by a lock icon). 
       \n\n- You will not have any indication for when your token expires, except that requests will return a **'Forbidden'** response. 
       \n\n- When this happens, you will be required to use the token endpoint, copy the access token in the response, and paste it into the field under **'bearerAuth'**.`,
@@ -81,10 +80,6 @@ app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
  *      type: http
  *      scheme: bearer
  *      bearerFormat: JWT
- *    cookieAuth:
- *      type: apiKey
- *      in: cookie
- *      name: jwt
  */
 
 // Express middleware
