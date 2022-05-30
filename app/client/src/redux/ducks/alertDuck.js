@@ -61,12 +61,12 @@ export function alertReducer(state = initialState, action) {
     case SET_WARNING:
       return {
         ...state,
-        errors: [...state.warnings, action.payload],
+        warnings: [...state.warnings, action.payload],
       };
     case SET_SUCCESS:
       return {
         ...state,
-        errors: [...state.successes, action.payload],
+        successes: [...state.successes, action.payload],
       };
     default:
       return state;
