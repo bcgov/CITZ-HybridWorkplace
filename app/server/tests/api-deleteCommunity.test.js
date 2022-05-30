@@ -1,10 +1,11 @@
 var community = require('./functions/communityFunctions.js');
-var user = require('./functions/userFunctions.js');
+let { AuthFunctions } = require('./functions/authFunctions.js');
 let token = '';
 
 const newCommunityTitle = "hello delete";
 const newCommunityDescript = "world delete";
 const newCommunityRules = "rules delete";
+let user = new AuthFunctions();
 
 // Testing the delete communities function without logging in
 describe('Delete Communities - Without Login', () => {
@@ -27,7 +28,7 @@ describe('Delete Communities - Without Login', () => {
 
 describe('Logging in the test user', () => {
   test('Test account can log in', async () => {
-    let response = await user.loginUser('test','Test123!');
+    let response = await user.login('test','Test123!');
     token = response.body.token;
     expect(response.status).toBe(201);
   });
