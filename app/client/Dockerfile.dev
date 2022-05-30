@@ -1,0 +1,26 @@
+FROM node:17.9.0-alpine3.14 AS development
+
+ENV NODE_ENV development
+
+# Add a work directory
+WORKDIR /usr/src/app/client
+
+# Cache and Install dependencies
+COPY package*.json .
+RUN npm i
+
+# Copy app files
+COPY app/client/. .
+COPY app/client/env.sh .
+
+# Add bash
+RUN apk add --no-cache bash
+
+# Expose port
+EXPOSE 3000
+
+# Make the env.sh script executable
+RUN chmod a+x env.sh
+
+# Run the env.sh bash script and then start the app
+CMD ["/bin/bash", "-c", "/usr/src/app/app/client/env.sh && npm start"]
