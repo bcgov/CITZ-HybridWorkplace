@@ -1,10 +1,10 @@
 let community = require('./functions/communityFunctions.js');
-let { UserFunctions } = require('./functions/authFunctions.js');
+let { AuthFunctions } = require('./functions/authFunctions.js');
 
 const welcomeCommunityTitle = "Welcome";
 const welcomeCommunityDescript = "Test";
 let token = '';
-let user = new UserFunctions();
+let user = new AuthFunctions();
 
 describe('Testing the get communities function without logging in', () => {
   let response = '';
