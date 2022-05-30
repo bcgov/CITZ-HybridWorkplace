@@ -92,10 +92,7 @@ app.use(express.json());
 // TODO: Remove hard-coding, set env variable for openshift
 app.use(
   cors({
-    origin: [
-      "https://hwp-react-d63404-dev.apps.silver.devops.gov.bc.ca/",
-      corsOrigin,
-    ],
+    origin: corsOrigin,
     credentials: true,
   })
 );
