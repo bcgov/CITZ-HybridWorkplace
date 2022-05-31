@@ -28,14 +28,11 @@ const swaggerOptions = {
     info: {
       title: "CITZ HybridWorkplace",
       version: process.env.API_VERSION || "undefined",
-      description: `API Documentation
-      \n\n## AUTH: 
-      This API uses JWT tokens for authentication. Start by registering, or if you already have an account, logging in. 
-      \n\n- After logging in, copy the access token from the response. 
-      \n\n- Click on the **'Authorize'** button, paste the token into the field under **'bearerAuth'**, and click **'Authorize'**. 
-      \n\n- Now you will have limited access to the endpoints that require authentication (indicated by a lock icon). 
-      \n\n- You will not have any indication for when your token expires, except that requests will return a **'Forbidden'** response. 
-      \n\n- When this happens, you will be required to use the token endpoint, copy the access token in the response, and paste it into the field under **'bearerAuth'**.`,
+      description: `### API Documentation
+      \n\n**This API uses JWT tokens for authentication. Steps to auth:**
+      \n\n- **Log in**, copy the access token from the response. Click on one of the **lock icons** to the right of some endpoints. Paste the token into the field and click **'Authorize'**. 
+      \n\n- Now you will have limited access, as the token will expire. When token expires requests will return a **403: Invalid Token** response. 
+      \n\n- When this happens, use the **/token** endpoint. Copy the access token in the response. Paste it into the field in the lock icon and click **'Authorize'**.`,
     },
     tags: [
       {
