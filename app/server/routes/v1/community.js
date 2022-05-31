@@ -728,7 +728,7 @@ router.delete("/tags/:title", async (req, res) => {
  *        - bearerAuth: []
  *      tags:
  *        - Community
- *      summary: Get community flags by community title
+ *      summary: Get community flags by community title.
  *      parameters:
  *        - in: path
  *          required: true
