@@ -52,7 +52,7 @@ const Community = require("../../../models/community.model");
  *        '404':
  *          description: User not found. **||** <br>Community not found.
  *        '403':
- *          description: Community can't have more than 3 pinned posts. **||** <br>Must be apart of community to post in community.
+ *          description: Community can't have more than 3 pinned posts. **||** <br>Must be a part of community to post in community.
  *        '201':
  *          description: Post successfully created.
  *          content:
@@ -75,7 +75,7 @@ router.post("/", async (req, res) => {
     if (!user.communities.includes(community.title))
       return res
         .status(403)
-        .send("Must be apart of community to post in community.");
+        .send("Must be a part of community to post in community.");
 
     if (
       req.body.pinned === true &&
