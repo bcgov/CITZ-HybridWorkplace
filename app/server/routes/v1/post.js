@@ -50,7 +50,7 @@ const Community = require("../../models/community.model");
  *                  $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
- *          description: User not found. || <br>Community not found.
+ *          description: User not found. **||** <br>Community not found.
  *        '403':
  *          description: Community can't have more than 3 pinned posts.
  *        '201':
@@ -209,7 +209,7 @@ router.get("/:id", async (req, res) => {
  *            $ref: "#/components/schemas/Community/properties/tags/items/properties/tag"
  *      responses:
  *        '404':
- *          description: Posts not found. || <br>Community not found.
+ *          description: Posts not found. **||** <br>Community not found.
  *        '200':
  *          description: Posts successfully found.
  *          content:
@@ -285,11 +285,11 @@ router.get("/community/:title", async (req, res) => {
  *                  $ref: '#/components/schemas/Post/properties/pinned'
  *      responses:
  *        '404':
- *          description: User not found. || <br>Post not found. || <br>Community not found.
+ *          description: User not found. **||** <br>Post not found. **||** <br>Community not found.
  *        '401':
  *          description: Not Authorized. Only creator of post can edit post.
  *        '403':
- *          description: Community can't have more than 3 pinned posts. || <br>Can't edit tags. Use /api/post/{id}/tags instead. || <br>Can't edit creator of a post.
+ *          description: Community can't have more than 3 pinned posts. **||** <br>Can't edit tags. Use /api/post/{id}/tags instead. **||** <br>Can't edit creator of a post.
  *        '204':
  *          description: Post successfully edited.
  *        '400':
@@ -378,7 +378,7 @@ router.patch("/:id", async (req, res) => {
  *            $ref: "#/components/schemas/Post/properties/id"
  *      responses:
  *        '404':
- *          description: User not found. || <br>Post not found.
+ *          description: User not found. **||** <br>Post not found.
  *        '401':
  *          description: Not Authorized. Must be creator of post to delete post.
  *        '200':
@@ -477,9 +477,9 @@ router.get("/tags/:id", async (req, res) => {
  *            $ref: '#/components/schemas/Post/properties/tags/items/properties/tag'
  *      responses:
  *        '404':
- *          description: User not found. || <br>Post not found. || <br>Tag not found in query.
+ *          description: User not found. **||** <br>Post not found. **||** <br>Tag not found in query.
  *        '403':
- *          description: Tag must be used by community. || <br>Limit 1 tag per user, per post.
+ *          description: Tag must be used by community. **||** <br>Limit 1 tag per user, per post.
  *        '204':
  *          description: Successfully created tag.
  *        '400':
@@ -564,7 +564,7 @@ router.post("/tags/:id", async (req, res) => {
  *            $ref: "#/components/schemas/Post/properties/id"
  *      responses:
  *        '404':
- *          description: User not found. || <br>Post not found.
+ *          description: User not found. **||** <br>Post not found.
  *        '403':
  *          description: User has not tagged post
  *        '204':
