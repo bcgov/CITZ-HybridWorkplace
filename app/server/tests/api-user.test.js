@@ -4,6 +4,8 @@ const { password, name, email } = require('./functions/randomizer');
 
 let auth = new AuthFunctions();
 
+jest.setTimeout(10000); // Some register-login-action groups take longer than 5000ms default.
+
 describe('Get the current user\'s information with /user', () => {
     let userName = name.gen();
     let userPassword = password.gen();
