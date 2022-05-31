@@ -2,6 +2,7 @@
   "extends": ["airbnb", "prettier", "plugin:node/recommended"],
   "plugins": ["prettier"],
   "rules": {
+    "max-lines": ["warn", 500],
     "no-unused-vars": "warn",
     "func-names": "warn",
     "spaced-comment": "error",
