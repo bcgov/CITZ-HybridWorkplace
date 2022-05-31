@@ -852,4 +852,76 @@ router.post("/flags/:title", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * paths:
+ *  /api/community/flags/{title}:
+ *    delete:
+ *      security:
+ *        - bearerAuth: []
+ *      tags:
+ *        - Community
+ *      summary: Unset flag on community by community title.
+ *      parameters:
+ *        - in: path
+ *          required: true
+ *          name: title
+ *          schema:
+ *            $ref: '#/components/schemas/Community/properties/title'
+ *        - in: query
+ *          required: true
+ *          name: flag
+ *          schema:
+ *            $ref: '#/components/schemas/Community/properties/flags/items/properties/flag'
+ *      responses:
+ *        '404':
+ *          description: User not found. **||** <br>Community not found. **||** <br>Flag not found in query.
+ *        '403':
+ *          description: User has not flagged community with specified flag.
+ *        '204':
+ *          description: Successfully unset flag.
+ *        '400':
+ *          description: Bad Request.
+ */
+
+// Unset flag on community by community title
+router.delete("/flags/:title", async (req, res) => {
+  try {
+    const user = await User.findOne({ name: req.user.name });
+    const community = await Community.findOne({
+      title: req.params.title,
+    }).exec();
+
+    if (!user) return res.status(404).send("User not found.");
+    if (!community) return res.status(404).send("Community not found.");
+    if (!req.query.flag)
+      return res.status(404).send("Flag not found in query.");
+
+    // Check user has flagged community
+    if (
+      !(await Community.exists({
+        title: community.title,
+        "flags.flag": req.query.flag,
+        "flags.flaggedBy": user.id,
+      }))
+    )
+      return res
+        .status(403)
+        .send("User has not flagged community with specified flag.");
+
+    // Remove user from flaggedBy
+    await Community.updateOne(
+      {
+        title: community.title,
+        flags: { $elemMatch: { flag: req.query.flag } },
+      },
+      { $pull: { "flags.$.flaggedBy": user.id } }
+    );
+
+    return res.sendStatus(204);
+  } catch (err) {
+    return res.status(400).send(`Bad Request: ${err}`);
+  }
+});
+
 module.exports = router;
