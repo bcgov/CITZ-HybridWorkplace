@@ -722,7 +722,51 @@ router.delete("/tags/:title", async (req, res) => {
 /**
  * @swagger
  * paths:
- *  /api/community/flag/{title}:
+ *  /api/community/flags/{title}:
+ *    get:
+ *      security:
+ *        - bearerAuth: []
+ *      tags:
+ *        - Community
+ *      summary: Get community flags by community title
+ *      parameters:
+ *        - in: path
+ *          required: true
+ *          name: title
+ *          schema:
+ *            $ref: "#/components/schemas/Community/properties/title"
+ *      responses:
+ *        '404':
+ *          description: Community not found.
+ *        '200':
+ *          description: Community successfully found.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/Community/properties/flags'
+ *        '400':
+ *          description: Bad Request.
+ */
+
+// Get community flags by community title
+router.get("/flags/:title", async (req, res) => {
+  try {
+    const community = await Community.findOne({
+      title: req.params.title,
+    }).exec();
+
+    if (!community) return res.status(404).send("Community not found.");
+
+    return res.status(200).json(community.flags);
+  } catch (err) {
+    return res.status(400).send(`Bad Request: ${err}`);
+  }
+});
+
+/**
+ * @swagger
+ * paths:
+ *  /api/community/flags/{title}:
  *    post:
  *      security:
  *        - bearerAuth: []
@@ -752,7 +796,7 @@ router.delete("/tags/:title", async (req, res) => {
  */
 
 // Flag community by community title
-router.post("/flag/:title", async (req, res) => {
+router.post("/flags/:title", async (req, res) => {
   try {
     const user = await User.findOne({ name: req.user.name });
     const community = await Community.findOne({
