@@ -41,9 +41,7 @@ const User = require("../../models/user.model");
  *        '404':
  *          description: Missing Cookie or missing User.
  *        '403':
- *          description: Forbidden.
- *        '401':
- *          description: Unauthorized. Invalid token.
+ *          description: Invalid token
  *        '204':
  *          description: Successfully logged out.
  *        '400':
@@ -62,7 +60,7 @@ router.get("/", async (req, res) => {
     let tokenUser;
 
     jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
-      if (err) return res.status(403).send("Forbidden.");
+      if (err) return res.status(403).send("Invalid token.");
       tokenUser = user;
     });
 
@@ -75,8 +73,7 @@ router.get("/", async (req, res) => {
       user.refresh_token
     );
 
-    if (!isRefreshTokenValid)
-      return res.status(401).send("Unauthorized. Invalid token.");
+    if (!isRefreshTokenValid) return res.status(403).send("Invalid token.");
 
     await User.updateOne({ name: user.name }, { refresh_token: "" });
     res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "None" });

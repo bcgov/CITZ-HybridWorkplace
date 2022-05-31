@@ -24,9 +24,9 @@ const express = require("express");
 
 const router = express.Router();
 
-const Community = require("../../models/community.model");
-const User = require("../../models/user.model");
-const Post = require("../../models/post.model");
+const Community = require("../../../models/community.model");
+const User = require("../../../models/user.model");
+const Post = require("../../../models/post.model");
 
 /**
  * @swagger
@@ -117,7 +117,7 @@ router.post("/", async (req, res) => {
  *      summary: Get all communities the user is a part of.
  *      responses:
  *        '404':
- *          description: User or Community not found.
+ *          description: User not found. **||** <br>Community not found.
  *        '200':
  *          content:
  *            application/json:
@@ -216,7 +216,7 @@ router.get("/:title", async (req, res) => {
  *                  $ref: '#/components/schemas/Community/properties/description'
  *      responses:
  *        '404':
- *          description: Community or User not found.
+ *          description: User not found. **||** <br>Community not found.
  *        '401':
  *          description: Not Authorized. Only creator of community can edit community.
  *        '204':
@@ -281,7 +281,7 @@ router.patch("/:title", async (req, res) => {
  *            $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
- *          description: Community or User not found.
+ *          description: User not found. **||** <br>Community not found.
  *        '401':
  *          description: Not Authorized. Only creator of community can edit community.
  *        '200':
@@ -307,9 +307,19 @@ router.delete("/:title", async (req, res) => {
         .status(401)
         .send("Not Authorized. Only creator of community can edit community.");
 
+    // Remove community
     await Community.deleteOne({
       title: req.params.title,
     }).exec();
+
+    // Remove reference to community from users
+    await User.updateMany(
+      { communities: req.params.title },
+      { $pull: { communities: req.params.title } }
+    ).exec();
+
+    // Remove posts from community
+    await Post.deleteMany({ community: req.params.title }).exec();
 
     // TODO: AUTH ONLY MODERATORS OF COMMUNITY
     return res.status(200).send("Community removed.");
@@ -336,7 +346,7 @@ router.delete("/:title", async (req, res) => {
  *            $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
- *          description: User or Community not found.
+ *          description: User not found. **||** <br>Community not found.
  *        '204':
  *          description: Successfully joined community.
  *        '400':
@@ -392,7 +402,7 @@ router.patch("/join/:title", async (req, res) => {
  *            $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
- *          description: User or Community not found.
+ *          description: User not found. **||** <br>Community not found.
  *        '204':
  *          description: Successfully left community.
  *        '400':
@@ -410,11 +420,13 @@ router.delete("/leave/:title", async (req, res) => {
     if (!user) return res.status(404).send("User not found.");
     if (!community) return res.status(404).send("Community not found.");
 
+    // Remove user from community
     await Community.updateOne(
       { title: community.title },
       { $pull: { members: user.id } }
     );
 
+    // Remove community from user's communities array
     await User.updateOne(
       { name: user.name },
       {
@@ -422,299 +434,6 @@ router.delete("/leave/:title", async (req, res) => {
           communities: community.title,
         },
       }
-    );
-
-    return res.sendStatus(204);
-  } catch (err) {
-    return res.status(400).send(`Bad Request: ${err}`);
-  }
-});
-
-/**
- * @swagger
- * paths:
- *  /api/community/rules/{title}:
- *    put:
- *      security:
- *        - bearerAuth: []
- *      tags:
- *        - Community
- *      summary: Set community rules by title.
- *      parameters:
- *        - in: path
- *          required: true
- *          name: title
- *          schema:
- *            $ref: '#/components/schemas/Community/properties/title'
- *      requestBody:
- *        required: true
- *        content:
- *          application/json:
- *            schema:
- *              type: object
- *              properties:
- *                rules:
- *                  $ref: '#/components/schemas/Community/properties/rules'
- *      responses:
- *        '404':
- *          description: Community or User not found.
- *        '401':
- *          description: Not Authorized. Only creator of community can edit community.
- *        '204':
- *          description: Successfully set rules.
- *        '400':
- *          description: Bad Request.
- */
-
-// Set community rules by title
-router.put("/rules/:title", async (req, res) => {
-  try {
-    const user = await User.findOne({ name: req.user.name });
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
-
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
-
-    if (user.name !== community.creator)
-      return res
-        .status(401)
-        .send("Not Authorized. Only creator of community can edit community.");
-
-    await Community.updateOne(
-      { title: community.title },
-      { $set: { rules: req.body.rules } }
-    ).exec();
-
-    return res.sendStatus(204);
-  } catch (err) {
-    return res.status(400).send(`Bad Request: ${err}`);
-  }
-});
-
-/**
- * @swagger
- * paths:
- *  /api/community/rules/{title}:
- *    get:
- *      security:
- *        - bearerAuth: []
- *      tags:
- *        - Community
- *      summary: Get community rules by title.
- *      parameters:
- *        - in: path
- *          required: true
- *          name: title
- *          schema:
- *            $ref: '#/components/schemas/Community/properties/title'
- *      responses:
- *        '404':
- *          description: Community not found.
- *        '200':
- *          content:
- *            application/json:
- *              schema:
- *                $ref: '#/components/schemas/Community/properties/rules'
- *        '400':
- *          description: Bad Request.
- */
-
-// Get community rules by title
-router.get("/rules/:title", async (req, res) => {
-  try {
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
-
-    if (!community) return res.status(404).send("Community not found.");
-
-    return res.status(200).json(community.rules);
-  } catch (err) {
-    return res.status(400).send(`Bad Request: ${err}`);
-  }
-});
-
-/**
- * @swagger
- * paths:
- *  /api/community/tags/{title}:
- *    get:
- *      security:
- *        - bearerAuth: []
- *      tags:
- *        - Community
- *      summary: Get community tags by title.
- *      parameters:
- *        - in: path
- *          required: true
- *          name: title
- *          schema:
- *            $ref: '#/components/schemas/Community/properties/title'
- *      responses:
- *        '404':
- *          description: Community not found.
- *        '200':
- *          content:
- *            application/json:
- *              schema:
- *                $ref: '#/components/schemas/Community/properties/tags'
- *        '400':
- *          description: Bad Request.
- */
-
-// Get community tags by title
-router.get("/tags/:title", async (req, res) => {
-  try {
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
-
-    if (!community) return res.status(404).send("Community not found.");
-
-    return res.status(200).json(community.tags);
-  } catch (err) {
-    return res.status(400).send(`Bad Request: ${err}`);
-  }
-});
-
-/**
- * @swagger
- * paths:
- *  /api/community/tags/{title}:
- *    post:
- *      security:
- *        - bearerAuth: []
- *      tags:
- *        - Community
- *      summary: Create community tag by community title.
- *      parameters:
- *        - in: path
- *          required: true
- *          name: title
- *          schema:
- *            $ref: '#/components/schemas/Community/properties/title'
- *        - in: query
- *          required: true
- *          name: tag
- *          schema:
- *            $ref: '#/components/schemas/Community/properties/tags/items/properties/tag'
- *      responses:
- *        '404':
- *          description: Community not found. OR User not found. OR Tag not found in query.
- *        '401':
- *          description: Not Authorized. Only creator of community can edit community.
- *        '403':
- *          description: Forbidden. A community can't have more than 7 tags. OR Forbidden. No duplicate tags.
- *        '204':
- *          description: Successfully created tag.
- *        '400':
- *          description: Bad Request.
- */
-
-// Create community tag by community title
-router.post("/tags/:title", async (req, res) => {
-  try {
-    const user = await User.findOne({ name: req.user.name });
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
-
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
-    if (!req.query.tag) return res.status(404).send("Tag not found in query.");
-
-    if (user.name !== community.creator)
-      return res
-        .status(401)
-        .send("Not Authorized. Only creator of community can edit community.");
-
-    if (
-      await Community.exists({
-        title: community.title,
-        "tags.tag": req.query.tag,
-      })
-    )
-      return res.status(403).send("Forbidden. No duplicate tags.");
-
-    if (await Community.exists({ title: community.title, tags: { $size: 7 } }))
-      return res
-        .status(403)
-        .send("Forbidden. A community can't have more than 7 tags.");
-
-    await Community.updateOne(
-      { title: community.title },
-      { $push: { tags: { tag: req.query.tag, count: 0 } } }
-    );
-
-    return res.sendStatus(204);
-  } catch (err) {
-    return res.status(400).send(`Bad Request: ${err}`);
-  }
-});
-
-/**
- * @swagger
- * paths:
- *  /api/community/tags/{title}:
- *    delete:
- *      security:
- *        - bearerAuth: []
- *      tags:
- *        - Community
- *      summary: Remove community tag by community title.
- *      parameters:
- *        - in: path
- *          required: true
- *          name: title
- *          schema:
- *            $ref: '#/components/schemas/Community/properties/title'
- *        - in: query
- *          required: true
- *          name: tag
- *          schema:
- *            $ref: '#/components/schemas/Community/properties/tags/items/properties/tag'
- *      responses:
- *        '404':
- *          description: Community not found. OR User not found. OR Tag not found in query.
- *        '401':
- *          description: Not Authorized. Only creator of community can edit community.
- *        '403':
- *          description: Forbidden. A community can't have more than 7 tags. OR Forbidden. No duplicate tags.
- *        '204':
- *          description: Successfully removed tag.
- *        '400':
- *          description: Bad Request.
- */
-
-// Remove community tag by community title
-router.delete("/tags/:title", async (req, res) => {
-  try {
-    const user = await User.findOne({ name: req.user.name });
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
-
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
-    if (!req.query.tag) return res.status(404).send("Tag not found in query.");
-
-    if (user.name !== community.creator)
-      return res
-        .status(401)
-        .send("Not Authorized. Only creator of community can edit community.");
-
-    // Remove tag from community
-    await Community.updateOne(
-      { title: community.title },
-      { $pull: { tags: { tag: req.query.tag } } }
-    );
-
-    // Remove tag from posts within community
-    await Post.updateMany(
-      { community: community.title },
-      { $pull: { tags: { tag: req.query.tag } } }
     );
 
     return res.sendStatus(204);
