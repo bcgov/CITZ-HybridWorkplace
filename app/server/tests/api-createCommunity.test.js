@@ -1,4 +1,4 @@
-var community = require('./functions/communityFunctions.js');
+let community = require('./functions/communityFunctions.js');
 let { AuthFunctions } = require('./functions/authFunctions.js');
 let token = '';
 
