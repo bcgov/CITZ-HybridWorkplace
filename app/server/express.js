@@ -65,9 +65,16 @@ const swaggerOptions = {
 
 const specs = swaggerJsDoc(swaggerOptions);
 
+const uiOptions = {
+  customSiteTitle: "HWP Swagger Docs",
+  customCss: `
+  .topbar-wrapper img {content:url(https://www2.gov.bc.ca/StaticWebResources/static/gov3/images/gov_bc_logo.svg); width:190px; height:auto;}
+  .swagger-ui .topbar { background-color: #234075; border-bottom: 2px solid #e3a82b; }`,
+};
+
 const app = express();
 
-app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs, uiOptions));
 
 /**
  * @swagger
