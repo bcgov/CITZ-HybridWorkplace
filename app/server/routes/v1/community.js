@@ -117,7 +117,7 @@ router.post("/", async (req, res) => {
  *      summary: Get all communities the user is a part of.
  *      responses:
  *        '404':
- *          description: User not found. || <br>Community not found.
+ *          description: User not found. **||** <br>Community not found.
  *        '200':
  *          content:
  *            application/json:
@@ -216,7 +216,7 @@ router.get("/:title", async (req, res) => {
  *                  $ref: '#/components/schemas/Community/properties/description'
  *      responses:
  *        '404':
- *          description: User not found. || <br>Community not found.
+ *          description: User not found. **||** <br>Community not found.
  *        '401':
  *          description: Not Authorized. Only creator of community can edit community.
  *        '204':
@@ -281,7 +281,7 @@ router.patch("/:title", async (req, res) => {
  *            $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
- *          description: User not found. || <br>Community not found.
+ *          description: User not found. **||** <br>Community not found.
  *        '401':
  *          description: Not Authorized. Only creator of community can edit community.
  *        '200':
@@ -336,7 +336,7 @@ router.delete("/:title", async (req, res) => {
  *            $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
- *          description: User not found. || <br>Community not found.
+ *          description: User not found. **||** <br>Community not found.
  *        '204':
  *          description: Successfully joined community.
  *        '400':
@@ -392,7 +392,7 @@ router.patch("/join/:title", async (req, res) => {
  *            $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
- *          description: User not found. || <br>Community not found.
+ *          description: User not found. **||** <br>Community not found.
  *        '204':
  *          description: Successfully left community.
  *        '400':
@@ -457,7 +457,7 @@ router.delete("/leave/:title", async (req, res) => {
  *                  $ref: '#/components/schemas/Community/properties/rules'
  *      responses:
  *        '404':
- *          description: User not found. || <br>Community not found.
+ *          description: User not found. **||** <br>Community not found.
  *        '401':
  *          description: Not Authorized. Only creator of community can edit community.
  *        '204':
@@ -602,11 +602,11 @@ router.get("/tags/:title", async (req, res) => {
  *            $ref: '#/components/schemas/Community/properties/tags/items/properties/tag'
  *      responses:
  *        '404':
- *          description: User not found. || <br>Community not found. || <br>Tag not found in query.
+ *          description: User not found. **||** <br>Community not found. **||** <br>Tag not found in query.
  *        '401':
  *          description: Not Authorized. Only creator of community can edit community.
  *        '403':
- *          description: A community can't have more than 7 tags. || <br>No duplicate tags.
+ *          description: A community can't have more than 7 tags. **||** <br>No duplicate tags.
  *        '204':
  *          description: Successfully created tag.
  *        '400':
@@ -675,7 +675,7 @@ router.post("/tags/:title", async (req, res) => {
  *            $ref: '#/components/schemas/Community/properties/tags/items/properties/tag'
  *      responses:
  *        '404':
- *          description: User not found. || <br>Community not found. || <br>Tag not found in query.
+ *          description: User not found. **||** <br>Community not found. **||** <br>Tag not found in query.
  *        '401':
  *          description: Not Authorized. Only creator of community can edit community.
  *        '204':
@@ -742,7 +742,7 @@ router.delete("/tags/:title", async (req, res) => {
  *            $ref: '#/components/schemas/Community/properties/flags/items/properties/flag'
  *      responses:
  *        '404':
- *          description: User not found. || <br>Community not found.
+ *          description: User not found. **||** <br>Community not found.
  *        '403':
  *          description: Invalid flag. Use one of <br>[Inappropriate, Hate, Harassment or Bullying, Spam, Misinformation, Against Community Rules]
  *        '204':
