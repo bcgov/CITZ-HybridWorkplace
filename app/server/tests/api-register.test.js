@@ -7,6 +7,8 @@ const { password, name, email } = require('./functions/randomizer');
 
 let users = new AuthFunctions(); // build class for user actions
 
+jest.setTimeout(10000);
+
 describe('Testing optimal inputs for register', () => {
     // Clean up
     afterAll(async () => {
@@ -25,33 +27,33 @@ describe('Testing optimal inputs for register', () => {
     });
 });
 
-describe('Testing sub-optimal inputs for register - all return 400', () => {
+describe('Testing sub-optimal inputs for register', () => {
     afterAll(async () => {
         await users.deleteUsers();
     });
 
     test('api rejects registration if password doesn\'t meet character specifications', async () => {
         let response = await users.register(name.gen(), email.gen(), 'badpasswo1!');
-        expect(response.status).toBe(400);
+        expect(response.status).not.toBe(201);
     });
 
     test('api rejects registration if password doesn\'t meet number specifications', async () => {
         let response = await users.register(name.gen(), email.gen(), 'B!adpassword');
-        expect(response.status).toBe(400);
+        expect(response.status).not.toBe(201);
     });
 
     test('api rejects registration if password doesn\'t meet symbol specifications', async () => {
         let response = await users.register(name.gen(), email.gen(), 'Badpassword1');
-        expect(response.status).toBe(400);
+        expect(response.status).not.toBe(201);
     });
 
     test('api rejects registration if password doesn\'t meet length specifications', async () => {
         let response = await users.register(name.gen(), email.gen(), 'hi');
-        expect(response.status).toBe(400);
+        expect(response.status).not.toBe(201);
     });
 
-    test('api rejects registration if email is not valid', async () => {
+    test('api rejects registration if email is not valid - returns 403', async () => {
         let response = await users.register(name.gen(), 'amazingemail', password.gen());
-        expect(response.status).toBe(400);
+        expect(response.status).not.toBe(201);
     });
 });
