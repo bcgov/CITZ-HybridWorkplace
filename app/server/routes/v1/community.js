@@ -307,9 +307,19 @@ router.delete("/:title", async (req, res) => {
         .status(401)
         .send("Not Authorized. Only creator of community can edit community.");
 
+    // Remove community
     await Community.deleteOne({
       title: req.params.title,
     }).exec();
+
+    // Remove reference to community from users
+    await User.updateMany(
+      { communities: req.params.title },
+      { $pull: { communities: req.params.title } }
+    ).exec();
+
+    // Remove posts from community
+    await Post.deleteMany({ community: req.params.title }).exec();
 
     // TODO: AUTH ONLY MODERATORS OF COMMUNITY
     return res.status(200).send("Community removed.");
@@ -410,11 +420,13 @@ router.delete("/leave/:title", async (req, res) => {
     if (!user) return res.status(404).send("User not found.");
     if (!community) return res.status(404).send("Community not found.");
 
+    // Remove user from community
     await Community.updateOne(
       { title: community.title },
       { $pull: { members: user.id } }
     );
 
+    // Remove community from user's communities array
     await User.updateOne(
       { name: user.name },
       {
