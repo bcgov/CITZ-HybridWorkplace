@@ -20,50 +20,48 @@
  * @module
  */
 
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 
-import Paper from '@mui/material/Paper';
+import Paper from "@mui/material/Paper";
 
-import { getCommunities } from '../redux/ducks/communityDuck';
+import { getCommunities } from "../redux/ducks/communityDuck";
 
 const CommunitiesList = (props) => {
-
   useEffect(() => {
     props.getCommunities();
-  }, [])
+  }, []);
 
   return (
     <div>
-      {
-        props.communities.map(community => (
-          <div key={community._id}>
-            <Paper
-              sx={{
-                px: 1,
-                py: 0,
-                margin: 'auto'
-              }}
-              variant="outlined"
-              square>
-              <h3>{community.title}</h3>
-              <p>{community.description}</p>
-            </Paper>
-          </div>
-        ))
-      }
+      {props.communities.items.map((community) => (
+        <div key={community._id}>
+          <Paper
+            sx={{
+              px: 1,
+              py: 0,
+              margin: "auto",
+            }}
+            variant="outlined"
+            square
+          >
+            <h3>{community.title}</h3>
+            <p>{community.description}</p>
+          </Paper>
+        </div>
+      ))}
     </div>
-  )
-}
+  );
+};
 
 CommunitiesList.propTypes = {
   getCommunities: PropTypes.func.isRequired,
-  communities: PropTypes.array.isRequired
-}
+  communities: PropTypes.array.isRequired,
+};
 
-const mapStateToProps = state => ({
-  communities: state.communities.items
+const mapStateToProps = (state) => ({
+  communities: state.communities,
 });
 
 export default connect(mapStateToProps, { getCommunities })(CommunitiesList);

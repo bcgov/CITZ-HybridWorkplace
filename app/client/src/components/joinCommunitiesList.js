@@ -20,67 +20,71 @@
  * @module
  */
 
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 
-import { getCommunities } from '../redux/ducks/communityDuck';
-import JoinButton from './joinButton';
+import { getCommunities, leaveCommunity } from "../redux/ducks/communityDuck";
+import JoinButton from "./joinButton";
+import { Button } from "@mui/material";
 
 const JoinCommunitiesList = (props) => {
-
   useEffect(() => {
     props.getCommunities();
   }, []);
 
+  const handleLeave = async (community) => {
+    const success = await props.leaveCommunity(community);
+  };
+
   return (
     <div>
-      {
-        props.communities.map(community => (
-          <div key={community._id}>
-            <Paper
-              sx={{
-                px: 0.5,
-                margin: 'auto'
-              }}
-              variant="outlined" square
-            >
-              <Grid container spacing={1} alignItems="center">
-
-                <Grid item xs={9}>
-                  <Typography p={1.5} variant='p' component='p'>{community.title}</Typography>
-                </Grid>
-
-                <Grid item xs={3} textAlign='center'>
-                  <JoinButton
-                    name={community._id}
-                  />
-                </Grid>
-
+      {props.communities.items.map((community) => (
+        <div key={community._id}>
+          <Paper
+            sx={{
+              px: 0.5,
+              margin: "auto",
+            }}
+            variant="outlined"
+            square
+          >
+            <Grid container spacing={1} alignItems="center">
+              <Grid item xs={9}>
+                <Typography p={1.5} variant="p" component="p">
+                  {community.title}
+                </Typography>
               </Grid>
-            </Paper>
-          </div>
-        ))
-      }
+
+              <Grid item xs={3} textAlign="center">
+                <Button onClick={() => handleLeave(community.title)}>
+                  Leave
+                </Button>
+              </Grid>
+            </Grid>
+          </Paper>
+        </div>
+      ))}
     </div>
   );
-}
+};
 
 JoinCommunitiesList.propTypes = {
   getCommunities: PropTypes.func.isRequired,
-  communities: PropTypes.array.isRequired
-}
+  communities: PropTypes.array.isRequired,
+};
 
-const mapStateToProps = state => ({
-  communities: state.communities.items
+const mapStateToProps = (state) => ({
+  communities: state.communities,
 });
 
 const mapActionsToProps = {
-  getCommunities
-}
+  getCommunities,
+  leaveCommunity,
+};
 
 export default connect(mapStateToProps, mapActionsToProps)(JoinCommunitiesList);

@@ -22,6 +22,8 @@
 
 const SET_COMMUNITIES = "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_COMMUNITIES";
 const ADD_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/ADD_COMMUNITY";
+const JOIN_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/JOIN_COMMUNITY";
+const LEAVE_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/LEAVE_COMMUNITY";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
@@ -90,6 +92,11 @@ export const createCommunity =
         type: ADD_COMMUNITY,
         payload: community,
       });
+
+      dispatch({
+        type: JOIN_COMMUNITY,
+        payload: community.title,
+      });
     } catch (err) {
       console.error(err);
       successful = false;
@@ -98,12 +105,74 @@ export const createCommunity =
     }
   };
 
-export const joinCommunity = (communityId) => (dispatch, getState) => {
-  //TODO: Implement join community
+export const joinCommunity = (communityName) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const authState = getState().auth;
+    const token = authState.accessToken;
+    if (!token) throw new Error(noTokenText);
+
+    const response = await fetch(
+      `${apiURI}/api/community/join/${communityName}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok)
+      throw new Error(`${response.status} ${response.statusText}`);
+
+    dispatch({
+      type: JOIN_COMMUNITY,
+      payload: communityName,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
+export const leaveCommunity = (communityName) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const authState = getState().auth;
+    const token = authState.accessToken;
+    if (!token) throw new Error(noTokenText);
+
+    const response = await fetch(
+      `${apiURI}/api/community/leave/${communityName}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok)
+      throw new Error(`${response.status} ${response.statusText}`);
+
+    dispatch({
+      type: LEAVE_COMMUNITY,
+      payload: communityName,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
 };
 
 const initialState = {
-  items: [], //communitys
+  items: [], //users communitys
   item: {}, //single community
 };
 
@@ -118,6 +187,18 @@ export function communityReducer(state = initialState, action) {
       return {
         ...state,
         items: [...state.items, action.payload],
+      };
+    case JOIN_COMMUNITY:
+      return {
+        ...state,
+        usersCommunities: [action.payload, ...state.usersCommunities],
+      };
+    case LEAVE_COMMUNITY:
+      return {
+        ...state,
+        items: state.items.filter(
+          (item, index) => item.title !== action.payload
+        ),
       };
     default:
       return state;
