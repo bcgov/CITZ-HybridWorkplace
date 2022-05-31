@@ -117,7 +117,7 @@ router.post("/", async (req, res) => {
  *      summary: Get all communities the user is a part of.
  *      responses:
  *        '404':
- *          description: User or Community not found.
+ *          description: User not found. || <br>Community not found.
  *        '200':
  *          content:
  *            application/json:
@@ -216,7 +216,7 @@ router.get("/:title", async (req, res) => {
  *                  $ref: '#/components/schemas/Community/properties/description'
  *      responses:
  *        '404':
- *          description: Community or User not found.
+ *          description: User not found. || <br>Community not found.
  *        '401':
  *          description: Not Authorized. Only creator of community can edit community.
  *        '204':
@@ -281,7 +281,7 @@ router.patch("/:title", async (req, res) => {
  *            $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
- *          description: Community or User not found.
+ *          description: User not found. || <br>Community not found.
  *        '401':
  *          description: Not Authorized. Only creator of community can edit community.
  *        '200':
@@ -336,7 +336,7 @@ router.delete("/:title", async (req, res) => {
  *            $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
- *          description: User or Community not found.
+ *          description: User not found. || <br>Community not found.
  *        '204':
  *          description: Successfully joined community.
  *        '400':
@@ -392,7 +392,7 @@ router.patch("/join/:title", async (req, res) => {
  *            $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
- *          description: User or Community not found.
+ *          description: User not found. || <br>Community not found.
  *        '204':
  *          description: Successfully left community.
  *        '400':
@@ -457,7 +457,7 @@ router.delete("/leave/:title", async (req, res) => {
  *                  $ref: '#/components/schemas/Community/properties/rules'
  *      responses:
  *        '404':
- *          description: Community or User not found.
+ *          description: User not found. || <br>Community not found.
  *        '401':
  *          description: Not Authorized. Only creator of community can edit community.
  *        '204':
@@ -602,11 +602,11 @@ router.get("/tags/:title", async (req, res) => {
  *            $ref: '#/components/schemas/Community/properties/tags/items/properties/tag'
  *      responses:
  *        '404':
- *          description: Community not found. OR User not found. OR Tag not found in query.
+ *          description: User not found. || <br>Community not found. || <br>Tag not found in query.
  *        '401':
  *          description: Not Authorized. Only creator of community can edit community.
  *        '403':
- *          description: Forbidden. A community can't have more than 7 tags. OR Forbidden. No duplicate tags.
+ *          description: A community can't have more than 7 tags. || <br>No duplicate tags.
  *        '204':
  *          description: Successfully created tag.
  *        '400':
@@ -636,12 +636,10 @@ router.post("/tags/:title", async (req, res) => {
         "tags.tag": req.query.tag,
       })
     )
-      return res.status(403).send("Forbidden. No duplicate tags.");
+      return res.status(403).send("No duplicate tags.");
 
     if (await Community.exists({ title: community.title, tags: { $size: 7 } }))
-      return res
-        .status(403)
-        .send("Forbidden. A community can't have more than 7 tags.");
+      return res.status(403).send("A community can't have more than 7 tags.");
 
     await Community.updateOne(
       { title: community.title },
@@ -677,11 +675,9 @@ router.post("/tags/:title", async (req, res) => {
  *            $ref: '#/components/schemas/Community/properties/tags/items/properties/tag'
  *      responses:
  *        '404':
- *          description: Community not found. OR User not found. OR Tag not found in query.
+ *          description: User not found. || <br>Community not found. || <br>Tag not found in query.
  *        '401':
  *          description: Not Authorized. Only creator of community can edit community.
- *        '403':
- *          description: Forbidden. A community can't have more than 7 tags. OR Forbidden. No duplicate tags.
  *        '204':
  *          description: Successfully removed tag.
  *        '400':
@@ -716,6 +712,95 @@ router.delete("/tags/:title", async (req, res) => {
       { community: community.title },
       { $pull: { tags: { tag: req.query.tag } } }
     );
+
+    return res.sendStatus(204);
+  } catch (err) {
+    return res.status(400).send(`Bad Request: ${err}`);
+  }
+});
+
+/**
+ * @swagger
+ * paths:
+ *  /api/community/flag/{title}:
+ *    post:
+ *      security:
+ *        - bearerAuth: []
+ *      tags:
+ *        - Community
+ *      summary: Flag community by community title.
+ *      parameters:
+ *        - in: path
+ *          required: true
+ *          name: title
+ *          schema:
+ *            $ref: '#/components/schemas/Community/properties/title'
+ *        - in: query
+ *          required: true
+ *          name: flag
+ *          schema:
+ *            $ref: '#/components/schemas/Community/properties/flags/items/properties/flag'
+ *      responses:
+ *        '404':
+ *          description: User not found. || <br>Community not found.
+ *        '403':
+ *          description: Invalid flag. Use one of <br>[Inappropriate, Hate, Harassment or Bullying, Spam, Misinformation, Against Community Rules]
+ *        '204':
+ *          description: Successfully set flag.
+ *        '400':
+ *          description: Bad Request.
+ */
+
+// Flag community by community title
+router.post("/flag/:title", async (req, res) => {
+  try {
+    const user = await User.findOne({ name: req.user.name });
+    const community = await Community.findOne({
+      title: req.params.title,
+    }).exec();
+
+    if (!user) return res.status(404).send("User not found.");
+    if (!community) return res.status(404).send("Community not found.");
+
+    // TODO: Set flags in an options collection, that can be edited by admins
+    const flags = [
+      "Inappropriate",
+      "Hate",
+      "Harassment or Bullying",
+      "Spam",
+      "Misinformation",
+      "Against Community Rules",
+    ];
+
+    if (!flags.includes(req.query.flag))
+      return res
+        .status(403)
+        .send(
+          "Invalid flag. Use one of [Inappropriate, Hate, Harassment or Bullying, Spam, Misinformation, Against Community Rules]"
+        );
+
+    // If flag isn't set on community
+    if (
+      !(await Community.exists({
+        title: community.title,
+        "flags.flag": req.query.flag,
+      }))
+    ) {
+      // Create flag
+      await Community.updateOne(
+        { title: community.title },
+        { $push: { flags: { flag: req.query.flag, flaggedBy: [user.id] } } }
+      );
+    } else {
+      // Add user to flaggedBy
+      await Community.updateOne(
+        {
+          title: community.title,
+          flags: { $elemMatch: { flag: req.query.flag } },
+        },
+        { $addToSet: { "flags.$.flaggedBy": [user.id] } }
+      );
+    }
 
     return res.sendStatus(204);
   } catch (err) {

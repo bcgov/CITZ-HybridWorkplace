@@ -50,9 +50,9 @@ const Community = require("../../models/community.model");
  *                  $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
- *          description: User or Community not found.
+ *          description: User not found. || <br>Community not found.
  *        '403':
- *          description: Forbidden. Community can't have more than 3 pinned posts.
+ *          description: Community can't have more than 3 pinned posts.
  *        '201':
  *          description: Post successfully created.
  *          content:
@@ -78,7 +78,7 @@ router.post("/", async (req, res) => {
     )
       return res
         .status(403)
-        .send("Forbidden. Community can't have more than 3 pinned posts.");
+        .send("Community can't have more than 3 pinned posts.");
 
     const post = await Post.create({
       title: req.body.title,
@@ -209,7 +209,7 @@ router.get("/:id", async (req, res) => {
  *            $ref: "#/components/schemas/Community/properties/tags/items/properties/tag"
  *      responses:
  *        '404':
- *          description: Posts not found. OR Community not found.
+ *          description: Posts not found. || <br>Community not found.
  *        '200':
  *          description: Posts successfully found.
  *          content:
@@ -285,11 +285,11 @@ router.get("/community/:title", async (req, res) => {
  *                  $ref: '#/components/schemas/Post/properties/pinned'
  *      responses:
  *        '404':
- *          description: User not found. OR Post not found. OR Community not found.
+ *          description: User not found. || <br>Post not found. || <br>Community not found.
  *        '401':
  *          description: Not Authorized. Only creator of post can edit post.
  *        '403':
- *          description: Forbidden. Community can't have more than 3 pinned posts. OR Forbidden. Can't edit tags. Use /api/post/{id}/tags instead. OR Forbidden. Can't edit creator of a post.
+ *          description: Community can't have more than 3 pinned posts. || <br>Can't edit tags. Use /api/post/{id}/tags instead. || <br>Can't edit creator of a post.
  *        '204':
  *          description: Post successfully edited.
  *        '400':
@@ -322,13 +322,13 @@ router.patch("/:id", async (req, res) => {
       )
         return res
           .status(403)
-          .send("Forbidden. Community can't have more than 3 pinned posts.");
+          .send("Community can't have more than 3 pinned posts.");
     } else if (req.body.pinned === true && !req.body.community) {
       // pinned set in patch, but not community
       if ((await Post.count({ community: post.community, pinned: true })) >= 3)
         return res
           .status(403)
-          .send("Forbidden. Community can't have more than 3 pinned posts.");
+          .send("Community can't have more than 3 pinned posts.");
     }
 
     // eslint-disable-next-line prefer-const
@@ -336,12 +336,12 @@ router.patch("/:id", async (req, res) => {
 
     Object.keys(req.body).forEach((key) => {
       if (key === "creator") {
-        return res.status(403).send("Forbidden. Can't edit creator of a post.");
+        return res.status(403).send("Can't edit creator of a post.");
       }
       if (key === "tags") {
         return res
           .status(403)
-          .send("Forbidden. Can't edit tags. Use /api/post/{id}/tags instead.");
+          .send("Can't edit tags. Use /api/post/{id}/tags instead.");
       }
 
       if (post[key] && post[key] !== req.body[key]) {
@@ -378,7 +378,7 @@ router.patch("/:id", async (req, res) => {
  *            $ref: "#/components/schemas/Post/properties/id"
  *      responses:
  *        '404':
- *          description: User not found. OR Post not found.
+ *          description: User not found. || <br>Post not found.
  *        '401':
  *          description: Not Authorized. Must be creator of post to delete post.
  *        '200':
@@ -477,9 +477,9 @@ router.get("/tags/:id", async (req, res) => {
  *            $ref: '#/components/schemas/Post/properties/tags/items/properties/tag'
  *      responses:
  *        '404':
- *          description: User not found. OR Post not found. OR Tag not found in query.
+ *          description: User not found. || <br>Post not found. || <br>Tag not found in query.
  *        '403':
- *          description: Forbidden. Tag must be used by community. OR Forbidden. Limit 1 tag per user, per post.
+ *          description: Tag must be used by community. || <br>Limit 1 tag per user, per post.
  *        '204':
  *          description: Successfully created tag.
  *        '400':
@@ -503,7 +503,7 @@ router.post("/tags/:id", async (req, res) => {
         "tags.tag": req.query.tag,
       }))
     )
-      return res.status(403).send("Forbidden. Tag must be used by community.");
+      return res.status(403).send("Tag must be used by community.");
 
     // Check duplicate tag
     if (
@@ -512,7 +512,7 @@ router.post("/tags/:id", async (req, res) => {
         "tags.taggedBy": user.id,
       })
     )
-      return res.status(403).send("Forbidden. Limit 1 tag per user, per post.");
+      return res.status(403).send("Limit 1 tag per user, per post.");
 
     // If tag isn't set on post
     if (
@@ -564,7 +564,7 @@ router.post("/tags/:id", async (req, res) => {
  *            $ref: "#/components/schemas/Post/properties/id"
  *      responses:
  *        '404':
- *          description: User not found. OR Post not found.
+ *          description: User not found. || <br>Post not found.
  *        '403':
  *          description: User has not tagged post
  *        '204':

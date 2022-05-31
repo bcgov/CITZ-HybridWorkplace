@@ -57,6 +57,20 @@
  *              count:
  *                type: number
  *                example: 1
+ *        flags:
+ *          type: array
+ *          description: Flags set by users to bring attention to admins.
+ *          items:
+ *            type: object
+ *            properties:
+ *              flag:
+ *                type: string
+ *                example: Inappropriate
+ *              flaggedBy:
+ *                type: array
+ *                description: Users that have flagged the community.
+ *                items:
+ *                  - $ref: '#/components/schemas/User'
  *      required:
  *        - title
  *        - description
@@ -79,6 +93,17 @@ const Community = new mongoose.Schema(
     ],
     rules: { type: String, required: true },
     tags: [{ tag: String, count: Number }],
+    flags: [
+      {
+        flag: String,
+        flaggedBy: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+          },
+        ],
+      },
+    ],
   },
   { collection: "community" }
 );
