@@ -25,15 +25,25 @@ describe('Get the current user\'s information with /user', () => {
         expect(response.status).toBe(200);
     });
 
-    // This is only returning name and email, despite what Swagger suggests.
-    test('Body of response is formated as expected (object with certain keys)', () => {
+    test('Body of response is formated as expected (returns only set keys)', () => {
         expect(typeof response.body).toBe('object');
         expect(response.body.name).toBeTruthy();
         expect(response.body.email).toBeTruthy();
-        // expect(response.body.first_name).toBeTruthy();
-        // expect(response.body.last_name).toBeTruthy();
-        // expect(response.body.bio).toBeTruthy();
-        // expect(response.body.title).toBeTruthy();
+        expect(response.body.first_name).not.toBeTruthy();
+        expect(response.body.last_name).not.toBeTruthy();
+        expect(response.body.bio).not.toBeTruthy();
+        expect(response.body.title).not.toBeTruthy();
+    });
+
+    test('After setting all keys, they are returned by the /user endpoint', async () => {
+        await user.editUserByFields(loginResponse.body.token, 'newemail@gmail.com', 'newName', 'newLastName', 'my bio', 'my title', 'my quote');
+        response = user.getUser(loginResponse.body.token);
+        expect(response.body.name).toBeTruthy();
+        expect(response.body.email).toBeTruthy();
+        expect(response.body.first_name).toBeTruthy();
+        expect(response.body.last_name).toBeTruthy();
+        expect(response.body.bio).toBeTruthy();
+        expect(response.body.title).toBeTruthy();
     });
 
     test('User info should not be returned if token does not match user - returns 403', async () => {
@@ -61,19 +71,17 @@ describe('Get the current user\'s information with /user/{name}', () => {
         expect(response.status).toBe(200);
     });
 
-    // This is only returning name and email, despite what Swagger suggests.
-    test('Body of response is formated as expected (object with certain keys)', () => {
+    test('Body of response is formated as expected (returns only set keys)', () => {
         expect(typeof response.body).toBe('object');
         expect(response.body.name).toBeTruthy();
         expect(response.body.email).toBeTruthy();
-        // expect(response.body.first_name).toBeTruthy();
-        // expect(response.body.last_name).toBeTruthy();
-        // expect(response.body.bio).toBeTruthy();
-        // expect(response.body.title).toBeTruthy();
+        expect(response.body.first_name).not.toBeTruthy();
+        expect(response.body.last_name).not.toBeTruthy();
+        expect(response.body.bio).not.toBeTruthy();
+        expect(response.body.title).not.toBeTruthy();
     });
 });
 
-// This needs fixing, needs another account to get data from
 describe('Get information of other users with /user/{name}', () => {
     let userName = name.gen();
     let userPassword = password.gen();
@@ -93,6 +101,7 @@ describe('Get information of other users with /user/{name}', () => {
         expect(response.status).toBe(200);
     });
 
+    // need to add editing of data and retry get
     test('Body of response is formated as expected (object with certain keys, but not all keys)', () => {
         expect(typeof response.body).toBe('object');
         expect(response.body.name).toBeTruthy();
@@ -108,6 +117,7 @@ describe('Get information of other users with /user/{name}', () => {
         expect(tempResponse.status).toBe(403);
     });
 
+    // need to add editing of data and retry get
     test('Trying to get data of another user should only return name and email', async () => {
         await auth.register('Todd', 'todd@gmail.com', 'Todd123!'); // Create new user
         let tempResponse = await user.getUserByName(loginResponse.body.token, 'Todd'); // Try to get that user's info with test account's token.
@@ -184,7 +194,7 @@ describe('Edit the information of users with /user/{name}', () => {
         expect(response.status).not.toBe(204);
     });
 
-    test('Try to set name to the name of another user - returns 400', async () => {
+    test('Try to change your name (IDIR) - returns 400', async () => {
         let body = {
             "name": "test"
         }

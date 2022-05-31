@@ -40,20 +40,7 @@ class AuthFunctions{
         let loginResponse = await request.post('/login')
             .set('accept', 'application/json')
             .set('Content-Type', 'application/json')
-            .send({
-                "name": name,
-                "password": password
-            });
-        return loginResponse;
-    }
-
-    // Tries to log in user with less secure configs
-    async loginInsecure(name, password){
-        let loginResponse = await request.post('/login')
-            .set('accept', 'application/json')
-            .set('Content-Type', 'application/json')
             .set('Credentials', 'Include')
-            .set('Cookie', 'samesite=lax; path=./')
             .send({
                 "name": name,
                 "password": password
@@ -69,38 +56,6 @@ class AuthFunctions{
                             .set('accept', '*/*')
                             .set('Authorization', `bearer ${ loginResponse.body.token }`);
         return deleteResponse;
-    }
-
-    /*** DEPRECIATED TEST FUNCTIONS ***/
-    /*** NO LONGER VALID WITH NEW AUTHENTICATION METHOD ***/
-    // Logs out an existing user
-    async logoutByCreds(name, password){
-        let loginResponse = await this.login(name, password);
-        let logoutResponse = await request.get('/logout')
-            .set('accept', `*/*`)
-            .set('Cookie', `jwt=${ loginResponse.body.refreshToken }`);
-        return logoutResponse;
-    }
-
-    async logoutByCookie(cookie){
-        let logoutResponse = await request.get('/logout')
-            .set('accept', `*/*`)
-            .set('Cookie', `jwt=${ cookie }`);
-        return logoutResponse;
-    }
-
-    // Retrieves a new token for an existing user
-    async tokenByCreds(name, password){
-        let loginResponse = await this.login(name, password);
-        let tokenResponse = await request.get('/token')
-            .set('Cookie', `jwt=${ loginResponse.body.refreshToken }`);
-        return tokenResponse;
-    }
-
-    async tokenByCookie(cookie){
-        let tokenResponse = await request.get('/token')
-            .set('Cookie', `jwt=${ cookie }`);
-        return tokenResponse;
     }
 }
 
