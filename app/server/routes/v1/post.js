@@ -52,7 +52,7 @@ const Community = require("../../models/community.model");
  *        '404':
  *          description: User not found. **||** <br>Community not found.
  *        '403':
- *          description: Community can't have more than 3 pinned posts.
+ *          description: Community can't have more than 3 pinned posts. **||** <br>Must be apart of community to post in community.
  *        '201':
  *          description: Post successfully created.
  *          content:
@@ -71,6 +71,11 @@ router.post("/", async (req, res) => {
 
     if (!user) return res.status(404).send("User not found.");
     if (!community) return res.status(404).send("Community not found.");
+
+    if (!user.communities.includes(community.title))
+      return res
+        .status(403)
+        .send("Must be apart of community to post in community.");
 
     if (
       req.body.pinned === true &&
@@ -524,15 +529,18 @@ router.post("/tags/:id", async (req, res) => {
       // Create tag
       await Post.updateOne(
         { _id: post.id },
-        { $push: { tags: { tag: req.query.tag } } }
+        { $push: { tags: { tag: req.query.tag, taggedBy: [user.id] } } }
+      );
+    } else {
+      // Add user to taggedBy
+      await Post.updateOne(
+        {
+          _id: post.id,
+          flags: { $elemMatch: { tag: req.query.tag } },
+        },
+        { $addToSet: { "tags.$.taggedBy": [user.id] } }
       );
     }
-
-    // Add user to taggedBy
-    await Post.updateOne(
-      { _id: post.id, tags: { $elemMatch: { tag: req.query.tag } } },
-      { $addToSet: { "tags.$.taggedBy": [user.id] } }
-    );
 
     // Increment tag count in community
     await Community.updateOne(

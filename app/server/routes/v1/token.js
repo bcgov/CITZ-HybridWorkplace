@@ -44,7 +44,7 @@ const User = require("../../models/user.model");
  *        '401':
  *          description: Unauthorized (missing cookie).
  *        '403':
- *          description: Forbidden (Refresh token no longer valid).
+ *          description: Invalid token.
  *        '200':
  *          description: Success.
  *          content:
@@ -72,7 +72,7 @@ router.get("/", async (req, res) => {
       refreshToken,
       process.env.JWT_REFRESH_SECRET,
       (err, tokenUser) => {
-        if (err) return res.status(403).send("Forbidden.");
+        if (err) return res.status(403).send("Invalid token.");
         username = tokenUser.name;
       }
     );
@@ -86,7 +86,7 @@ router.get("/", async (req, res) => {
       user.refresh_token
     );
 
-    if (!isRefreshTokenValid) return res.status(403).send("Forbidden.");
+    if (!isRefreshTokenValid) return res.status(403).send("Invalid token.");
 
     const token = generateToken(user);
     return res.status(200).json({ token });
