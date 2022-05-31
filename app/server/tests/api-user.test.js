@@ -152,7 +152,7 @@ describe('Edit the information of users with /user/{name}', () => {
         expect(result.body.email).toBe(userEmail);
     });
 
-    test('Edit fields by passing an object', async () => {
+    test('Edit fields by passing an object - returns 204', async () => {
         userEmail = email.gen();
         let body = {
             "email": userEmail
@@ -166,15 +166,37 @@ describe('Edit the information of users with /user/{name}', () => {
         expect(result.body.email).toBe(userEmail);
     });
 
-    //TODO: Test by passing things that arent valid
+    test('Try to set email to blank string value - should not return 204', async () => {
+        let body = {
+            "email": ""
+        }
+        response = await user.editUserByObject(loginResponse.body.token, body);
+        expect(response.status).not.toBe(204);
+    });
 
-    //TODO: Test by trying to change name to name already used
+    test('Try to set email to invalid email - should not return 204', async () => {
+        let body = {
+            "email": "best@email@ever"
+        }
+        response = await user.editUserByObject(loginResponse.body.token, body);
+        expect(response.status).not.toBe(204);
+    });
 
-    //TODO: Test by trying to change email to invalid email
+    test('Try to set name to the name of another user - returns 400', async () => {
+        let body = {
+            "name": "test"
+        }
+        response = await user.editUserByObject(loginResponse.body.token, body);
+        expect(response.status).toBe(400);
+    });
 
-    //TODO: Try to edit data with bad token
-
-    //TODO: Try to edit data of another user
+    test('Try to edit data using a bad token - returns 403', async () => {
+        let body = {
+            "email": "mynewemail@gmail.com"
+        }
+        response = await user.editUserByObject('thisisasupergoodtokenthatwillmostdefinitelypass', body);
+        expect(response.status).toBe(403);
+    });
 });
 
 describe('Delete users with /user/{name}', () => {
@@ -188,14 +210,32 @@ describe('Delete users with /user/{name}', () => {
         loginResponse = await auth.login(userName, userPassword);
     });
 
-    test('User is deleted upon request', async () => {
+    afterAll(async () => {
+        await auth.deleteUsers();
+    });
+
+    test('Trying to delete a user other than yourself should be rejected - returns 401', async () => {
+        await auth.register('Todd', 'todd@gmail.com', 'Todd123!'); // Create new user
+        response = await user.deleteUserByName(loginResponse.body.token, 'Todd');
+        expect(response.statusCode).toBe(401); // Not authorized
+    });
+
+    test('User is deleted upon request - returns 204', async () => {
         response = await user.deleteUserByName(loginResponse.body.token, userName);
         expect(response.statusCode).toBe(204);
     });
 
-    //TODO: Try and delete other user.
+    test('Trying to delete a user that no longer exists should be rejected - returns 404', async () => {
+        await auth.register('Josie', 'josie@gmail.com', 'josie123!'); // Create new user
+        let tempLoginResponse = await auth.login('Josie', 'josie123!'); // Log them in
+        await user.deleteUserByName(tempLoginResponse.body.token, 'Josie'); // Delete them
+        response = await user.deleteUserByName(tempLoginResponse.body.token, 'Josie'); // Delete them again
+        expect(response.statusCode).toBe(404); // User not found
+    });
 
-    //TODO: Try to delete non-existant user
-
-    //TODO: Try to delete user with bad token
+    test('Trying to delete a user with an invalid token should be rejected - returns 403', async () => {
+        await auth.register('Josie', 'josie@gmail.com', 'josie123!'); // Create new user
+        response = await user.deleteUserByName('reallybadtokenimeansobadithurts', 'Josie');
+        expect(response.statusCode).toBe(403); // Forbidden
+    });
 });
