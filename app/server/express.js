@@ -11,8 +11,13 @@ const swaggerUI = require("swagger-ui-express");
 const swaggerJsDoc = require("swagger-jsdoc");
 
 // Version 1 route imports
-const communityRouterV1 = require("./routes/v1/community");
-const postRouterV1 = require("./routes/v1/post");
+const communityRouterV1 = require("./routes/v1/community/community");
+const communityFlagsRouterV1 = require("./routes/v1/community/communityFlags");
+const communityTagsRouterV1 = require("./routes/v1/community/communityTags");
+const communityRulesRouterV1 = require("./routes/v1/community/communityRules");
+const postRouterV1 = require("./routes/v1/post/post");
+const postFlagsRouterV1 = require("./routes/v1/post/postFlags");
+const postTagsRouterV1 = require("./routes/v1/post/postTags");
 const userRouterV1 = require("./routes/v1/user");
 const registerRouterV1 = require("./routes/v1/register");
 const loginRouterV1 = require("./routes/v1/login");
@@ -47,8 +52,28 @@ const swaggerOptions = {
         description: "View, create, edit, and delete communities.",
       },
       {
+        name: "Community Rules",
+        description: "View and edit community rules.",
+      },
+      {
+        name: "Community Tags",
+        description: "View and edit community tags.",
+      },
+      {
+        name: "Community Flags",
+        description: "View, set, and unset community flags.",
+      },
+      {
         name: "Post",
         description: "View, create, edit, and delete posts.",
+      },
+      {
+        name: "Post Tags",
+        description: "View, tag, and untag posts.",
+      },
+      {
+        name: "Post Flags",
+        description: "View, set, and unset post flags.",
       },
       {
         name: "User",
@@ -59,6 +84,8 @@ const swaggerOptions = {
   apis: [
     `${__dirname}/express.js`,
     `${__dirname}/routes/v${process.env.API_VERSION}/*.js`,
+    `${__dirname}/routes/v${process.env.API_VERSION}/community/*.js`,
+    `${__dirname}/routes/v${process.env.API_VERSION}/post/*.js`,
     `${__dirname}/models/*.js`,
   ],
 };
@@ -135,7 +162,14 @@ function useV1(req, res, next) {
   app.use("/api/health", healthCheckRouterV1);
 
   app.use("/api/community", authenticateToken, communityRouterV1);
+  app.use("/api/community/flags", authenticateToken, communityFlagsRouterV1);
+  app.use("/api/community/tags", authenticateToken, communityTagsRouterV1);
+  app.use("/api/community/rules", authenticateToken, communityRulesRouterV1);
+
   app.use("/api/post", authenticateToken, postRouterV1);
+  app.use("/api/post/flags", authenticateToken, postFlagsRouterV1);
+  app.use("/api/post/tags", authenticateToken, postTagsRouterV1);
+
   app.use("/api/user", authenticateToken, userRouterV1);
 
   next();
