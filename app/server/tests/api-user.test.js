@@ -101,9 +101,23 @@ describe('Get information of other users with /user/{name}', () => {
         expect(response.body.title).not.toBeTruthy();
     });
 
-    //TODO: Try to get data with bad token
+    test('Trying to get a user with a bad token rejects the request - returns 403', async () => {
+        let tempResponse = await user.getUserByName('thistokenisillegitimate', userName);
+        expect(tempResponse.status).toBe(403);
+    });
 
-    //TODO: Try to get data of another user
+    test('Trying to get data of another user should only return name and email', async () => {
+        await auth.register('Todd', 'todd@gmail.com', 'Todd123!'); // Create new user
+        let tempResponse = await user.getUserByName(loginResponse.body.token, 'Todd'); // Try to get that user's info with test account's token.
+        expect(tempResponse.status).toBe(200);
+        expect(typeof tempResponse.body).toBe('object');
+        expect(tempResponse.body.name).toBeTruthy();
+        expect(tempResponse.body.email).toBeTruthy();
+        expect(tempResponse.body.first_name).not.toBeTruthy();
+        expect(tempResponse.body.last_name).not.toBeTruthy();
+        expect(tempResponse.body.bio).not.toBeTruthy();
+        expect(tempResponse.body.title).not.toBeTruthy();
+    });
 });
 
 describe('Edit the information of users with /user/{name}', () => {
