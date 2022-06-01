@@ -101,6 +101,12 @@ router.post("/", async (req, res) => {
  *      tags:
  *        - Comment
  *      summary: Get all comments from post id.
+ *      parameters:
+ *        - in: path
+ *          required: true
+ *          name: id
+ *          schema:
+ *            $ref: "#/components/schemas/Post/properties/id"
  *      responses:
  *        '404':
  *          description: User not found. **||** <br>Post not found. **||** <br>Comments not found.
@@ -120,7 +126,7 @@ router.post("/", async (req, res) => {
 router.get("/post/:id", async (req, res) => {
   try {
     const user = await User.findOne({ name: req.user.name });
-    const post = await Post.findOne({ _id: req.params.post });
+    const post = await Post.findOne({ _id: req.params.id });
 
     if (!user) return res.status(404).send("User not found.");
     if (!post) return res.status(404).send("Post not found.");
