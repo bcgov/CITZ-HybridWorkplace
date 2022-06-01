@@ -9,7 +9,7 @@ function getUser(token){
 }
 
 function editUserByFields(token, email, first_name, last_name, bio, title, quote){
-    let body = { };
+    let body = {};
 
     if (email) body.email = email;
     if (first_name) body.first_name = first_name;
@@ -27,7 +27,7 @@ function editUserByFields(token, email, first_name, last_name, bio, title, quote
 
 function editUserByObject(token, body){
     return request.patch('/user')
-        .set('accept', 'application/json')
+        .set('accept', '*/*')
         .set('content-type', 'application/json')
         .set('Authorization', `bearer ${ token }`)
         .send(body);
@@ -41,7 +41,7 @@ function getUserByName(token, name){
 
 function deleteUserByName(token, name){
     return request.delete(`/user/${ name }`)
-        .set('accept', 'application/json')
+        .set('accept', '*/*')
         .set('Authorization', `bearer ${ token }`);
 }
 
