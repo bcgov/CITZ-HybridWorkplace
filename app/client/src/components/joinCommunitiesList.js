@@ -28,7 +28,11 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 
-import { getCommunities, leaveCommunity } from "../redux/ducks/communityDuck";
+import {
+  getCommunities,
+  leaveCommunity,
+  joinCommunity,
+} from "../redux/ducks/communityDuck";
 import JoinButton from "./joinButton";
 import { Button } from "@mui/material";
 
@@ -39,6 +43,10 @@ const JoinCommunitiesList = (props) => {
 
   const handleLeave = async (community) => {
     const success = await props.leaveCommunity(community);
+  };
+
+  const handleJoin = async (community) => {
+    const success = await props.joinCommunity(community);
   };
 
   return (
@@ -61,9 +69,13 @@ const JoinCommunitiesList = (props) => {
               </Grid>
 
               <Grid item xs={3} textAlign="center">
+                {/* Join button is commented out, as all displayed communities are communities the user is in*/}
                 <Button onClick={() => handleLeave(community.title)}>
                   Leave
                 </Button>
+                {/* <Button onClick={() => handleJoin(community.title)}>
+                  Join
+                </Button> */}
               </Grid>
             </Grid>
           </Paper>
@@ -85,6 +97,7 @@ const mapStateToProps = (state) => ({
 const mapActionsToProps = {
   getCommunities,
   leaveCommunity,
+  joinCommunity,
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(JoinCommunitiesList);
