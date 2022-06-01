@@ -39,7 +39,7 @@ const authenticateToken = asyncHandler(async (req, res, next) => {
     });
   } catch (err) {
     console.log(err);
-    res.status(400).send(`Bad Request.`);
+    return res.status(400).send(`Bad Request.`);
   }
 });
 
