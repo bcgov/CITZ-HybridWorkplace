@@ -29,7 +29,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 
 import {
-  getCommunities,
+  getUsersCommunities,
   leaveCommunity,
   joinCommunity,
 } from "../redux/ducks/communityDuck";
@@ -38,7 +38,7 @@ import { Button } from "@mui/material";
 
 const JoinCommunitiesList = (props) => {
   useEffect(() => {
-    props.getCommunities();
+    props.getUsersCommunities();
   }, []);
 
   const handleLeave = async (community) => {
@@ -69,13 +69,12 @@ const JoinCommunitiesList = (props) => {
               </Grid>
 
               <Grid item xs={3} textAlign="center">
-                {/* Join button is commented out, as all displayed communities are communities the user is in*/}
                 <Button onClick={() => handleLeave(community.title)}>
                   Leave
                 </Button>
-                {/* <Button onClick={() => handleJoin(community.title)}>
+                <Button onClick={() => handleJoin(community.title)}>
                   Join
-                </Button> */}
+                </Button>
               </Grid>
             </Grid>
           </Paper>
@@ -95,7 +94,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapActionsToProps = {
-  getCommunities,
+  getUsersCommunities,
   leaveCommunity,
   joinCommunity,
 };

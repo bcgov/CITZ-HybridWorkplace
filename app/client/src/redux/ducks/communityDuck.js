@@ -61,6 +61,36 @@ export const getCommunities = () => async (dispatch, getState) => {
   }
 };
 
+export const getUsersCommunities = () => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const token = getState().auth.accessToken;
+    if (!token) throw new Error(noTokenText);
+
+    const response = await fetch(`${apiURI}/api/community?user=true`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`${response.status} ${response.statusText}`);
+    }
+
+    const communities = await response.json();
+
+    dispatch({
+      type: SET_COMMUNITIES,
+      payload: communities,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
 export const createCommunity =
   (communityData) => async (dispatch, getState) => {
     let successful = true;
@@ -172,7 +202,8 @@ export const leaveCommunity = (communityName) => async (dispatch, getState) => {
 };
 
 const initialState = {
-  items: [], //users communitys
+  usersCommunities: [], //users communities
+  items: [], //communitys
   item: {}, //single community
 };
 
@@ -188,12 +219,11 @@ export function communityReducer(state = initialState, action) {
         ...state,
         items: [...state.items, action.payload],
       };
-    //Below is commented out due to discovering communities is not available
-    /*case JOIN_COMMUNITY:
+    case JOIN_COMMUNITY:
       return {
         ...state,
         usersCommunities: [action.payload, ...state.usersCommunities],
-      };*/
+      };
     case LEAVE_COMMUNITY:
       return {
         ...state,
