@@ -21,6 +21,8 @@
  */
 
 const SET_COMMUNITIES = "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_COMMUNITIES";
+const SET_USERS_COMMUNITIES =
+  "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_USERS_COMMUNITIES";
 const ADD_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/ADD_COMMUNITY";
 const JOIN_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/JOIN_COMMUNITY";
 const LEAVE_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/LEAVE_COMMUNITY";
@@ -80,7 +82,7 @@ export const getUsersCommunities = () => async (dispatch, getState) => {
     const communities = await response.json();
 
     dispatch({
-      type: SET_COMMUNITIES,
+      type: SET_USERS_COMMUNITIES,
       payload: communities,
     });
   } catch (err) {
@@ -138,8 +140,9 @@ export const createCommunity =
 export const joinCommunity = (communityName) => async (dispatch, getState) => {
   let successful = true;
   try {
-    const authState = getState().auth;
-    const token = authState.accessToken;
+    const appState = getState();
+    const token = appState.auth.accessToken;
+
     if (!token) throw new Error(noTokenText);
 
     const response = await fetch(
@@ -156,6 +159,12 @@ export const joinCommunity = (communityName) => async (dispatch, getState) => {
     if (!response.ok)
       throw new Error(`${response.status} ${response.statusText}`);
 
+    if (
+      appState.communities.usersCommunities.find(
+        (community) => communityName === community.title
+      )
+    )
+      throw new Error("Cannot join community, user is already in community");
     dispatch({
       type: JOIN_COMMUNITY,
       payload: communityName,
@@ -189,10 +198,10 @@ export const leaveCommunity = (communityName) => async (dispatch, getState) => {
     if (!response.ok)
       throw new Error(`${response.status} ${response.statusText}`);
 
-    dispatch({
-      type: LEAVE_COMMUNITY,
-      payload: communityName,
-    });
+    // dispatch({
+    //   type: LEAVE_COMMUNITY,
+    //   payload: communityName,
+    // });
   } catch (err) {
     console.error(err);
     successful = false;
@@ -214,20 +223,29 @@ export function communityReducer(state = initialState, action) {
         ...state,
         items: action.payload,
       };
+    case SET_USERS_COMMUNITIES:
+      return {
+        ...state,
+        usersCommunities: action.payload,
+      };
     case ADD_COMMUNITY:
       return {
         ...state,
         items: [...state.items, action.payload],
       };
     case JOIN_COMMUNITY:
+      const comm = state.items.find(
+        (element) => element.title === action.payload
+      );
+      if (!comm) return state;
       return {
         ...state,
-        usersCommunities: [action.payload, ...state.usersCommunities],
+        usersCommunities: [comm, ...state.usersCommunities],
       };
     case LEAVE_COMMUNITY:
       return {
         ...state,
-        items: state.items?.filter(
+        usersCommunities: state.usersCommunities?.filter(
           (item, index) => item.title !== action.payload
         ),
       };

@@ -20,7 +20,7 @@
  * @module
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
@@ -37,21 +37,25 @@ import JoinButton from "./joinButton";
 import { Button } from "@mui/material";
 
 const JoinCommunitiesList = (props) => {
+  const [isInCommunity, setIsInCommunity] = useState(true);
+
   useEffect(() => {
     props.getUsersCommunities();
   }, []);
 
   const handleLeave = async (community) => {
+    setIsInCommunity(false);
     const success = await props.leaveCommunity(community);
   };
 
   const handleJoin = async (community) => {
+    setIsInCommunity(true);
     const success = await props.joinCommunity(community);
   };
 
   return (
     <div>
-      {props.communities.items.map((community) => (
+      {props.communities.usersCommunities.map((community) => (
         <div key={community._id}>
           <Paper
             sx={{
@@ -69,10 +73,21 @@ const JoinCommunitiesList = (props) => {
               </Grid>
 
               <Grid item xs={3} textAlign="center">
-                <Button onClick={() => handleLeave(community.title)}>
-                  Leave
-                </Button>
-                <Button onClick={() => handleJoin(community.title)}>
+                {isInCommunity && (
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => handleLeave(community.title)}
+                  >
+                    Leave
+                  </Button>
+                )}
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={() => handleJoin(community.title)}
+                  disabled={isInCommunity}
+                >
                   Join
                 </Button>
               </Grid>

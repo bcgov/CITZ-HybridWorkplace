@@ -31,7 +31,7 @@ import Typography from "@mui/material/Typography";
 
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import Communities from "../components/joinCommunitiesList";
+import Communities from "../components/usersCommunitiesList";
 import Posts from "../components/postsList";
 import PostModal from "../components/modals/addPostModal";
 import CommunityModal from "../components/modals/addCommunityModal";
