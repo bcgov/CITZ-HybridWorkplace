@@ -36,14 +36,13 @@ describe('Get the current user\'s information with /user', () => {
         expect(response.body.quote).not.toBeTruthy();
     });
 
-    test('After setting all keys, they are returned by the /user endpoint', async () => {
+    xtest('After setting all keys, they are returned by the /user endpoint', async () => {
         let body = {
             "email": email.gen(),
             "first_name": "newFirstName",
             "last_name": "newLastName",
             "bio": "new bio",
-            "title": "new title",
-            "quote": "new quote"
+            "title": "new title"
         };
         let editResponse = await user.editUserByObject(loginResponse.body.token, body);
         expect(editResponse.status).toBe(204);
@@ -97,7 +96,6 @@ describe('Get information of other users with /user/{name}', () => {
     let userName = name.gen();
     let userPassword = password.gen();
     let loginResponse;
-    let response; 
     beforeAll(async () => {
         await auth.register(userName, email.gen(), userPassword);
         loginResponse = await auth.login(userName, userPassword);

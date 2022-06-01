@@ -23,7 +23,7 @@ describe('Delete users with /user/{name}', () => {
 
     test('Trying to delete a user other than yourself should be rejected - returns 401', async () => {
         await auth.register('Todd', 'todd@gmail.com', 'Todd123!'); // Create new user
-        response = await user.deleteUserByName(loginResponse.body.token, 'Todd');
+        response = await user.deleteUserByName(loginResponse.body.token, 'Todd'); // Try to delete user with original token
         expect(response.statusCode).toBe(401); // Not authorized
     });
 
@@ -42,7 +42,7 @@ describe('Delete users with /user/{name}', () => {
 
     test('Trying to delete a user with an invalid token should be rejected - returns 403', async () => {
         await auth.register('Josie', 'josie@gmail.com', 'josie123!'); // Create new user
-        response = await user.deleteUserByName('reallybadtokenimeansobadithurts', 'Josie');
+        response = await user.deleteUserByName('reallybadtokenimeansobadithurts', 'Josie'); // Try to delete user with bad token
         expect(response.statusCode).toBe(403); // Forbidden
     });
 }); 
