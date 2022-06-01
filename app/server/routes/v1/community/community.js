@@ -275,7 +275,7 @@ router.patch("/:title", async (req, res) => {
 
     await Community.updateOne({ title: community.title }, query).exec();
 
-    return res.sendStatus(204);
+    return res.status(204).send("");
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);
   }

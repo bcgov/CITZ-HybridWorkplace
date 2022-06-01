@@ -254,7 +254,7 @@ router.patch("/:id", async (req, res) => {
 
     await Comment.updateOne({ _id: req.params.id }, query).exec();
 
-    return res.sendStatus(204);
+    return res.status(204).send("");
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);
   }
