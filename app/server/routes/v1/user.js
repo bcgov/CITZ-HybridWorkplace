@@ -155,11 +155,7 @@ router.patch("/", async (req, res) => {
 
     return res.status(204).send("");
   } catch (err) {
-    // Error wasn't explicitly thrown
-    if (!err.statusCode) {
-    } else {
-      return res.status(err.statusCode).send(err.response);
-    }
+    return res.status(400).send("Bad request");
   }
 });
 
