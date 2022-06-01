@@ -188,11 +188,12 @@ export function communityReducer(state = initialState, action) {
         ...state,
         items: [...state.items, action.payload],
       };
-    case JOIN_COMMUNITY:
+    //Below is commented out due to discovering communities is not available
+    /*case JOIN_COMMUNITY:
       return {
         ...state,
         usersCommunities: [action.payload, ...state.usersCommunities],
-      };
+      };*/
     case LEAVE_COMMUNITY:
       return {
         ...state,
