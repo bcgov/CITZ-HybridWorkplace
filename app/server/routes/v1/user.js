@@ -155,11 +155,11 @@ router.patch("/", async (req, res) => {
 
     return res.status(204).send("");
   } catch (err) {
-    return res
-      .status(400)
-      .send(
-        `Bad Request. The User in the params of the Request is either missing or malformed. ${err}`
-      );
+    // Error wasn't explicitly thrown
+    if (!err.statusCode) {
+    } else {
+      return res.status(err.statusCode).send(err.response);
+    }
   }
 });
 
