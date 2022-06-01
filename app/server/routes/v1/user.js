@@ -153,7 +153,7 @@ router.patch("/", async (req, res) => {
 
     await User.updateOne({ name: req.user.name }, query).exec();
 
-    return res.status(204);
+    return res.status(204).send("");
   } catch (err) {
     return res
       .status(400)
@@ -272,7 +272,7 @@ router.delete("/:name", async (req, res) => {
 
     await User.deleteOne({ name: user.name }).exec();
 
-    return res.status(204);
+    return res.status(204).send("");
   } catch (err) {
     return res
       .status(400)
