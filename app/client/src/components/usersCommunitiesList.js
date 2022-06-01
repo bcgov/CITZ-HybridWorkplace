@@ -20,7 +20,7 @@
  * @module
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
@@ -34,24 +34,11 @@ import {
   joinCommunity,
 } from "../redux/ducks/communityDuck";
 import JoinButton from "./joinButton";
-import { Button } from "@mui/material";
 
-const JoinCommunitiesList = (props) => {
-  const [isInCommunity, setIsInCommunity] = useState(true);
-
+const UsersCommunitiesList = (props) => {
   useEffect(() => {
     props.getUsersCommunities();
   }, []);
-
-  const handleLeave = async (community) => {
-    setIsInCommunity(false);
-    const success = await props.leaveCommunity(community);
-  };
-
-  const handleJoin = async (community) => {
-    setIsInCommunity(true);
-    const success = await props.joinCommunity(community);
-  };
 
   return (
     <div>
@@ -83,7 +70,7 @@ const JoinCommunitiesList = (props) => {
   );
 };
 
-JoinCommunitiesList.propTypes = {
+UsersCommunitiesList.propTypes = {
   getCommunities: PropTypes.func.isRequired,
   communities: PropTypes.array.isRequired,
 };
@@ -98,4 +85,7 @@ const mapActionsToProps = {
   joinCommunity,
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(JoinCommunitiesList);
+export default connect(
+  mapStateToProps,
+  mapActionsToProps
+)(UsersCommunitiesList);
