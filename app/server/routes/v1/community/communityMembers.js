@@ -26,46 +26,54 @@ const router = express.Router();
 
 const Community = require("../../../models/community.model");
 const User = require("../../../models/user.model");
-const Post = require("../../../models/post.model");
 
 /**
  * @swagger
  * paths:
- *  /api/community/tags/{title}:
+ *  /api/community/members/{title}:
  *    get:
  *      security:
  *        - bearerAuth: []
  *      tags:
- *        - Community Tags
- *      summary: Get community tags by title.
+ *        - Community Members
+ *      summary: Get all community members by community title or members count.
+ *      description: Use optional query 'count=true' to get member count.
  *      parameters:
  *        - in: path
  *          required: true
  *          name: title
  *          schema:
  *            $ref: '#/components/schemas/Community/properties/title'
+ *        - in: query
+ *          required: false
+ *          name: count
+ *          schema:
+ *            type: boolean
  *      responses:
  *        '404':
- *          description: Community not found.
+ *          description: User not found. **||** <br>Community not found.
  *        '200':
  *          content:
  *            application/json:
  *              schema:
- *                $ref: '#/components/schemas/Community/properties/tags'
+ *                $ref: '#/components/schemas/Community/properties/members'
  *        '400':
  *          description: Bad Request.
  */
 
-// Get community tags by title
+// Get all community members by community title or count
 router.get("/:title", async (req, res) => {
   try {
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
+    const user = await User.findOne({ name: req.user.name });
+    const community = await Community.findOne({ title: req.params.title });
 
+    if (!user) return res.status(404).send("User not found.");
     if (!community) return res.status(404).send("Community not found.");
 
-    return res.status(200).json(community.tags);
+    if (req.query.count === "true")
+      return res.status(200).json({ count: community.members.length || 0 });
+
+    return res.status(200).json(community.members);
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);
   }
@@ -74,39 +82,30 @@ router.get("/:title", async (req, res) => {
 /**
  * @swagger
  * paths:
- *  /api/community/tags/{title}:
- *    post:
+ *  /api/community/members/join/{title}:
+ *    patch:
  *      security:
  *        - bearerAuth: []
  *      tags:
- *        - Community Tags
- *      summary: Create community tag by community title.
+ *        - Community Members
+ *      summary: Join community by title.
  *      parameters:
  *        - in: path
  *          required: true
  *          name: title
  *          schema:
  *            $ref: '#/components/schemas/Community/properties/title'
- *        - in: query
- *          required: true
- *          name: tag
- *          schema:
- *            $ref: '#/components/schemas/Community/properties/tags/items/properties/tag'
  *      responses:
  *        '404':
- *          description: User not found. **||** <br>Community not found. **||** <br>Tag not found in query.
- *        '401':
- *          description: Not Authorized. Only creator of community can edit community.
- *        '403':
- *          description: A community can't have more than 7 tags. **||** <br>No duplicate tags.
+ *          description: User not found. **||** <br>Community not found.
  *        '204':
- *          description: Successfully created tag.
+ *          description: Successfully joined community.
  *        '400':
  *          description: Bad Request.
  */
 
-// Create community tag by community title
-router.post("/:title", async (req, res) => {
+// Join community by title
+router.patch("/join/:title", async (req, res) => {
   try {
     const user = await User.findOne({ name: req.user.name });
     const community = await Community.findOne({
@@ -115,27 +114,19 @@ router.post("/:title", async (req, res) => {
 
     if (!user) return res.status(404).send("User not found.");
     if (!community) return res.status(404).send("Community not found.");
-    if (!req.query.tag) return res.status(404).send("Tag not found in query.");
-
-    if (user.name !== community.creator)
-      return res
-        .status(401)
-        .send("Not Authorized. Only creator of community can edit community.");
-
-    if (
-      await Community.exists({
-        title: community.title,
-        "tags.tag": req.query.tag,
-      })
-    )
-      return res.status(403).send("No duplicate tags.");
-
-    if (await Community.exists({ title: community.title, tags: { $size: 7 } }))
-      return res.status(403).send("A community can't have more than 7 tags.");
 
     await Community.updateOne(
       { title: community.title },
-      { $push: { tags: { tag: req.query.tag, count: 0 } } }
+      { $push: { members: user.id } }
+    );
+
+    await User.updateOne(
+      { name: user.name },
+      {
+        $push: {
+          communities: community.title,
+        },
+      }
     );
 
     return res.status(204).send("");
@@ -147,37 +138,30 @@ router.post("/:title", async (req, res) => {
 /**
  * @swagger
  * paths:
- *  /api/community/tags/{title}:
+ *  /api/community/members/leave/{title}:
  *    delete:
  *      security:
  *        - bearerAuth: []
  *      tags:
- *        - Community Tags
- *      summary: Remove community tag by community title.
+ *        - Community Members
+ *      summary: Leave community by title.
  *      parameters:
  *        - in: path
  *          required: true
  *          name: title
  *          schema:
  *            $ref: '#/components/schemas/Community/properties/title'
- *        - in: query
- *          required: true
- *          name: tag
- *          schema:
- *            $ref: '#/components/schemas/Community/properties/tags/items/properties/tag'
  *      responses:
  *        '404':
- *          description: User not found. **||** <br>Community not found. **||** <br>Tag not found in query.
- *        '401':
- *          description: Not Authorized. Only creator of community can edit community.
+ *          description: User not found. **||** <br>Community not found.
  *        '204':
- *          description: Successfully removed tag.
+ *          description: Successfully left community.
  *        '400':
  *          description: Bad Request.
  */
 
-// Remove community tag by community title
-router.delete("/:title", async (req, res) => {
+// Leave community by title
+router.delete("/leave/:title", async (req, res) => {
   try {
     const user = await User.findOne({ name: req.user.name });
     const community = await Community.findOne({
@@ -186,23 +170,21 @@ router.delete("/:title", async (req, res) => {
 
     if (!user) return res.status(404).send("User not found.");
     if (!community) return res.status(404).send("Community not found.");
-    if (!req.query.tag) return res.status(404).send("Tag not found in query.");
 
-    if (user.name !== community.creator)
-      return res
-        .status(401)
-        .send("Not Authorized. Only creator of community can edit community.");
-
-    // Remove tag from community
+    // Remove user from community
     await Community.updateOne(
       { title: community.title },
-      { $pull: { tags: { tag: req.query.tag } } }
+      { $pull: { members: user.id } }
     );
 
-    // Remove tag from posts within community
-    await Post.updateMany(
-      { community: community.title },
-      { $pull: { tags: { tag: req.query.tag } } }
+    // Remove community from user's communities array
+    await User.updateOne(
+      { name: user.name },
+      {
+        $pull: {
+          communities: community.title,
+        },
+      }
     );
 
     return res.status(204).send("");

@@ -15,10 +15,15 @@ const communityRouterV1 = require("./routes/v1/community/community");
 const communityFlagsRouterV1 = require("./routes/v1/community/communityFlags");
 const communityTagsRouterV1 = require("./routes/v1/community/communityTags");
 const communityRulesRouterV1 = require("./routes/v1/community/communityRules");
+const communityMembersRouterV1 = require("./routes/v1/community/communityMembers");
+
 const postRouterV1 = require("./routes/v1/post/post");
 const postFlagsRouterV1 = require("./routes/v1/post/postFlags");
 const postTagsRouterV1 = require("./routes/v1/post/postTags");
+
+const commentRouterV1 = require("./routes/v1/comment/comment");
 const userRouterV1 = require("./routes/v1/user");
+
 const registerRouterV1 = require("./routes/v1/register");
 const loginRouterV1 = require("./routes/v1/login");
 const logoutRouterV1 = require("./routes/v1/logout");
@@ -87,10 +92,17 @@ function useV1(req, res, next) {
   app.use("/api/community/flags", authenticateToken, communityFlagsRouterV1);
   app.use("/api/community/tags", authenticateToken, communityTagsRouterV1);
   app.use("/api/community/rules", authenticateToken, communityRulesRouterV1);
+  app.use(
+    "/api/community/members",
+    authenticateToken,
+    communityMembersRouterV1
+  );
 
   app.use("/api/post", authenticateToken, postRouterV1);
   app.use("/api/post/flags", authenticateToken, postFlagsRouterV1);
   app.use("/api/post/tags", authenticateToken, postTagsRouterV1);
+
+  app.use("/api/comment", authenticateToken, commentRouterV1);
 
   app.use("/api/user", authenticateToken, userRouterV1);
 

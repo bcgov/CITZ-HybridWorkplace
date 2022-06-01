@@ -62,7 +62,8 @@ const User = require("../../models/user.model");
 router.get("/", async (req, res) => {
   try {
     // Get refresh token from cookies
-    if (!(req.cookies && req.cookies.jwt)) return res.sendStatus(401);
+    if (!(req.cookies && req.cookies.jwt))
+      return res.status(401).send("Missing cookie.");
     const refreshToken = req.cookies.jwt;
 
     let username;

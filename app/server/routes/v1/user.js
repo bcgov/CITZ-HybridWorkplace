@@ -153,13 +153,9 @@ router.patch("/", async (req, res) => {
 
     await User.updateOne({ name: req.user.name }, query).exec();
 
-    return res.status(204);
+    return res.status(204).send("");
   } catch (err) {
-    return res
-      .status(400)
-      .send(
-        `Bad Request. The User in the params of the Request is either missing or malformed. ${err}`
-      );
+    return res.status(400).send("Bad request");
   }
 });
 
@@ -272,7 +268,7 @@ router.delete("/:name", async (req, res) => {
 
     await User.deleteOne({ name: user.name }).exec();
 
-    return res.status(204);
+    return res.status(204).send("");
   } catch (err) {
     return res
       .status(400)

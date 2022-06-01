@@ -115,13 +115,15 @@ router.post("/", async (req, res) => {
  *      summary: Get all posts from communities user is apart of.
  *      responses:
  *        '404':
- *          description: Posts not found.
+ *          description: User not found. **||** <br>Posts not found.
  *        '200':
  *          description: Posts successfully found.
  *          content:
  *            application/json:
  *              schema:
- *                $ref: '#/components/schemas/Post'
+ *                type: array
+ *                items:
+ *                  - $ref: '#/components/schemas/Post'
  *        '400':
  *          description: Bad Request.
  */
@@ -291,10 +293,8 @@ router.get("/community/:title", async (req, res) => {
  *      responses:
  *        '404':
  *          description: User not found. **||** <br>Post not found. **||** <br>Community not found.
- *        '401':
- *          description: Not Authorized. Only creator of post can edit post.
  *        '403':
- *          description: Community can't have more than 3 pinned posts. **||** <br>Can't edit tags. Use /api/post/{id}/tags instead. **||** <br>Can't edit creator of a post.
+ *          description: Community can't have more than 3 pinned posts. **||** <br>Can't edit tags. Use /api/post/{id}/tags instead. **||** <br>Can't edit creator of a post. **||** <br>Only creator of post can edit post.
  *        '204':
  *          description: Post successfully edited.
  *        '400':
@@ -312,9 +312,7 @@ router.patch("/:id", async (req, res) => {
     if (!post) return res.status(404).send("Post not found.");
 
     if (post.creator !== user.id)
-      return res
-        .status(401)
-        .send("Not Authorized. Only creator of post can edit post.");
+      return res.status(403).send("Only creator of post can edit post.");
 
     if (req.body.pinned === true && req.body.community) {
       // pinned and community set in patch
@@ -360,7 +358,7 @@ router.patch("/:id", async (req, res) => {
 
     await Post.updateOne({ _id: req.params.id }, query).exec();
 
-    return res.sendStatus(204);
+    return res.status(204).send("");
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);
   }
@@ -387,12 +385,8 @@ router.patch("/:id", async (req, res) => {
  *          description: User not found. **||** <br>Post not found.
  *        '401':
  *          description: Not Authorized. Must be creator of post to delete post.
- *        '200':
- *          description: Post successfully edited.
- *          content:
- *            application/json:
- *              schema:
- *                $ref: '#/components/schemas/Post'
+ *        '204':
+ *          description: Post removed.
  *        '400':
  *          description: Bad Request.
  */

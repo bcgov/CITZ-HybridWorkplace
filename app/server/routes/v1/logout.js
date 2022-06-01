@@ -77,7 +77,7 @@ router.get("/", async (req, res) => {
 
     await User.updateOne({ name: user.name }, { refresh_token: "" });
     res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "None" });
-    res.sendStatus(204);
+    res.status(204).send("");
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);
   }

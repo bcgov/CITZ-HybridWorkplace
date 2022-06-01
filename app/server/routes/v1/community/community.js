@@ -114,29 +114,47 @@ router.post("/", async (req, res) => {
  *        - bearerAuth: []
  *      tags:
  *        - Community
- *      summary: Get all communities the user is a part of.
+ *      summary: Get all communities or only communities user is a part of.
+ *      description: Use optional query 'user=true' to get only communities user is a part of.
+ *      parameters:
+ *        - in: query
+ *          required: false
+ *          name: user
+ *          schema:
+ *            type: boolean
  *      responses:
  *        '404':
- *          description: User not found. **||** <br>Community not found.
+ *          description: User not found. **||** <br>Communities not found.
  *        '200':
  *          content:
  *            application/json:
  *              schema:
- *                $ref: '#/components/schemas/Community'
+ *                type: array
+ *                items:
+ *                  - $ref: '#/components/schemas/Community'
  *        '400':
  *          description: Bad Request.
  */
 
-// Get all communities you are a part of
+// Get all communities or all communities user is a part of
 router.get("/", async (req, res) => {
   try {
     const user = await User.findOne({ name: req.user.name });
-    const communities = await Community.find({ members: user.id }, "", {
-      sort: { _id: -1 },
-    }).exec();
+
+    let communities;
+
+    if (req.query.user === "true") {
+      // Ordered by last joined
+      communities = await Community.find({ members: user.id }, "", {
+        sort: { _id: -1 },
+      }).exec();
+    } else {
+      // Ordered by first created
+      communities = await Community.find({}, "", { sort: { _id: 1 } }).exec();
+    }
 
     if (!user) return res.status(404).send("User not found.");
-    if (!communities) return res.status(404).send("Community not found.");
+    if (!communities) return res.status(404).send("Communities not found.");
 
     return res.status(200).json(communities);
   } catch (err) {
@@ -257,7 +275,7 @@ router.patch("/:title", async (req, res) => {
 
     await Community.updateOne({ title: community.title }, query).exec();
 
-    return res.sendStatus(204);
+    return res.status(204).send("");
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);
   }
@@ -323,120 +341,6 @@ router.delete("/:title", async (req, res) => {
 
     // TODO: AUTH ONLY MODERATORS OF COMMUNITY
     return res.status(200).send("Community removed.");
-  } catch (err) {
-    return res.status(400).send(`Bad Request: ${err}`);
-  }
-});
-
-/**
- * @swagger
- * paths:
- *  /api/community/join/{title}:
- *    patch:
- *      security:
- *        - bearerAuth: []
- *      tags:
- *        - Community
- *      summary: Join community by title.
- *      parameters:
- *        - in: path
- *          required: true
- *          name: title
- *          schema:
- *            $ref: '#/components/schemas/Community/properties/title'
- *      responses:
- *        '404':
- *          description: User not found. **||** <br>Community not found.
- *        '204':
- *          description: Successfully joined community.
- *        '400':
- *          description: Bad Request.
- */
-
-// Join community by title
-router.patch("/join/:title", async (req, res) => {
-  try {
-    const user = await User.findOne({ name: req.user.name });
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
-
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
-
-    await Community.updateOne(
-      { title: community.title },
-      { $push: { members: user.id } }
-    );
-
-    await User.updateOne(
-      { name: user.name },
-      {
-        $push: {
-          communities: community.title,
-        },
-      }
-    );
-
-    return res.sendStatus(204);
-  } catch (err) {
-    return res.status(400).send(`Bad Request: ${err}`);
-  }
-});
-
-/**
- * @swagger
- * paths:
- *  /api/community/leave/{title}:
- *    delete:
- *      security:
- *        - bearerAuth: []
- *      tags:
- *        - Community
- *      summary: Leave community by title.
- *      parameters:
- *        - in: path
- *          required: true
- *          name: title
- *          schema:
- *            $ref: '#/components/schemas/Community/properties/title'
- *      responses:
- *        '404':
- *          description: User not found. **||** <br>Community not found.
- *        '204':
- *          description: Successfully left community.
- *        '400':
- *          description: Bad Request.
- */
-
-// Leave community by title
-router.delete("/leave/:title", async (req, res) => {
-  try {
-    const user = await User.findOne({ name: req.user.name });
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
-
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
-
-    // Remove user from community
-    await Community.updateOne(
-      { title: community.title },
-      { $pull: { members: user.id } }
-    );
-
-    // Remove community from user's communities array
-    await User.updateOne(
-      { name: user.name },
-      {
-        $pull: {
-          communities: community.title,
-        },
-      }
-    );
-
-    return res.sendStatus(204);
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);
   }

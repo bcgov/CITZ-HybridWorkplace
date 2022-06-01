@@ -16,6 +16,7 @@ The API is documented using Swagger (OpenAPI v3.0.0).\
 Open [http://localhost:5000/api-docs](http://localhost:5000/api-docs) to view it in your browser.
 
 The basic setup for swagger is done in ./express.js\
+and configured in ./swagger-conf.js\
 Data model documentation is done in the ./models/_.model.js files.\
 Endpoint documentation is done in the ./routes/v1/_.js files.
 
