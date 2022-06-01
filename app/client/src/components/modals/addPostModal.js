@@ -52,12 +52,12 @@ const CreatePost = (props) => {
       community: community,
     };
 
-    const successful = await props.createPost(post)
+    const successful = await props.createPost(post);
     if (successful === true) {
-      setTitle("")
-      setMessage("")
-      setCommunity("")
-      props.onClose()
+      setTitle("");
+      setMessage("");
+      setCommunity("");
+      props.onClose();
     }
   };
 
@@ -102,7 +102,12 @@ const CreatePost = (props) => {
             {props.communities.map((comm) => (
               <div key={comm._id}>
                 {/* TODO: change button input for choosing community to radio  */}
-                <Button onClick={() => onCommunityClick(comm.title)} variant={`${comm.title === community ? 'contained' : 'outlined'}`}>
+                <Button
+                  onClick={() => onCommunityClick(comm.title)}
+                  variant={`${
+                    comm.title === community ? "contained" : "outlined"
+                  }`}
+                >
                   {comm.title}{" "}
                 </Button>
               </div>
@@ -124,8 +129,8 @@ CreatePost.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  communities: state.communities.items,
-  auth: state.auth
+  communities: state.communities.usersCommunities,
+  auth: state.auth,
 });
 
 export default connect(mapStateToProps, { getCommunities, createPost })(
