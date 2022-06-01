@@ -24,8 +24,9 @@ const express = require("express");
 
 const router = express.Router();
 
-const Community = require("../../models/community.model");
-const User = require("../../models/user.model");
+const Community = require("../../../models/community.model");
+const User = require("../../../models/user.model");
+const Post = require("../../../models/post.model");
 
 /**
  * @swagger
@@ -48,6 +49,8 @@ const User = require("../../models/user.model");
  *                  $ref: '#/components/schemas/Community/properties/title'
  *                description:
  *                  $ref: '#/components/schemas/Community/properties/description'
+ *                rules:
+ *                  $ref: '#/components/schemas/Community/properties/rules'
  *      responses:
  *        '404':
  *          description: User not found.
@@ -77,8 +80,9 @@ router.post("/", async (req, res) => {
     const community = await Community.create({
       title: req.body.title,
       description: req.body.description,
-      creator: user.id,
+      creator: user.name,
       members: [user.id],
+      rules: req.body.rules,
     });
 
     await User.updateOne(
@@ -113,7 +117,7 @@ router.post("/", async (req, res) => {
  *      summary: Get all communities the user is a part of.
  *      responses:
  *        '404':
- *          description: User or Community not found.
+ *          description: User not found. **||** <br>Community not found.
  *        '200':
  *          content:
  *            application/json:
@@ -127,13 +131,11 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const user = await User.findOne({ name: req.user.name });
-
-    if (!user) return res.status(404).send("User not found.");
-
     const communities = await Community.find({ members: user.id }, "", {
       sort: { _id: -1 },
     }).exec();
 
+    if (!user) return res.status(404).send("User not found.");
     if (!communities) return res.status(404).send("Community not found.");
 
     return res.status(200).json(communities);
@@ -214,7 +216,9 @@ router.get("/:title", async (req, res) => {
  *                  $ref: '#/components/schemas/Community/properties/description'
  *      responses:
  *        '404':
- *          description: Community not found.
+ *          description: User not found. **||** <br>Community not found.
+ *        '401':
+ *          description: Not Authorized. Only creator of community can edit community.
  *        '204':
  *          description: Community successfully edited.
  *        '400':
@@ -225,12 +229,19 @@ router.get("/:title", async (req, res) => {
 // TODO: AUTH
 router.patch("/:title", async (req, res) => {
   try {
-    // FIX ME: AUTH USER IS MODERATOR
+    // TODO: AUTH USER IS MODERATOR
+    const user = await User.findOne({ name: req.user.name });
     const community = await Community.findOne({
       title: req.params.title,
     }).exec();
 
+    if (!user) return res.status(404).send("User not found.");
     if (!community) return res.status(404).send("Community not found.");
+
+    if (user.name !== community.creator)
+      return res
+        .status(401)
+        .send("Not Authorized. Only creator of community can edit community.");
 
     // eslint-disable-next-line prefer-const
     let query = { $set: {} };
@@ -244,7 +255,7 @@ router.patch("/:title", async (req, res) => {
       }
     });
 
-    await Community.updateOne({ title: req.params.title }, query).exec();
+    await Community.updateOne({ title: community.title }, query).exec();
 
     return res.sendStatus(204);
   } catch (err) {
@@ -270,7 +281,9 @@ router.patch("/:title", async (req, res) => {
  *            $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
- *          description: Community not found.
+ *          description: User not found. **||** <br>Community not found.
+ *        '401':
+ *          description: Not Authorized. Only creator of community can edit community.
  *        '200':
  *          description: Community removed.
  *        '400':
@@ -281,11 +294,32 @@ router.patch("/:title", async (req, res) => {
 // TODO: AUTH
 router.delete("/:title", async (req, res) => {
   try {
-    const community = await Community.deleteOne({
+    const user = await User.findOne({ name: req.user.name });
+    const community = await Community.findOne({
       title: req.params.title,
     }).exec();
 
+    if (!user) return res.status(404).send("User not found.");
     if (!community) return res.status(404).send("Community not found.");
+
+    if (user.name !== community.creator)
+      return res
+        .status(401)
+        .send("Not Authorized. Only creator of community can edit community.");
+
+    // Remove community
+    await Community.deleteOne({
+      title: req.params.title,
+    }).exec();
+
+    // Remove reference to community from users
+    await User.updateMany(
+      { communities: req.params.title },
+      { $pull: { communities: req.params.title } }
+    ).exec();
+
+    // Remove posts from community
+    await Post.deleteMany({ community: req.params.title }).exec();
 
     // TODO: AUTH ONLY MODERATORS OF COMMUNITY
     return res.status(200).send("Community removed.");
@@ -312,7 +346,7 @@ router.delete("/:title", async (req, res) => {
  *            $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
- *          description: User or Community not found.
+ *          description: User not found. **||** <br>Community not found.
  *        '204':
  *          description: Successfully joined community.
  *        '400':
@@ -323,13 +357,11 @@ router.delete("/:title", async (req, res) => {
 router.patch("/join/:title", async (req, res) => {
   try {
     const user = await User.findOne({ name: req.user.name });
-
-    if (!user) return res.status(404).send("User not found.");
-
     const community = await Community.findOne({
       title: req.params.title,
     }).exec();
 
+    if (!user) return res.status(404).send("User not found.");
     if (!community) return res.status(404).send("Community not found.");
 
     await Community.updateOne(
@@ -370,7 +402,7 @@ router.patch("/join/:title", async (req, res) => {
  *            $ref: '#/components/schemas/Community/properties/title'
  *      responses:
  *        '404':
- *          description: User or Community not found.
+ *          description: User not found. **||** <br>Community not found.
  *        '204':
  *          description: Successfully left community.
  *        '400':
@@ -381,20 +413,20 @@ router.patch("/join/:title", async (req, res) => {
 router.delete("/leave/:title", async (req, res) => {
   try {
     const user = await User.findOne({ name: req.user.name });
-
-    if (!user) return res.status(404).send("User not found.");
-
     const community = await Community.findOne({
       title: req.params.title,
     }).exec();
 
+    if (!user) return res.status(404).send("User not found.");
     if (!community) return res.status(404).send("Community not found.");
 
+    // Remove user from community
     await Community.updateOne(
       { title: community.title },
       { $pull: { members: user.id } }
     );
 
+    // Remove community from user's communities array
     await User.updateOne(
       { name: user.name },
       {

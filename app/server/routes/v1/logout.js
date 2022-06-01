@@ -25,6 +25,7 @@ const express = require("express");
 const router = express.Router();
 
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs"); // hashing
 
 const User = require("../../models/user.model");
 
@@ -33,29 +34,53 @@ const User = require("../../models/user.model");
  * paths:
  *  /api/logout:
  *    get:
- *      security:
- *        - cookieAuth: []
  *      tags:
  *        - Auth
  *      summary: Log out of account.
  *      responses:
- *        '401':
- *          description: Unauthorized (missing cookie).
+ *        '404':
+ *          description: Missing Cookie or missing User.
+ *        '403':
+ *          description: Invalid token
  *        '204':
  *          description: Successfully logged out.
+ *        '400':
+ *          description: Bad Request.
  */
 
 // TODO: ON CLIENT delete token on logout
 router.get("/", async (req, res) => {
-  // Get refresh token from cookies
-  if (!(req.cookies && req.cookies.jwt)) return res.sendStatus(401);
-  const refreshToken = req.cookies.jwt;
+  try {
+    // Get refresh token from cookies
+    if (!(req.cookies && req.cookies.jwt))
+      return res.status(404).send("Missing cookie.");
+    const refreshToken = req.cookies.jwt;
 
-  // Verify token
-  const user = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-  await User.updateOne({ user: user.name }, { refresh_token: "" });
-  res.clearCookie("jwt", { httpOnly: true });
-  res.sendStatus(204);
+    // Verify token
+    let tokenUser;
+
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
+      if (err) return res.status(403).send("Invalid token.");
+      tokenUser = user;
+    });
+
+    const user = await User.findOne({ name: tokenUser.name });
+    if (!user) return res.status(404).send("User not found.");
+
+    // Compare refreshToken to user.refresh_token from db
+    const isRefreshTokenValid = await bcrypt.compare(
+      refreshToken,
+      user.refresh_token
+    );
+
+    if (!isRefreshTokenValid) return res.status(403).send("Invalid token.");
+
+    await User.updateOne({ name: user.name }, { refresh_token: "" });
+    res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "None" });
+    res.sendStatus(204);
+  } catch (err) {
+    return res.status(400).send(`Bad Request: ${err}`);
+  }
 });
 
 module.exports = router;

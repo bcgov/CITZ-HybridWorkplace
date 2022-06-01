@@ -29,17 +29,17 @@ const authenticateToken = asyncHandler(async (req, res, next) => {
     // Get token from header
     const token =
       req.headers.authorization && req.headers.authorization.split(" ")[1];
-    if (token == null) return res.status(401).send("Not Authorized.");
+    if (token == null) return res.status(401).send("Missing token.");
 
     // Verify token
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-      if (err) return res.status(403).send("Forbidden.");
+      if (err) return res.status(403).send("Invalid token.");
       req.user = user;
       next();
     });
   } catch (err) {
     console.log(err);
-    res.status(401).send("Not Authorized.");
+    res.status(400).send(`Bad Request.`);
   }
 });
 

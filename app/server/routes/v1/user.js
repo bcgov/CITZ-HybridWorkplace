@@ -36,11 +36,12 @@ const User = require("../../models/user.model");
  *      tags:
  *        - User
  *      summary: Get user.
+ *      description: Returns properties of user that have been set.
  *      responses:
  *        '404':
  *          description: User not found.
  *        '200':
- *          description: Successfully found user.
+ *          description: Successfully found user. Returns the following properties if set.
  *          content:
  *            application/json:
  *              schema:
@@ -105,8 +106,6 @@ router.get("/", async (req, res) => {
  *            schema:
  *              type: object
  *              properties:
- *                name:
- *                  $ref: '#/components/schemas/User/properties/name'
  *                email:
  *                  $ref: '#/components/schemas/User/properties/email'
  *                first_name:
@@ -122,6 +121,8 @@ router.get("/", async (req, res) => {
  *      responses:
  *        '404':
  *          description: User not found.
+ *        '403':
+ *          description: Not allowed to edit name.
  *        '204':
  *          description: User successfully edited.
  *        '400':
@@ -139,6 +140,9 @@ router.patch("/", async (req, res) => {
     let query = { $set: {} };
 
     Object.keys(req.body).forEach((key) => {
+      if (key === "name")
+        return res.status(403).send("Not allowed to edit name.");
+
       // if the field in req.body exists, update/set it
       if (user[key] && user[key] !== req.body[key]) {
         query.$set[key] = req.body[key];
@@ -169,6 +173,7 @@ router.patch("/", async (req, res) => {
  *      tags:
  *        - User
  *      summary: Get user by name.
+ *      description: Returns properties of user that have been set.
  *      parameters:
  *        - in: path
  *          name: name

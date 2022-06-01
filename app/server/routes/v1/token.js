@@ -23,6 +23,7 @@
 require("dotenv").config();
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs"); // hashing
 
 const router = express.Router();
 
@@ -34,16 +35,16 @@ const User = require("../../models/user.model");
  * paths:
  *  /api/token:
  *    get:
- *      security:
- *        - cookieAuth: []
  *      tags:
  *        - Auth
  *      summary: Use refresh token to retreive a new access token.
  *      responses:
+ *        '404':
+ *          description: User not found.
  *        '401':
  *          description: Unauthorized (missing cookie).
  *        '403':
- *          description: Forbidden (Refresh token no longer valid).
+ *          description: Invalid token.
  *        '200':
  *          description: Success.
  *          content:
@@ -64,15 +65,31 @@ router.get("/", async (req, res) => {
     if (!(req.cookies && req.cookies.jwt)) return res.sendStatus(401);
     const refreshToken = req.cookies.jwt;
 
-    // Check refresh token exists
-    const user = await User.findOne({ refresh_token: refreshToken });
-    if (!user) return res.status(403).send("Forbidden.");
+    let username;
 
-    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err) => {
-      if (err) return res.status(403).send("Forbidden.");
-      const token = generateToken(user);
-      return res.status(200).json({ token });
-    });
+    // Verify token and get user.name from token
+    jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET,
+      (err, tokenUser) => {
+        if (err) return res.status(403).send("Invalid token.");
+        username = tokenUser.name;
+      }
+    );
+
+    const user = await User.findOne({ name: username });
+    if (!user) return res.status(404).send("User not found.");
+
+    // Compare refreshToken to user.refresh_token from db
+    const isRefreshTokenValid = await bcrypt.compare(
+      refreshToken,
+      user.refresh_token
+    );
+
+    if (!isRefreshTokenValid) return res.status(403).send("Invalid token.");
+
+    const token = generateToken(user);
+    return res.status(200).json({ token });
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);
   }

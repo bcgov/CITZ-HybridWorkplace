@@ -11,8 +11,13 @@ const swaggerUI = require("swagger-ui-express");
 const swaggerJsDoc = require("swagger-jsdoc");
 
 // Version 1 route imports
-const communityRouterV1 = require("./routes/v1/community");
-const postRouterV1 = require("./routes/v1/post");
+const communityRouterV1 = require("./routes/v1/community/community");
+const communityFlagsRouterV1 = require("./routes/v1/community/communityFlags");
+const communityTagsRouterV1 = require("./routes/v1/community/communityTags");
+const communityRulesRouterV1 = require("./routes/v1/community/communityRules");
+const postRouterV1 = require("./routes/v1/post/post");
+const postFlagsRouterV1 = require("./routes/v1/post/postFlags");
+const postTagsRouterV1 = require("./routes/v1/post/postTags");
 const userRouterV1 = require("./routes/v1/user");
 const registerRouterV1 = require("./routes/v1/register");
 const loginRouterV1 = require("./routes/v1/login");
@@ -28,15 +33,11 @@ const swaggerOptions = {
     info: {
       title: "CITZ HybridWorkplace",
       version: process.env.API_VERSION || "undefined",
-      description: `API Documentation
-      \n\n## AUTH: 
-      This API uses JWT tokens for authentication. Start by registering, or if you already have an account, logging in. 
-      \n\n- After logging in, copy the access token from the response. 
-      \n\n- Click on the **'Authorize'** button, paste the token into the field under **'bearerAuth'**, and click **'Authorize'**. 
-      \n\n- Repeat these steps but with the refresh token, and paste into the field under **'cookieAuth'**. 
-      \n\n- Now you will have limited access to the endpoints that require authentication (indicated by a lock icon). 
-      \n\n- You will not have any indication for when your token expires, except that requests will return a **'Forbidden'** response. 
-      \n\n- When this happens, you will be required to use the token endpoint, copy the access token in the response, and paste it into the field under **'bearerAuth'**.`,
+      description: `### API Documentation
+      \n\n**This API uses JWT tokens for authentication. Steps to auth:**
+      \n\n- **Log in**, copy the access token from the response. Click on one of the **lock icons** to the right of some endpoints. Paste the token into the field and click **'Authorize'**. 
+      \n\n- Now you will have limited access, as the token will expire. When token expires requests will return a **403: Invalid Token** response. 
+      \n\n- When this happens, use the **/token** endpoint. Copy the access token in the response. Paste it into the field in the lock icon and click **'Authorize'**.`,
     },
     tags: [
       {
@@ -51,8 +52,28 @@ const swaggerOptions = {
         description: "View, create, edit, and delete communities.",
       },
       {
+        name: "Community Rules",
+        description: "View and edit community rules.",
+      },
+      {
+        name: "Community Tags",
+        description: "View and edit community tags.",
+      },
+      {
+        name: "Community Flags",
+        description: "View, set, and unset community flags.",
+      },
+      {
         name: "Post",
         description: "View, create, edit, and delete posts.",
+      },
+      {
+        name: "Post Tags",
+        description: "View, tag, and untag posts.",
+      },
+      {
+        name: "Post Flags",
+        description: "View, set, and unset post flags.",
       },
       {
         name: "User",
@@ -63,15 +84,24 @@ const swaggerOptions = {
   apis: [
     `${__dirname}/express.js`,
     `${__dirname}/routes/v${process.env.API_VERSION}/*.js`,
+    `${__dirname}/routes/v${process.env.API_VERSION}/community/*.js`,
+    `${__dirname}/routes/v${process.env.API_VERSION}/post/*.js`,
     `${__dirname}/models/*.js`,
   ],
 };
 
 const specs = swaggerJsDoc(swaggerOptions);
 
+const uiOptions = {
+  customSiteTitle: "HWP Swagger Docs",
+  customCss: `
+  .topbar-wrapper img {content:url(https://www2.gov.bc.ca/StaticWebResources/static/gov3/images/gov_bc_logo.svg); width:190px; height:auto;}
+  .swagger-ui .topbar { background-color: #234075; border-bottom: 2px solid #e3a82b; }`,
+};
+
 const app = express();
 
-app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs, uiOptions));
 
 /**
  * @swagger
@@ -81,15 +111,22 @@ app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
  *      type: http
  *      scheme: bearer
  *      bearerFormat: JWT
- *    cookieAuth:
- *      type: apiKey
- *      in: cookie
- *      name: jwt
  */
+
+// Cors origin
+const corsOrigin = !process.env.REACT_APP_LOCAL_DEV
+  ? process.env.FRONTEND_REF
+  : `http://${process.env.FRONTEND_REF}:${process.env.FRONTEND_PORT}`;
 
 // Express middleware
 app.use(express.json());
-app.use(cors());
+// TODO: Remove hard-coding, set env variable for openshift
+app.use(
+  cors({
+    origin: corsOrigin,
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 app.use(
   rateLimit({
@@ -125,7 +162,14 @@ function useV1(req, res, next) {
   app.use("/api/health", healthCheckRouterV1);
 
   app.use("/api/community", authenticateToken, communityRouterV1);
+  app.use("/api/community/flags", authenticateToken, communityFlagsRouterV1);
+  app.use("/api/community/tags", authenticateToken, communityTagsRouterV1);
+  app.use("/api/community/rules", authenticateToken, communityRulesRouterV1);
+
   app.use("/api/post", authenticateToken, postRouterV1);
+  app.use("/api/post/flags", authenticateToken, postFlagsRouterV1);
+  app.use("/api/post/tags", authenticateToken, postTagsRouterV1);
+
   app.use("/api/user", authenticateToken, userRouterV1);
 
   next();

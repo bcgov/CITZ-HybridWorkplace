@@ -41,8 +41,42 @@
  *          $ref: '#/components/schemas/User/properties/id'
  *        community:
  *          $ref: '#/components/schemas/Community/properties/title'
+ *        pinned:
+ *          type: boolean
+ *          description: Pinned posts show at the top of the feed. Limit 3 per community.
+ *        tags:
+ *          type: array
+ *          description: Tags set by users to describe post.
+ *          items:
+ *            type: object
+ *            properties:
+ *              tag:
+ *                type: string
+ *                example: Informative
+ *              taggedBy:
+ *                type: array
+ *                description: Users that have tagged the post.
+ *                items:
+ *                  - $ref: '#/components/schemas/User'
+ *        flags:
+ *          type: array
+ *          description: Flags set by users to bring attention to moderators.
+ *          items:
+ *            type: object
+ *            properties:
+ *              flag:
+ *                type: string
+ *                example: Inappropriate
+ *              flaggedBy:
+ *                type: array
+ *                description: Users that have flagged the post.
+ *                items:
+ *                  - $ref: '#/components/schemas/User'
  *      required:
  *        - title
+ *        - message
+ *        - creator
+ *        - community
  */
 
 const mongoose = require("mongoose");
@@ -50,10 +84,32 @@ const mongoose = require("mongoose");
 const Post = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    message: { type: String },
-    creator: { type: String },
-    community: { type: String },
-    flagged: { type: Boolean },
+    message: { type: String, required: true },
+    creator: { type: String, required: true },
+    community: { type: String, required: true },
+    pinned: { type: Boolean },
+    tags: [
+      {
+        tag: String,
+        taggedBy: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+          },
+        ],
+      },
+    ],
+    flags: [
+      {
+        flag: String,
+        flaggedBy: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+          },
+        ],
+      },
+    ],
   },
   { collection: "post" }
 );
