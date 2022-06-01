@@ -41,9 +41,13 @@ const Home = () => {
 
   const [createCommunityOpen, setCreateCommunityOpen] = useState(false);
 
-  const openDialog = () => setCreateCommunityOpen(true);
+  const openDialog = () => {
+    setCreateCommunityOpen(true);
+  };
 
-  const closeDialog = (value) => setCreateCommunityOpen(false);
+  const closeDialog = (value) => {
+    setCreateCommunityOpen(false);
+  };
 
   return (
     <div>

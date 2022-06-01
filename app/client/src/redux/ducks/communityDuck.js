@@ -196,7 +196,7 @@ export function communityReducer(state = initialState, action) {
     case LEAVE_COMMUNITY:
       return {
         ...state,
-        items: state.items.filter(
+        items: state.items?.filter(
           (item, index) => item.title !== action.payload
         ),
       };
