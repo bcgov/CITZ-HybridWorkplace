@@ -1,5 +1,56 @@
 const swaggerJsDoc = require("swagger-jsdoc");
 
+// Endpoints are grouped by tags in Swagger Docs
+const tags = [
+  {
+    name: "API",
+  },
+  {
+    name: "Auth",
+    description: "Login, logout, register, and refresh access token.",
+  },
+  {
+    name: "Community",
+    description: "View, create, edit, and delete communities.",
+  },
+  {
+    name: "Community Members",
+    description: "Join, leave, view members of communities.",
+  },
+  {
+    name: "Community Rules",
+    description: "View and edit community rules.",
+  },
+  {
+    name: "Community Tags",
+    description: "View and edit community tags.",
+  },
+  {
+    name: "Community Flags",
+    description: "View, set, and unset community flags.",
+  },
+  {
+    name: "Post",
+    description: "View, create, edit, and delete posts.",
+  },
+  {
+    name: "Post Tags",
+    description: "View, tag, and untag posts.",
+  },
+  {
+    name: "Post Flags",
+    description: "View, set, and unset post flags.",
+  },
+  {
+    name: "Comment",
+    description: "View, create, edit, and delete comments.",
+  },
+  {
+    name: "User",
+    description: "View and edit user settings.",
+  },
+];
+
 const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
@@ -12,47 +63,7 @@ const swaggerOptions = {
       \n\n- Now you will have limited access, as the token will expire. When token expires requests will return a **403: Invalid Token** response. 
       \n\n- When this happens, use the **/token** endpoint. Copy the access token in the response. Paste it into the field in the lock icon and click **'Authorize'**.`,
     },
-    tags: [
-      {
-        name: "API",
-      },
-      {
-        name: "Auth",
-        description: "Login, logout, register, and refresh access token.",
-      },
-      {
-        name: "Community",
-        description: "View, create, edit, and delete communities.",
-      },
-      {
-        name: "Community Rules",
-        description: "View and edit community rules.",
-      },
-      {
-        name: "Community Tags",
-        description: "View and edit community tags.",
-      },
-      {
-        name: "Community Flags",
-        description: "View, set, and unset community flags.",
-      },
-      {
-        name: "Post",
-        description: "View, create, edit, and delete posts.",
-      },
-      {
-        name: "Post Tags",
-        description: "View, tag, and untag posts.",
-      },
-      {
-        name: "Post Flags",
-        description: "View, set, and unset post flags.",
-      },
-      {
-        name: "User",
-        description: "View and edit user settings.",
-      },
-    ],
+    tags: tags,
     components: {
       securitySchemes: {
         bearerAuth: {
@@ -66,8 +77,7 @@ const swaggerOptions = {
   apis: [
     `${__dirname}/express.js`,
     `${__dirname}/routes/v${process.env.API_VERSION}/*.js`,
-    `${__dirname}/routes/v${process.env.API_VERSION}/community/*.js`,
-    `${__dirname}/routes/v${process.env.API_VERSION}/post/*.js`,
+    `${__dirname}/routes/v${process.env.API_VERSION}/*/*.js`,
     `${__dirname}/models/*.js`,
   ],
 };
