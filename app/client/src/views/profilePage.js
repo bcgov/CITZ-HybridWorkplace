@@ -32,7 +32,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 
-import Communities from "../components/joinCommunitiesList";
+import Communities from "../components/usersCommunitiesList";
 import ProfileInfo from "../components/profileInfo";
 
 const Profile = () => {
@@ -53,7 +53,7 @@ const Profile = () => {
         }
     }, []);
     */
-  let { id } = useParams()
+  let { id } = useParams();
 
   return (
     <Box sx={{ alignItems: "stretch" }}>

@@ -21,7 +21,11 @@
  */
 
 const SET_COMMUNITIES = "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_COMMUNITIES";
+const SET_USERS_COMMUNITIES =
+  "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_USERS_COMMUNITIES";
 const ADD_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/ADD_COMMUNITY";
+const JOIN_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/JOIN_COMMUNITY";
+const LEAVE_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/LEAVE_COMMUNITY";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
@@ -49,6 +53,36 @@ export const getCommunities = () => async (dispatch, getState) => {
 
     dispatch({
       type: SET_COMMUNITIES,
+      payload: communities,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
+export const getUsersCommunities = () => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const token = getState().auth.accessToken;
+    if (!token) throw new Error(noTokenText);
+
+    const response = await fetch(`${apiURI}/api/community?user=true`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`${response.status} ${response.statusText}`);
+    }
+
+    const communities = await response.json();
+
+    dispatch({
+      type: SET_USERS_COMMUNITIES,
       payload: communities,
     });
   } catch (err) {
@@ -90,6 +124,11 @@ export const createCommunity =
         type: ADD_COMMUNITY,
         payload: community,
       });
+
+      dispatch({
+        type: JOIN_COMMUNITY,
+        payload: community.title,
+      });
     } catch (err) {
       console.error(err);
       successful = false;
@@ -98,11 +137,75 @@ export const createCommunity =
     }
   };
 
-export const joinCommunity = (communityId) => (dispatch, getState) => {
-  //TODO: Implement join community
+export const joinCommunity = (communityName) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const appState = getState();
+    const token = appState.auth.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await fetch(
+      `${apiURI}/api/community/members/join/${communityName}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok)
+      throw new Error(`${response.status} ${response.statusText}`);
+
+    dispatch({
+      type: JOIN_COMMUNITY,
+      payload: communityName,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
+export const leaveCommunity = (communityName) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const authState = getState().auth;
+    const token = authState.accessToken;
+    if (!token) throw new Error(noTokenText);
+
+    const response = await fetch(
+      `${apiURI}/api/community/members/leave/${communityName}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok)
+      throw new Error(`${response.status} ${response.statusText}`);
+
+    dispatch({
+      type: LEAVE_COMMUNITY,
+      payload: communityName,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
 };
 
 const initialState = {
+  usersCommunities: [], //users communities
   items: [], //communitys
   item: {}, //single community
 };
@@ -114,10 +217,31 @@ export function communityReducer(state = initialState, action) {
         ...state,
         items: action.payload,
       };
+    case SET_USERS_COMMUNITIES:
+      return {
+        ...state,
+        usersCommunities: action.payload,
+      };
     case ADD_COMMUNITY:
       return {
         ...state,
         items: [...state.items, action.payload],
+      };
+    case JOIN_COMMUNITY:
+      const comm = state.items.find(
+        (element) => element.title === action.payload
+      );
+      if (!comm) return state;
+      return {
+        ...state,
+        usersCommunities: [comm, ...state.usersCommunities],
+      };
+    case LEAVE_COMMUNITY:
+      return {
+        ...state,
+        usersCommunities: state.usersCommunities?.filter(
+          (item, index) => item.title !== action.payload
+        ),
       };
     default:
       return state;

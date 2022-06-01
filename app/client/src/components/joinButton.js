@@ -17,39 +17,71 @@
 import Button from "@mui/material/Button";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { PropTypes } from "prop-types"
-import { joinCommunity } from "../redux/ducks/communityDuck"
+import { PropTypes } from "prop-types";
+import { joinCommunity, leaveCommunity } from "../redux/ducks/communityDuck";
 
 const JoinButton = (props) => {
-  const [flag, setFlag] = useState(false);
+  const { community, communities } = props;
 
+  const isUserInCommunity = (communityName) => {
+    return (
+      communities.usersCommunities.find(
+        (element) => element.title === communityName
+      ) !== undefined
+    );
+  };
 
-  const handleClick = () => {
-    setFlag(!flag);
-    props.joinCommunity(props.name)
+  const [isInCommunity, setIsInCommunity] = useState(
+    isUserInCommunity(community.title)
+  );
 
+  const handleJoin = async () => {
+    setIsInCommunity(true);
+    const successful = await props.joinCommunity(community.title);
+    if (successful === false) {
+      setIsInCommunity(false);
+    }
+  };
+
+  const handleLeave = async () => {
+    setIsInCommunity(false);
+    const successful = await props.leaveCommunity(community.title);
+    if (successful === false) {
+      setIsInCommunity(true);
+    }
   };
 
   return (
-    <Button
-      onClick={handleClick}
-      variant="contained"
-      color={flag === true ? "error" : "success"}
-      size="small"
-    >
-      {flag ? "Remove" : "Join"}
-    </Button>
+    <>
+      {isInCommunity && (
+        <Button variant="contained" color={"error"} onClick={handleLeave}>
+          Leave Community
+        </Button>
+      )}
+      <Button
+        onClick={handleJoin}
+        variant="contained"
+        color={"success"}
+        size="small"
+        disabled={isInCommunity}
+      >
+        {isInCommunity ? "Remove" : "Join"}
+      </Button>
+    </>
   );
 };
 
 JoinButton.propTypes = {
   joinCommunity: PropTypes.func.isRequired,
-}
+};
 
-const mapStateToProps = state => ({});
+const mapStateToProps = (state) => ({
+  communities: state.communities,
+});
 
 const mapActionsToProps = {
-  joinCommunity
-}
+  joinCommunity,
+  leaveCommunity,
+};
 
 export default connect(mapStateToProps, mapActionsToProps)(JoinButton);

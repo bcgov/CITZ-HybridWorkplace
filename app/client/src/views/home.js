@@ -31,7 +31,7 @@ import Typography from "@mui/material/Typography";
 
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import Communities from "../components/joinCommunitiesList";
+import Communities from "../components/usersCommunitiesList";
 import Posts from "../components/postsList";
 import PostModal from "../components/modals/addPostModal";
 import CommunityModal from "../components/modals/addCommunityModal";
@@ -41,9 +41,13 @@ const Home = () => {
 
   const [createCommunityOpen, setCreateCommunityOpen] = useState(false);
 
-  const openDialog = () => setCreateCommunityOpen(true);
+  const openDialog = () => {
+    setCreateCommunityOpen(true);
+  };
 
-  const closeDialog = (value) => setCreateCommunityOpen(false);
+  const closeDialog = (value) => {
+    setCreateCommunityOpen(false);
+  };
 
   return (
     <div>
@@ -83,7 +87,7 @@ const Home = () => {
               }}
             >
               <Typography variant="h6" component="h5">
-                Communities
+                Your Communities
               </Typography>
             </Box>
             <Communities />
