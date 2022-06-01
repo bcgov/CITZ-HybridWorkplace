@@ -73,23 +73,7 @@ const JoinCommunitiesList = (props) => {
               </Grid>
 
               <Grid item xs={3} textAlign="center">
-                {isInCommunity && (
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => handleLeave(community.title)}
-                  >
-                    Leave
-                  </Button>
-                )}
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={() => handleJoin(community.title)}
-                  disabled={isInCommunity}
-                >
-                  Join
-                </Button>
+                <JoinButton community={community} />
               </Grid>
             </Grid>
           </Paper>

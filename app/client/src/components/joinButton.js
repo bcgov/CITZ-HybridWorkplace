@@ -22,8 +22,17 @@ import { joinCommunity, leaveCommunity } from "../redux/ducks/communityDuck";
 
 const JoinButton = (props) => {
   const { community, communities } = props;
+
+  const isUserInCommunity = (communityName) => {
+    return (
+      communities.usersCommunities.find(
+        (element) => element.title === communityName
+      ) !== undefined
+    );
+  };
+
   const [isInCommunity, setIsInCommunity] = useState(
-    communities.usersCommunities.includes(community.title)
+    isUserInCommunity(community.title)
   );
 
   const handleJoin = async () => {

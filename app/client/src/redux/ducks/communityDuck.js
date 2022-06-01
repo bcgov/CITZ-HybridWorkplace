@@ -146,7 +146,7 @@ export const joinCommunity = (communityName) => async (dispatch, getState) => {
     if (!token) throw new Error(noTokenText);
 
     const response = await fetch(
-      `${apiURI}/api/community/join/${communityName}`,
+      `${apiURI}/api/community/members/join/${communityName}`,
       {
         method: "PATCH",
         headers: {
@@ -159,12 +159,6 @@ export const joinCommunity = (communityName) => async (dispatch, getState) => {
     if (!response.ok)
       throw new Error(`${response.status} ${response.statusText}`);
 
-    if (
-      appState.communities.usersCommunities.find(
-        (community) => communityName === community.title
-      )
-    )
-      throw new Error("Cannot join community, user is already in community");
     dispatch({
       type: JOIN_COMMUNITY,
       payload: communityName,
@@ -185,7 +179,7 @@ export const leaveCommunity = (communityName) => async (dispatch, getState) => {
     if (!token) throw new Error(noTokenText);
 
     const response = await fetch(
-      `${apiURI}/api/community/leave/${communityName}`,
+      `${apiURI}/api/community/members/leave/${communityName}`,
       {
         method: "DELETE",
         headers: {
@@ -198,10 +192,10 @@ export const leaveCommunity = (communityName) => async (dispatch, getState) => {
     if (!response.ok)
       throw new Error(`${response.status} ${response.statusText}`);
 
-    // dispatch({
-    //   type: LEAVE_COMMUNITY,
-    //   payload: communityName,
-    // });
+    dispatch({
+      type: LEAVE_COMMUNITY,
+      payload: communityName,
+    });
   } catch (err) {
     console.error(err);
     successful = false;

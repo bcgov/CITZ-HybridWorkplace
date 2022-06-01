@@ -27,6 +27,7 @@ import PropTypes from "prop-types";
 import Paper from "@mui/material/Paper";
 
 import { getCommunities } from "../redux/ducks/communityDuck";
+import JoinButton from "./joinButton";
 
 const CommunitiesList = (props) => {
   useEffect(() => {
@@ -49,6 +50,7 @@ const CommunitiesList = (props) => {
             <h3>{community.title}</h3>
             <p>{community.description}</p>
           </Paper>
+          <JoinButton community={community} />
         </div>
       ))}
     </div>
