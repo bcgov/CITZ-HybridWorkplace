@@ -87,7 +87,7 @@ const Home = () => {
               }}
             >
               <Typography variant="h6" component="h5">
-                Communities
+                Your Communities
               </Typography>
             </Box>
             <Communities />
