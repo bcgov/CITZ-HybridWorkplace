@@ -20,39 +20,62 @@
  * @module
  */
 
- import React, { Component } from 'react';
- import {Link} from 'react-router-dom';
- import styled from 'styled-components';
- import { ExternalLink } from 'react-external-link';
- import './footer.css';
- 
- const StyledLink = styled(Link)`
-   color: White;
-   text-decoration: none;
-   margin: 1rem;
-   position: relative;
- `;
- 
- const StyledExLink = styled(ExternalLink)`
-   color: White;
-   text-decoration: none;
-   margin: 1rem;
-   position: relative;
- `;
- 
- class Footer extends Component {
-   render() {
-     return (
-       <div className='footer' >
-           
-             <StyledLink to="/">Home</StyledLink>
-             <StyledExLink href={'placeholder' + 'disclaimer'} target="_blank" rel="noopener noreferrer">Disclaimer</StyledExLink>
-             <StyledExLink href={'placeholder' + 'privacy'} target="_blank" rel="noopener noreferrer">Privacy</StyledExLink>
-             <StyledExLink href={'placeholder' + 'accessability'} target="_blank" rel="noopener noreferrer">Accessability</StyledExLink>
-             <StyledExLink href={'placeholder' + 'copyright'} target="_blank" rel="noopener noreferrer">Copyright</StyledExLink>
-       </div>
-     )
-   }
- }
- 
- export default Footer;
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+import { ExternalLink } from "react-external-link";
+import "./footer.css";
+
+const StyledLink = styled(Link)`
+  color: White;
+  text-decoration: none;
+  margin: 1rem;
+  position: relative;
+`;
+
+const StyledExLink = styled(ExternalLink)`
+  color: White;
+  text-decoration: none;
+  margin: 1rem;
+  position: relative;
+`;
+
+class Footer extends Component {
+  render() {
+    return (
+      <div className="footer">
+        <StyledLink to="/">Home</StyledLink>
+        <StyledExLink
+          href={"placeholder" + "disclaimer"}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Disclaimer
+        </StyledExLink>
+        <StyledExLink
+          href={"placeholder" + "privacy"}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Privacy
+        </StyledExLink>
+        <StyledExLink
+          href={"placeholder" + "accessability"}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Accessability
+        </StyledExLink>
+        <StyledExLink
+          href={"placeholder" + "copyright"}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Copyright
+        </StyledExLink>
+      </div>
+    );
+  }
+}
+
+export default Footer;
