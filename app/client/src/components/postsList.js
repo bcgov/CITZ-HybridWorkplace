@@ -18,53 +18,38 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
-*/
+ */
 
-import React, { useEffect } from 'react';
-import { connect, useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
+import React, { useEffect } from "react";
+import { connect, useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 
-import Paper from '@mui/material/Paper';
+import Paper from "@mui/material/Paper";
 
-import { getPosts } from '../redux/ducks/postDuck';
+import { getPosts } from "../redux/ducks/postDuck";
+import Post from "./post";
 
 const PostsList = (props) => {
-
   useEffect(() => {
-    props.getPosts()
-  }, [])
+    props.getPosts();
+  }, []);
 
   return (
     <div>
-      {
-        props.posts.map(post => (
-          <div key={post._id}>
-            <Paper
-              sx={{
-                px: 1,
-                py: 0,
-                margin: 'auto'
-              }}
-              variant="outlined"
-              square>
-              <h3>{post.title}</h3>
-              <p>{post.message}</p>
-            </Paper>
-          </div>
-        ))
-      }
+      {props.posts.map((post) => (
+        <Post post={post} />
+      ))}
     </div>
   );
-}
+};
 
 PostsList.propTypes = {
   getPosts: PropTypes.func.isRequired,
-  posts: PropTypes.array.isRequired
-}
+  posts: PropTypes.array.isRequired,
+};
 
-const mapStateToProps = state => ({
-  posts: state.posts.items
-
+const mapStateToProps = (state) => ({
+  posts: state.posts.items,
 });
 
 export default connect(mapStateToProps, { getPosts })(PostsList);
