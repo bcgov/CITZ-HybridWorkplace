@@ -34,13 +34,13 @@ function patchCommunitybyTitle(title, newTitle, newDescription, newRules, newTag
         .send({'title': newTitle, 'description': newDescription, 'rules': newRules, 'tags': newTags});
 } 
 
-function joinCommunitybyTitle(title, token){
+function joinCommunity(title, token){
     return request
         .patch(`/community/join/${title}`)
         .set({authorization: `Bearer ${token}`})
 } 
 
-function leaveCommunitybyTitle(title, token){
+function leaveCommunity(title, token){
     return request
         .delete(`/community/leave/${title}`)
         .set({authorization: `Bearer ${token}`})
@@ -80,6 +80,6 @@ function deleteTagsForCommunity(title, tag, token){
 }
 
 module.exports = {getCommunities, getCommunitybyTitle,createCommunity,deleteCommunity,
-    patchCommunitybyTitle,joinCommunitybyTitle,leaveCommunitybyTitle,setRulesForCommunity,
+    patchCommunitybyTitle,joinCommunity,leaveCommunity,setRulesForCommunity,
     getRulesForCommunity, getTagsForCommunity, setTagsForCommunity, deleteTagsForCommunity };
     

@@ -16,7 +16,7 @@ const welcomeCommunityDescript = "Test";
 describe('Get Community by Title - Without Login', () => {
   let response = '';
 
-  beforeAll( async() => {
+  beforeAll(async() => {
     response = await community.getCommunitybyTitle(welcomeCommunityTitle, '');
   });
 
@@ -32,7 +32,7 @@ describe('Get Community by Title - Without Login', () => {
 
 describe('Logging in the test user', () => {
   test('API returns a successful response - code 201', async () => {
-    let response = await user.login('test', 'Test123!');
+    let response = await user.login('test','Test123!');
     token = response.body.token;
     expect(response.status).toBe(201);
   });
@@ -43,7 +43,7 @@ describe('Logging in the test user', () => {
 describe('Get Community by Title - With Login, testing with "Welcome" community', () => {
   let response = '';
 
-  beforeAll( async() => {
+  beforeAll(async() => {
     response = await community.getCommunitybyTitle(welcomeCommunityTitle, token);
   }); 
 
@@ -80,7 +80,7 @@ describe('Get Community by Title - With Login, but without token, testing with "
 describe('Get Community by Title - With Login, with invalid token, testing with "Welcome" community', () => {
   let response = '';
 
-  beforeAll( async() => {
+  beforeAll(async() => {
     response = await community.getCommunitybyTitle(welcomeCommunityTitle, token + '11');
   });
 
@@ -98,7 +98,7 @@ describe('Get Community by Title - With Login, with invalid token, testing with 
 describe('Get Community by Title - With Login, testing with null', () => {
   let response = '';
 
-  beforeAll( async() => {
+  beforeAll(async() => {
     response = await community.getCommunitybyTitle(null, token);
   });
 
@@ -124,7 +124,7 @@ describe('Creating new Community', () => {
 describe('Get Community by Title - With Login, testing with new Community', () => {
   let response = '';
 
-  beforeAll( async() => {
+  beforeAll(async() => {
     response = await community.getCommunitybyTitle(newCommunityTitle, token);
   });
 
@@ -150,7 +150,7 @@ describe('Deleting new Community', () => {
 describe('Get Community by Title - With Login, testing with new Community after the deletion', () => {
   let response = '';
 
-  beforeAll( async() => {
+  beforeAll(async() => {
     response = await community.getCommunitybyTitle(null,token);
   });
 
