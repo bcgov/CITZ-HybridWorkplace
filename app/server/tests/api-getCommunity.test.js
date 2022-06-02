@@ -1,17 +1,18 @@
 let community = require('./functions/communityFunctions.js');
 let { AuthFunctions } = require('./functions/authFunctions.js');
 
+let token = '';
+let user = new AuthFunctions();
+
 const welcomeCommunityTitle = "Welcome";
 const welcomeCommunityDescript = "Test";
 
-let token = '';
-let user = new AuthFunctions();
 
 // Testing the get communities function without logging in
 describe('Get Communities - Without Login', () => {
   let response = '';
 
-  beforeAll(async() => {
+  beforeAll( async() => {
     response = await community.getCommunities('');
   });
 
@@ -27,7 +28,7 @@ describe('Get Communities - Without Login', () => {
 
 describe('Logging in the test user', () => {
   test('API returns a successful response - code 201', async () => {
-    let response = await user.login('test','Test123!');
+    let response = await user.login('test', 'Test123!');
     token = response.body.token;
     expect(response.status).toBe(201);
   });
@@ -38,7 +39,7 @@ describe('Logging in the test user', () => {
 describe('Get Communities - After Login', () => {
   let response = '';
 
-  beforeAll(async() => {
+  beforeAll( async() => {
     response = await community.getCommunities(token);
   });
 
@@ -57,7 +58,7 @@ describe('Get Communities - After Login', () => {
 describe('Get Communities - After Login, without token', () => {
   let response = '';
 
-  beforeAll(async() => {
+  beforeAll( async() => {
     response = await community.getCommunities('');
   });
 
@@ -75,7 +76,7 @@ describe('Get Communities - After Login, without token', () => {
 describe('Get Communities - After Login, with modified token', () => {
   let response = '';
 
-  beforeAll(async() => {
+  beforeAll( async() => {
     response = await community.getCommunities(token + '11');
   });
 
@@ -91,7 +92,7 @@ describe('Get Communities - After Login, with modified token', () => {
 
 describe('Get Communities - After Login, with token set to null', () => {
 
-  beforeAll(async() => {
+  beforeAll( async() => {
     response = await community.getCommunities(null);
   });
 
