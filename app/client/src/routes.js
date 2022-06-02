@@ -24,6 +24,8 @@ import "./App.css";
 import React, { Component } from "react";
 import { Routes, Route } from "react-router-dom";
 
+import PrivateComponent from "./privateComponent";
+
 // Views
 import Login from "./views/login";
 import Register from "./views/register";
@@ -35,7 +37,6 @@ import Posts from "./views/posts";
 
 //Components
 import EditProfile from "./components/editProfile";
-import CreateCommunity from "./components/createCommunity";
 import NewCommunity from "./components/newCommunity";
 
 class App extends Component {
@@ -45,13 +46,36 @@ class App extends Component {
         <Routes>
           <Route path="/" exact element={<Register />} />
           <Route path="/login" exact element={<Login />} />
-          <Route path="/home" exact element={<Home />} />
-          <Route path="/about" exact element={<About />} />
-          <Route path="/profile/:id" element={<ProfilePage />} />
-          <Route path="/profile/:id/edit" element={<EditProfile />} />
-          <Route path="/communities" element={<CommunitiesPage />} />
-          <Route path="/newCommunity" element={<NewCommunity />} />
-          <Route path="/posts" element={<Posts />} />
+          <Route
+            path="/home"
+            exact
+            element={<PrivateComponent component={<Home />} />}
+          />
+          <Route
+            path="/about"
+            exact
+            element={<PrivateComponent component={<About />} />}
+          />
+          <Route
+            path="/profile/:id"
+            element={<PrivateComponent component={<ProfilePage />} />}
+          />
+          <Route
+            path="/profile/:id/edit"
+            element={<PrivateComponent component={<EditProfile />} />}
+          />
+          <Route
+            path="/communities"
+            element={<PrivateComponent component={<CommunitiesPage />} />}
+          />
+          <Route
+            path="/newCommunity"
+            element={<PrivateComponent component={<NewCommunity />} />}
+          />
+          <Route
+            path="/posts"
+            element={<PrivateComponent component={<Posts />} />}
+          />
         </Routes>
       </div>
     );
