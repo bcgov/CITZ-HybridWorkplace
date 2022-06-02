@@ -34,43 +34,14 @@ import Header from "./layout/header";
 
 import Paper from "@mui/material/Paper";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import AlertList from "./components/alertList";
 
 function App() {
-  //const [darkMode, setDarkMode] = useState(false);
-
-  //mode: darkMode ? 'dark' : 'light'
   const theme = createTheme({
     palette: {
       mode: "light",
     },
   });
-
-  /*
-  async function populateDark() {
-    const req = await fetch(`${window._env_.REACT_APP_API_REF}/editprofile`, {
-        headers: {
-            'x-access-token': localStorage.getItem('token'),
-        },
-    })
-
-    const data = await req.json()
-    if(data.status === 'ok'){
-      if(data.darkmode == undefined){
-        setDarkMode(false)
-      }else{
-        setDarkMode(data.darkMode)
-      }
-        console.log(data.darkMode)
-    }else{
-        alert(data.error)
-    }
-}
-useEffect(() => {
-     populateDark()
-}, [])
-*/
-
-  //<Header darkMode={darkMode} setDarkMode={setDarkMode} />
 
   return (
     <ThemeProvider theme={theme}>
@@ -81,6 +52,7 @@ useEffect(() => {
             <div className="App">
               <Container>
                 <Routes />
+                <AlertList />
               </Container>
             </div>
             <Footer />
