@@ -92,6 +92,7 @@ router.get("/", async (req, res) => {
     const token = generateToken(user);
     return res.status(200).json({ token });
   } catch (err) {
+    console.error(err);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
