@@ -27,11 +27,11 @@ function deleteCommunity(title, token){
         .set({authorization: `Bearer ${token}`});
 } 
 
-function patchCommunitybyTitle(title, newTitle, newDescription, newRules, token){
+function patchCommunitybyTitle(title, newTitle, newDescription, newRules, newTags, token){
     return request
         .patch(`/community/${title}`)
         .set({authorization: `Bearer ${token}`})
-        .send({'title': newTitle, 'description': newDescription, 'rules': newRules});
+        .send({'title': newTitle, 'description': newDescription, 'rules': newRules, 'tags': newTags});
 } 
 
 function joinCommunitybyTitle(title, token){

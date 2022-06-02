@@ -12,8 +12,6 @@ const newCommunityTags = "tags";
 
 const updatedCommunityTitle = "hello world";
 const updatedCommunityDescript = "world hello";
-const updatedCommunityRules = "rules";
-const updatedCommunityTags = "tags";
 
 
 describe('Edit Community - Without login', () => {
@@ -143,27 +141,3 @@ describe('Removing new Community', () => {
       expect(response.status).toBe(200);
   });
 });
-
-/*
-// checking for conflicts in the edit
-describe('Edit Community - With login, multiple times', () => {
-  let response = '';
-
-  beforeAll( () => {
-    response = community.patchCommunitybyTitle(newCommunityTitle, newCommunityTitle, updatedCommunityDescript, newCommunityRules, '', token);
-    response = community.patchCommunitybyTitle(newCommunityTitle, newCommunityTitle, newCommunityDescript + '1', newCommunityRules, '', token);
-    response = community.patchCommunitybyTitle(newCommunityTitle, newCommunityTitle, updatedCommunityDescript + '1', newCommunityRules, '', token);
-    response = community.patchCommunitybyTitle(newCommunityTitle, newCommunityTitle, newCommunityDescript + '2', newCommunityRules, '', token);
-    response = community.patchCommunitybyTitle(newCommunityTitle, newCommunityTitle, updatedCommunityDescript + '2', newCommunityRules, '', token);
-  });
-
-  test('API returns a successful response - code 204', async () => {
-    //await getCommunities(token);
-    expect(response.status).toBe(204);
-  });
-
-  test('API returns description - ""', () => {
-    expect(response.text).toBe("");
-  });
-});
-*/
