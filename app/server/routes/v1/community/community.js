@@ -69,7 +69,7 @@ const Post = require("../../../models/post.model");
 // Create community
 router.post("/", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
 
     if (!user) return res.status(404).send("User not found.");
 
@@ -80,13 +80,13 @@ router.post("/", async (req, res) => {
     const community = await Community.create({
       title: req.body.title,
       description: req.body.description,
-      creator: user.name,
+      creator: user.username,
       members: [user.id],
       rules: req.body.rules,
     });
 
     await User.updateOne(
-      { name: user.name },
+      { username: user.username },
       {
         $push: {
           communities: community.title,
@@ -139,7 +139,7 @@ router.post("/", async (req, res) => {
 // Get all communities or all communities user is a part of
 router.get("/", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
 
     let communities;
 
@@ -248,7 +248,7 @@ router.get("/:title", async (req, res) => {
 router.patch("/:title", async (req, res) => {
   try {
     // TODO: AUTH USER IS MODERATOR
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const community = await Community.findOne({
       title: req.params.title,
     }).exec();
@@ -256,7 +256,7 @@ router.patch("/:title", async (req, res) => {
     if (!user) return res.status(404).send("User not found.");
     if (!community) return res.status(404).send("Community not found.");
 
-    if (user.name !== community.creator)
+    if (user.username !== community.creator)
       return res
         .status(401)
         .send("Not Authorized. Only creator of community can edit community.");
@@ -312,7 +312,7 @@ router.patch("/:title", async (req, res) => {
 // TODO: AUTH
 router.delete("/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const community = await Community.findOne({
       title: req.params.title,
     }).exec();
@@ -320,7 +320,7 @@ router.delete("/:title", async (req, res) => {
     if (!user) return res.status(404).send("User not found.");
     if (!community) return res.status(404).send("Community not found.");
 
-    if (user.name !== community.creator)
+    if (user.username !== community.creator)
       return res
         .status(401)
         .send("Not Authorized. Only creator of community can edit community.");

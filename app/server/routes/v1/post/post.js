@@ -66,7 +66,7 @@ const Community = require("../../../models/community.model");
 // Create post
 router.post("/", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const community = await Community.findOne({ title: req.body.community });
 
     if (!user) return res.status(404).send("User not found.");
@@ -131,7 +131,7 @@ router.post("/", async (req, res) => {
 // Get all posts from communities user is apart of
 router.get("/", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
 
     if (!user) return res.status(404).send("User not found.");
 
@@ -305,7 +305,7 @@ router.get("/community/:title", async (req, res) => {
 router.patch("/:id", async (req, res) => {
   try {
     // TODO: MODERATORS CAN EDIT POST TOO
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const post = await Post.findOne({ _id: req.params.id }).exec();
 
     if (!user) return res.status(404).send("User not found.");
@@ -395,7 +395,7 @@ router.patch("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     // TODO: MODERATORS CAN DELETE POST TOO
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const post = await Post.findOne({ _id: req.params.id }).exec();
 
     if (!user) return res.status(404).send("User not found.");

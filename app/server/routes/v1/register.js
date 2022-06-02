@@ -43,8 +43,8 @@ const Community = require("../../models/community.model");
  *            schema:
  *              type: object
  *              properties:
- *                name:
- *                  $ref: '#/components/schemas/User/properties/name'
+ *                username:
+ *                  $ref: '#/components/schemas/User/properties/username'
  *                email:
  *                  $ref: '#/components/schemas/User/properties/email'
  *                password:
@@ -65,13 +65,13 @@ router.post("/", async (req, res) => {
 
     if (
       await User.exists({
-        $or: [{ name: req.body.name }, { email: req.body.email }],
+        $or: [{ username: req.body.username }, { email: req.body.email }],
       })
     )
       return res.status(403).send("IDIR or email already exists.");
 
     const user = await User.create({
-      name: req.body.name,
+      username: req.body.username,
       email: req.body.email,
       password: hashedPassword,
     });
@@ -86,7 +86,7 @@ router.post("/", async (req, res) => {
     );
 
     await User.updateOne(
-      { name: req.body.name },
+      { username: req.body.username },
       {
         $push: {
           communities: "Welcome",

@@ -65,12 +65,7 @@ const Comment = new mongoose.Schema(
     creator: { type: String, required: true },
     post: { type: String, required: true },
     timeStamp: { type: String, required: true },
-    edits: [
-      {
-        timeStamp: String,
-        precursor: String,
-      },
-    ],
+    edits: [{ precursor: String, timeStamp: String }],
   },
   { collection: "comment" }
 );

@@ -102,7 +102,7 @@ router.get("/:id", async (req, res) => {
 // Tag post by id
 router.post("/:id", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const post = await Post.findOne({ _id: req.params.id }).exec();
 
     if (!user) return res.status(404).send("User not found.");
@@ -193,7 +193,7 @@ router.post("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     // TODO: MODERATORS CAN EDIT POST TOO
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const post = await Post.findOne({ _id: req.params.id }).exec();
 
     if (!user) return res.status(404).send("User not found.");

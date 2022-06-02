@@ -244,8 +244,8 @@ router.patch("/:id", async (req, res) => {
       if (
         key === "creator" ||
         key === "post" ||
-        key === timeStamp ||
-        key === edits
+        key === "timeStamp" ||
+        key === "edits"
       ) {
         return res.status(403).send("Can only edit the message of a comment.");
       }
@@ -258,13 +258,14 @@ router.patch("/:id", async (req, res) => {
       }
     });
 
+    // Edit history
     await Comment.updateOne(
       { _id: req.params.id },
       {
         $push: {
           edits: {
-            timeStamp: moment().format("MMMM Do YYYY, h:mm:ss a"),
             precursor: comment.message,
+            timeStamp: moment().format("MMMM Do YYYY, h:mm:ss a"),
           },
         },
       }
@@ -274,6 +275,7 @@ router.patch("/:id", async (req, res) => {
 
     return res.status(204).send("");
   } catch (err) {
+    console.error(err);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

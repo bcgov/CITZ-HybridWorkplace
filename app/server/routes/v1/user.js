@@ -47,14 +47,14 @@ const User = require("../../models/user.model");
  *              schema:
  *                type: object
  *                properties:
- *                  name:
- *                    $ref: '#/components/schemas/User/properties/name'
+ *                  username:
+ *                    $ref: '#/components/schemas/User/properties/username'
  *                  email:
  *                    $ref: '#/components/schemas/User/properties/email'
- *                  first_name:
- *                    $ref: '#/components/schemas/User/properties/first_name'
- *                  last_name:
- *                    $ref: '#/components/schemas/User/properties/last_name'
+ *                  firstName:
+ *                    $ref: '#/components/schemas/User/properties/firstName'
+ *                  lastName:
+ *                    $ref: '#/components/schemas/User/properties/lastName'
  *                  bio:
  *                    $ref: '#/components/schemas/User/properties/bio'
  *                  title:
@@ -68,15 +68,15 @@ const User = require("../../models/user.model");
 // Get user
 router.get("/", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
 
     if (!user) return res.status(404).send("User not found.");
 
     return res.status(200).json({
-      name: user.name,
+      username: user.username,
       email: user.email,
-      first_name: user.first_name,
-      last_name: user.last_name,
+      firstName: user.firstName,
+      lastName: user.lastName,
       bio: user.bio,
       title: user.title,
       quote: user.quote,
@@ -108,10 +108,10 @@ router.get("/", async (req, res) => {
  *              properties:
  *                email:
  *                  $ref: '#/components/schemas/User/properties/email'
- *                first_name:
- *                  $ref: '#/components/schemas/User/properties/first_name'
- *                last_name:
- *                  $ref: '#/components/schemas/User/properties/last_name'
+ *                firstName:
+ *                  $ref: '#/components/schemas/User/properties/firstName'
+ *                lastName:
+ *                  $ref: '#/components/schemas/User/properties/lastName'
  *                bio:
  *                  $ref: '#/components/schemas/User/properties/bio'
  *                title:
@@ -122,7 +122,7 @@ router.get("/", async (req, res) => {
  *        '404':
  *          description: User not found.
  *        '403':
- *          description: Not allowed to edit name.
+ *          description: Not allowed to edit username.
  *        '204':
  *          description: User successfully edited.
  *        '400':
@@ -132,7 +132,7 @@ router.get("/", async (req, res) => {
 // Edit user
 router.patch("/", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
 
     if (!user) return res.status(404).send("User not found.");
 
@@ -140,8 +140,10 @@ router.patch("/", async (req, res) => {
     let query = { $set: {} };
 
     Object.keys(req.body).forEach((key) => {
-      if (key === "name")
-        return res.status(403).send("Not allowed to edit name.");
+      if (key === "username" || key === "registeredOn")
+        return res
+          .status(403)
+          .send("Not allowed to edit username or registeredOn.");
 
       // if the field in req.body exists, update/set it
       if (user[key] && user[key] !== req.body[key]) {
@@ -151,7 +153,7 @@ router.patch("/", async (req, res) => {
       }
     });
 
-    await User.updateOne({ name: req.user.name }, query).exec();
+    await User.updateOne({ username: req.user.username }, query).exec();
 
     return res.status(204).send("");
   } catch (err) {
@@ -162,20 +164,20 @@ router.patch("/", async (req, res) => {
 /**
  * @swagger
  * paths:
- *  /api/user/{name}:
+ *  /api/user/{username}:
  *    get:
  *      security:
  *        - bearerAuth: []
  *      tags:
  *        - User
- *      summary: Get user by name.
+ *      summary: Get user by username.
  *      description: Returns properties of user that have been set.
  *      parameters:
  *        - in: path
- *          name: name
+ *          name: username
  *          required: true
  *          schema:
- *            $ref: '#/components/schemas/User/properties/name'
+ *            $ref: '#/components/schemas/User/properties/username'
  *      responses:
  *        '404':
  *          description: User not found.
@@ -186,14 +188,14 @@ router.patch("/", async (req, res) => {
  *              schema:
  *                type: object
  *                properties:
- *                  name:
- *                    $ref: '#/components/schemas/User/properties/name'
+ *                  username:
+ *                    $ref: '#/components/schemas/User/properties/username'
  *                  email:
  *                    $ref: '#/components/schemas/User/properties/email'
- *                  first_name:
- *                    $ref: '#/components/schemas/User/properties/first_name'
- *                  last_name:
- *                    $ref: '#/components/schemas/User/properties/last_name'
+ *                  firstName:
+ *                    $ref: '#/components/schemas/User/properties/firstName'
+ *                  lastName:
+ *                    $ref: '#/components/schemas/User/properties/lastName'
  *                  bio:
  *                    $ref: '#/components/schemas/User/properties/bio'
  *                  title:
@@ -204,18 +206,18 @@ router.patch("/", async (req, res) => {
  *          description: Bad Request.
  */
 
-// Get user by name
-router.get("/:name", async (req, res) => {
+// Get user by username
+router.get("/:username", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.params.name }).exec();
+    const user = await User.findOne({ username: req.params.username }).exec();
 
     if (!user) return res.status(404).send("User not found.");
 
     return res.status(200).json({
-      name: user.name,
+      username: user.username,
       email: user.email,
-      first_name: user.first_name,
-      last_name: user.last_name,
+      firstName: user.firstName,
+      lastName: user.lastName,
       bio: user.bio,
       title: user.title,
       quote: user.quote,
@@ -232,19 +234,19 @@ router.get("/:name", async (req, res) => {
 /**
  * @swagger
  * paths:
- *  /api/user/{name}:
+ *  /api/user/{username}:
  *    delete:
  *      security:
  *        - bearerAuth: []
  *      tags:
  *        - User
- *      summary: Remove user by name.
+ *      summary: Remove user by username.
  *      parameters:
  *        - in: path
- *          name: name
+ *          name: username
  *          required: true
  *          schema:
- *            $ref: '#/components/schemas/User/properties/name'
+ *            $ref: '#/components/schemas/User/properties/username'
  *      responses:
  *        '404':
  *          description: User not found.
@@ -256,17 +258,17 @@ router.get("/:name", async (req, res) => {
  *          description: Bad Request.
  */
 
-// Remove user by name
-router.delete("/:name", async (req, res) => {
+// Remove user by username
+router.delete("/:username", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.params.name }).exec();
+    const user = await User.findOne({ username: req.params.username }).exec();
 
     if (!user) return res.status(404).send("User not found.");
 
-    if (user.name !== req.user.name)
+    if (user.username !== req.user.username)
       return res.status(401).send("Not Authorized.");
 
-    await User.deleteOne({ name: user.name }).exec();
+    await User.deleteOne({ username: user.username }).exec();
 
     return res.status(204).send("");
   } catch (err) {

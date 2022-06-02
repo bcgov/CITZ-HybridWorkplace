@@ -68,23 +68,23 @@ router.get("/", async (req, res) => {
 
     let username;
 
-    // Verify token and get user.name from token
+    // Verify token and get user.username from token
     jwt.verify(
       refreshToken,
       process.env.JWT_REFRESH_SECRET,
       (err, tokenUser) => {
         if (err) return res.status(403).send("Invalid token.");
-        username = tokenUser.name;
+        username = tokenUser.username;
       }
     );
 
-    const user = await User.findOne({ name: username });
+    const user = await User.findOne({ username: username });
     if (!user) return res.status(404).send("User not found.");
 
     // Compare refreshToken to user.refresh_token from db
     const isRefreshTokenValid = await bcrypt.compare(
       refreshToken,
-      user.refresh_token
+      user.refreshToken
     );
 
     if (!isRefreshTokenValid) return res.status(403).send("Invalid token.");
