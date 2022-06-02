@@ -32,28 +32,28 @@ describe('Testing sub-optimal inputs for register', () => {
         await users.deleteUsers();
     });
 
-    test('api rejects registration if password doesn\'t meet character specifications', async () => {
+    test('api rejects registration if password doesn\'t meet character specifications - returns 403', async () => {
         let response = await users.register(name.gen(), email.gen(), 'badpasswo1!');
-        expect(response.status).not.toBe(201);
+        expect(response.status).toBe(403);
     });
 
-    test('api rejects registration if password doesn\'t meet number specifications', async () => {
+    test('api rejects registration if password doesn\'t meet number specifications - returns 403', async () => {
         let response = await users.register(name.gen(), email.gen(), 'B!adpassword');
-        expect(response.status).not.toBe(201);
+        expect(response.status).toBe(403);
     });
 
-    test('api rejects registration if password doesn\'t meet symbol specifications', async () => {
+    test('api rejects registration if password doesn\'t meet symbol specifications - returns 403', async () => {
         let response = await users.register(name.gen(), email.gen(), 'Badpassword1');
-        expect(response.status).not.toBe(201);
+        expect(response.status).toBe(403);
     });
 
-    test('api rejects registration if password doesn\'t meet length specifications', async () => {
+    test('api rejects registration if password doesn\'t meet length specifications - returns 403', async () => {
         let response = await users.register(name.gen(), email.gen(), 'hi');
-        expect(response.status).not.toBe(201);
+        expect(response.status).toBe(403);
     });
 
     test('api rejects registration if email is not valid - returns 403', async () => {
         let response = await users.register(name.gen(), 'amazingemail', password.gen());
-        expect(response.status).not.toBe(201);
+        expect(response.status).toBe(403);
     });
 });

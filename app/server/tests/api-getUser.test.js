@@ -53,7 +53,8 @@ describe('Get the current user\'s information with /user', () => {
         expect(response.body.last_name).toBeTruthy();
         expect(response.body.bio).toBeTruthy();
         expect(response.body.title).toBeTruthy();
-        // expect(response.body.quote).toBeTruthy(); // currently missing from User schema
+        // TODO: Uncomment test for body.quote after user schema is updated.
+        // expect(response.body.quote).toBeTruthy();
     });
 
     test('User info should not be returned if token does not match user - returns 403', async () => {

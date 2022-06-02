@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "test:regex": "jest -t",
     "dev": "nodemon index.js",
     "start": "node index.js"
   },

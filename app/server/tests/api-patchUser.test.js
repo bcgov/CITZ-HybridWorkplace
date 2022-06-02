@@ -57,7 +57,7 @@ describe('Edit the information of users with /user/{name}', () => {
             "email": ""
         }
         response = await user.editUserByObject(loginResponse.body.token, body);
-        expect(response.status).not.toBe(204);
+        expect(response.status).toBe(403);
     });
 
     test('Try to set email to invalid email - should not return 204', async () => {
@@ -65,7 +65,7 @@ describe('Edit the information of users with /user/{name}', () => {
             "email": "best@email@ever"
         }
         response = await user.editUserByObject(loginResponse.body.token, body);
-        expect(response.status).not.toBe(204);
+        expect(response.status).toBe(403);
     });
 
     test('Try to change your name (IDIR) - returns 403', async () => {
@@ -90,7 +90,7 @@ describe('Edit the information of users with /user/{name}', () => {
             "favouriteDrink": "eggnog"
         }
         response = await user.editUserByObject(loginResponse.body.token, body);
-        expect(response.status).not.toBe(204);
+        expect(response.status).toBe(403);
         response = await user.getUserByName(loginResponse.body.token, userName);
         expect(response.body.favouriteDrink).toBeFalsy();
     });
