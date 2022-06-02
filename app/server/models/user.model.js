@@ -59,9 +59,6 @@
  *          type: string
  *          description: User's profile bio (set in profile).
  *          example: Hi I'm new! Just moved from the Ottawa
- *        quote:
- *          type: string
- *          description: User's profile quote (set in profile).
  *        communities:
  *          type: array
  *          description: Communities User has joined.
