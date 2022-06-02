@@ -1,6 +1,6 @@
 let community = require('./functions/communityFunctions.js');
 let { AuthFunctions } = require('./functions/authFunctions.js');
-const { getCommunities } = require('../../../../tests/functions/communityFunctions.js');
+const { getCommunities } = require('./functions/communityFunctions.js');
 
 let token = '';
 let user = new AuthFunctions();

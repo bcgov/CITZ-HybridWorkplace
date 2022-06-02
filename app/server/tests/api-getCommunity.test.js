@@ -3,9 +3,9 @@ let { AuthFunctions } = require('./functions/authFunctions.js');
 
 const welcomeCommunityTitle = "Welcome";
 const welcomeCommunityDescript = "Test";
+
 let token = '';
 let user = new AuthFunctions();
-
 
 // Testing the get communities function without logging in
 describe('Get Communities - Without Login', () => {
@@ -19,15 +19,14 @@ describe('Get Communities - Without Login', () => {
     expect(response.status).toBe(401);
   });
 
-  test('API returns description - "Not Authorized."', () => {
-    expect(response.text).toBe("Not Authorized.");
+  test('API returns description - "Missing token."', () => {
+    expect(response.text).toBe("Missing token.");
   });
 });
 
 
 describe('Logging in the test user', () => {
-
-  test('Test account can log in', async () => {
+  test('API returns a successful response - code 201', async () => {
     let response = await user.login('test','Test123!');
     token = response.body.token;
     expect(response.status).toBe(201);
@@ -43,7 +42,7 @@ describe('Get Communities - After Login', () => {
     response = await community.getCommunities(token);
   });
 
-  test('API returns a successful response - code 201', () => {
+  test('API returns a successful response - code 200', () => {
     expect(response.status).toBe(200);
   });
 
@@ -62,16 +61,12 @@ describe('Get Communities - After Login, without token', () => {
     response = await community.getCommunities('');
   });
 
-  test('API returns unsuccessful response', () => {
-    expect(response.ok).toBe(false);
-  });
-
   test('API returns a unsuccessful response - code 401', () => {
     expect(response.status).toBe(401);
   });
 
-  test('API returns description - "Not Authorized."', () => {
-    expect(response.text).toBe("Not Authorized.");
+  test('API returns description - "Missing token."', () => {
+    expect(response.text).toBe("Missing token.");
   });
 });
 
@@ -84,16 +79,27 @@ describe('Get Communities - After Login, with modified token', () => {
     response = await community.getCommunities(token + '11');
   });
 
-  test('API returns unsuccessful response', () => {
-    expect(response.ok).toBe(false);
+  test('API returns a unsuccessful response - code 403', () => {
+    expect(response.status).toBe(403);
+  });
+
+  test('API returns description -  "Invalid token."', () => {
+    expect(response.text).toBe("Invalid token.");
+  });
+});
+
+
+describe('Get Communities - After Login, with token set to null', () => {
+
+  beforeAll(async() => {
+    response = await community.getCommunities(null);
   });
 
   test('API returns a unsuccessful response - code 403', () => {
     expect(response.status).toBe(403);
   });
 
-  test('API returns description -  "Forbidden."', () => {
-    expect(response.text).toBe("Forbidden.");
+  test('API returns description -  "Invalid token."', () => {
+    expect(response.text).toBe("Invalid token.");
   });
 });
-
