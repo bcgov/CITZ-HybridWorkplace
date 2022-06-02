@@ -21,6 +21,7 @@
  */
 
 const express = require("express");
+const moment = require("moment");
 
 const router = express.Router();
 
@@ -83,6 +84,7 @@ router.post("/", async (req, res) => {
       creator: user.username,
       members: [user.id],
       rules: req.body.rules,
+      createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
 
     await User.updateOne(
@@ -237,6 +239,8 @@ router.get("/:title", async (req, res) => {
  *          description: User not found. **||** <br>Community not found.
  *        '401':
  *          description: Not Authorized. Only creator of community can edit community.
+ *        '403':
+ *          description: One of the fields you tried to edit, can not be edited.
  *        '204':
  *          description: Community successfully edited.
  *        '400':
@@ -265,6 +269,10 @@ router.patch("/:title", async (req, res) => {
     let query = { $set: {} };
 
     Object.keys(req.body).forEach((key) => {
+      if (key === "tags" || key === "flags" || key === "createdOn")
+        return res
+          .status(403)
+          .send("One of the fields you tried to edit, can not be edited.");
       // if the field in req.body exists, update/set it
       if (community[key] && community[key] !== req.body[key]) {
         query.$set[key] = req.body[key];

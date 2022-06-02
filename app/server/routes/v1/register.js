@@ -22,6 +22,7 @@
 
 const express = require("express");
 const bcrypt = require("bcryptjs"); // hashing passwords
+const moment = require("moment");
 
 const router = express.Router();
 
@@ -74,6 +75,7 @@ router.post("/", async (req, res) => {
       username: req.body.username,
       email: req.body.email,
       password: hashedPassword,
+      registeredOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
 
     await Community.updateOne(

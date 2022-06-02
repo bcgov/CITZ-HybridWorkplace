@@ -67,7 +67,7 @@
  *          items:
  *            - $ref: '#/components/schemas/Community/properties/title'
  *      required:
- *        - name
+ *        - username
  *        - email
  *        - password
  *        - registeredOn

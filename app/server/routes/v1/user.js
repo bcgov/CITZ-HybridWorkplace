@@ -59,8 +59,6 @@ const User = require("../../models/user.model");
  *                    $ref: '#/components/schemas/User/properties/bio'
  *                  title:
  *                    $ref: '#/components/schemas/User/properties/title'
- *                  quote:
- *                    $ref: '#/components/schemas/User/properties/quote'
  *        '400':
  *          description: Bad Request.
  */
@@ -116,13 +114,11 @@ router.get("/", async (req, res) => {
  *                  $ref: '#/components/schemas/User/properties/bio'
  *                title:
  *                  $ref: '#/components/schemas/User/properties/title'
- *                quote:
- *                  $ref: '#/components/schemas/User/properties/quote'
  *      responses:
  *        '404':
  *          description: User not found.
  *        '403':
- *          description: Not allowed to edit username.
+ *          description: One of the fields you tried to edit, can not be edited.
  *        '204':
  *          description: User successfully edited.
  *        '400':
@@ -143,7 +139,7 @@ router.patch("/", async (req, res) => {
       if (key === "username" || key === "registeredOn")
         return res
           .status(403)
-          .send("Not allowed to edit username or registeredOn.");
+          .send("One of the fields you tried to edit, can not be edited.");
 
       // if the field in req.body exists, update/set it
       if (user[key] && user[key] !== req.body[key]) {
@@ -200,8 +196,6 @@ router.patch("/", async (req, res) => {
  *                    $ref: '#/components/schemas/User/properties/bio'
  *                  title:
  *                    $ref: '#/components/schemas/User/properties/title'
- *                  quote:
- *                    $ref: '#/components/schemas/User/properties/quote'
  *        '400':
  *          description: Bad Request.
  */

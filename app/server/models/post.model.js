@@ -44,7 +44,7 @@
  *        pinned:
  *          type: boolean
  *          description: Pinned posts show at the top of the feed. Limit 3 per community.
- *        timeStamp:
+ *        createdOn:
  *          type: string
  *        tags:
  *          type: array
@@ -79,7 +79,7 @@
  *        - message
  *        - creator
  *        - community
- *        - timeStamp
+ *        - createdOn
  */
 
 const mongoose = require("mongoose");
@@ -91,7 +91,7 @@ const Post = new mongoose.Schema(
     creator: { type: String, required: true },
     community: { type: String, required: true },
     pinned: { type: Boolean },
-    timeStamp: { type: String, required: true },
+    createdOn: { type: String, required: true },
     tags: [
       {
         tag: String,
