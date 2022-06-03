@@ -36,7 +36,7 @@ const CreatePost = (props) => {
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
 
-  const [creator, setCreator] = useState(props.auth.user.name);
+  const [creator, setCreator] = useState(props.auth.user.username);
   const [community, setCommunity] = useState("");
 
   useEffect(() => {
