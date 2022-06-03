@@ -18,13 +18,13 @@
  */
 
 const express = require("express");
+const moment = require("moment");
 
 const router = express.Router();
 
 const Post = require("../../../models/post.model");
 const Comment = require("../../../models/comment.model");
 const User = require("../../../models/user.model");
-const Community = require("../../../models/community.model");
 
 /**
  * @swagger
@@ -83,6 +83,7 @@ router.post("/", async (req, res) => {
       message: req.body.message,
       creator: user.id,
       post: post.id,
+      createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
 
     return res.status(201).json(comment);
@@ -213,7 +214,7 @@ router.get("/:id", async (req, res) => {
  *        '404':
  *          description: User not found. **||** <br>Comment not found.
  *        '403':
- *          description: Missing message in body of the request. **||** <br>Only creator of comment can edit comment. **||** <br>Can't edit creator or post of a comment.
+ *          description: Missing message in body of the request. **||** <br>Only creator of comment can edit comment. **||** <br>Can only edit the message of a comment.
  *        '204':
  *          description: Comment successfully edited.
  *        '400':
@@ -240,8 +241,13 @@ router.patch("/:id", async (req, res) => {
 
     // eslint-disable-next-line consistent-return
     Object.keys(req.body).forEach((key) => {
-      if (key === "creator" || key === "post") {
-        return res.status(403).send("Can't edit creator or post of a comment.");
+      if (
+        key === "creator" ||
+        key === "post" ||
+        key === "createdOn" ||
+        key === "edits"
+      ) {
+        return res.status(403).send("Can only edit the message of a comment.");
       }
 
       if (comment[key] && comment[key] !== req.body[key]) {
@@ -252,10 +258,24 @@ router.patch("/:id", async (req, res) => {
       }
     });
 
+    // Edit history
+    await Comment.updateOne(
+      { _id: req.params.id },
+      {
+        $push: {
+          edits: {
+            precursor: comment.message,
+            timeStamp: moment().format("MMMM Do YYYY, h:mm:ss a"),
+          },
+        },
+      }
+    ).exec();
+
     await Comment.updateOne({ _id: req.params.id }, query).exec();
 
     return res.status(204).send("");
   } catch (err) {
+    console.error(err);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

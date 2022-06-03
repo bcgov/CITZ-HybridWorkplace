@@ -64,7 +64,7 @@ const User = require("../../../models/user.model");
 // Get all community members by community title or count
 router.get("/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const community = await Community.findOne({ title: req.params.title });
 
     if (!user) return res.status(404).send("User not found.");
@@ -107,7 +107,7 @@ router.get("/:title", async (req, res) => {
 // Join community by title
 router.patch("/join/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const community = await Community.findOne({
       title: req.params.title,
     }).exec();
@@ -121,7 +121,7 @@ router.patch("/join/:title", async (req, res) => {
     );
 
     await User.updateOne(
-      { name: user.name },
+      { username: user.username },
       {
         $push: {
           communities: community.title,
@@ -163,7 +163,7 @@ router.patch("/join/:title", async (req, res) => {
 // Leave community by title
 router.delete("/leave/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const community = await Community.findOne({
       title: req.params.title,
     }).exec();
@@ -179,7 +179,7 @@ router.delete("/leave/:title", async (req, res) => {
 
     // Remove community from user's communities array
     await User.updateOne(
-      { name: user.name },
+      { username: user.username },
       {
         $pull: {
           communities: community.title,

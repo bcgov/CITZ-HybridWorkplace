@@ -106,7 +106,7 @@ router.get("/:title", async (req, res) => {
 // Flag community by community title
 router.post("/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const community = await Community.findOne({
       title: req.params.title,
     }).exec();
@@ -195,7 +195,7 @@ router.post("/:title", async (req, res) => {
 // Unset flag on community by community title
 router.delete("/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const community = await Community.findOne({
       title: req.params.title,
     }).exec();

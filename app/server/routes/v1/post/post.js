@@ -18,6 +18,7 @@
  */
 
 const express = require("express");
+const moment = require("moment");
 
 const router = express.Router();
 
@@ -66,7 +67,7 @@ const Community = require("../../../models/community.model");
 // Create post
 router.post("/", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const community = await Community.findOne({ title: req.body.community });
 
     if (!user) return res.status(404).send("User not found.");
@@ -91,6 +92,7 @@ router.post("/", async (req, res) => {
       creator: user.id,
       community: req.body.community,
       pinned: req.body.pinned || false,
+      createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
 
     return res.status(201).json(post);
@@ -131,7 +133,7 @@ router.post("/", async (req, res) => {
 // Get all posts from communities user is apart of
 router.get("/", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
 
     if (!user) return res.status(404).send("User not found.");
 
@@ -294,7 +296,7 @@ router.get("/community/:title", async (req, res) => {
  *        '404':
  *          description: User not found. **||** <br>Post not found. **||** <br>Community not found.
  *        '403':
- *          description: Community can't have more than 3 pinned posts. **||** <br>Can't edit tags. Use /api/post/{id}/tags instead. **||** <br>Can't edit creator of a post. **||** <br>Only creator of post can edit post.
+ *          description: Community can't have more than 3 pinned posts. **||** <br>One of the fields you tried to edit, can not be edited. **||** <br>Only creator of post can edit post.
  *        '204':
  *          description: Post successfully edited.
  *        '400':
@@ -305,7 +307,7 @@ router.get("/community/:title", async (req, res) => {
 router.patch("/:id", async (req, res) => {
   try {
     // TODO: MODERATORS CAN EDIT POST TOO
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const post = await Post.findOne({ _id: req.params.id }).exec();
 
     if (!user) return res.status(404).send("User not found.");
@@ -339,13 +341,15 @@ router.patch("/:id", async (req, res) => {
 
     // eslint-disable-next-line consistent-return
     Object.keys(req.body).forEach((key) => {
-      if (key === "creator") {
-        return res.status(403).send("Can't edit creator of a post.");
-      }
-      if (key === "tags") {
+      if (
+        key === "creator" ||
+        key === "tags" ||
+        key === "flags" ||
+        key === "createdOn"
+      ) {
         return res
           .status(403)
-          .send("Can't edit tags. Use /api/post/{id}/tags instead.");
+          .send("One of the fields you tried to edit, can not be edited.");
       }
 
       if (post[key] && post[key] !== req.body[key]) {
@@ -395,7 +399,7 @@ router.patch("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     // TODO: MODERATORS CAN DELETE POST TOO
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const post = await Post.findOne({ _id: req.params.id }).exec();
 
     if (!user) return res.status(404).send("User not found.");

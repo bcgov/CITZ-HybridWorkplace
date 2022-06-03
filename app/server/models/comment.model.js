@@ -37,10 +37,24 @@
  *          $ref: '#/components/schemas/User/properties/id'
  *        post:
  *          $ref: '#/components/schemas/Post/properties/id'
+ *        createdOn:
+ *          type: string
+ *        edits:
+ *          type: array
+ *          description: Edits made to the comment.
+ *          items:
+ *            type: object
+ *            properties:
+ *              timeStamp:
+ *                type: string
+ *              precursor:
+ *                type: string
+ *                description: The message before it was edited.
  *      required:
  *        - message
  *        - creator
  *        - post
+ *        - createdOn
  */
 
 const mongoose = require("mongoose");
@@ -50,6 +64,8 @@ const Comment = new mongoose.Schema(
     message: { type: String, required: true },
     creator: { type: String, required: true },
     post: { type: String, required: true },
+    createdOn: { type: String, required: true },
+    edits: [{ precursor: String, timeStamp: String }],
   },
   { collection: "comment" }
 );

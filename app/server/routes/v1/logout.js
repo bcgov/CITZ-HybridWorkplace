@@ -64,18 +64,18 @@ router.get("/", async (req, res) => {
       tokenUser = user;
     });
 
-    const user = await User.findOne({ name: tokenUser.name });
+    const user = await User.findOne({ username: tokenUser.username });
     if (!user) return res.status(404).send("User not found.");
 
     // Compare refreshToken to user.refresh_token from db
     const isRefreshTokenValid = await bcrypt.compare(
       refreshToken,
-      user.refresh_token
+      user.refreshToken
     );
 
     if (!isRefreshTokenValid) return res.status(403).send("Invalid token.");
 
-    await User.updateOne({ name: user.name }, { refresh_token: "" });
+    await User.updateOne({ username: user.username }, { refreshToken: "" });
     res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "None" });
     res.status(204).send("");
   } catch (err) {
