@@ -83,7 +83,7 @@ router.post("/", async (req, res) => {
       message: req.body.message,
       creator: user.id,
       post: post.id,
-      timeStamp: moment().format("MMMM Do YYYY, h:mm:ss a"),
+      createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
 
     return res.status(201).json(comment);
@@ -244,7 +244,7 @@ router.patch("/:id", async (req, res) => {
       if (
         key === "creator" ||
         key === "post" ||
-        key === "timeStamp" ||
+        key === "createdOn" ||
         key === "edits"
       ) {
         return res.status(403).send("Can only edit the message of a comment.");

@@ -37,7 +37,7 @@
  *          $ref: '#/components/schemas/User/properties/id'
  *        post:
  *          $ref: '#/components/schemas/Post/properties/id'
- *        timeStamp:
+ *        createdOn:
  *          type: string
  *        edits:
  *          type: array
@@ -54,7 +54,7 @@
  *        - message
  *        - creator
  *        - post
- *        - timeStamp
+ *        - createdOn
  */
 
 const mongoose = require("mongoose");
@@ -64,7 +64,7 @@ const Comment = new mongoose.Schema(
     message: { type: String, required: true },
     creator: { type: String, required: true },
     post: { type: String, required: true },
-    timeStamp: { type: String, required: true },
+    createdOn: { type: String, required: true },
     edits: [{ precursor: String, timeStamp: String }],
   },
   { collection: "comment" }
