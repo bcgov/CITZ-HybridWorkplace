@@ -35,7 +35,7 @@ const EditProfile = () => {
 
   const [email, setEmail] = useState("Undefined");
   const [title, setTitle] = useState("Undefined");
-  const [username, setName] = useState("Undefined");
+  const [username, setUsername] = useState("Undefined");
   const [fullName, setFullName] = useState("Undefined");
   const [bio, setBio] = useState("Undefined");
   const [tempFullName, setTempFullName] = useState("Undefined");
