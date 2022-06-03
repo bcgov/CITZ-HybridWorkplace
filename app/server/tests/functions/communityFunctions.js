@@ -36,13 +36,13 @@ function patchCommunitybyTitle(title, newTitle, newDescription, newRules, newTag
 
 function joinCommunity(title, token){
     return request
-        .patch(`/community/join/${title}`)
+        .patch(`/community/members/join/${title}`)
         .set({authorization: `Bearer ${token}`})
 } 
 
 function leaveCommunity(title, token){
     return request
-        .delete(`/community/leave/${title}`)
+        .delete(`/community/members/leave/${title}`)
         .set({authorization: `Bearer ${token}`})
 }
 
