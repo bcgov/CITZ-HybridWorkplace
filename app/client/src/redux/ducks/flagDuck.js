@@ -79,7 +79,7 @@ export const flagPost = (postId, flag) => async (dispatch, getState) => {
   } catch (err) {
     console.error(err);
     successful = false;
-    createError(err)(dispatch);
+    createError("Unexpected error occurred")(dispatch);
   } finally {
     return successful;
   }

@@ -28,7 +28,7 @@ const apiURI = !window._env_.REACT_APP_LOCAL_DEV
   ? `${window._env_.REACT_APP_API_REF}`
   : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
 
-export const getProfile = (name) => async (dispatch, getState) => {
+export const getProfile = (username) => async (dispatch, getState) => {
   let successful = true;
   try {
     const token = getState().auth.accessToken;
@@ -39,7 +39,7 @@ export const getProfile = (name) => async (dispatch, getState) => {
         authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        name,
+        username,
       }),
     });
 

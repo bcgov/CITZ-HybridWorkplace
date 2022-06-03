@@ -28,7 +28,7 @@ import "../views/Styles/register.css";
 
 function App(props) {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
@@ -38,7 +38,7 @@ function App(props) {
     if (password !== rePassword) {
       alert("Password's do not match, please try again");
     }
-    const successful = await props.register(name, email, password);
+    const successful = await props.register(username, email, password);
     if (successful === true) navigate("/login");
   }
 
@@ -112,8 +112,8 @@ function App(props) {
             <label>IDIR:</label>
             <br />
             <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               type="text"
               className="divBox"
               placeholder="ID"

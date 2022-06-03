@@ -21,20 +21,19 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 import { getProfile } from "../redux/ducks/profileDuck";
-import PropTypes from 'prop-types'
+import PropTypes from "prop-types";
 
 const Profile = (props) => {
-
   useEffect(() => {
-    props.getProfile(props.name)
-  })
+    props.getProfile(props.username);
+  });
 
   return (
     <div>
-      <h3>{props.profile.name || ""}</h3>
-      <h4>{props.profile.first_name + ' ' + props.profile.last_name}</h4>
+      <h3>{props.profile.username || ""}</h3>
+      <h4>{props.profile.firstName + " " + props.profile.lastName}</h4>
       <p> {props.profile.email} </p>
       <p> {props.profile.title || ""} </p>
       <br />
@@ -45,16 +44,15 @@ const Profile = (props) => {
 
 Profile.propTypes = {
   getProfile: PropTypes.func.isRequired,
-  profile: PropTypes.array.isRequired
-}
+  profile: PropTypes.array.isRequired,
+};
 
-const mapStateToProps = state => ({
-  profile: state.profile.user
+const mapStateToProps = (state) => ({
+  profile: state.profile.user,
 });
 
 const mapActionsToProps = {
-  getProfile
-}
+  getProfile,
+};
 
 export default connect(mapStateToProps, mapActionsToProps)(Profile);
-
