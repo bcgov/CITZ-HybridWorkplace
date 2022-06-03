@@ -25,7 +25,10 @@ import { createSuccess, createError } from "./alertDuck";
 const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_COMMUNITIES";
 const ADD_POST = "CITZ-HYBRIDWORKPLACE/POST/ADD_COMMUNITY";
 <<<<<<< HEAD
+<<<<<<< HEAD
 const REMOVE_POST = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_POST";
+=======
+>>>>>>> 7fabcc5... Created files to start on tagging
 =======
 >>>>>>> 7fabcc5... Created files to start on tagging
 const ADD_TAG = "CITZ-HYBRIDWORKPLACE/POST/ADD_TAG";
@@ -107,6 +110,7 @@ export const createPost = (postData) => async (dispatch, getState) => {
   }
 };
 
+<<<<<<< HEAD
 export const deletePost = (postId) => async (dispatch, getState) => {
   let successful = true;
   try {
@@ -176,6 +180,11 @@ export const tagPost = (postId, tag) => async (dispatch, getState) => {
   let successful = true;
   try {
     if (tag === "") throw new Error("Error: Invalid Input");
+=======
+export const addTagToPost = (postId, tag) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+>>>>>>> 7fabcc5... Created files to start on tagging
     const authState = getState().auth;
     const token = authState.accessToken;
 
@@ -186,10 +195,15 @@ export const tagPost = (postId, tag) => async (dispatch, getState) => {
       {
         method: "POST",
         headers: {
+<<<<<<< HEAD
+=======
+          "Content-Type": "application/json",
+>>>>>>> 7fabcc5... Created files to start on tagging
           authorization: `Bearer ${token}`,
         },
       }
     );
+<<<<<<< HEAD
     if (!response.ok)
       throw new Error(`${response.status} ${response.statusText}`);
 
@@ -198,6 +212,19 @@ export const tagPost = (postId, tag) => async (dispatch, getState) => {
     console.error(err);
     successful = false;
     createError("Unexpected error occurred")(dispatch);
+=======
+
+    if (!response.ok)
+      throw new Error(`${response.status} ${response.statusText}`);
+
+    dispatch({
+      type: ADD_TAG,
+      payload: { postId, tag },
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+>>>>>>> 7fabcc5... Created files to start on tagging
   } finally {
     return successful;
   }
@@ -220,11 +247,14 @@ export function postReducer(state = initialState, action) {
         ...state,
         items: [...state.items, action.payload],
       };
+<<<<<<< HEAD
     case REMOVE_POST:
       return {
         ...state,
         items: state.items.filter((item) => item._id !== action.payload),
       };
+=======
+>>>>>>> 7fabcc5... Created files to start on tagging
     case ADD_TAG:
       return {};
     default:
