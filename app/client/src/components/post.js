@@ -20,6 +20,7 @@ import { openFlagPostModal } from "../redux/ducks/modalDuck";
 import { openDeletePostModal } from "../redux/ducks/modalDuck";
 import { useState } from "react";
 import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
+import TagsList from "./tagsList";
 
 const Post = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -84,7 +85,9 @@ const Post = (props) => {
           <CardContent>
             <Typography variant="body1">{post.message}</Typography>
           </CardContent>
-          <CardActions></CardActions>
+          <CardActions>
+            <TagsList post={post.tags} />
+          </CardActions>
         </Card>
       </Paper>
     </div>

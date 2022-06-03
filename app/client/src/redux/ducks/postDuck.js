@@ -24,7 +24,12 @@ import { createSuccess, createError } from "./alertDuck";
 
 const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_COMMUNITIES";
 const ADD_POST = "CITZ-HYBRIDWORKPLACE/POST/ADD_COMMUNITY";
+<<<<<<< HEAD
 const REMOVE_POST = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_POST";
+=======
+const ADD_TAG = "CITZ-HYBRIDWORKPLACE/POST/ADD_TAG";
+const REMOVE_TAG = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_TAG";
+>>>>>>> 7fabcc5... Created files to start on tagging
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
@@ -102,6 +107,7 @@ export const createPost = (postData) => async (dispatch, getState) => {
   }
 };
 
+<<<<<<< HEAD
 export const deletePost = (postId) => async (dispatch, getState) => {
   let successful = true;
   try {
@@ -140,20 +146,34 @@ export const flagPost = (postId, flag) => async (dispatch, getState) => {
   try {
     //TODO: Throw error if given flag is not in list of available flags
     if (flag === "") throw new Error("Error: Invalid Input");
+=======
+export const addTagToPost = (postId, tag) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+>>>>>>> 7fabcc5... Created files to start on tagging
     const authState = getState().auth;
     const token = authState.accessToken;
 
     if (!token) throw new Error(noTokenText);
 
     const response = await fetch(
+<<<<<<< HEAD
       `${apiURI}/api/post/flags/${postId}?flag=${flag}`,
       {
         method: "POST",
         headers: {
+=======
+      `${apiURI}/api/post/tags/${postId}?tag=${tag}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+>>>>>>> 7fabcc5... Created files to start on tagging
           authorization: `Bearer ${token}`,
         },
       }
     );
+<<<<<<< HEAD
     if (!response.ok)
       throw new Error(`${response.status} ${response.statusText}`);
 
@@ -162,6 +182,19 @@ export const flagPost = (postId, flag) => async (dispatch, getState) => {
     console.error(err);
     successful = false;
     createError("Unexpected error occurred")(dispatch);
+=======
+
+    if (!response.ok)
+      throw new Error(`${response.status} ${response.statusText}`);
+
+    dispatch({
+      type: ADD_TAG,
+      payload: { postId, tag },
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+>>>>>>> 7fabcc5... Created files to start on tagging
   } finally {
     return successful;
   }
@@ -184,11 +217,16 @@ export function postReducer(state = initialState, action) {
         ...state,
         items: [...state.items, action.payload],
       };
+<<<<<<< HEAD
     case REMOVE_POST:
       return {
         ...state,
         items: state.items.filter((item) => item._id !== action.payload),
       };
+=======
+    case ADD_TAG:
+      return {};
+>>>>>>> 7fabcc5... Created files to start on tagging
     default:
       return state;
   }
