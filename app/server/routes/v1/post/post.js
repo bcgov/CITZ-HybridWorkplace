@@ -25,6 +25,7 @@ const router = express.Router();
 const Post = require("../../../models/post.model");
 const User = require("../../../models/user.model");
 const Community = require("../../../models/community.model");
+const Comment = require("../../../models/comment.model");
 
 /**
  * @swagger
@@ -410,6 +411,15 @@ router.delete("/:id", async (req, res) => {
         .status(401)
         .send("Not Authorized. Must be creator of post to delete post.");
     }
+
+    // Remove the comments on post
+    await Comment.deleteMany({ post: post.id }).exec();
+
+    // Remove post
+    await Post.deleteOne({
+      _id: post.id,
+    }).exec();
+
     return res.status(204).send("Post removed.");
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);
