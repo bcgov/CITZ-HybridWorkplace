@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --runInBand",
     "test:regex": "jest -t",
     "dev": "nodemon index.js",
     "start": "node index.js"

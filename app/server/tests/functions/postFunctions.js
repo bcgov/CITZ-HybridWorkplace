@@ -15,7 +15,10 @@ class PostFunctions{
             .post('/post')
             .set({authorization: `Bearer ${token}`})
             .send({"title":title, "message":message, "community":community})
-        this.postList.push(response);
+        this.postList.push({
+            response: response,
+            token: token
+        });
         return response;
     } 
 
@@ -25,7 +28,7 @@ class PostFunctions{
             .set({authorization: `Bearer ${token}`});
     } 
 
-    async getPostsById(id, token){
+    async getPostById(id, token){
         return await request
             .get(`/post/${id}`)
             .set({authorization: `Bearer ${token}`});
@@ -44,9 +47,9 @@ class PostFunctions{
             .set({authorization: `Bearer ${token}`});
     }
 
-    async deleteAllPosts(token){
+    async deleteAllPosts(){
         for(let i = 0; i < this.postList.length; i++){
-            await this.deletePost(this.postList[i].body._id, token);
+            await this.deletePost(this.postList[i].response.body._id, this.postList[i].token);
         }
     }
 
@@ -57,7 +60,6 @@ class PostFunctions{
     } 
 
     // Post Tags Functions
-
     async getPostTags(id, token){
         return await request
             .get(`/post/tags/${id}`)
