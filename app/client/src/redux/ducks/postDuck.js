@@ -24,7 +24,10 @@ import { createSuccess, createError } from "./alertDuck";
 
 const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_COMMUNITIES";
 const ADD_POST = "CITZ-HYBRIDWORKPLACE/POST/ADD_COMMUNITY";
+<<<<<<< HEAD
 const REMOVE_POST = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_POST";
+=======
+>>>>>>> 7fabcc5... Created files to start on tagging
 const ADD_TAG = "CITZ-HYBRIDWORKPLACE/POST/ADD_TAG";
 const REMOVE_TAG = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_TAG";
 
