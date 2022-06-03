@@ -29,7 +29,7 @@ const apiURI = !window._env_.REACT_APP_LOCAL_DEV
   ? `${window._env_.REACT_APP_API_REF}`
   : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
 
-export const login = (name, password) => async (dispatch) => {
+export const login = (username, password) => async (dispatch) => {
   let successful = true;
   try {
     const res = await fetch(`${apiURI}/api/login`, {
@@ -39,7 +39,7 @@ export const login = (name, password) => async (dispatch) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name,
+        username,
         password,
       }),
     });
@@ -50,7 +50,7 @@ export const login = (name, password) => async (dispatch) => {
 
     const data = await res.json();
     const decodedToken = jwtDecode(data.token);
-    data.user = { name: decodedToken.name, email: decodedToken.email };
+    data.user = { username: decodedToken.username, email: decodedToken.email };
 
     dispatch({
       type: LOGIN,
@@ -64,7 +64,7 @@ export const login = (name, password) => async (dispatch) => {
   }
 };
 
-export const register = (name, email, password) => async (dispatch) => {
+export const register = (username, email, password) => async (dispatch) => {
   let successful = true;
   try {
     const res = await fetch(`${apiURI}/api/register`, {
@@ -73,7 +73,7 @@ export const register = (name, email, password) => async (dispatch) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name,
+        username,
         email,
         password,
       }),
@@ -134,7 +134,7 @@ export function authReducer(state = initialState, action) {
         accessToken: action.payload.token,
         refreshToken: action.payload.refreshToken,
         user: {
-          name: action.payload.user.name,
+          username: action.payload.user.username,
           email: action.payload.user.email,
         },
       };

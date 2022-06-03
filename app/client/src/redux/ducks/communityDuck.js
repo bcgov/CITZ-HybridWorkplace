@@ -99,7 +99,7 @@ export const createCommunity =
     try {
       const authState = getState().auth;
       const token = authState.accessToken;
-      const name = authState.user.name;
+      const username = authState.user.username;
       if (!token) throw new Error(noTokenText);
 
       const response = await fetch(`${apiURI}/api/community`, {

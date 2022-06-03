@@ -35,13 +35,12 @@ const EditProfile = () => {
 
   const [email, setEmail] = useState("Undefined");
   const [title, setTitle] = useState("Undefined");
-  const [name, setName] = useState("Undefined");
+  const [username, setName] = useState("Undefined");
   const [fullName, setFullName] = useState("Undefined");
   const [bio, setBio] = useState("Undefined");
   const [tempFullName, setTempFullName] = useState("Undefined");
   const [temptitle, setTempTitle] = useState("Undefined");
   const [tempBio, setTempBio] = useState("Undefined");
-
 
   async function updateTitle(event) {
     event.preventDefault();
@@ -63,7 +62,7 @@ const EditProfile = () => {
     } else {
       alert(
         "At least one field in JSON is undefined, line 93, editProfile.js: " +
-        data.error
+          data.error
       );
     }
   }
@@ -88,7 +87,7 @@ const EditProfile = () => {
     } else {
       alert(
         "At least one field in JSON is undefined, line 114, editProfile.js: " +
-        data.error
+          data.error
       );
     }
   }
@@ -113,7 +112,7 @@ const EditProfile = () => {
     } else {
       alert(
         "At least one field in JSON is undefined, line 137, editProfile.js: " +
-        data.error
+          data.error
       );
     }
   }
@@ -121,7 +120,7 @@ const EditProfile = () => {
   return (
     <div id="eprofile">
       <h2>Edit your profile</h2>
-      <p>ID: {name}</p>
+      <p>ID: {username}</p>
       <p>Email: {email} </p>
       <form onSubmit={updateFullName}>
         <label htmlFor="fullname">Full Name: </label>

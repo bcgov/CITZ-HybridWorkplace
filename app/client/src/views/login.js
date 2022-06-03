@@ -27,13 +27,13 @@ import { login } from "../redux/ducks/authDuck";
 import "../views/Styles/login.css";
 
 function App(props) {
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   async function loginUser(event) {
     event.preventDefault();
-    const successful = await props.login(name, password);
+    const successful = await props.login(username, password);
     if (successful === true) navigate("/home");
   }
 
@@ -46,8 +46,8 @@ function App(props) {
           <label>IDIR:</label>
           <br />
           <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             type="name"
             placeholder="ID"
             className="divBox"
