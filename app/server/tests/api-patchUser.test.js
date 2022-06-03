@@ -75,8 +75,7 @@ describe('Edit the information of users with /user/{name}', () => {
         expect(response.status).toBe(403);
     });
 
-    // Crashed API as of 2022-06-01
-    xtest('Try to edit data using a bad token - returns 403', async () => {
+    test('Try to edit data using a bad token - returns 403', async () => {
         let body = {
             "email": "mynewemail@gmail.com"
         }

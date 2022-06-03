@@ -54,4 +54,25 @@ describe('Testing user\'s ability to get posts from their communities', () => {
         response = await post.getPostById(id, loginResponse.body.token);
         expect(response.status).toBe(200);
     });
+
+    test('Post with a non-existant id is not returned - returns 404', async () => {
+        response = await post.getPostById('whoablackbetty', loginResponse.body.token);
+        expect(response.status).toBe(404);
+    });
+
+    test('Post is not returned when using invalid token - returns 403', async () => {
+        let postResponse = await post.createPost('Meow Mix', 'Please deliver', 'Thundercats', loginResponse.body.token);
+        let id = postResponse.body._id;
+        response = await post.getPostById(id, 'mytokenisnotgood');
+        expect(response.status).toBe(403);
+    });
+
+    test('Post is not returned if user is not part of that community - returns 403', async () => {
+        let postResponse = await post.createPost('Meow Mix', 'Please deliver', 'Thundercats', loginResponse.body.token);
+        let id = postResponse.body._id;
+        await auth.register('Pete', 'pete@gmail.com', userPassword);
+        let tempLoginResponse = await auth.login('Pete', 'pete@gmail.com');
+        response = await post.getPostById(id, tempLoginResponse.body.token);
+        expect(response.status).toBe(403);
+    });
 });
