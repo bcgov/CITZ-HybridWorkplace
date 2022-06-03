@@ -21,6 +21,7 @@
  */
 
 const express = require("express");
+const moment = require("moment");
 
 const router = express.Router();
 
@@ -69,7 +70,7 @@ const Post = require("../../../models/post.model");
 // Create community
 router.post("/", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
 
     if (!user) return res.status(404).send("User not found.");
 
@@ -80,13 +81,14 @@ router.post("/", async (req, res) => {
     const community = await Community.create({
       title: req.body.title,
       description: req.body.description,
-      creator: user.name,
+      creator: user.username,
       members: [user.id],
       rules: req.body.rules,
+      createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
 
     await User.updateOne(
-      { name: user.name },
+      { username: user.username },
       {
         $push: {
           communities: community.title,
@@ -139,7 +141,7 @@ router.post("/", async (req, res) => {
 // Get all communities or all communities user is a part of
 router.get("/", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
 
     let communities;
 
@@ -237,6 +239,8 @@ router.get("/:title", async (req, res) => {
  *          description: User not found. **||** <br>Community not found.
  *        '401':
  *          description: Not Authorized. Only creator of community can edit community.
+ *        '403':
+ *          description: One of the fields you tried to edit, can not be edited.
  *        '204':
  *          description: Community successfully edited.
  *        '400':
@@ -248,7 +252,7 @@ router.get("/:title", async (req, res) => {
 router.patch("/:title", async (req, res) => {
   try {
     // TODO: AUTH USER IS MODERATOR
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const community = await Community.findOne({
       title: req.params.title,
     }).exec();
@@ -256,7 +260,7 @@ router.patch("/:title", async (req, res) => {
     if (!user) return res.status(404).send("User not found.");
     if (!community) return res.status(404).send("Community not found.");
 
-    if (user.name !== community.creator)
+    if (user.username !== community.creator)
       return res
         .status(401)
         .send("Not Authorized. Only creator of community can edit community.");
@@ -265,6 +269,10 @@ router.patch("/:title", async (req, res) => {
     let query = { $set: {} };
 
     Object.keys(req.body).forEach((key) => {
+      if (key === "tags" || key === "flags" || key === "createdOn")
+        return res
+          .status(403)
+          .send("One of the fields you tried to edit, can not be edited.");
       // if the field in req.body exists, update/set it
       if (community[key] && community[key] !== req.body[key]) {
         query.$set[key] = req.body[key];
@@ -312,7 +320,7 @@ router.patch("/:title", async (req, res) => {
 // TODO: AUTH
 router.delete("/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const community = await Community.findOne({
       title: req.params.title,
     }).exec();
@@ -320,7 +328,7 @@ router.delete("/:title", async (req, res) => {
     if (!user) return res.status(404).send("User not found.");
     if (!community) return res.status(404).send("Community not found.");
 
-    if (user.name !== community.creator)
+    if (user.username !== community.creator)
       return res
         .status(401)
         .send("Not Authorized. Only creator of community can edit community.");

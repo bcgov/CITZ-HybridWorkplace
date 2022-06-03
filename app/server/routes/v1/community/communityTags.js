@@ -108,7 +108,7 @@ router.get("/:title", async (req, res) => {
 // Create community tag by community title
 router.post("/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const community = await Community.findOne({
       title: req.params.title,
     }).exec();
@@ -117,7 +117,7 @@ router.post("/:title", async (req, res) => {
     if (!community) return res.status(404).send("Community not found.");
     if (!req.query.tag) return res.status(404).send("Tag not found in query.");
 
-    if (user.name !== community.creator)
+    if (user.username !== community.creator)
       return res
         .status(401)
         .send("Not Authorized. Only creator of community can edit community.");
@@ -179,7 +179,7 @@ router.post("/:title", async (req, res) => {
 // Remove community tag by community title
 router.delete("/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const community = await Community.findOne({
       title: req.params.title,
     }).exec();
@@ -188,7 +188,7 @@ router.delete("/:title", async (req, res) => {
     if (!community) return res.status(404).send("Community not found.");
     if (!req.query.tag) return res.status(404).send("Tag not found in query.");
 
-    if (user.name !== community.creator)
+    if (user.username !== community.creator)
       return res
         .status(401)
         .send("Not Authorized. Only creator of community can edit community.");

@@ -46,8 +46,8 @@ const User = require("../../models/user.model");
  *            schema:
  *              type: object
  *              properties:
- *                name:
- *                  $ref: '#/components/schemas/User/properties/name'
+ *                username:
+ *                  $ref: '#/components/schemas/User/properties/username'
  *                password:
  *                  $ref: '#/components/schemas/User/properties/password'
  *      responses:
@@ -76,7 +76,7 @@ const User = require("../../models/user.model");
 router.post("/", async (req, res) => {
   try {
     const user = await User.findOne({
-      name: req.body.name,
+      username: req.body.username,
     });
 
     if (!user) return res.status(404).send("User not found.");
@@ -95,8 +95,8 @@ router.post("/", async (req, res) => {
 
       // Add or replace refresh token to db
       await User.updateOne(
-        { user: user.name },
-        { refresh_token: hashedRefreshToken }
+        { user: user.username },
+        { refreshToken: hashedRefreshToken }
       );
 
       // Create JWT Refresh Cookie (HTTPOnly - JS can't touch)

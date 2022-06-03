@@ -30,7 +30,7 @@
  *        id:
  *          type: string
  *          description: Used as a reference to creator of a post or community.
- *        name:
+ *        username:
  *          type: string
  *          description: User's IDIR username.
  *          example: sarah
@@ -43,11 +43,11 @@
  *          description: User's password.
  *          example: VerySecure123
  *          minimum: 8
- *        first_name:
+ *        firstName:
  *          type: string
  *          description: User's first name (set in profile).
  *          example: Sarah
- *        last_name:
+ *        lastName:
  *          type: string
  *          description: User's last name (set in profile).
  *          example: Grace
@@ -59,32 +59,33 @@
  *          type: string
  *          description: User's profile bio (set in profile).
  *          example: Hi I'm new! Just moved from the Ottawa
- *        quote:
+ *        registeredOn:
  *          type: string
- *          description: User's profile quote (set in profile).
  *        communities:
  *          type: array
  *          description: Communities User has joined.
  *          items:
  *            - $ref: '#/components/schemas/Community/properties/title'
  *      required:
- *        - name
+ *        - username
  *        - email
  *        - password
+ *        - registeredOn
  */
 
 const mongoose = require("mongoose");
 
 const User = new mongoose.Schema(
   {
-    name: { type: String, required: true, unique: true },
+    username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    refresh_token: { type: String },
-    first_name: { type: String },
-    last_name: { type: String },
+    refreshToken: { type: String },
+    firstName: { type: String },
+    lastName: { type: String },
     title: { type: String },
     bio: { type: String },
+    registeredOn: { type: String, required: true },
     communities: [{ type: String }],
   },
   { collection: "user" }

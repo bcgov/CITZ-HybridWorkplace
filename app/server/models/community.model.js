@@ -45,6 +45,8 @@
  *        rules:
  *          type: string
  *          description: Community rules set by moderators
+ *        createdOn:
+ *          type: string
  *        tags:
  *          type: array
  *          description: Tags set on posts in the community.
@@ -76,6 +78,7 @@
  *        - description
  *        - creator
  *        - rules
+ *        - createdOn
  */
 
 const mongoose = require("mongoose");
@@ -85,6 +88,7 @@ const Community = new mongoose.Schema(
     title: { type: String, required: true, unique: true },
     description: { type: String, required: true },
     creator: { type: String, required: true },
+    createdOn: { type: String, required: true },
     members: [
       {
         type: mongoose.Schema.Types.ObjectId,

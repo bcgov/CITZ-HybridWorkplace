@@ -66,7 +66,7 @@ const User = require("../../../models/user.model");
 // Set community rules by title
 router.put("/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const community = await Community.findOne({
       title: req.params.title,
     }).exec();
@@ -74,7 +74,7 @@ router.put("/:title", async (req, res) => {
     if (!user) return res.status(404).send("User not found.");
     if (!community) return res.status(404).send("Community not found.");
 
-    if (user.name !== community.creator)
+    if (user.username !== community.creator)
       return res
         .status(401)
         .send("Not Authorized. Only creator of community can edit community.");

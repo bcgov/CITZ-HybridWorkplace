@@ -103,7 +103,7 @@ router.get("/:id", async (req, res) => {
 // Flag post by post id
 router.post("/:id", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const post = await Post.findOne({
       _id: req.params.id,
     }).exec();
@@ -192,7 +192,7 @@ router.post("/:id", async (req, res) => {
 // Unset flag on post by post id
 router.delete("/:id", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const post = await Post.findOne({
       _id: req.params.id,
     }).exec();

@@ -26,7 +26,7 @@ const jwt = require("jsonwebtoken");
 function generateRefreshToken(user) {
   return jwt.sign(
     {
-      name: user.name,
+      username: user.username,
     },
     process.env.JWT_REFRESH_SECRET
   );
