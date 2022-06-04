@@ -46,6 +46,10 @@ const tags = [
     description: "View, create, edit, and delete comments.",
   },
   {
+    name: "Comment Reply",
+    description: "View replies and create replies.",
+  },
+  {
     name: "User",
     description: "View and edit user settings.",
   },

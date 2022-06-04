@@ -39,6 +39,9 @@
  *          $ref: '#/components/schemas/Post/properties/id'
  *        createdOn:
  *          type: string
+ *        replyTo:
+ *          type: string
+ *          description: The id of the comment that is being replied to.
  *        edits:
  *          type: array
  *          description: Edits made to the comment.
@@ -64,7 +67,9 @@ const Comment = new mongoose.Schema(
     message: { type: String, required: true },
     creator: { type: String, required: true },
     post: { type: String, required: true },
+    community: { type: String, required: true },
     createdOn: { type: String, required: true },
+    replyTo: { type: String },
     edits: [{ precursor: String, timeStamp: String }],
   },
   { collection: "comment" }
