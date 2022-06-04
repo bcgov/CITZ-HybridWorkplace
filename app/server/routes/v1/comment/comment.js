@@ -248,8 +248,7 @@ router.patch("/:id", async (req, res) => {
         key === "community" ||
         key === "createdOn" ||
         key === "edits" ||
-        key === "replyTo" ||
-        key === "replies"
+        key === "replyTo"
       ) {
         return res.status(403).send("Can only edit the message of a comment.");
       }

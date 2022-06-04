@@ -22,7 +22,6 @@ const moment = require("moment");
 
 const router = express.Router();
 
-const Post = require("../../../models/post.model");
 const Comment = require("../../../models/comment.model");
 const User = require("../../../models/user.model");
 
@@ -136,16 +135,6 @@ router.post("/:id", async (req, res) => {
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
       replyTo: comment.id,
     });
-
-    // Add reply to the replies array in the comment it is replying to
-    await Comment.updateOne(
-      { _id: comment.id },
-      {
-        $push: {
-          replies: [reply.id],
-        },
-      }
-    ).exec();
 
     return res.status(201).json(reply);
   } catch (err) {
