@@ -18,23 +18,28 @@
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
-*/
+ */
 
-import React from 'react';
-import './header.css';
-import BCLogo from './icons/BCLogo.svg';
-import SideMenu from './sideMenu';
+import React from "react";
+import "./header.css";
+import BCLogo from "./icons/BCLogo.svg";
+import SideMenu from "./sideMenu";
+import { connect } from "react-redux";
 
 // props: {darkMode, setDarkMode}
 // <SideMenu darkMode={darkMode} setDarkMode={setDarkMode}/>
-const Header = () => {
+const Header = (props) => {
   return (
-    <div className='header' >
+    <div className="header">
       <img src={BCLogo} className="App-logo" alt="logo" />
-      <h2> The Neighbourhood  </h2>
-      <SideMenu />
+      <h2> The Neighbourhood </h2>
+      {props.auth.accessToken !== "" && <SideMenu />}
     </div>
   );
-}
-  
-export default Header;
+};
+
+const mapStateToProps = (state) => ({ auth: state.auth });
+
+const mapDispatchToProps = {};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

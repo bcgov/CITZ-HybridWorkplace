@@ -8,7 +8,7 @@ import PropTypes from "prop-types";
 const PrivateComponent = (props) => {
   const isLoggedIn = props.accessToken !== "";
   if (!isLoggedIn) {
-    props.createError(`Please Login before accessing ${props.component.name}`);
+    props.createError(`Must log in before accessing page`);
   }
   return isLoggedIn ? props.component : <Navigate to="/login" />;
 };

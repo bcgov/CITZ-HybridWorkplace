@@ -34,6 +34,7 @@ import About from "./views/aboutPage";
 import ProfilePage from "./views/profilePage";
 import CommunitiesPage from "./views/communitiesPage";
 import Posts from "./views/posts";
+import NotFoundPage from "./views/404Page";
 
 //Components
 import EditProfile from "./components/editProfile";
@@ -76,6 +77,7 @@ class App extends Component {
             path="/posts"
             element={<PrivateComponent component={<Posts />} />}
           />
+          <Route path="*" exact element={<NotFoundPage />}></Route>
         </Routes>
       </div>
     );
