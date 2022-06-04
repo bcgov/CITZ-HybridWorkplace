@@ -26,6 +26,7 @@ const Post = require("../../../models/post.model");
 const User = require("../../../models/user.model");
 const Community = require("../../../models/community.model");
 const Comment = require("../../../models/comment.model");
+const { aggregate } = require("../../../models/post.model");
 
 /**
  * @swagger
