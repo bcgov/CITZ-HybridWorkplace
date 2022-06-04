@@ -83,6 +83,7 @@ router.post("/", async (req, res) => {
       message: req.body.message,
       creator: user.id,
       post: post.id,
+      community: post.community,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
 
@@ -244,8 +245,11 @@ router.patch("/:id", async (req, res) => {
       if (
         key === "creator" ||
         key === "post" ||
+        key === "community" ||
         key === "createdOn" ||
-        key === "edits"
+        key === "edits" ||
+        key === "replyTo" ||
+        key === "replies"
       ) {
         return res.status(403).send("Can only edit the message of a comment.");
       }
@@ -290,6 +294,7 @@ router.patch("/:id", async (req, res) => {
  *      tags:
  *        - Comment
  *      summary: Remove comment by id.
+ *      description: Also removes all replies to comment.
  *      parameters:
  *        - in: path
  *          required: true
@@ -322,6 +327,13 @@ router.delete("/:id", async (req, res) => {
         .status(403)
         .send("Must be creator of comment to delete comment.");
     }
+
+    // Remove the replies to comment
+    await Comment.deleteMany({ replyTo: comment.id }).exec();
+
+    // Remove comment
+    await Comment.deleteOne({ _id: comment.id }).exec();
+
     return res.status(204).send("Comment removed.");
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);

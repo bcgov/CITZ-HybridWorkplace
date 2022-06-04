@@ -136,6 +136,8 @@ router.patch("/", async (req, res) => {
     let query = { $set: {} };
 
     Object.keys(req.body).forEach((key) => {
+      console.log(key);
+      console.log(req.body[key]);
       if (key === "username" || key === "registeredOn")
         return res
           .status(403)

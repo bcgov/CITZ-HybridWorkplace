@@ -28,6 +28,7 @@ const router = express.Router();
 const Community = require("../../../models/community.model");
 const User = require("../../../models/user.model");
 const Post = require("../../../models/post.model");
+const Comment = require("../../../models/comment.model");
 
 /**
  * @swagger
@@ -269,7 +270,12 @@ router.patch("/:title", async (req, res) => {
     let query = { $set: {} };
 
     Object.keys(req.body).forEach((key) => {
-      if (key === "tags" || key === "flags" || key === "createdOn")
+      if (
+        key === "tags" ||
+        key === "flags" ||
+        key === "createdOn" ||
+        key === "members"
+      )
         return res
           .status(403)
           .send("One of the fields you tried to edit, can not be edited.");
@@ -340,12 +346,15 @@ router.delete("/:title", async (req, res) => {
 
     // Remove reference to community from users
     await User.updateMany(
-      { communities: req.params.title },
-      { $pull: { communities: req.params.title } }
+      { communities: community.title },
+      { $pull: { communities: community.title } }
     ).exec();
 
     // Remove posts from community
-    await Post.deleteMany({ community: req.params.title }).exec();
+    await Post.deleteMany({ community: community.title }).exec();
+
+    // Remove comments from posts in community
+    await Comment.deleteMany({ community: community.title }).exec();
 
     // TODO: AUTH ONLY MODERATORS OF COMMUNITY
     return res.status(200).send("Community removed.");
