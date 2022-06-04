@@ -59,7 +59,15 @@ router.get("/:id", async (req, res) => {
     const comment = await Comment.findOne({ _id: req.params.id });
     if (!comment) return res.status(404).send("Comment not found.");
 
-    const replies = await Comment.find({ replyTo: comment.id });
+    const replies = await Comment.aggregate([
+      { $match: { replyTo: comment.id } },
+      {
+        $addFields: {
+          votes: { $subtract: ["$upvotes.count", "$downvotes.count"] },
+        },
+      },
+      { $sort: { votes: -1, _id: 1 } },
+    ]).exec();
 
     return res.status(200).json(replies);
   } catch (err) {

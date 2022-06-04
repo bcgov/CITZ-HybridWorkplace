@@ -17,8 +17,6 @@
  * @module
  */
 
-// TODO: Order comment replies by votes
-
 const express = require("express");
 
 const router = express.Router();
@@ -69,7 +67,8 @@ router.patch("/:id", async (req, res) => {
     if (!req.query.vote)
       return res.status(404).send("Vote not found in query.");
 
-    // TODO: Check user is apart of community
+    if (!user.communities.includes(comment.community))
+      return res.status(403).send("Must be a part of community to vote.");
 
     let query;
 
