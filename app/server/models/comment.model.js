@@ -42,6 +42,9 @@
  *        replyTo:
  *          type: string
  *          description: The id of the comment that is being replied to.
+ *        hasReplies:
+ *          type: boolean
+ *          description: If the comment has replies.
  *        edits:
  *          type: array
  *          description: Edits made to the comment.
@@ -94,6 +97,7 @@ const Comment = new mongoose.Schema(
     community: { type: String, required: true },
     createdOn: { type: String, required: true },
     replyTo: { type: String },
+    hasReplies: { type: Boolean },
     edits: [{ precursor: String, timeStamp: String }],
     upvotes: {
       count: Number,

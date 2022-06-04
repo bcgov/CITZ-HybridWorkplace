@@ -136,6 +136,8 @@ router.post("/:id", async (req, res) => {
     if (!req.body.message || req.body.message === "")
       return res.status(403).send("Missing message in body of the request.");
 
+    await Comment.updateOne({ _id: comment.id }, { hasReplies: true }).exec();
+
     // Create reply
     const reply = await Comment.create({
       message: req.body.message,

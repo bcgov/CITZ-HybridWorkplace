@@ -104,7 +104,7 @@ router.post("/", async (req, res) => {
  *        - bearerAuth: []
  *      tags:
  *        - Comment
- *      summary: Get all comments from post id.
+ *      summary: Get all comments from post id, excluding replies.
  *      parameters:
  *        - in: path
  *          required: true
@@ -126,7 +126,7 @@ router.post("/", async (req, res) => {
  *          description: Bad Request.
  */
 
-// Get all comments from post id
+// Get all comments from post id, excluding replies
 router.get("/post/:id", async (req, res) => {
   try {
     const user = await User.findOne({ username: req.user.username });
@@ -136,7 +136,7 @@ router.get("/post/:id", async (req, res) => {
     if (!post) return res.status(404).send("Post not found.");
 
     const comments = await Comment.aggregate([
-      { $match: { post: post.id } },
+      { $match: { post: post.id, replyTo: null } },
       {
         $addFields: {
           votes: {
@@ -345,6 +345,16 @@ router.delete("/:id", async (req, res) => {
 
     // Remove comment
     await Comment.deleteOne({ _id: comment.id }).exec();
+
+    // If replyTo comment has no more replies
+    if (
+      comment.replyTo &&
+      !(await Comment.exists({ replyTo: comment.replyTo }))
+    )
+      await Comment.updateOne(
+        { _id: comment.replyTo },
+        { hasReplies: false }
+      ).exec();
 
     return res.status(204).send("Comment removed.");
   } catch (err) {
