@@ -33,7 +33,7 @@ const User = require("../../../models/user.model");
  *      security:
  *        - bearerAuth: []
  *      tags:
- *        - Comment Reply
+ *        - Comment Replies
  *      summary: Get all replies to comment with id.
  *      parameters:
  *        - in: path
@@ -63,7 +63,9 @@ router.get("/:id", async (req, res) => {
       { $match: { replyTo: comment.id } },
       {
         $addFields: {
-          votes: { $subtract: ["$upvotes.count", "$downvotes.count"] },
+          votes: {
+            $ifNull: [{ $subtract: ["$upvotes.count", "$downvotes.count"] }, 0],
+          },
         },
       },
       { $sort: { votes: -1, _id: 1 } },
@@ -83,7 +85,7 @@ router.get("/:id", async (req, res) => {
  *      security:
  *        - bearerAuth: []
  *      tags:
- *        - Comment Reply
+ *        - Comment Replies
  *      summary: Reply to comment with id.
  *      parameters:
  *        - in: path

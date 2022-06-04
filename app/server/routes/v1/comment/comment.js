@@ -139,7 +139,9 @@ router.get("/post/:id", async (req, res) => {
       { $match: { post: post.id } },
       {
         $addFields: {
-          votes: { $subtract: ["$upvotes.count", "$downvotes.count"] },
+          votes: {
+            $ifNull: [{ $subtract: ["$upvotes.count", "$downvotes.count"] }, 0],
+          },
         },
       },
       { $sort: { votes: -1, _id: 1 } },
