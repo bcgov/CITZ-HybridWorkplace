@@ -23,6 +23,8 @@ const postTagsRouterV1 = require("./routes/v1/post/postTags");
 
 const commentRouterV1 = require("./routes/v1/comment/comment");
 const commentReplyRouterV1 = require("./routes/v1/comment/commentReply");
+const commentVoteRouterV1 = require("./routes/v1/comment/commentVoting");
+
 const userRouterV1 = require("./routes/v1/user");
 
 const registerRouterV1 = require("./routes/v1/register");
@@ -105,6 +107,7 @@ function useV1(req, res, next) {
 
   app.use("/api/comment", authenticateToken, commentRouterV1);
   app.use("/api/comment/reply", authenticateToken, commentReplyRouterV1);
+  app.use("/api/comment/vote", authenticateToken, commentVoteRouterV1);
 
   app.use("/api/user", authenticateToken, userRouterV1);
 

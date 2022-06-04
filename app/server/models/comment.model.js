@@ -53,6 +53,30 @@
  *              precursor:
  *                type: string
  *                description: The message before it was edited.
+ *        upvotes:
+ *          type: array
+ *          description: Users that have upvote the comment.
+ *          items:
+ *            type: object
+ *            properties:
+ *              count:
+ *                type: number
+ *              users:
+ *                type: array
+ *                items:
+ *                  - $ref: '#/components/schemas/User'
+ *        downvotes:
+ *          type: array
+ *          description: Users that have upvote the comment.
+ *          items:
+ *            type: object
+ *            properties:
+ *              count:
+ *                type: number
+ *              users:
+ *                type: array
+ *                items:
+ *                  - $ref: '#/components/schemas/User'
  *      required:
  *        - message
  *        - creator
@@ -71,6 +95,24 @@ const Comment = new mongoose.Schema(
     createdOn: { type: String, required: true },
     replyTo: { type: String },
     edits: [{ precursor: String, timeStamp: String }],
+    upvotes: {
+      count: Number,
+      users: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+      ],
+    },
+    downvotes: {
+      count: Number,
+      users: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+      ],
+    },
   },
   { collection: "comment" }
 );
