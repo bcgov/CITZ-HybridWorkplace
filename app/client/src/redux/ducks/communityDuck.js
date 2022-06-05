@@ -112,6 +112,7 @@ export const createCommunity =
           title: communityData.title,
           description: communityData.description,
           rules: communityData.rules,
+          tags: communityData.tags,
         }),
       });
 

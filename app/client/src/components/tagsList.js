@@ -9,8 +9,7 @@ export const TagsList = (props) => {
         name={tag}
         clicked={props.post.tags.find(
           (element) =>
-            element.tag === tag &&
-            element.taggedBy[0] === "62995f76382a7c7988075ac7"
+            element.tag === tag && element.taggedBy[0] === props.auth.user.id
         )}
       />
     ))
@@ -19,7 +18,7 @@ export const TagsList = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = (state) => ({ auth: state.auth });
 
 const mapDispatchToProps = {};
 

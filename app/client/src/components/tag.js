@@ -1,7 +1,7 @@
 import { Chip } from "@mui/material";
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { addTagToPost } from "../redux/ducks/postDuck";
+import { tagPost } from "../redux/ducks/postDuck";
 
 export const Tag = (props) => {
   const [clicked, setClicked] = useState(props.clicked);
@@ -11,7 +11,6 @@ export const Tag = (props) => {
 
   const randomColor = () => {
     const colors = [
-      "default",
       "primary",
       "secondary",
       "error",
@@ -22,10 +21,12 @@ export const Tag = (props) => {
     return colors[Math.floor(Math.random() * colors.length)];
   };
 
+  const [color, setColor] = useState(randomColor());
+
   return (
     <Chip
       label={props.name}
-      color={props.color || randomColor()}
+      color={props.color || color}
       variant={clicked ? "filled" : "outlined"}
       onClick={handleTagClick}
     ></Chip>
@@ -34,6 +35,6 @@ export const Tag = (props) => {
 
 const mapStateToProps = (state) => ({});
 
-const mapDispatchToProps = { addTagToPost };
+const mapDispatchToProps = { tagPost };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Tag);
