@@ -25,6 +25,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { ExternalLink } from "react-external-link";
 import "./footer.css";
+import Divider from "@mui/material/Divider";
 
 const StyledLink = styled(Link)`
   color: White;
@@ -45,6 +46,7 @@ class Footer extends Component {
     return (
       <div className="footer">
         <StyledLink to="/">Home</StyledLink>
+        <Divider vertical />
         <StyledExLink
           href={"placeholder" + "disclaimer"}
           target="_blank"
@@ -52,6 +54,7 @@ class Footer extends Component {
         >
           Disclaimer
         </StyledExLink>
+        <Divider vertical />
         <StyledExLink
           href={"placeholder" + "privacy"}
           target="_blank"
@@ -59,19 +62,28 @@ class Footer extends Component {
         >
           Privacy
         </StyledExLink>
+        <Divider vertical />
         <StyledExLink
-          href={"placeholder" + "accessability"}
+          href={"placeholder" + "accessibility"}
           target="_blank"
           rel="noopener noreferrer"
         >
-          Accessability
+          Accessibility
         </StyledExLink>
+        <Divider vertical />
         <StyledExLink
           href={"placeholder" + "copyright"}
           target="_blank"
           rel="noopener noreferrer"
         >
           Copyright
+        </StyledExLink>
+        <Divider vertical />
+        <StyledExLink
+          href="https://github.com/bcgov/CITZ-HybridWorkplace"
+          target="_blank"
+        >
+          GitHub
         </StyledExLink>
       </div>
     );

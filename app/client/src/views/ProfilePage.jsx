@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Province of British Columbia
+// Copyright Â© 2022 Province of British Columbia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,98 +25,121 @@ import { Link, useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
 import "./Styles/profile.css";
-
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import AccountCircle from "@mui/icons-material/AccountCircle";
+import { getProfile } from "../redux/ducks/profileDuck";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { Grid, Paper, Box, Typography, Avatar, Form } from "@mui/material";
 
 import UsersCommunitiesList from "../components/UsersCommunitiesList";
 import ProfileInfo from "../components/ProfileInfo";
 
-const ProfilePage = () => {
-  /*
-    const navigate = useNavigate();
+const ProfilePage = (props) => {
+  let { username } = useParams();
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            const user = jwt_decode(token)
-            if(!user){
-                localStorage.removeItem('token')
-                navigate('/login');
-            }
-        } else {
-            alert('Please Log in or Register before accessing this page');
-            navigate('/login');
-        }
-    }, []);
-    */
-  let { id } = useParams();
+  useEffect(() => {
+    props.getProfile(username);
+  }, []);
 
   return (
     <Box sx={{ alignItems: "stretch" }}>
-      <Grid container spacing={2}>
+      <Grid
+        container
+        spacing={2}
+        direction="row"
+        justifyContent="space-around"
+        alignItems="flex-start"
+      >
         <Grid item xs={2}>
-          <AccountCircle style={{ width: "100%", height: "40%" }} />
-          <ProfileInfo name={id} />
-          <br />
-          <br />
-          <Link to="./edit" style={{ textDecoration: "none" }}>
-            <Box
-              sx={{
-                backgroundColor: "#036",
-                color: "white",
-                px: 1,
-                py: 0.5,
-                textAlign: "center",
-              }}
-            >
-              <Typography variant="h6" component="p">
-                Edit Profile
-              </Typography>
-            </Box>
-          </Link>
-        </Grid>
-
-        <Grid item xs={6}>
-          <Paper elevation={0}>
-            <Box
-              sx={{
-                backgroundColor: "#036",
-                color: "white",
-                px: 1,
-                py: 0.5,
-                textAlign: "center",
-              }}
-            >
-              <Typography variant="h6" component="h5">
-                Posts
-              </Typography>
-            </Box>
-          </Paper>
+          <Grid
+            container
+            direction="column"
+            alignitems="flex-start"
+            justifyContent="space-evenly"
+          >
+            <Grid item xs={12}>
+              <Avatar src="https://source.unsplash.com/random/150×150/?profile" />
+              <ProfileInfo />
+            </Grid>
+          </Grid>
         </Grid>
 
         <Grid item xs={4}>
-          <Box
-            sx={{
-              backgroundColor: "#036",
-              color: "white",
-              px: 1,
-              py: 0.5,
-              textAlign: "center",
-            }}
-          >
-            <Typography variant="h6" component="h5">
-              My Communities
-            </Typography>
-          </Box>
-          <UsersCommunitiesList />
+          <Grid container direction="row" justifyContent="space-evenly">
+            <Grid item xs={12}>
+              <Typography variant="h4" style={{ fontWeight: 600 }}>
+                Bio
+              </Typography>
+              <br />
+              <Typography variant="body1">
+                {props.profile.bio || "No bio to display"}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Grid>
+
+        <Grid item xs={4}>
+          <Grid container direction="row" justifyContent="space-evenly">
+            <Grid item xs={12}>
+              <Typography variant="h4" style={{ fontWeight: 600 }}>
+                Pinned Communities
+              </Typography>
+              <Grid container spacing={2}>
+                {props.communities.slice(0, 4).map((element) => (
+                  <Grid item xs={6}>
+                    <Box
+                      sx={{
+                        backgroundColor: "#036",
+                        color: "white",
+                        px: 1,
+                        py: 0.5,
+                        textAlign: "center",
+                      }}
+                    >
+                      <p>{element.title}</p>
+                    </Box>
+                  </Grid>
+                ))}
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xs={2}></Grid>
+        <Typography variant="h4" style={{ fontWeight: 600 }}>
+          Settings
+        </Typography>
+        <Box
+          sx={{
+            backgroundColor: "#036",
+            color: "white",
+            px: 1,
+            py: 0.5,
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="h6" component="p">
+            Community
+          </Typography>
+        </Box>
+        <Grid item xs={8}>
+          <Typography variant="h4" style={{ fontWeight: 600 }}>
+            Recent Posts
+          </Typography>
         </Grid>
       </Grid>
     </Box>
   );
 };
 
-export default ProfilePage;
+ProfilePage.propTypes = {
+  getProfile: PropTypes.func.isRequired,
+  profile: PropTypes.array.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  profile: state.profile.user,
+  communities: state.communities.items,
+});
+
+const mapActionsToProps = { getProfile };
+
+export default connect(mapStateToProps, mapActionsToProps)(ProfilePage);
