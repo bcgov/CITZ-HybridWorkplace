@@ -74,7 +74,12 @@ router.post("/", async (req, res) => {
     if (!user) return res.status(404).send("User not found.");
     if (!community) return res.status(404).send("Community not found.");
 
-    if (!user.communities.includes(community.title))
+    if (
+      !(await User.exists({
+        _id: user.id,
+        "communities.community": community.title,
+      }))
+    )
       return res
         .status(403)
         .send("Must be a part of community to post in community.");
@@ -95,6 +100,15 @@ router.post("/", async (req, res) => {
       pinned: req.body.pinned || false,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
+
+    // Update user engagement
+    await User.updateOne(
+      {
+        _id: user.id,
+        communities: { $elemMatch: { community: req.body.community } },
+      },
+      { $inc: { "communities.$.engagement": 1 } }
+    ).exec();
 
     return res.status(201).json(post);
   } catch (err) {

@@ -92,13 +92,18 @@ router.post("/", async (req, res) => {
       { username: user.username },
       {
         $push: {
-          communities: community.title,
+          communities: {
+            community: community.title,
+            engagement:
+              process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMUNITY || 0,
+          },
         },
       }
     );
 
     return res.status(201).json(community);
   } catch (err) {
+    console.log(err);
     return res
       .status(400)
       .send(
@@ -118,13 +123,13 @@ router.post("/", async (req, res) => {
  *      tags:
  *        - Community
  *      summary: Get all communities or only communities user is a part of.
- *      description: Use optional query 'user=true' to get only communities user is a part of.
+ *      description: Use optional query 'orderBy' with<br>'lastJoined' - Communities user has joined, in the order of last joined first.<br>'engagement' - Communities user has joined, in the order of most engagement.
  *      parameters:
  *        - in: query
  *          required: false
- *          name: user
+ *          name: orderBy
  *          schema:
- *            type: boolean
+ *            type: string
  *      responses:
  *        '404':
  *          description: User not found. **||** <br>Communities not found.
@@ -146,11 +151,47 @@ router.get("/", async (req, res) => {
 
     let communities;
 
-    if (req.query.user === "true") {
+    if (req.query.orderBy === "lastJoined") {
       // Ordered by last joined
       communities = await Community.find({ members: user.id }, "", {
         sort: { _id: -1 },
       }).exec();
+    } else if (req.query.orderBy === "engagement") {
+      // Order by engagment (posts, comments, votes)
+      communities = await Community.aggregate([
+        {
+          $lookup: {
+            from: "user",
+            let: { community_title: "$title" },
+            pipeline: [
+              {
+                $unwind: "$communities",
+              },
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ["$communities.community", "$$community_title"] },
+                    ],
+                  },
+                },
+              },
+            ],
+            as: "userData",
+          },
+        },
+        {
+          $addFields: {
+            engagement: {
+              $ifNull: [{ $sum: ["$userData.communities.engagement"] }, 0],
+            },
+          },
+        },
+        {
+          $project: { userData: 0 },
+        },
+        { $sort: { engagement: -1, _id: -1 } },
+      ]).exec();
     } else {
       // Ordered by first created
       communities = await Community.find({}, "", { sort: { _id: 1 } }).exec();
@@ -346,8 +387,8 @@ router.delete("/:title", async (req, res) => {
 
     // Remove reference to community from users
     await User.updateMany(
-      { communities: community.title },
-      { $pull: { communities: community.title } }
+      { "communities.community": community.title },
+      { $pull: { "communities.community": community.title } }
     ).exec();
 
     // Remove posts from community

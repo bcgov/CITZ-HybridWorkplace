@@ -71,7 +71,12 @@ router.post("/", async (req, res) => {
     if (!user) return res.status(404).send("User not found.");
     if (!post) return res.status(404).send("Post not found.");
 
-    if (!user.communities.includes(post.community))
+    if (
+      !(await User.exists({
+        _id: user.id,
+        "communities.community": post.community,
+      }))
+    )
       return res
         .status(403)
         .send("Must be a part of community to comment in community.");
