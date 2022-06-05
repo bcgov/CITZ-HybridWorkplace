@@ -86,7 +86,7 @@ const Post = (props) => {
             <Typography variant="body1">{post.message}</Typography>
           </CardContent>
           <CardActions>
-            <TagsList post={post.tags} />
+            <TagsList post={post} />
           </CardActions>
         </Card>
       </Paper>
