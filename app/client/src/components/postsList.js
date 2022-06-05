@@ -29,6 +29,7 @@ import Paper from "@mui/material/Paper";
 import { getPosts } from "../redux/ducks/postDuck";
 import Post from "./post";
 import FlagPostModal from "./modals/flagPostModal";
+import DeletePostModal from "./modals/deletePostModal";
 
 const PostsList = (props) => {
   useEffect(() => {
@@ -41,6 +42,7 @@ const PostsList = (props) => {
         <Post post={post} />
       ))}
       <FlagPostModal />
+      <DeletePostModal />
     </div>
   );
 };

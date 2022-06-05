@@ -33,7 +33,8 @@ import {
   Typography,
 } from "@mui/material";
 import { connect } from "react-redux";
-import { closeFlagPostModal, flagPost } from "../../redux/ducks/flagDuck";
+import { closeFlagPostModal } from "../../redux/ducks/modalDuck";
+import { flagPost } from "../../redux/ducks/postDuck";
 import PropTypes from "prop-types";
 import { useState } from "react";
 
@@ -104,8 +105,8 @@ FlagPost.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  open: state.flags.flagPost.open,
-  post: state.flags.flagPost.post,
+  open: state.modal.flagPost.open,
+  post: state.modal.flagPost.post,
 });
 
 const mapActionsToProps = {
