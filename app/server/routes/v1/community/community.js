@@ -22,6 +22,7 @@
 
 const express = require("express");
 const moment = require("moment");
+const ObjectId = require("mongodb").ObjectId;
 
 const router = express.Router();
 
@@ -148,6 +149,7 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const user = await User.findOne({ username: req.user.username });
+    if (!user) return res.status(404).send("User not found.");
 
     let communities;
 
@@ -188,7 +190,15 @@ router.get("/", async (req, res) => {
           },
         },
         {
-          $project: { userData: 0 },
+          $project: {
+            userData: 0,
+          },
+        },
+        { $unwind: "$members" },
+        {
+          $match: {
+            members: new ObjectId(user.id),
+          },
         },
         { $sort: { engagement: -1, _id: -1 } },
       ]).exec();
@@ -197,7 +207,6 @@ router.get("/", async (req, res) => {
       communities = await Community.find({}, "", { sort: { _id: 1 } }).exec();
     }
 
-    if (!user) return res.status(404).send("User not found.");
     if (!communities) return res.status(404).send("Communities not found.");
 
     return res.status(200).json(communities);

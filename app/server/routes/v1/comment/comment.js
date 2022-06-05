@@ -92,6 +92,20 @@ router.post("/", async (req, res) => {
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
 
+    // Update user engagement
+    await User.updateOne(
+      {
+        _id: user.id,
+        communities: { $elemMatch: { community: post.community } },
+      },
+      {
+        $inc: {
+          "communities.$.engagement":
+            process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT,
+        },
+      }
+    ).exec();
+
     return res.status(201).json(comment);
   } catch (err) {
     return res.status(400).send(`Bad Request: ${err}`);
@@ -337,6 +351,20 @@ router.delete("/:id", async (req, res) => {
 
     // Remove comment
     await Comment.deleteOne({ _id: comment.id }).exec();
+
+    // Update user engagement
+    await User.updateOne(
+      {
+        _id: user.id,
+        communities: { $elemMatch: { community: comment.community } },
+      },
+      {
+        $inc: {
+          "communities.$.engagement":
+            -process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT,
+        },
+      }
+    ).exec();
 
     return res.status(204).send("Comment removed.");
   } catch (err) {

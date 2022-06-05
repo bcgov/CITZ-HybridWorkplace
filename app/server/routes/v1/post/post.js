@@ -107,7 +107,12 @@ router.post("/", async (req, res) => {
         _id: user.id,
         communities: { $elemMatch: { community: req.body.community } },
       },
-      { $inc: { "communities.$.engagement": 1 } }
+      {
+        $inc: {
+          "communities.$.engagement":
+            process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_POST,
+        },
+      }
     ).exec();
 
     return res.status(201).json(post);
@@ -433,6 +438,20 @@ router.delete("/:id", async (req, res) => {
     await Post.deleteOne({
       _id: post.id,
     }).exec();
+
+    // Update user engagement
+    await User.updateOne(
+      {
+        _id: user.id,
+        communities: { $elemMatch: { community: post.community } },
+      },
+      {
+        $inc: {
+          "communities.$.engagement":
+            -process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_POST,
+        },
+      }
+    ).exec();
 
     return res.status(204).send("Post removed.");
   } catch (err) {
