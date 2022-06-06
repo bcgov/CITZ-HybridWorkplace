@@ -87,7 +87,6 @@ router.post("/", async (req, res) => {
       members: [user.id],
       rules: req.body.rules,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
-      tags: req.body.tags,
     });
 
     await User.updateOne(
