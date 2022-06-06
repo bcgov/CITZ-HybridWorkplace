@@ -26,13 +26,13 @@ const jwt = require("jsonwebtoken");
 function generateToken(user) {
   return jwt.sign(
     {
+      id: user.id,
       username: user.username,
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
       title: user.title,
       bio: user.bio,
-      quote: user.quote,
     },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_TOKEN_EXPIRY }

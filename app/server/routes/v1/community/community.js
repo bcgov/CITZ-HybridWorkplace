@@ -397,7 +397,7 @@ router.delete("/:title", async (req, res) => {
     // Remove reference to community from users
     await User.updateMany(
       { "communities.community": community.title },
-      { $pull: { "communities.community": community.title } }
+      { $pull: { communities: { community: community.title } } }
     ).exec();
 
     // Remove posts from community

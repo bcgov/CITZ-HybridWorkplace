@@ -117,13 +117,13 @@ router.patch("/join/:title", async (req, res) => {
 
     await Community.updateOne(
       { title: community.title },
-      { $push: { members: user.id } }
+      { $addToSet: { members: user.id } }
     );
 
     await User.updateOne(
       { username: user.username },
       {
-        $push: {
+        $addToSet: {
           communities: { community: community.title, engagement: 0 },
         },
       }
@@ -182,7 +182,7 @@ router.delete("/leave/:title", async (req, res) => {
       { username: user.username },
       {
         $pull: {
-          "communities.community": community.title,
+          communities: { community: community.title },
         },
       }
     );
