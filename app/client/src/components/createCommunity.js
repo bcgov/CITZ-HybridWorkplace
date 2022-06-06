@@ -36,12 +36,12 @@ const CreateCommunity = (props) => {
   const [tags, setTags] = useState([]);
   async function registerCommunity() {
     setCreateCommunityLoading(true);
-    const newTags = tags.map((tag) => ({ tag: tag, count: 0 }));
+    const formattedTags = tags.map((tag) => ({ tag: tag, count: 0 }));
     const community = {
       title: title,
       description: description,
       rules: rules,
-      tags: newTags,
+      tags: formattedTags,
     };
     const successful = await props.createCommunity(community);
     setCreateCommunityLoading(false);
