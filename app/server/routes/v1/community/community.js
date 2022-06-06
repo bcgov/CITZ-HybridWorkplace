@@ -54,6 +54,8 @@ const Comment = require("../../../models/comment.model");
  *                  $ref: '#/components/schemas/Community/properties/description'
  *                rules:
  *                  $ref: '#/components/schemas/Community/properties/rules'
+ *                tags:
+ *                  $ref: '#/components/schemas/Community/properties/tags'
  *      responses:
  *        '404':
  *          description: User not found.
@@ -79,6 +81,8 @@ router.post("/", async (req, res) => {
     if (await Community.exists({ title: req.body.title })) {
       return res.status(403).send("Community already exists.");
     }
+
+    // TODO: Validate formatting for tags in request body
 
     const community = await Community.create({
       title: req.body.title,
