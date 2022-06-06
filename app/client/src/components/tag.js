@@ -21,7 +21,7 @@ export const Tag = (props) => {
     return colors[Math.floor(Math.random() * colors.length)];
   };
 
-  const [color, setColor] = useState(randomColor());
+  const color = randomColor();
 
   return (
     <Chip
