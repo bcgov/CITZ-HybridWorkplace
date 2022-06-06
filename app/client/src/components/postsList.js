@@ -39,7 +39,7 @@ const PostsList = (props) => {
   return (
     <div>
       {props.posts.map((post) => (
-        <Post post={post} />
+        <Post post={post} key={post._id} />
       ))}
       <FlagPostModal />
       <DeletePostModal />

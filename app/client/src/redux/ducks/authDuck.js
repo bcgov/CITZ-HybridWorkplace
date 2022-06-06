@@ -50,8 +50,7 @@ export const login = (username, password) => async (dispatch) => {
 
     const data = await res.json();
     const decodedToken = jwtDecode(data.token);
-    data.user = { username: decodedToken.username, email: decodedToken.email };
-
+    data.user = decodedToken;
     dispatch({
       type: LOGIN,
       payload: data,
@@ -133,10 +132,7 @@ export function authReducer(state = initialState, action) {
       return {
         accessToken: action.payload.token,
         refreshToken: action.payload.refreshToken,
-        user: {
-          username: action.payload.user.username,
-          email: action.payload.user.email,
-        },
+        user: action.payload.user,
       };
     case LOGOUT:
       return initialState;
