@@ -22,6 +22,15 @@
 
 import { createSuccess, createError } from "./alertDuck";
 
+const OPEN_DELETE_POST_MODAL =
+  "CITZ-HYBRIDWORKPLACE/DELETE/OPEN_DELETE_POST_MODAL";
+const CLOSE_DELETE_POST_MODAL =
+  "CITZ-HYBRIDWORKPLACE/DELETE/CLOSE_DELETE_POST_MODAL";
+const OPEN_DELETE_COMMUNITY_MODAL =
+  "CITZ-HYBRIDWORKPLACE/DELETE/OPEN_DELETE_COMMUNITY_MODAL";
+const CLOSE_DELETE_COMMUNITY_MODAL =
+  "CITZ-HYBRIDWORKPLACE/DELETE/CLOSE_DELETE_COMMUNITY_MODAL";
+
 const OPEN_FLAG_POST_MODAL = "CITZ-HYBRIDWORKPLACE/FLAG/OPEN_FLAG_POST_MODAL";
 const CLOSE_FLAG_POST_MODAL = "CITZ-HYBRIDWORKPLACE/FLAG/CLOSE_FLAG_POST_MODAL";
 const OPEN_FLAG_COMMUNITY_MODAL =
@@ -29,14 +38,27 @@ const OPEN_FLAG_COMMUNITY_MODAL =
 const CLOSE_FLAG_COMMUNITY_MODAL =
   "CITZ-HYBRIDWORKPLACE/FLAG/CLOSE_FLAG_COMMUNITY_MODAL";
 
-const noTokenText = "Trying to access accessToken, no accessToken in store";
+/*********************** DELETE MODAL ACTIONS***********************/
+export const openDeletePostModal = (post) => (dispatch) => {
+  closeDeleteCommunityModal()(dispatch);
+  dispatch({ type: OPEN_DELETE_POST_MODAL, payload: post });
+};
 
-const apiURI = !window._env_.REACT_APP_LOCAL_DEV
-  ? `${window._env_.REACT_APP_API_REF}`
-  : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
+export const closeDeletePostModal = () => (dispatch) => {
+  dispatch({ type: CLOSE_DELETE_POST_MODAL });
+};
 
+export const openDeleteCommunityModal = (community) => (dispatch) => {
+  closeDeletePostModal()(dispatch);
+  dispatch({ type: OPEN_DELETE_COMMUNITY_MODAL, payload: community });
+};
+
+export const closeDeleteCommunityModal = () => (dispatch) => {
+  dispatch({ type: OPEN_DELETE_COMMUNITY_MODAL });
+};
+
+/*********************** FLAG MODAL ACTIONS***********************/
 export const openFlagPostModal = (post) => (dispatch) => {
-  //Closing the flag community modal as a safeguard to prevent confusing application state
   closeFlagCommunityModal()(dispatch);
   dispatch({ type: OPEN_FLAG_POST_MODAL, payload: post });
 };
@@ -45,53 +67,37 @@ export const closeFlagPostModal = () => (dispatch) =>
   dispatch({ type: CLOSE_FLAG_POST_MODAL });
 
 export const openFlagCommunityModal = (community) => (dispatch) => {
-  //Closing the flag post modal as a safeguard to prevent confusing application state
   closeFlagPostModal()(dispatch);
   dispatch({ type: OPEN_FLAG_COMMUNITY_MODAL, payload: community });
 };
 
-export const closeFlagCommunityModal = () => (dispatch) =>
+export const closeFlagCommunityModal = () => (dispatch) => {
   dispatch({ type: OPEN_FLAG_COMMUNITY_MODAL });
-
-export const flagPost = (postId, flag) => async (dispatch, getState) => {
-  let successful = true;
-  try {
-    //TODO: Throw error if given flag is not in list of available flags
-    if (flag === "") throw new Error("Error: Invalid Input");
-    const authState = getState().auth;
-    const token = authState.accessToken;
-
-    if (!token) throw new Error(noTokenText);
-
-    const response = await fetch(
-      `${apiURI}/api/post/flags/${postId}?flag=${flag}`,
-      {
-        method: "POST",
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    if (!response.ok)
-      throw new Error(`${response.status} ${response.statusText}`);
-
-    createSuccess(`Successfully Flagged Post For Reason: ${flag}`)(dispatch);
-  } catch (err) {
-    console.error(err);
-    successful = false;
-    createError("Unexpected error occurred")(dispatch);
-  } finally {
-    return successful;
-  }
 };
 
 const initialState = {
-  flagPost: { open: false, post: {} }, //communitys
-  flagCommunity: { open: false, community: {} }, //single community
+  deletePost: { open: false, post: {} },
+  deleteCommunity: { open: false, community: {} },
+  flagPost: { open: false, post: {} },
+  flagCommunity: { open: false, community: {} },
 };
 
-export function flagReducer(state = initialState, action) {
+export function modalReducer(state = initialState, action) {
   switch (action.type) {
+    case OPEN_DELETE_POST_MODAL:
+      return {
+        ...state,
+        deletePost: { open: true, post: action.payload },
+      };
+    case CLOSE_DELETE_POST_MODAL:
+      return initialState;
+    case OPEN_DELETE_COMMUNITY_MODAL:
+      return {
+        ...state,
+        deleteCommunity: { open: true, community: action.payload },
+      };
+    case CLOSE_DELETE_COMMUNITY_MODAL:
+      return initialState;
     case OPEN_FLAG_POST_MODAL:
       return {
         ...state,

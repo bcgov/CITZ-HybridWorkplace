@@ -20,8 +20,11 @@
  * @module
  */
 
+import { createSuccess, createError } from "./alertDuck";
+
 const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_COMMUNITIES";
 const ADD_POST = "CITZ-HYBRIDWORKPLACE/POST/ADD_COMMUNITY";
+const REMOVE_POST = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_POST";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
@@ -33,7 +36,7 @@ export const getPosts = () => async (dispatch, getState) => {
   let successful = true;
 
   try {
-    const authState = getState().auth
+    const authState = getState().auth;
     const token = authState.accessToken;
 
     if (!token) throw new Error(noTokenText);
@@ -63,7 +66,7 @@ export const getPosts = () => async (dispatch, getState) => {
 export const createPost = (postData) => async (dispatch, getState) => {
   let successful = true;
   try {
-    const authState = getState().auth
+    const authState = getState().auth;
     const token = authState.accessToken;
 
     if (!token) throw new Error(noTokenText);
@@ -99,6 +102,71 @@ export const createPost = (postData) => async (dispatch, getState) => {
   }
 };
 
+export const deletePost = (postId) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    //TODO: Throw error if given delete is not in list of available deletes
+    if (postId === "") throw new Error("Error: Invalid Input");
+    const authState = getState().auth;
+    const token = authState.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await fetch(`${apiURI}/api/post/${postId}`, {
+      method: "DELETE",
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok)
+      throw new Error(`${response.status} ${response.statusText}`);
+
+    dispatch({
+      type: REMOVE_POST,
+      payload: postId,
+    });
+    createSuccess(`Successfully Deleted Post`)(dispatch);
+  } catch (err) {
+    console.error(err);
+    successful = false;
+    createError("Unexpected error occurred")(dispatch);
+  } finally {
+    return successful;
+  }
+};
+
+export const flagPost = (postId, flag) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    //TODO: Throw error if given flag is not in list of available flags
+    if (flag === "") throw new Error("Error: Invalid Input");
+    const authState = getState().auth;
+    const token = authState.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await fetch(
+      `${apiURI}/api/post/flags/${postId}?flag=${flag}`,
+      {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!response.ok)
+      throw new Error(`${response.status} ${response.statusText}`);
+
+    createSuccess(`Successfully Flagged Post For Reason: ${flag}`)(dispatch);
+  } catch (err) {
+    console.error(err);
+    successful = false;
+    createError("Unexpected error occurred")(dispatch);
+  } finally {
+    return successful;
+  }
+};
+
 const initialState = {
   items: [], //communitys
   item: {}, //single community
@@ -115,6 +183,11 @@ export function postReducer(state = initialState, action) {
       return {
         ...state,
         items: [...state.items, action.payload],
+      };
+    case REMOVE_POST:
+      return {
+        ...state,
+        items: state.items.filter((item) => item._id !== action.payload),
       };
     default:
       return state;

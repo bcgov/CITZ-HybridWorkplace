@@ -1,5 +1,6 @@
 import {
   Card,
+  CardActions,
   CardContent,
   CardHeader,
   IconButton,
@@ -11,12 +12,14 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import FlagIcon from "@mui/icons-material/Flag";
+import FlagTwoToneIcon from "@mui/icons-material/FlagTwoTone";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { openFlagPostModal } from "../redux/ducks/flagDuck";
+import { openFlagPostModal } from "../redux/ducks/modalDuck";
+import { openDeletePostModal } from "../redux/ducks/modalDuck";
 import { useState } from "react";
+import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
 
 const Post = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -25,6 +28,11 @@ const Post = (props) => {
 
   const handleFlagPostClick = () => {
     props.openFlagPostModal(post);
+    handleMenuClose();
+  };
+
+  const handleDeletePostClick = () => {
+    props.openDeletePostModal(post);
     handleMenuClose();
   };
 
@@ -57,9 +65,15 @@ const Post = (props) => {
                   <MenuList>
                     <MenuItem onClick={handleFlagPostClick}>
                       <ListItemIcon>
-                        <FlagIcon fontSize="small" />
+                        <FlagTwoToneIcon fontSize="small" />
                       </ListItemIcon>
                       <ListItemText>Flag</ListItemText>
+                    </MenuItem>
+                    <MenuItem onClick={handleDeletePostClick}>
+                      <ListItemIcon>
+                        <DeleteForeverTwoToneIcon fontSize="small" />
+                      </ListItemIcon>
+                      <ListItemText>Delete</ListItemText>
                     </MenuItem>
                   </MenuList>
                 </Menu>
@@ -70,6 +84,7 @@ const Post = (props) => {
           <CardContent>
             <Typography variant="body1">{post.message}</Typography>
           </CardContent>
+          <CardActions></CardActions>
         </Card>
       </Paper>
     </div>
@@ -81,11 +96,13 @@ Post.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  open: state.flags.flagPost.open,
+  flagPostOpen: state.modal.flagPost.open,
+  deletePostOpen: state.modal.deletePost.open,
 });
 
 const mapActionsToProps = {
   openFlagPostModal,
+  openDeletePostModal,
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(Post);
