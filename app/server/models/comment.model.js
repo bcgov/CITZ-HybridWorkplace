@@ -58,7 +58,7 @@
  *                description: The message before it was edited.
  *        upvotes:
  *          type: array
- *          description: Users that have upvote the comment.
+ *          description: Users that have upvoted the comment.
  *          items:
  *            type: object
  *            properties:
@@ -70,7 +70,7 @@
  *                  - $ref: '#/components/schemas/User'
  *        downvotes:
  *          type: array
- *          description: Users that have upvote the comment.
+ *          description: Users that have downvoted the comment.
  *          items:
  *            type: object
  *            properties:
