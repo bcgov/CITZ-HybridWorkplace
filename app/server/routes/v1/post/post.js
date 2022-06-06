@@ -92,12 +92,15 @@ router.post("/", async (req, res) => {
         .status(403)
         .send("Community can't have more than 3 pinned posts.");
 
+    const availableTags = community.tags.map((tag) => tag.tag);
+
     const post = await Post.create({
       title: req.body.title,
       message: req.body.message,
       creator: user.id,
       community: req.body.community,
       pinned: req.body.pinned || false,
+      availableTags: availableTags,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
 
