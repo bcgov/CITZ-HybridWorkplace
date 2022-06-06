@@ -1,12 +1,24 @@
 import { Chip } from "@mui/material";
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { tagPost } from "../redux/ducks/postDuck";
 
 export const Tag = (props) => {
   const [clicked, setClicked] = useState(props.clicked);
-  const handleTagClick = () => {
-    setClicked(!clicked);
+
+  const handleRemoveTag = async () => {
+    setClicked(false);
+    const successful = await props.unTagPost(props.postId, props.name);
+    if (!successful) {
+      setClicked(true);
+    }
+  };
+
+  const handleTagPost = async () => {
+    setClicked(true);
+    const successful = await props.tagPost(props.postId, props.name);
+    if (!successful) {
+      setClicked(false);
+    }
   };
 
   const randomColor = () => {
@@ -21,20 +33,20 @@ export const Tag = (props) => {
     return colors[Math.floor(Math.random() * colors.length)];
   };
 
-  const color = randomColor();
+  const color = useState(randomColor())[0];
 
   return (
     <Chip
       label={props.name}
       color={props.color || color}
       variant={clicked ? "filled" : "outlined"}
-      onClick={handleTagClick}
+      onClick={clicked ? handleRemoveTag : handleTagPost}
     ></Chip>
   );
 };
 
 const mapStateToProps = (state) => ({});
 
-const mapDispatchToProps = { tagPost };
+const mapDispatchToProps = {};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Tag);

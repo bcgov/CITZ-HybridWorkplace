@@ -20,13 +20,14 @@
  * @module
  */
 
+import tag from "../../components/tag";
 import { createSuccess, createError } from "./alertDuck";
 
 const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_COMMUNITIES";
 const ADD_POST = "CITZ-HYBRIDWORKPLACE/POST/ADD_COMMUNITY";
 const REMOVE_POST = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_POST";
 const ADD_TAG = "CITZ-HYBRIDWORKPLACE/POST/ADD_TAG";
-const REMOVE_TAG = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_TAG";
+const UNTAG = "CITZ-HYBRIDWORKPLACE/POST/UNTAG";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
@@ -51,7 +52,7 @@ export const getPosts = () => async (dispatch, getState) => {
     if (!response.ok)
       throw new Error(`${response.status} ${response.statusText}`);
 
-    const posts = await response.json();
+    let posts = await response.json();
 
     dispatch({
       type: GET_POSTS,
@@ -200,6 +201,37 @@ export const tagPost = (postId, tag) => async (dispatch, getState) => {
   }
 };
 
+export const unTagPost = (postId, tag) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    if (tag === "") throw new Error("Error: Invalid Input");
+    const authState = getState().auth;
+    const token = authState.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await fetch(
+      `${apiURI}/api/post/tags/${postId}?tag=${tag}`,
+      {
+        method: "DELETE",
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!response.ok)
+      throw new Error(`${response.status} ${response.statusText}`);
+
+    createSuccess(`Successfully Untagged Post`)(dispatch);
+  } catch (err) {
+    console.error(err);
+    successful = false;
+    createError("Unexpected error occurred")(dispatch);
+  } finally {
+    return successful;
+  }
+};
+
 const initialState = {
   items: [], //communitys
   item: {}, //single community
@@ -222,7 +254,10 @@ export function postReducer(state = initialState, action) {
         ...state,
         items: state.items.filter((item) => item._id !== action.payload),
       };
+    //TODO: Implement redux functionality for tagging state
     case ADD_TAG:
+      return {};
+    case UNTAG:
       return {};
     default:
       return state;

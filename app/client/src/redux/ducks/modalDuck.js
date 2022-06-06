@@ -20,8 +20,6 @@
  * @module
  */
 
-import { createSuccess, createError } from "./alertDuck";
-
 const OPEN_DELETE_POST_MODAL =
   "CITZ-HYBRIDWORKPLACE/DELETE/OPEN_DELETE_POST_MODAL";
 const CLOSE_DELETE_POST_MODAL =

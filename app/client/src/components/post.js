@@ -9,7 +9,6 @@ import {
   Menu,
   MenuItem,
   MenuList,
-  Paper,
   Typography,
 } from "@mui/material";
 import FlagTwoToneIcon from "@mui/icons-material/FlagTwoTone";
@@ -42,7 +41,7 @@ const Post = (props) => {
 
   return (
     <div key={post._id}>
-      <Paper
+      <Card
         sx={{
           px: 1,
           py: 0,
@@ -51,45 +50,43 @@ const Post = (props) => {
         variant="outlined"
         square
       >
-        <Card>
-          <CardHeader
-            action={
-              <>
-                <IconButton aria-label="settings" onClick={handleMenuOpen}>
-                  <MoreVertIcon />
-                </IconButton>
-                <Menu
-                  open={!!anchorEl}
-                  onClose={handleMenuClose}
-                  anchorEl={anchorEl}
-                >
-                  <MenuList>
-                    <MenuItem onClick={handleFlagPostClick}>
-                      <ListItemIcon>
-                        <FlagTwoToneIcon fontSize="small" />
-                      </ListItemIcon>
-                      <ListItemText>Flag</ListItemText>
-                    </MenuItem>
-                    <MenuItem onClick={handleDeletePostClick}>
-                      <ListItemIcon>
-                        <DeleteForeverTwoToneIcon fontSize="small" />
-                      </ListItemIcon>
-                      <ListItemText>Delete</ListItemText>
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
-              </>
-            }
-            title={<Typography variant="h4">{post.title}</Typography>}
-          />
-          <CardContent>
-            <Typography variant="body1">{post.message}</Typography>
-          </CardContent>
-          <CardActions>
-            <TagsList post={post} />
-          </CardActions>
-        </Card>
-      </Paper>
+        <CardHeader
+          action={
+            <>
+              <IconButton aria-label="settings" onClick={handleMenuOpen}>
+                <MoreVertIcon />
+              </IconButton>
+              <Menu
+                open={!!anchorEl}
+                onClose={handleMenuClose}
+                anchorEl={anchorEl}
+              >
+                <MenuList>
+                  <MenuItem onClick={handleFlagPostClick}>
+                    <ListItemIcon>
+                      <FlagTwoToneIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Flag</ListItemText>
+                  </MenuItem>
+                  <MenuItem onClick={handleDeletePostClick}>
+                    <ListItemIcon>
+                      <DeleteForeverTwoToneIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Delete</ListItemText>
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            </>
+          }
+          title={<Typography variant="h4">{post.title}</Typography>}
+        />
+        <CardContent>
+          <Typography variant="body1">{post.message}</Typography>
+        </CardContent>
+        <CardActions>
+          <TagsList post={post} />
+        </CardActions>
+      </Card>
     </div>
   );
 };
