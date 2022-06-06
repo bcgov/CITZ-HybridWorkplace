@@ -91,13 +91,14 @@ router.post("/", async (req, res) => {
       { username: req.body.username },
       {
         $push: {
-          communities: "Welcome",
+          communities: { community: "Welcome", engagement: 0 },
         },
       }
     );
 
     return res.status(201).send("Registered.");
   } catch (err) {
+    console.log(err);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

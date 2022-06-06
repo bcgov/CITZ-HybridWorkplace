@@ -71,7 +71,12 @@ router.post("/", async (req, res) => {
     if (!user) return res.status(404).send("User not found.");
     if (!post) return res.status(404).send("Post not found.");
 
-    if (!user.communities.includes(post.community))
+    if (
+      !(await User.exists({
+        _id: user.id,
+        "communities.community": post.community,
+      }))
+    )
       return res
         .status(403)
         .send("Must be a part of community to comment in community.");
@@ -86,6 +91,20 @@ router.post("/", async (req, res) => {
       community: post.community,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
+
+    // Update user engagement
+    await User.updateOne(
+      {
+        _id: user.id,
+        communities: { $elemMatch: { community: post.community } },
+      },
+      {
+        $inc: {
+          "communities.$.engagement":
+            process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT,
+        },
+      }
+    ).exec();
 
     return res.status(201).json(comment);
   } catch (err) {
@@ -332,6 +351,20 @@ router.delete("/:id", async (req, res) => {
 
     // Remove comment
     await Comment.deleteOne({ _id: comment.id }).exec();
+
+    // Update user engagement
+    await User.updateOne(
+      {
+        _id: user.id,
+        communities: { $elemMatch: { community: comment.community } },
+      },
+      {
+        $inc: {
+          "communities.$.engagement":
+            -process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT,
+        },
+      }
+    ).exec();
 
     return res.status(204).send("Comment removed.");
   } catch (err) {

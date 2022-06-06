@@ -53,6 +53,10 @@ services:
       dockerfile: ./app/server/Dockerfile
       args:
         env: ${ENV_FILE:-.env-template}
+    environment:
+      - COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMUNITY=${COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMUNITY:-0}
+      - COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_POST=${COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_POST:-5}
+      - COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT=${COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT:-1}
     networks:
       - hwp-network
     ports:

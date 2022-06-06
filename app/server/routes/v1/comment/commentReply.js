@@ -118,7 +118,12 @@ router.post("/:id", async (req, res) => {
     if (!!comment.replyTo)
       return res.status(403).send("Not allowed to reply to a reply.");
 
-    if (!user.communities.includes(comment.community))
+    if (
+      !(await User.exists({
+        _id: user.id,
+        "communities.community": comment.community,
+      }))
+    )
       return res
         .status(403)
         .send("Must be a part of community to comment in community.");

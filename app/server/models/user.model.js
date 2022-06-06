@@ -65,7 +65,13 @@
  *          type: array
  *          description: Communities User has joined.
  *          items:
- *            - $ref: '#/components/schemas/Community/properties/title'
+ *            type: object
+ *            properties:
+ *              community:
+ *                $ref: '#/components/schemas/Community/properties/title'
+ *              engagement:
+ *                type: number
+ *                description: Engagement in the community based on posts, comments, votes.
  *      required:
  *        - username
  *        - email
@@ -86,7 +92,7 @@ const User = new mongoose.Schema(
     title: { type: String },
     bio: { type: String },
     registeredOn: { type: String, required: true },
-    communities: [{ type: String }],
+    communities: [{ community: String, engagement: Number }],
   },
   { collection: "user" }
 );
