@@ -86,6 +86,7 @@ router.post("/", async (req, res) => {
       creator: user.username,
       members: [user.id],
       rules: req.body.rules,
+      tags: req.body.tags,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
 
