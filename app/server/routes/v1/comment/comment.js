@@ -65,7 +65,7 @@ const User = require("../../../models/user.model");
 // Create comment
 router.post("/", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const post = await Post.findOne({ _id: req.body.post });
 
     if (!user) return res.status(404).send("User not found.");
@@ -89,6 +89,8 @@ router.post("/", async (req, res) => {
       creator: user.id,
       post: post.id,
       community: post.community,
+      "upvotes.count": 0,
+      "downvotes.count": 0,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
 
@@ -121,7 +123,7 @@ router.post("/", async (req, res) => {
  *        - bearerAuth: []
  *      tags:
  *        - Comment
- *      summary: Get all comments from post id.
+ *      summary: Get all comments from post id, excluding replies.
  *      parameters:
  *        - in: path
  *          required: true
@@ -143,23 +145,32 @@ router.post("/", async (req, res) => {
  *          description: Bad Request.
  */
 
-// Get all comments from post id
+// Get all comments from post id, excluding replies
 router.get("/post/:id", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const post = await Post.findOne({ _id: req.params.id });
 
     if (!user) return res.status(404).send("User not found.");
     if (!post) return res.status(404).send("Post not found.");
 
-    const comments = await Comment.find({ post: post.id }, "", {
-      sort: { _id: -1 },
-    }).exec();
+    const comments = await Comment.aggregate([
+      { $match: { post: post.id, replyTo: null } },
+      {
+        $addFields: {
+          votes: {
+            $ifNull: [{ $subtract: ["$upvotes.count", "$downvotes.count"] }, 0],
+          },
+        },
+      },
+      { $sort: { votes: -1, _id: 1 } },
+    ]).exec();
 
     if (!comments) return res.status(404).send("Comments not found.");
 
     return res.status(200).json(comments);
   } catch (err) {
+    console.log(err);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -244,7 +255,7 @@ router.get("/:id", async (req, res) => {
 // Edit comment by id
 router.patch("/:id", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const comment = await Comment.findOne({ _id: req.params.id }).exec();
 
     if (!user) return res.status(404).send("User not found.");
@@ -267,7 +278,9 @@ router.patch("/:id", async (req, res) => {
         key === "community" ||
         key === "createdOn" ||
         key === "edits" ||
-        key === "replyTo"
+        key === "replyTo" ||
+        key === "upvotes" ||
+        key === "downvotes"
       ) {
         return res.status(403).send("Can only edit the message of a comment.");
       }
@@ -334,7 +347,7 @@ router.patch("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     // TODO: MODERATORS CAN DELETE COMMENT TOO
-    const user = await User.findOne({ name: req.user.name });
+    const user = await User.findOne({ username: req.user.username });
     const comment = await Comment.findOne({ _id: req.params.id }).exec();
 
     if (!user) return res.status(404).send("User not found.");
@@ -351,6 +364,16 @@ router.delete("/:id", async (req, res) => {
 
     // Remove comment
     await Comment.deleteOne({ _id: comment.id }).exec();
+
+    // If replyTo comment has no more replies
+    if (
+      comment.replyTo &&
+      !(await Comment.exists({ replyTo: comment.replyTo }))
+    )
+      await Comment.updateOne(
+        { _id: comment.replyTo },
+        { hasReplies: false }
+      ).exec();
 
     // Update user engagement
     await User.updateOne(

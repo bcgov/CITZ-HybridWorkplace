@@ -33,7 +33,7 @@ const User = require("../../../models/user.model");
  *      security:
  *        - bearerAuth: []
  *      tags:
- *        - Comment Reply
+ *        - Comment Replies
  *      summary: Get all replies to comment with id.
  *      parameters:
  *        - in: path
@@ -59,7 +59,17 @@ router.get("/:id", async (req, res) => {
     const comment = await Comment.findOne({ _id: req.params.id });
     if (!comment) return res.status(404).send("Comment not found.");
 
-    const replies = await Comment.find({ replyTo: comment.id });
+    const replies = await Comment.aggregate([
+      { $match: { replyTo: comment.id } },
+      {
+        $addFields: {
+          votes: {
+            $ifNull: [{ $subtract: ["$upvotes.count", "$downvotes.count"] }, 0],
+          },
+        },
+      },
+      { $sort: { votes: -1, _id: 1 } },
+    ]).exec();
 
     return res.status(200).json(replies);
   } catch (err) {
@@ -75,7 +85,7 @@ router.get("/:id", async (req, res) => {
  *      security:
  *        - bearerAuth: []
  *      tags:
- *        - Comment Reply
+ *        - Comment Replies
  *      summary: Reply to comment with id.
  *      parameters:
  *        - in: path
@@ -130,6 +140,8 @@ router.post("/:id", async (req, res) => {
 
     if (!req.body.message || req.body.message === "")
       return res.status(403).send("Missing message in body of the request.");
+
+    await Comment.updateOne({ _id: comment.id }, { hasReplies: true }).exec();
 
     // Create reply
     const reply = await Comment.create({
