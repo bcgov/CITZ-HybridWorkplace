@@ -112,6 +112,12 @@ objects:
                     secretKeyRef:
                       name: url-values
                       key: FRONTEND_REF
+                - name: COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMUNITY
+                  value: '0'
+                - name: COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_POST
+                  value: '5'
+                - name: COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT
+                  value: '1'
               resources: {}
               terminationMessagePath: /dev/termination-log
               terminationMessagePolicy: File
