@@ -161,11 +161,12 @@ router.get("/", async (req, res) => {
     if (!user) return res.status(404).send("User not found.");
 
     // If post belongs to community listed in user.communities
-    const posts = await Post.find(
-      { community: { $in: user.communities } },
-      "",
-      { sort: { pinned: -1, _id: -1 } }
-    ).exec();
+    const communities = user.communities.map(
+      (community) => community.community
+    );
+    const posts = await Post.find({ community: { $in: communities } }, "", {
+      sort: { pinned: -1, _id: -1 },
+    }).exec();
 
     if (!posts) return res.status(404).send("Posts not found.");
 

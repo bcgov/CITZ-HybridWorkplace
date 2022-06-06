@@ -49,7 +49,7 @@ const User = require("../../../models/user.model");
  *        '404':
  *          description: User not found. **||** <br>Comment not found. **||** <br>Vote not found in query.
  *        '403':
- *          description: Missing message in body of the request. **||** <br>Must be a part of community to post in community.
+ *          description: Missing message in body of the request. **||** <br>Must be a part of community to vote.
  *        '204':
  *          description: Success.
  *        '400':
@@ -67,7 +67,12 @@ router.patch("/:id", async (req, res) => {
     if (!req.query.vote)
       return res.status(404).send("Vote not found in query.");
 
-    if (!user.communities.includes(comment.community))
+    if (
+      !(await User.exists({
+        _id: user.id,
+        "communities.community": comment.community,
+      }))
+    )
       return res.status(403).send("Must be a part of community to vote.");
 
     let query;
