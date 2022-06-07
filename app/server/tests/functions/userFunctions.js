@@ -8,15 +8,14 @@ function getUser(token){
         .set('Authorization', `bearer ${ token }`);
 }
 
-function editUserByFields(token, email, first_name, last_name, bio, title, quote){
+function editUserByFields(token, email, firstName, lastName, bio, title){
     let body = {};
 
     if (email) body.email = email;
-    if (first_name) body.first_name = first_name;
-    if (last_name) body.last_name = last_name;
+    if (firstName) body.firstName = firstName;
+    if (lastName) body.lastName = lastName;
     if (bio) body.bio = bio;
     if (title) body.title = title;
-    if (quote) body.quote = quote;
 
     return request.patch('/user')
         .set('accept', 'application/json')
@@ -33,14 +32,14 @@ function editUserByObject(token, body){
         .send(body);
 }
 
-function getUserByName(token, name){
-    return request.get(`/user/${ name }`)
+function getUserByName(token, username){
+    return request.get(`/user/${ username }`)
         .set('accept', 'application/json')
         .set('Authorization', `bearer ${ token }`);
 }
 
-function deleteUserByName(token, name){
-    return request.delete(`/user/${ name }`)
+function deleteUserByName(token, username){
+    return request.delete(`/user/${ username }`)
         .set('accept', '*/*')
         .set('Authorization', `bearer ${ token }`);
 }

@@ -13,7 +13,7 @@ class AuthFunctions{
     async register(name, email, password) {
         let registerResponse = await request.post('/register')
                                     .send({
-                                        "name": name,
+                                        "username": name,
                                         "email": email,
                                         "password": password
                                     });
@@ -41,7 +41,7 @@ class AuthFunctions{
             .set('accept', 'application/json')
             .set('Content-Type', 'application/json')
             .send({
-                "name": name,
+                "username": name,
                 "password": password
             });
         return loginResponse;
@@ -55,7 +55,7 @@ class AuthFunctions{
             .set('Credentials', 'Include')
             .set('Cookie', 'samesite=lax; path=./')
             .send({
-                "name": name,
+                "username": name,
                 "password": password
             });
         return loginResponse;
