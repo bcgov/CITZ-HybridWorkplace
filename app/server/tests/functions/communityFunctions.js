@@ -46,6 +46,7 @@ function leaveCommunity(title, token){
         .set({authorization: `Bearer ${token}`})
 }
 
+// Community rules functions
 function setRulesForCommunity(title,rules,token){
     return request
         .put(`/community/rules/${title}`)
@@ -59,6 +60,7 @@ function getRulesForCommunity(title, token){
         .set({authorization: `Bearer ${token}`})
 }
 
+// Community tag functions
 function getTagsForCommunity(title, token){
     return request
         .get(`/community/tags/${title}`)
@@ -69,7 +71,7 @@ function setTagsForCommunity(title, tag, token){
     return request
         .post(`/community/tags/${title}`)
         .set({authorization: `Bearer ${token}`})
-        .send({'tag': tag});
+        .query(`tag=${ tag }`);
 }
 
 function deleteTagsForCommunity(title, tag, token){
