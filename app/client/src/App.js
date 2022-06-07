@@ -22,7 +22,7 @@
 
 import "./App.css";
 
-import Routes from "./routes";
+import Routes from "./Routes";
 import Container from "@mui/material/Container";
 
 import { Provider } from "react-redux";
