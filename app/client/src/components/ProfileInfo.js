@@ -25,7 +25,7 @@ import { connect } from "react-redux";
 import { getProfile } from "../redux/ducks/profileDuck";
 import PropTypes from "prop-types";
 
-const Profile = (props) => {
+const ProfileInfo = (props) => {
   useEffect(() => {
     props.getProfile(props.username);
   });
@@ -42,7 +42,7 @@ const Profile = (props) => {
   );
 };
 
-Profile.propTypes = {
+ProfileInfo.propTypes = {
   getProfile: PropTypes.func.isRequired,
   profile: PropTypes.array.isRequired,
 };
@@ -55,4 +55,4 @@ const mapActionsToProps = {
   getProfile,
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(Profile);
+export default connect(mapStateToProps, mapActionsToProps)(ProfileInfo);

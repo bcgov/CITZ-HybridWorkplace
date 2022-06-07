@@ -27,7 +27,7 @@ import PropTypes from "prop-types";
 import Paper from "@mui/material/Paper";
 
 import { getCommunities } from "../redux/ducks/communityDuck";
-import JoinButton from "./joinButton";
+import JoinButton from "./JoinButton";
 
 const CommunitiesList = (props) => {
   useEffect(() => {

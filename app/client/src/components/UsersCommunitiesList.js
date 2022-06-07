@@ -33,7 +33,7 @@ import {
   leaveCommunity,
   joinCommunity,
 } from "../redux/ducks/communityDuck";
-import JoinButton from "./joinButton";
+import JoinButton from "./JoinButton";
 
 const UsersCommunitiesList = (props) => {
   useEffect(() => {
