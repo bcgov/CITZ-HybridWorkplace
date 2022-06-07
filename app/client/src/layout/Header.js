@@ -23,7 +23,7 @@
 import React from "react";
 import "./header.css";
 import BCLogo from "./icons/BCLogo.svg";
-import SideMenu from "./sideMenu";
+import SideMenu from "./SideMenu";
 import { connect } from "react-redux";
 
 // props: {darkMode, setDarkMode}
