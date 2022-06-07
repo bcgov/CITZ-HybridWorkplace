@@ -52,10 +52,8 @@ const User = require("../../models/user.model");
  *                password:
  *                  $ref: '#/components/schemas/User/properties/password'
  *      responses:
- *        '404':
- *          description: User not found.
- *        '403':
- *          description: Community already exists.
+ *        '401':
+ *          description: Invalid username or password.
  *        '201':
  *          description: Successfully logged in.
  *          content:
@@ -80,7 +78,7 @@ router.post("/", async (req, res) => {
       username: req.body.username,
     });
 
-    if (!user) return res.status(404).send("User not found.");
+    if (!user) throw new ResponseError(401, "Invalid username or password.");
 
     const isPasswordValid = await bcrypt.compare(
       req.body.password,
@@ -110,7 +108,7 @@ router.post("/", async (req, res) => {
       // Send JWT
       return res.status(201).json({ token });
     }
-    return res.status(400).send("Bad Request");
+    throw new ResponseError(401, "Invalid username or password.");
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);

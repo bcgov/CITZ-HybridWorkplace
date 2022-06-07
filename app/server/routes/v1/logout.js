@@ -40,33 +40,32 @@ const User = require("../../models/user.model");
  *      summary: Log out of account.
  *      responses:
  *        '404':
- *          description: Missing Cookie or missing User.
+ *          description: Cookie not found **||** <br>User not found.
  *        '403':
- *          description: Invalid token
+ *          description: Invalid token.
  *        '204':
  *          description: Successfully logged out.
  *        '400':
  *          description: Bad Request.
  */
 
-// TODO: ON CLIENT delete token on logout
 router.get("/", async (req, res) => {
   try {
     // Get refresh token from cookies
     if (!(req.cookies && req.cookies.jwt))
-      return res.status(404).send("Missing cookie.");
+      throw new ResponseError(404, "Cookie not found.");
     const refreshToken = req.cookies.jwt;
 
     // Verify token
     let tokenUser;
 
     jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
-      if (err) return res.status(403).send("Invalid token.");
+      if (err) throw new ResponseError(403, "Invalid token.");
       tokenUser = user;
     });
 
     const user = await User.findOne({ username: tokenUser.username });
-    if (!user) return res.status(404).send("User not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
 
     // Compare refreshToken to user.refresh_token from db
     const isRefreshTokenValid = await bcrypt.compare(
@@ -74,11 +73,11 @@ router.get("/", async (req, res) => {
       user.refreshToken
     );
 
-    if (!isRefreshTokenValid) return res.status(403).send("Invalid token.");
+    if (!isRefreshTokenValid) throw new ResponseError(403, "Invalid token.");
 
     await User.updateOne({ username: user.username }, { refreshToken: "" });
     res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "None" });
-    res.status(204).send("");
+    res.status(204).send("Success. No content to return.");
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);

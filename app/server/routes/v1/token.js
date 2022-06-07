@@ -41,7 +41,7 @@ const User = require("../../models/user.model");
  *      summary: Use refresh token to retreive a new access token.
  *      responses:
  *        '404':
- *          description: User not found.
+ *          description: Cookie not found. **||** <br>User not found.
  *        '401':
  *          description: Unauthorized (missing cookie).
  *        '403':
@@ -64,7 +64,7 @@ router.get("/", async (req, res) => {
   try {
     // Get refresh token from cookies
     if (!(req.cookies && req.cookies.jwt))
-      return res.status(401).send("Missing cookie.");
+      throw new ResponseError(404, "Cookie not found.");
     const refreshToken = req.cookies.jwt;
 
     let username;
@@ -74,13 +74,13 @@ router.get("/", async (req, res) => {
       refreshToken,
       process.env.JWT_REFRESH_SECRET,
       (err, tokenUser) => {
-        if (err) return res.status(403).send("Invalid token.");
+        if (err) throw new ResponseError(403, "Invalid token.");
         username = tokenUser.username;
       }
     );
 
     const user = await User.findOne({ username });
-    if (!user) return res.status(404).send("User not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
 
     // Compare refreshToken to user.refresh_token from db
     const isRefreshTokenValid = await bcrypt.compare(
@@ -88,7 +88,7 @@ router.get("/", async (req, res) => {
       user.refreshToken
     );
 
-    if (!isRefreshTokenValid) return res.status(403).send("Invalid token.");
+    if (!isRefreshTokenValid) throw new ResponseError(403, "Invalid token.");
 
     const token = generateToken(user);
     return res.status(200).json({ token });
