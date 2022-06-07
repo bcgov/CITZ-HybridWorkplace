@@ -6,6 +6,8 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const routesVersioning = require("express-routes-versioning")();
 const rateLimit = require("express-rate-limit");
+const authenticateToken = require("./middleware/authenticateToken");
+const sanitizeInputs = require("./middleware/sanitizeInputs");
 
 const swaggerUI = require("swagger-ui-express");
 const swaggerConf = require("./swagger-conf");
@@ -32,8 +34,6 @@ const loginRouterV1 = require("./routes/v1/login");
 const logoutRouterV1 = require("./routes/v1/logout");
 const healthCheckRouterV1 = require("./routes/v1/healthCheck");
 const tokenRouterV1 = require("./routes/v1/token");
-
-const authenticateToken = require("./middleware/authenticateToken");
 
 const app = express();
 
@@ -66,6 +66,7 @@ app.use(
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   })
 );
+app.use(sanitizeInputs);
 
 // Routing
 app.get("/", (req, res) => res.send("Node.js Server is live!"));
