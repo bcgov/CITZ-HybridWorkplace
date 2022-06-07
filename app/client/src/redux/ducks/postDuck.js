@@ -267,7 +267,6 @@ export function postReducer(state = initialState, action) {
         ...state,
         items: state.items.filter((item) => item._id !== action.payload),
       };
-    //TODO: Implement redux functionality for tagging state
     case TAG_POST:
       return {
         ...state,
