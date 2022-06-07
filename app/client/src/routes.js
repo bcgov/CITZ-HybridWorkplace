@@ -24,7 +24,7 @@ import "./App.css";
 import React, { Component } from "react";
 import { Routes, Route } from "react-router-dom";
 
-import PrivateComponent from "./components/privateComponent";
+import PrivateComponent from "./components/PrivateComponent";
 
 // Views
 import LoginPage from "./views/LoginPage";
