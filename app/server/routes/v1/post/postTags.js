@@ -60,7 +60,7 @@ router.get("/:id", async (req, res) => {
   try {
     const post = await Post.findOne({ _id: req.params.id }).exec();
 
-    if (!post) return res.status(404).send("Post not found.");
+    if (!post) throw new ResponseError(404, "Post not found.");
 
     return res.status(200).json(post.tags);
   } catch (err) {
@@ -108,9 +108,9 @@ router.post("/:id", async (req, res) => {
     const user = await User.findOne({ username: req.user.username });
     const post = await Post.findOne({ _id: req.params.id }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!post) return res.status(404).send("Post not found.");
-    if (!req.query.tag) return res.status(404).send("Tag not found in query.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!post) throw new ResponseError(404, "Post not found.");
+    if (!req.query.tag) throw new ResponseError(404, "Tag not found in query.");
 
     // Check community has tag
     if (
@@ -119,7 +119,7 @@ router.post("/:id", async (req, res) => {
         "tags.tag": req.query.tag,
       }))
     )
-      return res.status(403).send("Tag must be used by community.");
+      throw new ResponseError(403, "Tag must be used by community.");
 
     // Check duplicate tag
     if (
@@ -128,7 +128,7 @@ router.post("/:id", async (req, res) => {
         "tags.taggedBy": user.id,
       })
     )
-      return res.status(403).send("Limit 1 tag per user, per post.");
+      throw new ResponseError(403, "Limit 1 tag per post, per user.");
 
     // If tag isn't set on post
     if (
@@ -159,7 +159,7 @@ router.post("/:id", async (req, res) => {
       { $inc: { "tags.$.count": 1 } }
     );
 
-    return res.status(204).send("");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
@@ -201,8 +201,8 @@ router.delete("/:id", async (req, res) => {
     const user = await User.findOne({ username: req.user.username });
     const post = await Post.findOne({ _id: req.params.id }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!post) return res.status(404).send("Post not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!post) throw new ResponseError(404, "Post not found.");
 
     // Check user has tagged post
     if (
@@ -211,7 +211,7 @@ router.delete("/:id", async (req, res) => {
         "tags.taggedBy": user.id,
       }))
     )
-      return res.status(403).send("User has not tagged post.");
+      throw new ResponseError(403, "User has not tagged post.");
 
     const selectedTag = await Post.findOne(
       { _id: post.id },
@@ -247,7 +247,7 @@ router.delete("/:id", async (req, res) => {
       { $inc: { "tags.$.count": -1 } }
     );
 
-    return res.status(204).send("");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);

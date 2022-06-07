@@ -61,7 +61,7 @@ router.get("/:id", async (req, res) => {
       _id: req.params.id,
     }).exec();
 
-    if (!post) return res.status(404).send("Post not found.");
+    if (!post) throw new ResponseError(404, "Post not found.");
 
     return res.status(200).json(post.flags);
   } catch (err) {
@@ -111,8 +111,8 @@ router.post("/:id", async (req, res) => {
       _id: req.params.id,
     }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!post) return res.status(404).send("Post not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!post) throw new ResponseError(404, "Post not found.");
 
     // TODO: Set flags in an options collection, that can be edited by admins
     const flags = [
@@ -125,11 +125,10 @@ router.post("/:id", async (req, res) => {
     ];
 
     if (!flags.includes(req.query.flag))
-      return res
-        .status(403)
-        .send(
-          "Invalid flag. Use one of [Inappropriate, Hate, Harassment or Bullying, Spam, Misinformation, Against Community Rules]"
-        );
+      throw new ResponseError(
+        403,
+        "Invalid flag. Use one of [Inappropriate, Hate, Harassment or Bullying, Spam, Misinformation, Against Community Rules]"
+      );
 
     // If flag isn't set on post
     if (
@@ -154,7 +153,7 @@ router.post("/:id", async (req, res) => {
       );
     }
 
-    return res.status(204).send("");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
@@ -202,10 +201,10 @@ router.delete("/:id", async (req, res) => {
       _id: req.params.id,
     }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!post) return res.status(404).send("Post not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!post) throw new ResponseError(404, "Post not found.");
     if (!req.query.flag)
-      return res.status(404).send("Flag not found in query.");
+      throw new ResponseError(404, "Flag not found in query.");
 
     // Check user has flagged post
     if (
@@ -215,9 +214,10 @@ router.delete("/:id", async (req, res) => {
         "flags.flaggedBy": user.id,
       }))
     )
-      return res
-        .status(403)
-        .send("User has not flagged post with specified flag.");
+      throw new ResponseError(
+        403,
+        `User has not flagged post with ${req.query.flag}.`
+      );
 
     // Remove user from flaggedBy
     await Post.updateOne(
@@ -228,7 +228,7 @@ router.delete("/:id", async (req, res) => {
       { $pull: { "flags.$.flaggedBy": user.id } }
     );
 
-    return res.sendStatus(204);
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
