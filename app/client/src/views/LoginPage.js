@@ -26,7 +26,7 @@ import { connect } from "react-redux";
 import { login } from "../redux/ducks/authDuck";
 import "../views/Styles/login.css";
 
-function App(props) {
+function LoginPage(props) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -83,4 +83,4 @@ function App(props) {
   );
 }
 
-export default connect(null, { login })(App);
+export default connect(null, { login })(LoginPage);

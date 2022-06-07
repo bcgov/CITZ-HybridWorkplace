@@ -32,10 +32,10 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 
-import Communities from "../components/usersCommunitiesList";
-import ProfileInfo from "../components/profileInfo";
+import UsersCommunitiesList from "../components/UsersCommunitiesList";
+import ProfileInfo from "../components/ProfileInfo";
 
-const Profile = () => {
+const ProfilePage = () => {
   /*
     const navigate = useNavigate();
 
@@ -112,11 +112,11 @@ const Profile = () => {
               My Communities
             </Typography>
           </Box>
-          <Communities />
+          <UsersCommunitiesList />
         </Grid>
       </Grid>
     </Box>
   );
 };
 
-export default Profile;
+export default ProfilePage;

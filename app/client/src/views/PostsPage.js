@@ -22,8 +22,8 @@
 
 import React, { useState } from "react";
 
-import PostsList from "../components/postsList";
-import PostModal from "../components/modals/addPostModal";
+import PostsList from "../components/PostsList";
+import AddPostModal from "../components/modals/AddPostModal";
 
 const PostsPage = () => {
   const [show, setShow] = useState(false);
@@ -34,7 +34,7 @@ const PostsPage = () => {
       <PostsList />
       <br />
       <button onClick={() => setShow(true)}>Add Post</button>
-      <PostModal onClose={() => setShow(false)} show={show} />
+      <AddPostModal onClose={() => setShow(false)} show={show} />
     </div>
   );
 };

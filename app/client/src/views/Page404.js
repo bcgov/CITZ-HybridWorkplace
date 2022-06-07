@@ -2,7 +2,7 @@ import { Button, Grid, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 
-const NotFoundPage = () => {
+const Page404 = () => {
   const navigate = useNavigate();
   const redirect = () => {
     navigate("/login");
@@ -20,4 +20,4 @@ const NotFoundPage = () => {
   );
 };
 
-export default NotFoundPage;
+export default Page404;

@@ -22,8 +22,8 @@
 
 import { Button } from "@mui/material";
 import { useState } from "react";
-import Communities from "../components/communitiesList";
-import AddCommunity from "../components/modals/addCommunityModal";
+import Communities from "../components/CommunitiesList";
+import AddCommunity from "../components/modals/AddCommunityModal";
 
 const CommunitiesPage = () => {
   const [createCommunityOpen, setCreateCommunityOpen] = useState(false);

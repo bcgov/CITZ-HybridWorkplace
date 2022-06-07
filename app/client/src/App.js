@@ -34,7 +34,7 @@ import Header from "./layout/header";
 
 import Paper from "@mui/material/Paper";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import AlertList from "./components/alertList";
+import AlertList from "./components/AlertList";
 
 function App() {
   const theme = createTheme({
