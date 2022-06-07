@@ -24,10 +24,10 @@ require("dotenv").config();
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs"); // hashing
+const generateToken = require("../../functions/generateToken");
 
 const router = express.Router();
 
-const generateToken = require("../../middleware/generateToken");
 const User = require("../../models/user.model");
 
 /**

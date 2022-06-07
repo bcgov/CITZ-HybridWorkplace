@@ -26,8 +26,8 @@ const bcrypt = require("bcryptjs"); // hashing passwords
 
 const router = express.Router();
 
-const generateToken = require("../../middleware/generateToken");
-const generateRefreshToken = require("../../middleware/generateRefreshToken");
+const generateToken = require("../../functions/generateToken");
+const generateRefreshToken = require("../../functions/generateRefreshToken");
 
 const User = require("../../models/user.model");
 
