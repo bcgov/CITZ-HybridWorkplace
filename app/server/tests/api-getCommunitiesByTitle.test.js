@@ -1,38 +1,24 @@
 let community = require('./functions/communityFunctions.js');
 let { AuthFunctions } = require('./functions/authFunctions.js');
-
-let token = '';
 let user = new AuthFunctions();
+let token = '';
 
-const newCommunityTitle = "hello get";
-const newCommunityDescript = "world get";
-const newCommunityRules = "hello get";
-const newCommunityTags = "world get";
+const welComTitle = "Welcome";
+const welComDescript = "The Neighbourhood";
 
-const welcomeCommunityTitle = "Welcome";
-const welcomeCommunityDescript = "Test";
+const newComTitle = "hello";
+const newComDescript = "world";
+const newComRules = "1. rules";
+const newComTags = [{
+    "tag": "Informative",
+    "count": 1
+}];
 
-// Testing the get community by title function with the "Welcome" community without logging in
-describe('Get Community by Title - Without Login', () => {
-  let response = '';
-
-  beforeAll(async() => {
-    response = await community.getCommunitybyTitle(welcomeCommunityTitle, '');
-  });
-
-  test('API returns a unsuccessful response - code 401', () => {
-    expect(response.status).toBe(401);
-  });
-
-  test('API returns description - "Missing token."', () => {
-    expect(response.text).toBe("Missing token.");
-  });
-});
-
+const spaceCom = ' ';
 
 describe('Logging in the test user', () => {
   test('API returns a successful response - code 201', async () => {
-    let response = await user.login('test','Test123!');
+    let response = await user.login('test2','Tester123!');
     token = response.body.token;
     expect(response.status).toBe(201);
   });
@@ -44,7 +30,7 @@ describe('Get Community by Title - With Login, testing with "Welcome" community'
   let response = '';
 
   beforeAll(async() => {
-    response = await community.getCommunitybyTitle(welcomeCommunityTitle, token);
+    response = await community.getCommunitybyTitle(welComTitle, token);
   }); 
 
   test('API returns a successful response - code 200', () => {
@@ -52,47 +38,10 @@ describe('Get Community by Title - With Login, testing with "Welcome" community'
   });
 
   test('API returns the "Welcome" community description and title in its response body', () => {
-    expect('' + response.text + '').toContain(welcomeCommunityDescript);
-    expect('' + response.text + '').toContain(welcomeCommunityTitle);
+    expect('' + response.text + '').toContain(welComDescript);
+    expect('' + response.text + '').toContain(welComTitle);
   });
 });
-
-
-//Testing the get community function with the "Welcome" communityafter logging in, but without token
-describe('Get Community by Title - With Login, but without token, testing with "Welcome" community', () => {
-  let response = '';
-
-  beforeAll( async() => {
-    response = await community.getCommunitybyTitle(welcomeCommunityTitle, '');
-  });
-
-  test('API returns a unsuccessful response - code 401', () => {
-    expect(response.status).toBe(401);
-  });
-
-  test('API returns description - "Missing token."', () => {
-    expect(response.text).toBe("Missing token.");
-  });
-});
-
-
-// Testing the get community function with the "Welcome" community after logging in, but with wrong token
-describe('Get Community by Title - With Login, with invalid token, testing with "Welcome" community', () => {
-  let response = '';
-
-  beforeAll(async() => {
-    response = await community.getCommunitybyTitle(welcomeCommunityTitle, token + '11');
-  });
-
-  test('API returns a unsuccessful response - code 403', () => {
-    expect(response.status).toBe(403);
-  });
-
-  test('API returns description -  "Invalid token."',() => {
-    expect(response.text).toBe("Invalid token.");
-  });
-});
-
 
 //Testing the get community function with the "Welcome" community after logging in, but with null as the token
 describe('Get Community by Title - With Login, testing with null', () => {
@@ -113,8 +62,8 @@ describe('Get Community by Title - With Login, testing with null', () => {
 
 
 describe('Creating new Community', () => {
-  test('API returns a successful response - code 201',async() => {
-      response = await community.createCommunity(newCommunityTitle, newCommunityDescript, newCommunityRules, newCommunityTags, token);
+  test('API returns a successful response - code 201', async() => {
+      response = await community.createCommunity(newComTitle, newComDescript, newComRules, newComTags, token);
       expect(response.status).toBe(201);
   });
 });
@@ -125,7 +74,7 @@ describe('Get Community by Title - With Login, testing with new Community', () =
   let response = '';
 
   beforeAll(async() => {
-    response = await community.getCommunitybyTitle(newCommunityTitle, token);
+    response = await community.getCommunitybyTitle(newComTitle, token);
   });
 
   test('API returns a successful response - code 200', () => {
@@ -133,14 +82,14 @@ describe('Get Community by Title - With Login, testing with new Community', () =
   });
 
   test('API returns description -  includes new community Title',() => {
-    expect('' + response.text + '').toContain(newCommunityTitle);
+    expect('' + response.text + '').toContain(newComTitle);
   });
 });
 
 
 describe('Deleting new Community', () => {
   test('API returns a successful response - code 200', async() => {
-       response = await community.deleteCommunity(newCommunityTitle,token);
+       response = await community.deleteCommunity(newComTitle, token);
        expect(response.status).toBe(200);
   });
 });
@@ -151,11 +100,11 @@ describe('Get Community by Title - With Login, testing with new Community after 
   let response = '';
 
   beforeAll(async() => {
-    response = await community.getCommunitybyTitle(null,token);
+    response = await community.getCommunitybyTitle(newComTitle, token);
   });
 
   afterAll( async() => {
-    response = await community.deleteCommunity(newCommunityTitle, token);
+    response = await community.deleteCommunity(newComTitle, token);
   });
 
   test('API returns a unsuccessful response - code 404', () => {
@@ -164,5 +113,40 @@ describe('Get Community by Title - With Login, testing with new Community after 
 
   test('API returns description -  "Invalid token."',() => {
     expect(response.text).toBe("Community not found.");
+  });
+});
+
+
+
+describe('Creating new Community with " " as title', () => {
+  test('API returns a successful response - code 201',async() => {
+      response = await community.createCommunity(' ', newComDescript, newComRules, newComTags, token);
+      expect(response.status).toBe(201);
+  });
+});
+
+
+//Testing the get community function with the "Welcome" community after logging in, but with null as the token
+describe('Get Community by Title - With Login, testing with new " " Community', () => {
+  let response = '';
+
+  beforeAll(async() => {
+    response = await community.getCommunitybyTitle(" ", token);
+  });
+
+  test('API returns a successful response - code 200', () => {
+    expect(response.status).toBe(200);
+  });
+
+  test('API returns description -  includes new community Title',() => {
+    expect('' + response.text + '').toContain(' ');
+  });
+});
+
+
+describe('Deleting new Community', () => {
+  test('API returns a successful response - code 200', async() => {
+       response = await community.deleteCommunity(" ",token);
+       expect(response.status).toBe(200);
   });
 });

@@ -9,11 +9,15 @@ const welComRules = "string";
 
 const newComTitle = "hello";
 const newComDescript = "world";
-const newComyRules = "1. rules";
-const newComTags = ["tags"];
+const newComRules = "1. rules";
+const newComTags = [{
+    "tag": "Informative",
+    "count": 1
+}];
 
+const specialCom = '$@#*()#@*()$()&&&*@$@&';
 const linkCom = 'https://hwp-express-api-d63404-dev.apps.silver.devops.gov.bc.ca/api';
-const arrayCom = ["Welcome"];
+const arrayCom = ["Matt"];
 const arrayCom2 = ["Welcome", "to", "the"];
 const intCom = 1231;
 const boolCom = false;
@@ -41,7 +45,7 @@ const jsonCom = JSON.stringify({
 
 describe('Logging in the test user', () => {
   test('API returns a successful response - code 201', async () => {
-    let response = await user.login('test','Tester123!');
+    let response = await user.login('test2','Tester123!');
     token = response.body.token;
     expect(response.status).toBe(201);
   });
@@ -53,11 +57,7 @@ describe('Create Community - With login', () => {
 
   beforeAll(async() => {
     await community.deleteCommunity(newComTitle, token);
-    response = await community.createCommunity(newComTitle, newComDescript, newComRules, '', token);
-  });
-
-  afterAll(async() => {
-    response = await community.deleteCommunity(newComTitle, token);
+    response = await community.createCommunity(newComTitle, newComDescript, newComRules, newComTags, token);
   });
 
   test('API returns a successful response - code 201', () => {
@@ -89,50 +89,50 @@ describe('Create Community - With login, but community already exists', () => {
 
 describe('Create Communities by Title - After Login, with token, but title is an array(1 element)', () => {
   beforeAll( async() => {
-    response = await community.createCommunity(arrayCom, newComDescript, '1', '', token);
+    response = await community.createCommunity(arrayCom, newComDescript, newComRules, newComTags, token);
   });
 
   test('API returns a unsuccessful response - code 403', () => {
     expect(response.status).toBe(403);
   });
 
-  test('API returns description -  "Invalid token."', () => {
-    expect(response.text).toBe("Heelllooo.");
+  test('API returns description -  "Error."', () => {
+    expect(response.text).toBe("Error.");
   });
 });
 
 
 describe('Create Communities by Title - After Login, with token, but title is an array(3 elements)', () => {
   beforeAll( async() => {
-    response = await community.createCommunity(arrayCom2, newComDescript, '1', '', token);
+    response = await community.createCommunity(arrayCom2, newComDescript, newComRules, newComTags, token);
   });
 
   test('API returns a unsuccessful response - code 403', () => {
     expect(response.status).toBe(403);
   });
 
-  test('API returns description -  "Invalid token."', () => {
-    expect(response.text).toBe("Heelllooo.");
+  test('API returns description -  "Error."', () => {
+    expect(response.text).toBe("Error.");
   });
 });
 
 describe('Create Communities by Title - After Login, with token, but getting an integer', () => {
   beforeAll( async() => {
-    response = await community.createCommunity(intCom, newComDescript, '1', '', token);
+    response = await community.createCommunity(intCom, newComDescript, newComRules, newComTags, token);
   });
 
   test('API returns a unsuccessful response - code 403', () => {
-    expect(response.status).toBe(403);
+    expect(response.status).toBe(201);
   });
 
   test('API returns description -  "Invalid token."', () => {
-    expect(response.text).toBe("Heelllooo.");
+    expect(response.text).toContain("" + intCom + "");
   });
 });
 
 describe('Create Communities by Title - After Login, with token, but getting an boolean', () => {
   beforeAll( async() => {
-    response = await community.createCommunity(boolCom, newComDescript, '1', '', token);
+    response = await community.createCommunity(boolCom, newComDescript, newComRules, newComTags, token);
   });
 
   test('API returns a unsuccessful response - code 403', () => {
@@ -146,7 +146,7 @@ describe('Create Communities by Title - After Login, with token, but getting an 
 
 describe('Create Communities by Title - After Login, with token, but getting an object', () => {
   beforeAll( async() => {
-    response = await community.createCommunity(community, newComDescript, '1', '', token);
+    response = await community.createCommunity(community, newComDescript, newComRules, newComTags, token);
   });
 
   test('API returns a unsuccessful response - code 403', () => {
@@ -161,7 +161,7 @@ describe('Create Communities by Title - After Login, with token, but getting an 
 
 describe('Create Communities by Title - After Login, with token, but getting a json object', () => {
   beforeAll( async() => {
-    response = await community.createCommunity(jsonCom, newComDescript, '1', '', token);
+    response = await community.createCommunity(jsonCom, newComDescript, newComRules, newComTags, token);
   });
 
   test('API returns a unsuccessful response - code 403', () => {
@@ -176,7 +176,7 @@ describe('Create Communities by Title - After Login, with token, but getting a j
 
 describe('Create Communities by Title - After Login, with token, but getting a link', () => {
   beforeAll( async() => {
-    response = await community.createCommunity(linkCom, newComDescript, '1', '', token);
+    response = await community.createCommunity(linkCom, newComDescript, newComRules, newComTags, token);
   });
 
   test('API returns a unsuccessful response - code 403', () => {
@@ -207,6 +207,7 @@ describe('Deleting all createdCommunity', () => {
 
   test('API returns a successful response - code 200 (removes arrayCommunity)', async() => {
     response = await community.deleteCommunity(arrayCom, token);
+    expect(response.text).toBe("Heelllooo.");
     expect(response.status).toBe(200);
   });
 
