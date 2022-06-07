@@ -25,7 +25,7 @@ describe('Delete Communities - After Login', () => {
   let response = '';
   
   beforeAll( async() => {
-    response = await community.createCommunity(newComTitle, newComDescript, newComRules, newComTags, token);
+    await community.createCommunity(newComTitle, newComDescript, newComRules, newComTags, token);
     response = await community.deleteCommunity(newComTitle, token);
   });
 
@@ -51,7 +51,7 @@ describe('Get Community by Title - With Login, testing with new Community after 
     expect(response.status).toBe(404);
   });
 
-  test('API returns description -  "Invalid token."',() => {
+  test('API returns description -  "Community not found."',() => {
     expect(response.text).toBe("Community not found.");
   });
 });
@@ -69,7 +69,7 @@ describe('Delete Communities - After Login, community does not exist', () => {
     expect(response.status).toBe(404);
   });
 
-  test('API returns description - "Community removed."', () => {
+  test('API returns description - "Community not found."', () => {
     expect(response.text).toBe("Community not found.");
   });
 });

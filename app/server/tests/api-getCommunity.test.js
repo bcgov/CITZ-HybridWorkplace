@@ -30,7 +30,7 @@ describe('Get Communities - After Login', () => {
   });
 
   test('API returns the "Welcome" community description and title in its response body', () => {
-    expect(" " + response.text+ " ").toContain(welComDescript+ 2);
+    expect(" " + response.text+ " ").toContain(welComDescript);
     expect(" " + response.text + " ").toContain(welComTitle);
   });
 });

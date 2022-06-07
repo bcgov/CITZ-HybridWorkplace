@@ -18,7 +18,7 @@ function createCommunity(title, description, rules, tags, token) {
     return request
         .post('/community')
         .set({authorization: `Bearer ${token}`})
-        .send({'title': title, 'description': description, 'rules': rules, 'tags':tags});
+        .send({'title': title, 'description': description, 'rules': rules, 'tags': tags});
 } 
 
 function deleteCommunity(title, token) {
@@ -31,7 +31,8 @@ function patchCommunitybyTitle(title, newTitle, newDescription, newRules, newTag
     return request
         .patch(`/community/${title}`)
         .set({authorization: `Bearer ${token}`})
-        .send({'title': newTitle, 'description': newDescription, 'rules': newRules, 'tags': newTags});
+        .query({'tag': newTags})
+        .send({'title': newTitle, 'description': newDescription, 'rules': newRules});
 } 
 
 function joinCommunity(title, token) {
@@ -65,18 +66,18 @@ function getCommunityTags(title, token) {
         .set({authorization: `Bearer ${token}`})
 }
 
-function setCommunityTags(title, tag, token) {
+function setCommunityTags(title, tags, token) {
     return request
         .post(`/community/tags/${title}`)
         .set({authorization: `Bearer ${token}`})
-        .send({'tags': tag});
+        .query({'tag': tags});
 }
 
-function deleteCommunityTags(title, tag, token) {
+function deleteCommunityTags(title, tags, token) {
     return request
         .delete(`/community/tags/${title}`)
         .set({authorization: `Bearer ${token}`})
-        .send({'tags': tag});
+        .query({'tag': tags});
 }
 
 module.exports = {getCommunities, getCommunitybyTitle,createCommunity,deleteCommunity,

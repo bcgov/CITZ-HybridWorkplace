@@ -6,7 +6,7 @@ let token = '';
 const welComTitle = "Welcome";
 const welComDescript = "The Neighbourhood";
 
-const newComTitle = "hello";
+const newComTitle = "hello get Titles";
 const newComDescript = "world";
 const newComRules = "1. rules";
 const newComTags = [{
