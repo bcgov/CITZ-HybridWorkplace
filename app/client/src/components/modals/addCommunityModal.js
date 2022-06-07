@@ -21,9 +21,9 @@
  */
 
 import { Dialog, DialogContent, DialogTitle, Grid } from "@mui/material";
-import CreateCommunity from "../createCommunity";
+import CreateCommunity from "../CreateCommunity";
 
-const AddCommunity = (props) => {
+const AddCommunityModal = (props) => {
   return (
     <Dialog onClose={props.onClose} open={props.open} fullWidth="md">
       <DialogTitle>Create a Community</DialogTitle>
@@ -38,4 +38,4 @@ const AddCommunity = (props) => {
   );
 };
 
-export default AddCommunity;
+export default AddCommunityModal;

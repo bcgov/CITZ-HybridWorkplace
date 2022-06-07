@@ -34,7 +34,7 @@ import { closeDeletePostModal } from "../../redux/ducks/modalDuck";
 import { deletePost } from "../../redux/ducks/postDuck";
 import PropTypes from "prop-types";
 
-const DeletePost = (props) => {
+const DeletePostModal = (props) => {
   const handleDeletePost = async () => {
     const successful = await props.deletePost(props.post._id);
     if (successful === true) {
@@ -72,7 +72,7 @@ const DeletePost = (props) => {
   );
 };
 
-DeletePost.propTypes = {
+DeletePostModal.propTypes = {
   open: PropTypes.bool,
   closeDeletePostModal: PropTypes.func,
 };
@@ -87,4 +87,4 @@ const mapActionsToProps = {
   deletePost,
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(DeletePost);
+export default connect(mapStateToProps, mapActionsToProps)(DeletePostModal);
