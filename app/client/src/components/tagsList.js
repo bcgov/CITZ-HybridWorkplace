@@ -8,12 +8,7 @@ export const TagsList = (props) => {
     props.post.availableTags?.map((tag, index) => (
       <Tag
         name={tag}
-        clicked={
-          !!props.post.tags.find(
-            (element) =>
-              element.tag === tag && element.taggedBy[0] === props.auth.user.id
-          )
-        }
+        clicked={tag === props.post.userTag}
         postId={props.post._id}
         key={index}
         tagPost={props.tagPost}
