@@ -1,5 +1,4 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { connect } from "react-redux";
 import { createError } from "../redux/ducks/alertDuck";
