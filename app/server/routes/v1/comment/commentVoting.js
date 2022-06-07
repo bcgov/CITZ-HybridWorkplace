@@ -63,10 +63,10 @@ router.patch("/:id", async (req, res) => {
     const user = await User.findOne({ username: req.user.username });
     const comment = await Comment.findOne({ _id: req.params.id });
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!comment) return res.status(404).send("Comment not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!comment) throw new ResponseError(404, "Comment not found.");
     if (!req.query.vote)
-      return res.status(404).send("Vote not found in query.");
+      throw new ResponseError(404, "Vote not found in query.");
 
     if (
       !(await User.exists({
@@ -74,7 +74,7 @@ router.patch("/:id", async (req, res) => {
         "communities.community": comment.community,
       }))
     )
-      return res.status(403).send("Must be a part of community to vote.");
+      throw new ResponseError(403, "Must be a part of community to vote.");
 
     let query;
 
@@ -130,7 +130,10 @@ router.patch("/:id", async (req, res) => {
           };
           break;
         default:
-          break;
+          throw new ResponseError(
+            404,
+            "Vote not found or unrecognized query value."
+          );
       }
     }
 

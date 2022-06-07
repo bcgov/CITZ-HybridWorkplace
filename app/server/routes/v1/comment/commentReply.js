@@ -58,7 +58,7 @@ const User = require("../../../models/user.model");
 router.get("/:id", async (req, res) => {
   try {
     const comment = await Comment.findOne({ _id: req.params.id });
-    if (!comment) return res.status(404).send("Comment not found.");
+    if (!comment) throw new ResponseError(404, "Comment not found.");
 
     const replies = await Comment.aggregate([
       { $match: { replyTo: comment.id } },
@@ -125,11 +125,11 @@ router.post("/:id", async (req, res) => {
     const user = await User.findOne({ name: req.user.name });
     const comment = await Comment.findOne({ _id: req.params.id });
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!comment) return res.status(404).send("Comment not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!comment) throw new ResponseError(404, "Comment not found.");
 
     if (comment.replyTo)
-      return res.status(403).send("Not allowed to reply to a reply.");
+      throw new ResponseError(403, "Not allowed to reply to a reply.");
 
     if (
       !(await User.exists({
@@ -137,12 +137,13 @@ router.post("/:id", async (req, res) => {
         "communities.community": comment.community,
       }))
     )
-      return res
-        .status(403)
-        .send("Must be a part of community to comment in community.");
+      throw new ResponseError(
+        403,
+        "Must be a part of community to comment in community."
+      );
 
     if (!req.body.message || req.body.message === "")
-      return res.status(403).send("Missing message in body of the request.");
+      throw new ResponseError(403, "Missing message in body of the request.");
 
     await Comment.updateOne({ _id: comment.id }, { hasReplies: true }).exec();
 

@@ -69,8 +69,8 @@ router.post("/", async (req, res) => {
     const user = await User.findOne({ username: req.user.username });
     const post = await Post.findOne({ _id: req.body.post });
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!post) return res.status(404).send("Post not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!post) throw new ResponseError(404, "Post not found.");
 
     if (
       !(await User.exists({
@@ -78,12 +78,13 @@ router.post("/", async (req, res) => {
         "communities.community": post.community,
       }))
     )
-      return res
-        .status(403)
-        .send("Must be a part of community to comment in community.");
+      throw new ResponseError(
+        403,
+        "Must be a part of community to comment in community."
+      );
 
     if (!req.body.message || req.body.message === "")
-      return res.status(403).send("Missing message in body of the request.");
+      throw new ResponseError(403, "Missing message in body of the request.");
 
     const comment = await Comment.create({
       message: req.body.message,
@@ -154,8 +155,8 @@ router.get("/post/:id", async (req, res) => {
     const user = await User.findOne({ username: req.user.username });
     const post = await Post.findOne({ _id: req.params.id });
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!post) return res.status(404).send("Post not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!post) throw new ResponseError(404, "Post not found.");
 
     const comments = await Comment.aggregate([
       { $match: { post: post.id, replyTo: null } },
@@ -169,7 +170,7 @@ router.get("/post/:id", async (req, res) => {
       { $sort: { votes: -1, _id: 1 } },
     ]).exec();
 
-    if (!comments) return res.status(404).send("Comments not found.");
+    if (!comments) throw new ResponseError(404, "Comments not found.");
 
     return res.status(200).json(comments);
   } catch (err) {
@@ -213,7 +214,7 @@ router.get("/:id", async (req, res) => {
   try {
     const comment = await Comment.findOne({ _id: req.params.id }).exec();
 
-    if (!comment) return res.status(404).send("Comment not found.");
+    if (!comment) throw new ResponseError(404, "Comment not found.");
 
     return res.status(200).json(comment);
   } catch (err) {
@@ -264,14 +265,13 @@ router.patch("/:id", async (req, res) => {
     const user = await User.findOne({ username: req.user.username });
     const comment = await Comment.findOne({ _id: req.params.id }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!comment) return res.status(404).send("Comment not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!comment) throw new ResponseError(404, "Comment not found.");
 
     if (comment.creator !== user.id)
-      return res.status(403).send("Only creator of comment can edit comment.");
-
+      throw new ResponseError(403, "Only creator of comment can edit comment.");
     if (!req.body.message || req.body.message === "")
-      return res.status(403).send("Missing message in body of the request.");
+      throw new ResponseError(403, "Missing message in body of the request.");
 
     // eslint-disable-next-line prefer-const
     let query = { $set: {} };
@@ -288,7 +288,7 @@ router.patch("/:id", async (req, res) => {
         key === "upvotes" ||
         key === "downvotes"
       ) {
-        return res.status(403).send("Can only edit the message of a comment.");
+        throw new ResponseError(403, "Can only edit the message of a comment.");
       }
 
       if (comment[key] && comment[key] !== req.body[key]) {
@@ -357,13 +357,14 @@ router.delete("/:id", async (req, res) => {
     const user = await User.findOne({ username: req.user.username });
     const comment = await Comment.findOne({ _id: req.params.id }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!comment) return res.status(404).send("Comment not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!comment) throw new ResponseError(404, "Comment not found.");
 
     if (comment.creator !== user.id) {
-      return res
-        .status(403)
-        .send("Must be creator of comment to delete comment.");
+      throw new ResponseError(
+        403,
+        "Must be creator of comment to delete comment."
+      );
     }
 
     // Remove the replies to comment
