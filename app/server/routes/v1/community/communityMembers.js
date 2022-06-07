@@ -68,8 +68,8 @@ router.get("/:title", async (req, res) => {
     const user = await User.findOne({ username: req.user.username });
     const community = await Community.findOne({ title: req.params.title });
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
 
     if (req.query.count === "true")
       return res.status(200).json({ count: community.members.length || 0 });
@@ -115,8 +115,8 @@ router.patch("/join/:title", async (req, res) => {
       title: req.params.title,
     }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
 
     await Community.updateOne(
       { title: community.title },
@@ -132,7 +132,7 @@ router.patch("/join/:title", async (req, res) => {
       }
     );
 
-    return res.status(204).send("");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
@@ -173,8 +173,8 @@ router.delete("/leave/:title", async (req, res) => {
       title: req.params.title,
     }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
 
     // Remove user from community
     await Community.updateOne(
@@ -192,7 +192,7 @@ router.delete("/leave/:title", async (req, res) => {
       }
     );
 
-    return res.status(204).send("");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);

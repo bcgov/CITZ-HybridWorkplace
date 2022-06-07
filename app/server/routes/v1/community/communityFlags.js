@@ -64,7 +64,7 @@ router.get("/:title", async (req, res) => {
       title: req.params.title,
     }).exec();
 
-    if (!community) return res.status(404).send("Community not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
 
     return res.status(200).json(community.flags);
   } catch (err) {
@@ -114,8 +114,8 @@ router.post("/:title", async (req, res) => {
       title: req.params.title,
     }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
 
     // TODO: Set flags in an options collection, that can be edited by admins
     const flags = [
@@ -128,11 +128,10 @@ router.post("/:title", async (req, res) => {
     ];
 
     if (!flags.includes(req.query.flag))
-      return res
-        .status(403)
-        .send(
-          "Invalid flag. Use one of [Inappropriate, Hate, Harassment or Bullying, Spam, Misinformation, Against Community Rules]"
-        );
+      throw new ResponseError(
+        403,
+        "Invalid flag. Use one of [Inappropriate, Hate, Harassment or Bullying, Spam, Misinformation, Against Community Rules]"
+      );
 
     // If flag isn't set on community
     if (
@@ -205,10 +204,10 @@ router.delete("/:title", async (req, res) => {
       title: req.params.title,
     }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
     if (!req.query.flag)
-      return res.status(404).send("Flag not found in query.");
+      throw new ResponseError(404, "Flag not found in query.");
 
     // Check user has flagged community
     if (
@@ -218,9 +217,10 @@ router.delete("/:title", async (req, res) => {
         "flags.flaggedBy": user.id,
       }))
     )
-      return res
-        .status(403)
-        .send("User has not flagged community with specified flag.");
+      throw new ResponseError(
+        403,
+        `User has not flagged community with ${req.query.flag}.`
+      );
 
     // Remove user from flaggedBy
     await Community.updateOne(

@@ -72,20 +72,21 @@ router.put("/:title", async (req, res) => {
       title: req.params.title,
     }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
 
     if (user.username !== community.creator)
-      return res
-        .status(401)
-        .send("Not Authorized. Only creator of community can edit community.");
+      throw new ResponseError(
+        403,
+        "Only creator of community can edit community."
+      );
 
     await Community.updateOne(
       { title: community.title },
       { $set: { rules: req.body.rules } }
     ).exec();
 
-    return res.status(204).send("");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
@@ -128,7 +129,7 @@ router.get("/:title", async (req, res) => {
       title: req.params.title,
     }).exec();
 
-    if (!community) return res.status(404).send("Community not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
 
     return res.status(200).json(community.rules);
   } catch (err) {
