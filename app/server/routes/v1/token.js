@@ -25,6 +25,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs"); // hashing
 const generateToken = require("../../functions/generateToken");
+const ResponseError = require("../../responseError");
 
 const router = express.Router();
 
@@ -78,7 +79,7 @@ router.get("/", async (req, res) => {
       }
     );
 
-    const user = await User.findOne({ username: username });
+    const user = await User.findOne({ username });
     if (!user) return res.status(404).send("User not found.");
 
     // Compare refreshToken to user.refresh_token from db
@@ -92,7 +93,8 @@ router.get("/", async (req, res) => {
     const token = generateToken(user);
     return res.status(200).json({ token });
   } catch (err) {
-    console.error(err);
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

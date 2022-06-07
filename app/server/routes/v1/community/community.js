@@ -22,7 +22,8 @@
 
 const express = require("express");
 const moment = require("moment");
-const ObjectId = require("mongodb").ObjectId;
+const { ObjectId } = require("mongodb");
+const ResponseError = require("../../../responseError");
 
 const router = express.Router();
 
@@ -109,13 +110,9 @@ router.post("/", async (req, res) => {
 
     return res.status(201).json(community);
   } catch (err) {
-    console.log(err);
-    return res
-      .status(400)
-      .send(
-        "Bad Request. The Community in the body of the Request is either missing or malformed. " +
-          `${err}`
-      );
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
+    return res.status(400).send(`Bad Request: ${err}`);
   }
 });
 
@@ -216,6 +213,8 @@ router.get("/", async (req, res) => {
 
     return res.status(200).json(communities);
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -259,6 +258,8 @@ router.get("/:title", async (req, res) => {
 
     return res.status(200).json(community);
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -346,6 +347,8 @@ router.patch("/:title", async (req, res) => {
 
     return res.status(204).send("");
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -414,6 +417,8 @@ router.delete("/:title", async (req, res) => {
     // TODO: AUTH ONLY MODERATORS OF COMMUNITY
     return res.status(200).send("Community removed.");
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

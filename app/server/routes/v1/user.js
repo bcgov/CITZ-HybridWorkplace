@@ -21,6 +21,7 @@
  */
 
 const express = require("express");
+const ResponseError = require("../../responseError");
 
 const router = express.Router();
 
@@ -80,11 +81,9 @@ router.get("/", async (req, res) => {
       quote: user.quote,
     });
   } catch (err) {
-    return res
-      .status(400)
-      .send(
-        `Bad Request. The User in the body of the Request is either missing or malformed. ${err}`
-      );
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
+    return res.status(400).send(`Bad Request: ${err}`);
   }
 });
 
@@ -136,8 +135,6 @@ router.patch("/", async (req, res) => {
     let query = { $set: {} };
 
     Object.keys(req.body).forEach((key) => {
-      console.log(key);
-      console.log(req.body[key]);
       if (key === "username" || key === "registeredOn")
         return res
           .status(403)
@@ -155,7 +152,9 @@ router.patch("/", async (req, res) => {
 
     return res.status(204).send("");
   } catch (err) {
-    return res.status(400).send("Bad request");
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
+    return res.status(400).send(`Bad Request: ${err}`);
   }
 });
 
@@ -219,11 +218,9 @@ router.get("/:username", async (req, res) => {
       quote: user.quote,
     });
   } catch (err) {
-    return res
-      .status(400)
-      .send(
-        `Bad Request. The User in the params of the Request is either missing or malformed. ${err}`
-      );
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
+    return res.status(400).send(`Bad Request: ${err}`);
   }
 });
 
@@ -268,11 +265,9 @@ router.delete("/:username", async (req, res) => {
 
     return res.status(204).send("");
   } catch (err) {
-    return res
-      .status(400)
-      .send(
-        `Bad Request. The User in the params of the Request is either missing or malformed. ${err}`
-      );
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
+    return res.status(400).send(`Bad Request: ${err}`);
   }
 });
 

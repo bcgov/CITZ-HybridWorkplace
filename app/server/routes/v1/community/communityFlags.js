@@ -21,6 +21,7 @@
  */
 
 const express = require("express");
+const ResponseError = require("../../../responseError");
 
 const router = express.Router();
 
@@ -67,6 +68,8 @@ router.get("/:title", async (req, res) => {
 
     return res.status(200).json(community.flags);
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -156,6 +159,8 @@ router.post("/:title", async (req, res) => {
 
     return res.status(204).send("");
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -228,6 +233,8 @@ router.delete("/:title", async (req, res) => {
 
     return res.status(204).send("");
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

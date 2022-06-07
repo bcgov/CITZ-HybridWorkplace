@@ -26,6 +26,7 @@ const router = express.Router();
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs"); // hashing
+const ResponseError = require("../../responseError");
 
 const User = require("../../models/user.model");
 
@@ -79,6 +80,8 @@ router.get("/", async (req, res) => {
     res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "None" });
     res.status(204).send("");
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

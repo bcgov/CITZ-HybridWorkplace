@@ -19,6 +19,7 @@
 
 const express = require("express");
 const moment = require("moment");
+const ResponseError = require("../../../responseError");
 
 const router = express.Router();
 
@@ -73,6 +74,8 @@ router.get("/:id", async (req, res) => {
 
     return res.status(200).json(replies);
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -125,7 +128,7 @@ router.post("/:id", async (req, res) => {
     if (!user) return res.status(404).send("User not found.");
     if (!comment) return res.status(404).send("Comment not found.");
 
-    if (!!comment.replyTo)
+    if (comment.replyTo)
       return res.status(403).send("Not allowed to reply to a reply.");
 
     if (
@@ -155,6 +158,8 @@ router.post("/:id", async (req, res) => {
 
     return res.status(201).json(reply);
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

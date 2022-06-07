@@ -19,6 +19,7 @@
 
 const express = require("express");
 const moment = require("moment");
+const ResponseError = require("../../../responseError");
 
 const router = express.Router();
 
@@ -110,6 +111,8 @@ router.post("/", async (req, res) => {
 
     return res.status(201).json(comment);
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -170,7 +173,8 @@ router.get("/post/:id", async (req, res) => {
 
     return res.status(200).json(comments);
   } catch (err) {
-    console.log(err);
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -213,6 +217,8 @@ router.get("/:id", async (req, res) => {
 
     return res.status(200).json(comment);
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -310,7 +316,8 @@ router.patch("/:id", async (req, res) => {
 
     return res.status(204).send("");
   } catch (err) {
-    console.error(err);
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -391,6 +398,8 @@ router.delete("/:id", async (req, res) => {
 
     return res.status(204).send("Comment removed.");
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

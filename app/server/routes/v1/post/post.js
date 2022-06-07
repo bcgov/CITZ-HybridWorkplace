@@ -19,6 +19,7 @@
 
 const express = require("express");
 const moment = require("moment");
+const ResponseError = require("../../../responseError");
 
 const router = express.Router();
 
@@ -100,7 +101,7 @@ router.post("/", async (req, res) => {
       creator: user.id,
       community: req.body.community,
       pinned: req.body.pinned || false,
-      availableTags: availableTags,
+      availableTags,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
 
@@ -120,11 +121,9 @@ router.post("/", async (req, res) => {
 
     return res.status(201).json(post);
   } catch (err) {
-    return res
-      .status(400)
-      .send(
-        `Bad Request. The Post in the body of the Request is either missing or malformed. ${err}`
-      );
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
+    return res.status(400).send(`Bad Request: ${err}`);
   }
 });
 
@@ -172,6 +171,8 @@ router.get("/", async (req, res) => {
 
     return res.status(200).json(posts);
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -214,6 +215,8 @@ router.get("/:id", async (req, res) => {
 
     return res.status(200).json(post);
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -282,6 +285,8 @@ router.get("/community/:title", async (req, res) => {
 
     return res.status(200).json(posts);
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -388,6 +393,8 @@ router.patch("/:id", async (req, res) => {
 
     return res.status(204).send("");
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -459,6 +466,8 @@ router.delete("/:id", async (req, res) => {
 
     return res.status(204).send("Post removed.");
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

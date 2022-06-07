@@ -23,6 +23,7 @@
 require("dotenv").config();
 const express = require("express");
 const bcrypt = require("bcryptjs"); // hashing passwords
+const ResponseError = require("../../responseError");
 
 const router = express.Router();
 
@@ -111,6 +112,8 @@ router.post("/", async (req, res) => {
     }
     return res.status(400).send("Bad Request");
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

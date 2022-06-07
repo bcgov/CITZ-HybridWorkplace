@@ -18,6 +18,7 @@
  */
 
 const express = require("express");
+const ResponseError = require("../../../responseError");
 
 const router = express.Router();
 
@@ -128,6 +129,8 @@ router.patch("/:id", async (req, res) => {
             $push: { "downvotes.users": user.id },
           };
           break;
+        default:
+          break;
       }
     }
 
@@ -135,7 +138,8 @@ router.patch("/:id", async (req, res) => {
 
     return res.status(204).send("");
   } catch (err) {
-    console.log(err);
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

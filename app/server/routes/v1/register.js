@@ -23,6 +23,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs"); // hashing passwords
 const moment = require("moment");
+const ResponseError = require("../../responseError");
 
 const router = express.Router();
 
@@ -98,7 +99,8 @@ router.post("/", async (req, res) => {
 
     return res.status(201).send("Registered.");
   } catch (err) {
-    console.log(err);
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
