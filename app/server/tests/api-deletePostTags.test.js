@@ -16,7 +16,6 @@ describe('Testing user\'s ability to DELETE Post Tags', () => {
     let communityName = name.gen();
     let randomText = name.gen();
     let tag1 = 'great';
-    let tag2 = 'not so great';
 
     beforeAll(async () => {
         // Set up user
@@ -42,7 +41,7 @@ describe('Testing user\'s ability to DELETE Post Tags', () => {
         await auth.deleteUsers();
     });
 
-    test('User can delete existing post tag. xx', async () => {
+    test('User can delete existing post tag.', async () => {
         response = await post.deletePostTags(postResponse.body._id, loginResponse.body.token);
         expect(response.status).toBe(204);
         expect(response.body).not.toEqual(
@@ -54,19 +53,19 @@ describe('Testing user\'s ability to DELETE Post Tags', () => {
         );
     });
 
-    test('User receives 403 error when post has not been tagged xx', async () => {
+    test('User receives 403 error when post has not been tagged', async () => {
         let tempPostResponse = await post.createPost(randomText, randomText, communityName, loginResponse.body.token);
         response = await post.deletePostTags(tempPostResponse.body._id, loginResponse.body.token);
         expect(response.status).toBe(403);
     });
 
-    test('User receives 403 error when using an invalid token xx', async () => {
+    test('User receives 403 error when using an invalid token', async () => {
         await post.createPostTags(postResponse.body._id, tag1, loginResponse.body.token);
         response = await post.deletePostTags(postResponse.body._id, 'invalidtokensRus');
         expect(response.status).toBe(403);
     });
 
-    test('User receives 404 error when trying to delete tags from non-existant post xx', async () => {
+    test('User receives 404 error when trying to delete tags from non-existant post', async () => {
         response = await post.deletePostTags('htkeiodjkfldsjifo', loginResponse.body.token);
         expect(response.status).toBe(404);
     });

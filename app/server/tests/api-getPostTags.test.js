@@ -16,7 +16,6 @@ describe('Testing user\'s ability to GET Post Tags', () => {
     let communityName = name.gen();
     let randomText = name.gen();
     let tag1 = 'great';
-    let tag2 = 'not so great';
 
     beforeAll(async () => {
         // Set up user
