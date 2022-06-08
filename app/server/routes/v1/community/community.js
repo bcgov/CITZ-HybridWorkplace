@@ -295,9 +295,7 @@ router.get("/:title", async (req, res) => {
  *        '404':
  *          description: User not found. **||** <br>Community not found.
  *        '403':
- *          description: Only creator of community can edit community.
- *        '403':
- *          description: One of the fields you tried to edit, can not be edited.
+ *          description: One of the fields you tried to edit, can not be edited. **||** <br>Only creator of community can edit community.
  *        '204':
  *          description: Success. No content to return.
  *        '400':
