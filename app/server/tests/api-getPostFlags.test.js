@@ -49,7 +49,6 @@ describe('Testing user\'s ability to GET Post Flags', () => {
     // TODO: currently returns 400
     test('User cannot get flags with an invalid post id - returns 404', async () => {
         await post.setPostFlags(postResponse.body._id, flags[1], loginResponse.body.token);
-        await post.setPostFlags(postResponse.body._id, flags[3], loginResponse.body.token);
         response = await post.getPostFlags('invalidID', loginResponse.body.token);
         expect(response.status).toBe(404);
     });
@@ -57,7 +56,6 @@ describe('Testing user\'s ability to GET Post Flags', () => {
     // TODO: currently returns 401
     test('User cannot get flags with an invalid token - returns 403', async () => {
         await post.setPostFlags(postResponse.body._id, flags[4], loginResponse.body.token);
-        await post.setPostFlags(postResponse.body._id, flags[5], loginResponse.body.token);
         response = await post.getPostFlags(postResponse.body._id, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyOWY4YTI3NDI0MDdmMWViZmUwZjVmMiIsInVzZXJuYW1lIjoiaGVscCIsImVtYWlsIjoiaGVscEBnb3YuYmMuY2EiLCJpYXQiOjE2NTQ3MTA4MDIsImV4cCI6MTY1NDcxMTQwMn0.xCEveZWfewI6dTmoifcqWT2Zyg0w8nzAxd9RSGiiTmA');
         expect(response.status).toBe(403);
     });
