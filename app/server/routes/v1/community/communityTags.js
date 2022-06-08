@@ -98,12 +98,10 @@ router.get("/:title", async (req, res) => {
  *      responses:
  *        '404':
  *          description: User not found. **||** <br>Community not found. **||** <br>Tag not found in query.
- *        '401':
- *          description: Not Authorized. Only creator of community can edit community.
  *        '403':
- *          description: A community can't have more than 7 tags. **||** <br>No duplicate tags.
+ *          description: A community can't have more than 7 tags. **||** <br>No duplicate tags. **||** <br>Only creator of community can edit community.
  *        '204':
- *          description: Successfully created tag.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
@@ -181,10 +179,10 @@ router.post("/:title", async (req, res) => {
  *      responses:
  *        '404':
  *          description: User not found. **||** <br>Community not found. **||** <br>Tag not found in query.
- *        '401':
- *          description: Not Authorized. Only creator of community can edit community.
+ *        '403':
+ *          description: Only creator of community can edit community.
  *        '204':
- *          description: Successfully removed tag.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */

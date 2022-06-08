@@ -52,7 +52,7 @@ const User = require("../../../models/user.model");
  *        '403':
  *          description: Missing message in body of the request. **||** <br>Must be a part of community to vote.
  *        '204':
- *          description: Success.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */

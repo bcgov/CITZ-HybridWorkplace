@@ -97,7 +97,7 @@ router.get("/:id", async (req, res) => {
  *        '403':
  *          description: Tag must be used by community. **||** <br>Limit 1 tag per user, per post.
  *        '204':
- *          description: Successfully created tag.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
@@ -189,7 +189,7 @@ router.post("/:id", async (req, res) => {
  *        '403':
  *          description: User has not tagged post
  *        '204':
- *          description: Successfully untagged post.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */

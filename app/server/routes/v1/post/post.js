@@ -329,7 +329,7 @@ router.get("/community/:title", async (req, res) => {
  *        '403':
  *          description: Community can't have more than 3 pinned posts. **||** <br>One of the fields you tried to edit, can not be edited. **||** <br>Only creator of post can edit post.
  *        '204':
- *          description: Post successfully edited.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
@@ -417,10 +417,10 @@ router.patch("/:id", async (req, res) => {
  *      responses:
  *        '404':
  *          description: User not found. **||** <br>Post not found.
- *        '401':
- *          description: Not Authorized. Must be creator of post to delete post.
+ *        '403':
+ *          description: Must be creator of post to delete post.
  *        '204':
- *          description: Post removed.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */

@@ -294,12 +294,12 @@ router.get("/:title", async (req, res) => {
  *      responses:
  *        '404':
  *          description: User not found. **||** <br>Community not found.
- *        '401':
- *          description: Not Authorized. Only creator of community can edit community.
+ *        '403':
+ *          description: Only creator of community can edit community.
  *        '403':
  *          description: One of the fields you tried to edit, can not be edited.
  *        '204':
- *          description: Community successfully edited.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
@@ -372,8 +372,8 @@ router.patch("/:title", async (req, res) => {
  *      responses:
  *        '404':
  *          description: User not found. **||** <br>Community not found.
- *        '401':
- *          description: Not Authorized. Only creator of community can edit community.
+ *        '403':
+ *          description: Only creator of community can edit community.
  *        '200':
  *          description: Community removed.
  *        '400':

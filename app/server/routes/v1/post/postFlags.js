@@ -98,7 +98,7 @@ router.get("/:id", async (req, res) => {
  *        '403':
  *          description: Invalid flag. Use one of <br>[Inappropriate, Hate, Harassment or Bullying, Spam, Misinformation, Against Community Rules]
  *        '204':
- *          description: Successfully set flag.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
@@ -188,7 +188,7 @@ router.post("/:id", async (req, res) => {
  *        '403':
  *          description: User has not flagged post with specified flag.
  *        '204':
- *          description: Successfully unset flag.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */

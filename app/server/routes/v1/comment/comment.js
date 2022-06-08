@@ -254,7 +254,7 @@ router.get("/:id", async (req, res) => {
  *        '403':
  *          description: Missing message in body of the request. **||** <br>Only creator of comment can edit comment. **||** <br>Can only edit the message of a comment.
  *        '204':
- *          description: Comment successfully edited.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
@@ -345,7 +345,7 @@ router.patch("/:id", async (req, res) => {
  *        '403':
  *          description: Must be creator of comment to delete comment.
  *        '204':
- *          description: Comment removed.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */

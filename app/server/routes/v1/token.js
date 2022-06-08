@@ -43,8 +43,6 @@ const User = require("../../models/user.model");
  *        '404':
  *          description: Cookie not found. **||** <br>User not found.
  *        '401':
- *          description: Unauthorized (missing cookie).
- *        '403':
  *          description: Invalid token.
  *        '200':
  *          description: Success.
@@ -74,7 +72,7 @@ router.get("/", async (req, res) => {
       refreshToken,
       process.env.JWT_REFRESH_SECRET,
       (err, tokenUser) => {
-        if (err) throw new ResponseError(403, "Invalid token.");
+        if (err) throw new ResponseError(401, "Invalid token.");
         username = tokenUser.username;
       }
     );

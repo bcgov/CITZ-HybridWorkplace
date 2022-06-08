@@ -44,7 +44,7 @@ const User = require("../../models/user.model");
  *        '403':
  *          description: Invalid token.
  *        '204':
- *          description: Successfully logged out.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */

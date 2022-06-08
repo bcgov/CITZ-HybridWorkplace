@@ -118,7 +118,7 @@ router.get("/", async (req, res) => {
  *        '403':
  *          description: One of the fields you tried to edit, can not be edited.
  *        '204':
- *          description: User successfully edited.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
@@ -242,7 +242,7 @@ router.get("/:username", async (req, res) => {
  *        '403':
  *          description: Must be account owner to remove user.
  *        '204':
- *          description: Successfully removed user.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */

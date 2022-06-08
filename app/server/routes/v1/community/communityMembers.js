@@ -102,7 +102,7 @@ router.get("/:title", async (req, res) => {
  *        '404':
  *          description: User not found. **||** <br>Community not found.
  *        '204':
- *          description: Successfully joined community.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
@@ -160,7 +160,7 @@ router.patch("/join/:title", async (req, res) => {
  *        '404':
  *          description: User not found. **||** <br>Community not found.
  *        '204':
- *          description: Successfully left community.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
