@@ -13,7 +13,7 @@ class PostFunctions{
     async createPost(title, message, community, token){
         let response = await request
             .post('/post')
-            .set({authorization: `Bearer ${token}`})
+            .set({authorization: `Bearer ${ token }`})
             .send({"title":title, "message":message, "community":community})
         this.postList.push({
             response: response,
@@ -25,26 +25,26 @@ class PostFunctions{
     async getAllPosts(token){
         return await request
             .get(`/post`)
-            .set({authorization: `Bearer ${token}`});
+            .set({authorization: `Bearer ${ token }`});
     } 
 
     async getPostById(id, token){
         return await request
-            .get(`/post/${id}`)
-            .set({authorization: `Bearer ${token}`});
+            .get(`/post/${ id }`)
+            .set({authorization: `Bearer ${ token }`});
     } 
 
     async editPost(id, newTitle, newMessage, newCommunity, token){
         return await request
-            .patch(`/post/${id}`)
-            .set({authorization: `Bearer ${token}`})
+            .patch(`/post/${ id }`)
+            .set({authorization: `Bearer ${ token }`})
             .send({"title":newTitle, "message":newMessage, "community":newCommunity})
     } 
 
     async deletePost(id, token){
         return await request
-            .delete(`/post/${id}`)
-            .set({authorization: `Bearer ${token}`});
+            .delete(`/post/${ id }`)
+            .set({authorization: `Bearer ${ token }`});
     }
 
     async deleteAllPosts(){
@@ -55,48 +55,48 @@ class PostFunctions{
 
     async getPostsByCommunity(title, token){
         return await request
-            .get(`/post/community/${title}`)
-            .set({authorization: `Bearer ${token}`});
+            .get(`/post/community/${ title }`)
+            .set({authorization: `Bearer ${ token }`});
     } 
 
     // Post Tags Functions
     async getPostTags(id, token){
         return await request
-            .get(`/post/tags/${id}`)
-            .set({authorization: `Bearer ${token}`});
+            .get(`/post/tags/${ id }`)
+            .set({authorization: `Bearer ${ token }`});
     } 
 
-    async createPostTags(tags, token){
+    async createPostTags(id, tag, token){
         return await request
-            .post(`/post/tags/${id}`)
-            .set({authorization: `Bearer ${token}`})
-            .send({"tags":tags});
+            .post(`/post/tags/${ id }`)
+            .set({authorization: `Bearer ${ token }`})
+            .query(`tag=${ tag }`);
     } 
 
-    async deletePostTags(token){
+    async deletePostTags(id, token){
         return await request
-            .delete(`/post/tags/${id}`)
-            .set({authorization: `Bearer ${token}`});
+            .delete(`/post/tags/${ id }`)
+            .set({authorization: `Bearer ${ token }`});
     }
 
     // Post Flags Functions
     async getPostFlags(id, token){
         return await request
-            .get(`/post/flags/${id}`)
-            .set({authorization: `Bearer ${token}`});
+            .get(`/post/flags/${ id }`)
+            .set({authorization: `Bearer ${ token }`});
     } 
 
     async createPostFlags(id, flag, token){
         return await request
-            .post(`/post/flags/${id}`)
-            .set({authorization: `Bearer ${token}`})
-            .send({"flag":flag});
+            .post(`/post/flags/${ id }`)
+            .set({authorization: `Bearer ${ token }`})
+            .query(`flag=${ flag }`);
     } 
 
     async deletePostFlags(id, token){
         return await request
-            .delete(`/post/flags/${id}`)
-            .set({authorization: `Bearer ${token}`});
+            .delete(`/post/flags/${ id }`)
+            .set({authorization: `Bearer ${ token }`});
     }
 }
 
