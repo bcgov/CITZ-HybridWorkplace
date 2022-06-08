@@ -14,74 +14,73 @@ function getCommunitybyTitle(title, token){
         .set({authorization: `Bearer ${token}`});
 } 
 
-function createCommunity(title, description, rules, tags, token){
+function createCommunity(title, description, rules, tags, token) {
     return request
         .post('/community')
         .set({authorization: `Bearer ${token}`})
-        .send({'title': title, 'description': description, 'rules': rules, 'tags':tags});
+        .send({'title': title, 'description': description, 'rules': rules, 'tags': tags});
 } 
 
-function deleteCommunity(title, token){
+function deleteCommunity(title, token) {
     return request
         .delete(`/community/${title}`)
         .set({authorization: `Bearer ${token}`});
 } 
 
-function patchCommunitybyTitle(title, newTitle, newDescription, newRules, newTags, token){
+function patchCommunitybyTitle(title, newTitle, newDescription, newRules, newTags, token) {
     return request
         .patch(`/community/${title}`)
         .set({authorization: `Bearer ${token}`})
         .send({'title': newTitle, 'description': newDescription, 'rules': newRules, 'tags': newTags});
 } 
 
-function joinCommunity(title, token){
+function joinCommunity(title, token) {
     return request
         .patch(`/community/members/join/${title}`)
         .set({authorization: `Bearer ${token}`})
 } 
 
-function leaveCommunity(title, token){
+function leaveCommunity(title, token) {
     return request
         .delete(`/community/members/leave/${title}`)
         .set({authorization: `Bearer ${token}`})
 }
 
-// Community rules functions
-function setRulesForCommunity(title,rules,token){
+function setCommunityRules(title, rules, token) {
     return request
         .put(`/community/rules/${title}`)
         .set({authorization: `Bearer ${token}`})
         .send({'rules': rules});
 }
 
-function getRulesForCommunity(title, token){
+function getCommunityRules(title, token) {
     return request
         .get(`/community/rules/${title}`)
         .set({authorization: `Bearer ${token}`})
 }
 
-// Community tag functions
-function getTagsForCommunity(title, token){
+
+function getCommunityTags(title, token) {
     return request
         .get(`/community/tags/${title}`)
         .set({authorization: `Bearer ${token}`})
 }
 
-function setTagsForCommunity(title, tag, token){
+function setCommunityTags(title, tag, token) {
     return request
         .post(`/community/tags/${title}`)
         .set({authorization: `Bearer ${token}`})
         .query(`tag=${ tag }`);
 }
 
-function deleteTagsForCommunity(title, tag, token){
+function deleteCommunityTags(title, tag, token) {
     return request
         .delete(`/community/tags/${title}`)
         .set({authorization: `Bearer ${token}`})
-        .send({'tag': tag});
+        .query({'tag': tag});
 }
 
 module.exports = {getCommunities, getCommunitybyTitle,createCommunity,deleteCommunity,
-    patchCommunitybyTitle,joinCommunity,leaveCommunity,setRulesForCommunity,
-    getRulesForCommunity, getTagsForCommunity, setTagsForCommunity, deleteTagsForCommunity };
+    patchCommunitybyTitle,joinCommunity, leaveCommunity, setCommunityRules, getCommunityRules,
+    setCommunityTags, getCommunityTags, deleteCommunityTags };
     
