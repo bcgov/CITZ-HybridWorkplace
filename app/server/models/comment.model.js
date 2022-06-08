@@ -39,6 +39,12 @@
  *          $ref: '#/components/schemas/Post/properties/id'
  *        createdOn:
  *          type: string
+ *        replyTo:
+ *          type: string
+ *          description: The id of the comment that is being replied to.
+ *        hasReplies:
+ *          type: boolean
+ *          description: If the comment has replies.
  *        edits:
  *          type: array
  *          description: Edits made to the comment.
@@ -50,6 +56,30 @@
  *              precursor:
  *                type: string
  *                description: The message before it was edited.
+ *        upvotes:
+ *          type: array
+ *          description: Users that have upvoted the comment.
+ *          items:
+ *            type: object
+ *            properties:
+ *              count:
+ *                type: number
+ *              users:
+ *                type: array
+ *                items:
+ *                  - $ref: '#/components/schemas/User'
+ *        downvotes:
+ *          type: array
+ *          description: Users that have downvoted the comment.
+ *          items:
+ *            type: object
+ *            properties:
+ *              count:
+ *                type: number
+ *              users:
+ *                type: array
+ *                items:
+ *                  - $ref: '#/components/schemas/User'
  *      required:
  *        - message
  *        - creator
@@ -64,8 +94,29 @@ const Comment = new mongoose.Schema(
     message: { type: String, required: true },
     creator: { type: String, required: true },
     post: { type: String, required: true },
+    community: { type: String, required: true },
     createdOn: { type: String, required: true },
+    replyTo: { type: String },
+    hasReplies: { type: Boolean },
     edits: [{ precursor: String, timeStamp: String }],
+    upvotes: {
+      count: Number,
+      users: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+      ],
+    },
+    downvotes: {
+      count: Number,
+      users: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+      ],
+    },
   },
   { collection: "comment" }
 );

@@ -133,9 +133,16 @@ router.post("/:title", async (req, res) => {
     if (await Community.exists({ title: community.title, tags: { $size: 7 } }))
       return res.status(403).send("A community can't have more than 7 tags.");
 
+    // Add to community
     await Community.updateOne(
       { title: community.title },
       { $push: { tags: { tag: req.query.tag, count: 0 } } }
+    );
+
+    // Add to availableTags array on posts
+    await Post.updateMany(
+      { community: community.title },
+      { $push: { availableTags: req.query.tag } }
     );
 
     return res.status(204).send("");
@@ -202,7 +209,7 @@ router.delete("/:title", async (req, res) => {
     // Remove tag from posts within community
     await Post.updateMany(
       { community: community.title },
-      { $pull: { tags: { tag: req.query.tag } } }
+      { $pull: { tags: { tag: req.query.tag }, availableTags: req.query.tag } }
     );
 
     return res.status(204).send("");

@@ -20,12 +20,12 @@
  * @module
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { createCommunity } from "../redux/ducks/communityDuck";
-import { Button } from "@mui/material";
+import { Autocomplete, Button, Chip, TextField } from "@mui/material";
 
 const CreateCommunity = (props) => {
   const navigate = useNavigate();
@@ -33,13 +33,15 @@ const CreateCommunity = (props) => {
   const [description, setDescription] = useState("");
   const [rules, setRules] = useState("");
   const [createCommunityLoading, setCreateCommunityLoading] = useState(false);
-
+  const [tags, setTags] = useState([]);
   async function registerCommunity() {
     setCreateCommunityLoading(true);
+    const formattedTags = tags.map((tag) => ({ tag: tag, count: 0 }));
     const community = {
       title: title,
       description: description,
       rules: rules,
+      tags: formattedTags,
     };
     const successful = await props.createCommunity(community);
     setCreateCommunityLoading(false);
@@ -48,6 +50,10 @@ const CreateCommunity = (props) => {
       navigate("/home");
     }
   }
+
+  const handleTags = (tags) => {
+    setTags(tags);
+  };
 
   return (
     <div>
@@ -70,6 +76,33 @@ const CreateCommunity = (props) => {
           onChange={(e) => setRules(e.target.value)}
           type="text"
           placeholder="Rules"
+        />
+        <Autocomplete
+          multiple
+          id="tags-filled"
+          limitTags={7}
+          options={[]}
+          freeSolo
+          renderTags={(value, getTagProps) => {
+            handleTags(value);
+            return value.map((option, index) => {
+              return (
+                <Chip
+                  variant="outlined"
+                  label={option}
+                  {...getTagProps({ index })}
+                />
+              );
+            });
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="filled"
+              label="Custom Tags"
+              placeholder="Tags"
+            />
+          )}
         />
         <br />
         <Button

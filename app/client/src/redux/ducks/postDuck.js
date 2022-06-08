@@ -20,8 +20,13 @@
  * @module
  */
 
+import { createSuccess, createError } from "./alertDuck";
+
 const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_COMMUNITIES";
 const ADD_POST = "CITZ-HYBRIDWORKPLACE/POST/ADD_COMMUNITY";
+const REMOVE_POST = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_POST";
+const TAG_POST = "CITZ-HYBRIDWORKPLACE/POST/TAG_POST";
+const UNTAG_POST = "CITZ-HYBRIDWORKPLACE/POST/UNTAG_POST";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
@@ -33,7 +38,7 @@ export const getPosts = () => async (dispatch, getState) => {
   let successful = true;
 
   try {
-    const authState = getState().auth
+    const authState = getState().auth;
     const token = authState.accessToken;
 
     if (!token) throw new Error(noTokenText);
@@ -46,7 +51,14 @@ export const getPosts = () => async (dispatch, getState) => {
     if (!response.ok)
       throw new Error(`${response.status} ${response.statusText}`);
 
-    const posts = await response.json();
+    let posts = await response.json();
+
+    //Modifies each post and adds a userTag field which shows the tag the user has given it
+    posts = posts.map((post) => ({
+      ...post,
+      userTag: post.tags.find((tag) => tag.taggedBy[0] === authState.user.id)
+        ?.tag,
+    }));
 
     dispatch({
       type: GET_POSTS,
@@ -63,7 +75,7 @@ export const getPosts = () => async (dispatch, getState) => {
 export const createPost = (postData) => async (dispatch, getState) => {
   let successful = true;
   try {
-    const authState = getState().auth
+    const authState = getState().auth;
     const token = authState.accessToken;
 
     if (!token) throw new Error(noTokenText);
@@ -99,9 +111,142 @@ export const createPost = (postData) => async (dispatch, getState) => {
   }
 };
 
+export const deletePost = (postId) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    //TODO: Throw error if given delete is not in list of available deletes
+    if (postId === "") throw new Error("Error: Invalid Input");
+    const authState = getState().auth;
+    const token = authState.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await fetch(`${apiURI}/api/post/${postId}`, {
+      method: "DELETE",
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok)
+      throw new Error(`${response.status} ${response.statusText}`);
+
+    dispatch({
+      type: REMOVE_POST,
+      payload: postId,
+    });
+    createSuccess(`Successfully Deleted Post`)(dispatch);
+  } catch (err) {
+    console.error(err);
+    successful = false;
+    createError("Unexpected error occurred")(dispatch);
+  } finally {
+    return successful;
+  }
+};
+
+export const flagPost = (postId, flag) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    //TODO: Throw error if given flag is not in list of available flags
+    if (flag === "") throw new Error("Error: Invalid Input");
+    const authState = getState().auth;
+    const token = authState.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await fetch(
+      `${apiURI}/api/post/flags/${postId}?flag=${flag}`,
+      {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!response.ok)
+      throw new Error(`${response.status} ${response.statusText}`);
+
+    createSuccess(`Successfully Flagged Post For Reason: ${flag}`)(dispatch);
+  } catch (err) {
+    console.error(err);
+    successful = false;
+    createError("Unexpected error occurred")(dispatch);
+  } finally {
+    return successful;
+  }
+};
+
+export const tagPost = (postId, tag) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    if (tag === "") throw new Error("Error: Invalid Input");
+    const authState = getState().auth;
+    const token = authState.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await fetch(
+      `${apiURI}/api/post/tags/${postId}?tag=${tag}`,
+      {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!response.ok)
+      throw new Error(`${response.status} ${response.statusText}`);
+
+    dispatch({ type: TAG_POST, payload: { postId, tag } });
+
+    createSuccess(`Successfully Tagged Post`)(dispatch);
+  } catch (err) {
+    console.error(err);
+    successful = false;
+    createError("Unexpected error occurred")(dispatch);
+  } finally {
+    return successful;
+  }
+};
+
+export const unTagPost = (postId, tag) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    if (tag === "") throw new Error("Error: Invalid Input");
+    const authState = getState().auth;
+    const token = authState.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await fetch(
+      `${apiURI}/api/post/tags/${postId}?tag=${tag}`,
+      {
+        method: "DELETE",
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!response.ok)
+      throw new Error(`${response.status} ${response.statusText}`);
+
+    dispatch({
+      type: UNTAG_POST,
+      payload: { postId },
+    });
+    createSuccess(`Successfully Untagged Post`)(dispatch);
+  } catch (err) {
+    console.error(err);
+    successful = false;
+    createError("Unexpected error occurred")(dispatch);
+  } finally {
+    return successful;
+  }
+};
+
 const initialState = {
-  items: [], //communitys
-  item: {}, //single community
+  items: [], //posts
+  item: {}, //single post
 };
 
 export function postReducer(state = initialState, action) {
@@ -115,6 +260,29 @@ export function postReducer(state = initialState, action) {
       return {
         ...state,
         items: [...state.items, action.payload],
+      };
+    case REMOVE_POST:
+      return {
+        ...state,
+        items: state.items.filter((item) => item._id !== action.payload),
+      };
+    case TAG_POST:
+      return {
+        ...state,
+        items: state.items.map((element) =>
+          element._id === action.payload.postId
+            ? { ...element, userTag: action.payload.tag }
+            : element
+        ),
+      };
+    case UNTAG_POST:
+      return {
+        ...state,
+        items: state.items.map((element) =>
+          element._id === action.payload.postId
+            ? { ...element, userTag: undefined }
+            : element
+        ),
       };
     default:
       return state;

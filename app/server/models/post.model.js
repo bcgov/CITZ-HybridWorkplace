@@ -46,6 +46,11 @@
  *          description: Pinned posts show at the top of the feed. Limit 3 per community.
  *        createdOn:
  *          type: string
+ *        availableTags:
+ *          type: array
+ *          description: Tags set by moderators of the community.
+ *          items:
+ *            type: string
  *        tags:
  *          type: array
  *          description: Tags set by users to describe post.
@@ -92,6 +97,7 @@ const Post = new mongoose.Schema(
     community: { type: String, required: true },
     pinned: { type: Boolean },
     createdOn: { type: String, required: true },
+    availableTags: [String],
     tags: [
       {
         tag: String,

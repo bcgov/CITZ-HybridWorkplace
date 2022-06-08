@@ -28,8 +28,7 @@ describe('Edit the information of users with /user/{name}', () => {
             'James',
             'Smith',
             'I am a small boy from Kentucky.',
-            'Modern Major General',
-            'Yahoo!');
+            'Modern Major General');
         expect(response.status).toBe(204);
     });
 
@@ -70,14 +69,13 @@ describe('Edit the information of users with /user/{name}', () => {
 
     test('Try to change your name (IDIR) - returns 403', async () => {
         let body = {
-            "name": "test"
+            "username": "test"
         }
         response = await user.editUserByObject(loginResponse.body.token, body);
         expect(response.status).toBe(403);
     });
 
-    // Crashed API as of 2022-06-01
-    xtest('Try to edit data using a bad token - returns 403', async () => {
+    test('Try to edit data using a bad token - returns 403', async () => {
         let body = {
             "email": "mynewemail@gmail.com"
         }

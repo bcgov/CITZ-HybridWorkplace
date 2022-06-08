@@ -69,7 +69,7 @@ export const getUsersCommunities = () => async (dispatch, getState) => {
     const token = getState().auth.accessToken;
     if (!token) throw new Error(noTokenText);
 
-    const response = await fetch(`${apiURI}/api/community?user=true`, {
+    const response = await fetch(`${apiURI}/api/community?orderBy=lastJoined`, {
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -112,6 +112,7 @@ export const createCommunity =
           title: communityData.title,
           description: communityData.description,
           rules: communityData.rules,
+          tags: communityData.tags,
         }),
       });
 

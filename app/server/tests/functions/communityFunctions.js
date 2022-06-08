@@ -59,6 +59,7 @@ function getCommunityRules(title, token) {
         .set({authorization: `Bearer ${token}`})
 }
 
+
 function getCommunityTags(title, token) {
     return request
         .get(`/community/tags/${title}`)
@@ -69,7 +70,7 @@ function setCommunityTags(title, tags, token) {
     return request
         .post(`/community/tags/${title}`)
         .set({authorization: `Bearer ${token}`})
-        .query({'tag': tags});
+        .query(`tag=${ tag }`);
 }
 
 function deleteCommunityTags(title, tags, token) {

@@ -24,20 +24,21 @@ import "./App.css";
 import React, { Component } from "react";
 import { Routes, Route } from "react-router-dom";
 
-import PrivateComponent from "./privateComponent";
+import PrivateComponent from "./components/PrivateComponent";
 
 // Views
-import Login from "./views/login";
-import Register from "./views/register";
-import Home from "./views/home";
-import About from "./views/aboutPage";
-import ProfilePage from "./views/profilePage";
-import CommunitiesPage from "./views/communitiesPage";
-import Posts from "./views/posts";
+import LoginPage from "./views/LoginPage";
+import Register from "./views/RegisterPage";
+import HomePage from "./views/HomePage";
+import AboutPage from "./views/AboutPage";
+import ProfilePage from "./views/ProfilePage";
+import CommunitiesPage from "./views/CommunitiesPage";
+import PostsPage from "./views/PostsPage";
+import Page404 from "./views/Page404";
 
 //Components
-import EditProfile from "./components/editProfile";
-import NewCommunity from "./components/newCommunity";
+import EditProfile from "./components/EditProfile";
+import NewCommunity from "./components/NewCommunity";
 
 class App extends Component {
   render() {
@@ -45,16 +46,16 @@ class App extends Component {
       <div className="Routes">
         <Routes>
           <Route path="/" exact element={<Register />} />
-          <Route path="/login" exact element={<Login />} />
+          <Route path="/login" exact element={<LoginPage />} />
           <Route
             path="/home"
             exact
-            element={<PrivateComponent component={<Home />} />}
+            element={<PrivateComponent component={<HomePage />} />}
           />
           <Route
             path="/about"
             exact
-            element={<PrivateComponent component={<About />} />}
+            element={<PrivateComponent component={<AboutPage />} />}
           />
           <Route
             path="/profile/:id"
@@ -74,8 +75,9 @@ class App extends Component {
           />
           <Route
             path="/posts"
-            element={<PrivateComponent component={<Posts />} />}
+            element={<PrivateComponent component={<PostsPage />} />}
           />
+          <Route path="*" exact element={<Page404 />}></Route>
         </Routes>
       </div>
     );

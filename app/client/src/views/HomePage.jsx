@@ -20,8 +20,7 @@
  * @module
  */
 
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
@@ -31,12 +30,12 @@ import Typography from "@mui/material/Typography";
 
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import Communities from "../components/usersCommunitiesList";
-import Posts from "../components/postsList";
-import PostModal from "../components/modals/addPostModal";
-import CommunityModal from "../components/modals/addCommunityModal";
+import UsersCommunitiesList from "../components/UsersCommunitiesList";
+import Posts from "../components/PostsList";
+import PostModal from "../components/modals/AddPostModal";
+import AddCommunityModal from "../components/modals/AddCommunityModal";
 
-const Home = () => {
+const HomePage = () => {
   const [show, setShow] = useState(false);
 
   const [createCommunityOpen, setCreateCommunityOpen] = useState(false);
@@ -90,7 +89,7 @@ const Home = () => {
                 Your Communities
               </Typography>
             </Box>
-            <Communities />
+            <UsersCommunitiesList />
             <Box
               sx={{
                 backgroundColor: "#036",
@@ -103,7 +102,7 @@ const Home = () => {
               <Button variant="text" onClick={openDialog}>
                 + Create Community
               </Button>
-              <CommunityModal
+              <AddCommunityModal
                 onClose={closeDialog}
                 open={createCommunityOpen}
               />
@@ -115,7 +114,7 @@ const Home = () => {
   );
 };
 
-Home.propTypes = {
+HomePage.propTypes = {
   getCommunities: PropTypes.func.isRequired,
   communities: PropTypes.array.isRequired,
 };
@@ -124,4 +123,4 @@ const mapStateToProps = (state) => ({
   communities: state.communities.items,
 });
 
-export default connect(mapStateToProps, {})(Home);
+export default connect(mapStateToProps, {})(HomePage);

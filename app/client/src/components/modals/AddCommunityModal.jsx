@@ -16,25 +16,26 @@
 
 /**
  * Application entry point
- * @author [Zach Bouruqe](zachbourque01@gmail.com)
+ * @author [Zach Bourque](bettesworthjayna@gmail.com)
  * @module
  */
 
-import { combineReducers } from "redux";
+import { Dialog, DialogContent, DialogTitle, Grid } from "@mui/material";
+import CreateCommunity from "../CreateCommunity";
 
-// Ducks
-import { communityReducer } from "./ducks/communityDuck";
-import { postReducer } from "./ducks/postDuck";
-import { authReducer } from "./ducks/authDuck";
-import { profileReducer } from "./ducks/profileDuck";
-import { alertReducer } from "./ducks/alertDuck";
-import { modalReducer } from "./ducks/modalDuck";
+const AddCommunityModal = (props) => {
+  return (
+    <Dialog onClose={props.onClose} open={props.open} fullWidth="md">
+      <DialogTitle>Create a Community</DialogTitle>
+      <DialogContent>
+        <Grid container justifyContent="center" alignItems="center">
+          <Grid item>
+            <CreateCommunity onClose={props.onClose} />
+          </Grid>
+        </Grid>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
-export default combineReducers({
-  communities: communityReducer,
-  posts: postReducer,
-  auth: authReducer,
-  profile: profileReducer,
-  alerts: alertReducer,
-  modal: modalReducer,
-});
+export default AddCommunityModal;

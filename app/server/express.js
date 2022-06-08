@@ -6,6 +6,8 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const routesVersioning = require("express-routes-versioning")();
 const rateLimit = require("express-rate-limit");
+const authenticateToken = require("./middleware/authenticateToken");
+const sanitizeInputs = require("./middleware/sanitizeInputs");
 
 const swaggerUI = require("swagger-ui-express");
 const swaggerConf = require("./swagger-conf");
@@ -22,6 +24,9 @@ const postFlagsRouterV1 = require("./routes/v1/post/postFlags");
 const postTagsRouterV1 = require("./routes/v1/post/postTags");
 
 const commentRouterV1 = require("./routes/v1/comment/comment");
+const commentReplyRouterV1 = require("./routes/v1/comment/commentReply");
+const commentVoteRouterV1 = require("./routes/v1/comment/commentVoting");
+
 const userRouterV1 = require("./routes/v1/user");
 
 const registerRouterV1 = require("./routes/v1/register");
@@ -29,8 +34,6 @@ const loginRouterV1 = require("./routes/v1/login");
 const logoutRouterV1 = require("./routes/v1/logout");
 const healthCheckRouterV1 = require("./routes/v1/healthCheck");
 const tokenRouterV1 = require("./routes/v1/token");
-
-const authenticateToken = require("./middleware/authenticateToken");
 
 const app = express();
 
@@ -63,6 +66,7 @@ app.use(
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   })
 );
+app.use(sanitizeInputs);
 
 // Routing
 app.get("/", (req, res) => res.send("Node.js Server is live!"));
@@ -103,6 +107,8 @@ function useV1(req, res, next) {
   app.use("/api/post/tags", authenticateToken, postTagsRouterV1);
 
   app.use("/api/comment", authenticateToken, commentRouterV1);
+  app.use("/api/comment/reply", authenticateToken, commentReplyRouterV1);
+  app.use("/api/comment/vote", authenticateToken, commentVoteRouterV1);
 
   app.use("/api/user", authenticateToken, userRouterV1);
 

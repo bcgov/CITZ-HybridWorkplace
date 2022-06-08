@@ -22,19 +22,18 @@
 
 import "./App.css";
 
-import React, { useState, useEffect } from "react";
-import Routes from "./routes";
+import Routes from "./Routes";
 import Container from "@mui/material/Container";
 
 import { Provider } from "react-redux";
 import store from "./store";
 
-import Footer from "./layout/footer";
-import Header from "./layout/header";
+import Footer from "./layout/Footer";
+import Header from "./layout/Header";
 
 import Paper from "@mui/material/Paper";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import AlertList from "./components/alertList";
+import AlertList from "./components/AlertList";
 
 function App() {
   const theme = createTheme({

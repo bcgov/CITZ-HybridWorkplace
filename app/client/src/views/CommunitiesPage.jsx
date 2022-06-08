@@ -20,23 +20,29 @@
  * @module
  */
 
-import React, { useState } from "react";
+import { Button } from "@mui/material";
+import { useState } from "react";
+import Communities from "../components/CommunitiesList";
+import AddCommunity from "../components/modals/AddCommunityModal";
 
-import PostsList from "../components/postsList";
-import PostModal from "../components/modals/addPostModal";
+const CommunitiesPage = () => {
+  const [createCommunityOpen, setCreateCommunityOpen] = useState(false);
 
-const PostsPage = () => {
-  const [show, setShow] = useState(false);
+  const openDialog = () => setCreateCommunityOpen(true);
+
+  const closeDialog = (value) => setCreateCommunityOpen(false);
 
   return (
     <div>
-      <h1>Posts</h1>
-      <PostsList />
+      <h1>Communities</h1>
+      <Communities />
       <br />
-      <button onClick={() => setShow(true)}>Add Post</button>
-      <PostModal onClose={() => setShow(false)} show={show} />
+      <AddCommunity onClose={closeDialog} open={createCommunityOpen} />
+      <Button variant="contained" onClick={openDialog}>
+        Create Community
+      </Button>
     </div>
   );
 };
 
-export default PostsPage;
+export default CommunitiesPage;

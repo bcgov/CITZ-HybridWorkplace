@@ -27,34 +27,31 @@ describe('Get the current user\'s information with /user', () => {
 
     test('Body of response is formated as expected (returns only set keys)', () => {
         expect(typeof response.body).toBe('object');
-        expect(response.body.name).toBeTruthy();
+        expect(response.body.username).toBeTruthy();
         expect(response.body.email).toBeTruthy();
-        expect(response.body.first_name).not.toBeTruthy();
-        expect(response.body.last_name).not.toBeTruthy();
+        expect(response.body.firstName).not.toBeTruthy();
+        expect(response.body.lastName).not.toBeTruthy();
         expect(response.body.bio).not.toBeTruthy();
         expect(response.body.title).not.toBeTruthy();
-        expect(response.body.quote).not.toBeTruthy();
     });
 
     xtest('After setting all keys, they are returned by the /user endpoint', async () => {
         let body = {
             "email": email.gen(),
-            "first_name": "newFirstName",
-            "last_name": "newLastName",
+            "firstName": "newFirstName",
+            "lastName": "newLastName",
             "bio": "new bio",
             "title": "new title"
         };
         let editResponse = await user.editUserByObject(loginResponse.body.token, body);
         expect(editResponse.status).toBe(204);
         response = await user.getUser(loginResponse.body.token);
-        expect(response.body.name).toBeTruthy();
+        expect(response.body.username).toBeTruthy();
         expect(response.body.email).toBeTruthy();
-        expect(response.body.first_name).toBeTruthy();
-        expect(response.body.last_name).toBeTruthy();
+        expect(response.body.firstName).toBeTruthy();
+        expect(response.body.lastName).toBeTruthy();
         expect(response.body.bio).toBeTruthy();
         expect(response.body.title).toBeTruthy();
-        // TODO: Uncomment test for body.quote after user schema is updated.
-        // expect(response.body.quote).toBeTruthy();
     });
 
     test('User info should not be returned if token does not match user - returns 403', async () => {
@@ -84,10 +81,10 @@ describe('Get the current user\'s information with /user/{name}', () => {
 
     test('Body of response is formated as expected (returns only set keys)', () => {
         expect(typeof response.body).toBe('object');
-        expect(response.body.name).toBeTruthy();
+        expect(response.body.username).toBeTruthy();
         expect(response.body.email).toBeTruthy();
-        expect(response.body.first_name).not.toBeTruthy();
-        expect(response.body.last_name).not.toBeTruthy();
+        expect(response.body.firstName).not.toBeTruthy();
+        expect(response.body.lastName).not.toBeTruthy();
         expect(response.body.bio).not.toBeTruthy();
         expect(response.body.title).not.toBeTruthy();
     });
@@ -121,10 +118,10 @@ describe('Get information of other users with /user/{name}', () => {
         let tempResponse = await user.getUserByName(loginResponse.body.token, 'Todd'); // Try to get that user's info with test account's token.
         expect(tempResponse.status).toBe(200);
         expect(typeof tempResponse.body).toBe('object');
-        expect(tempResponse.body.name).toBeTruthy();
+        expect(tempResponse.body.username).toBeTruthy();
         expect(tempResponse.body.email).toBeTruthy();
-        expect(tempResponse.body.first_name).not.toBeTruthy();
-        expect(tempResponse.body.last_name).not.toBeTruthy();
+        expect(tempResponse.body.firstName).not.toBeTruthy();
+        expect(tempResponse.body.lastName).not.toBeTruthy();
         expect(tempResponse.body.bio).not.toBeTruthy();
         expect(tempResponse.body.title).not.toBeTruthy();
     });
