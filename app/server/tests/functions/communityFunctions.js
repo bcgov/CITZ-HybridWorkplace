@@ -31,8 +31,7 @@ function patchCommunitybyTitle(title, newTitle, newDescription, newRules, newTag
     return request
         .patch(`/community/${title}`)
         .set({authorization: `Bearer ${token}`})
-        .query({'tag': newTags})
-        .send({'title': newTitle, 'description': newDescription, 'rules': newRules});
+        .send({'title': newTitle, 'description': newDescription, 'rules': newRules, 'tags': newTags});
 } 
 
 function joinCommunity(title, token) {
