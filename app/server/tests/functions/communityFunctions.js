@@ -47,34 +47,34 @@ function leaveCommunity(title, token){
 }
 
 // Community rules functions
-function setRulesForCommunity(title,rules,token){
+function setCommunityRules(title,rules,token){
     return request
         .put(`/community/rules/${title}`)
         .set({authorization: `Bearer ${token}`})
         .send({'rules': rules});
 }
 
-function getRulesForCommunity(title, token){
+function getCommunityRules(title, token){
     return request
         .get(`/community/rules/${title}`)
         .set({authorization: `Bearer ${token}`})
 }
 
 // Community tag functions
-function getTagsForCommunity(title, token){
+function getCommunityTags(title, token){
     return request
         .get(`/community/tags/${title}`)
         .set({authorization: `Bearer ${token}`})
 }
 
-function setTagsForCommunity(title, tag, token){
+function setCommunityTags(title, tag, token){
     return request
         .post(`/community/tags/${title}`)
         .set({authorization: `Bearer ${token}`})
         .query(`tag=${ tag }`);
 }
 
-function deleteTagsForCommunity(title, tag, token){
+function deleteCommunityTags(title, tag, token){
     return request
         .delete(`/community/tags/${title}`)
         .set({authorization: `Bearer ${token}`})
@@ -82,6 +82,6 @@ function deleteTagsForCommunity(title, tag, token){
 }
 
 module.exports = {getCommunities, getCommunitybyTitle,createCommunity,deleteCommunity,
-    patchCommunitybyTitle,joinCommunity,leaveCommunity,setRulesForCommunity,
-    getRulesForCommunity, getTagsForCommunity, setTagsForCommunity, deleteTagsForCommunity };
+    patchCommunitybyTitle,joinCommunity,leaveCommunity,setCommunityRules,
+    getCommunityRules, getCommunityTags, setCommunityTags, deleteCommunityTags };
     
