@@ -82,7 +82,7 @@ describe('Edit Community - With login, same community back to original title', (
 
 
 describe('Get Communities - get altered community title (2)', () => {
-  test('API returns the "Welcome" community description and title in its response body', async () => {
+  test('API returns the "new" community description and title in its response body', async () => {
     let response = await community.getCommunitybyTitle(newComTitle, token);
     expect(response.status).toBe(200);
     expect(" " + response.text + " ").toContain(newComDescript);
@@ -110,7 +110,7 @@ describe('Edit Community - With login and token, change all fields to empty', ()
     expect(response.status).toBe(403);
   });
 
-  test('API returns description - "Cannot Patch"', () => {
+  test('API returns description - ""', () => {
     expect(response.text).toBe("");
   });
 });
