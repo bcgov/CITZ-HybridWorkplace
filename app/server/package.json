@@ -23,6 +23,7 @@
     "express-routes-versioning": "^1.0.1",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.3",
+    "mongodb": "^4.7.0",
     "mongoose": "^6.2.3",
     "nodemon": "^2.0.15",
     "swagger-jsdoc": "^6.2.1",
