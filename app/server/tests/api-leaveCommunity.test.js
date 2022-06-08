@@ -62,29 +62,29 @@ describe('Leave Community by Title - With Login, community exists', () => {
     response = await community.leaveCommunity(newComTitle, token);
   });
 
-  test('API returns a successful response - code 404', () => {
-    expect(response.status).toBe(404);
+  test('API returns a successful response - code 204', () => {
+    expect(response.status).toBe(204);
   });
 
-  test('API returns description - "Community not found."', () => {
-    expect('' +response.text + '').toBe("Community not found.");
+  test('API returns description - "Successfully left community. "', () => {
+    expect('' + response.text + '').toBe("Successfully left community.");
   });
 });
 
 
-describe('Leave Community by Title - With Login, but already a member', () => {
+describe('Leave Community by Title - With Login, but already left', () => {
   let response = '';
 
   beforeAll(async() => {
     response = await community.leaveCommunity(newComTitle, token);
   });
   
-  test('API returns a unsuccessful response - code 403', () => {
-    expect(response.status).toBe(403);
+  test('API returns a unsuccessful response - code 404', () => {
+    expect(response.status).toBe(404);
   });
 
-  test('API returns description - "Community already exists."', () => {
-    expect('' + response.text + '').toContain("Community already exists.");
+  test('API returns description - "Community not found."', () => {
+    expect('' + response.text + '').toContain("Community not found.");
   });
 });
 
@@ -104,6 +104,23 @@ describe('Leave Community by Title - With Login, but community does not exist', 
   });
   
   test('API returns a unsuccessful response - code 403', () => {
+    expect(response.status).toBe(404);
+  });
+
+  test('API returns description - "Community already exists."', () => {
+    expect('' + response.text + '').toContain("Community not found.");
+  });
+});
+
+
+describe('Leave Community by Title - With Login, with " " community', () => {
+  let response = '';
+
+  beforeAll(async() => {
+    response = await community.leaveCommunity(newComTitle, token);
+  });
+  
+  test('API returns a unsuccessful response - code 404', () => {
     expect(response.status).toBe(404);
   });
 

@@ -56,12 +56,12 @@ describe('Join Community by Title - With Login, community exists', () => {
     response = await community.joinCommunity(newComTitle, token);
   });
 
-  test('API returns a successful response - code 404', () => {
-    expect(response.status).toBe(404);
+  test('API returns a successful response - code 204', () => {
+    expect(response.status).toBe(204);
   });
 
-  test('API returns description - "Community not found."', () => {
-    expect('' +response.text + '').toBe("Community not found.");
+  test('API returns description - "Successfully joined community."', () => {
+    expect('' +response.text + '').toBe("Successfully joined community.");
   });
 });
 
@@ -77,8 +77,8 @@ describe('Join Community by Title - With Login, but already a member', () => {
     expect(response.status).toBe(403);
   });
 
-  test('API returns description - "Community already exists."', () => {
-    expect('' + response.text + '').toContain("Community already exists.");
+  test('API returns description - "already joined Community."', () => {
+    expect('' + response.text + '').toContain("already joined Community.");
   });
 });
 
@@ -98,6 +98,23 @@ describe('Join Community by Title - With Login, but community does not exist', (
   });
   
   test('API returns a unsuccessful response - code 403', () => {
+    expect(response.status).toBe(404);
+  });
+
+  test('API returns description - "Community already exists."', () => {
+    expect('' + response.text + '').toContain("Community not found.");
+  });
+});
+
+
+describe('Join Community by Title - With Login, with " " community', () => {
+  let response = '';
+
+  beforeAll(async() => {
+    response = await community.joinCommunity(newComTitle, token);
+  });
+  
+  test('API returns a unsuccessful response - code 404', () => {
     expect(response.status).toBe(404);
   });
 
