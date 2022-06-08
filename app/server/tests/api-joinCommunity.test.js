@@ -7,7 +7,7 @@ const welComTitle = "Welcome";
 const welComDescript = "Welcome to theNeighbourhood";
 const welComRules = "string";
 
-const newComTitle = "hello";
+const newComTitle = "hello join";
 const newComDescript = "world";
 const newComRules = "1. rules";
 const newComTags = [{
@@ -98,23 +98,6 @@ describe('Join Community by Title - With Login, but community does not exist', (
   });
   
   test('API returns a unsuccessful response - code 403', () => {
-    expect(response.status).toBe(404);
-  });
-
-  test('API returns description - "Community already exists."', () => {
-    expect('' + response.text + '').toContain("Community not found.");
-  });
-});
-
-
-describe('Join Community by Title - With Login, with " " community', () => {
-  let response = '';
-
-  beforeAll(async() => {
-    response = await community.joinCommunity(newComTitle, token);
-  });
-  
-  test('API returns a unsuccessful response - code 404', () => {
     expect(response.status).toBe(404);
   });
 
