@@ -44,6 +44,7 @@ describe('Testing user\'s ability to DELETE Post Tags', () => {
     test('User can delete existing post tag.', async () => {
         response = await post.deletePostTags(postResponse.body._id, loginResponse.body.token);
         expect(response.status).toBe(204);
+        response = await post.getPostTags(postResponse.body._id, loginResponse.body.token);
         expect(response.body).not.toEqual(
             expect.arrayContaining([{
             "tag": tag1,
