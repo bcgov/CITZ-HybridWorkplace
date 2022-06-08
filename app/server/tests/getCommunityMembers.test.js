@@ -58,23 +58,6 @@ describe('Get Community Members - With Login, testing with "Welcome" community',
 });
 
 
-//Testing the get community function with the "Welcome" communityafter logging in, but without token
-describe('Get Community Members - With Login, but without token, testing with "Welcome" community', () => {
-  let response = '';
-
-  beforeAll( async() => {
-    response = await community.getCommunitybyTitle(welcomeCommunityTitle, '');
-  });
-
-  test('API returns a unsuccessful response - code 401', () => {
-    expect(response.status).toBe(401);
-  });
-
-  test('API returns description - "Missing token."', () => {
-    expect(response.text).toBe("Missing token.");
-  });
-});
-
 
 // Testing the get community function with the "Welcome" community after logging in, but with wrong token
 describe('Get Community Members - With Login, with invalid token, testing with "Welcome" community', () => {
