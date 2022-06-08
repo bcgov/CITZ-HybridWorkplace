@@ -119,12 +119,12 @@ describe('Edit Community - With login and token, running multiple edits synchron
   let response = '';
 
   beforeAll( async() => {
-    response = community.patchCommunitybyTitle(newComTitle, newComTitle, newComDescript + '1', newComRules, token);
-    response = community.patchCommunitybyTitle(newComTitle, newComTitle, newComDescript + '2', newComRules, token);
-    response = community.patchCommunitybyTitle(newComTitle, newComTitle, newComDescript + '3', newComRules, token);
-    response = community.patchCommunitybyTitle(newComTitle, newComTitle, newComDescript + '4', newComRules, token);
-    response = community.patchCommunitybyTitle(newComTitle, newComTitle, newComDescript + '5', newComRules, token);
-    response = community.patchCommunitybyTitle(newComTitle, newComTitle, newComDescript + '6', newComRules, token);
+    community.patchCommunitybyTitle(newComTitle, newComTitle, newComDescript + '1', newComRules, token);
+    community.patchCommunitybyTitle(newComTitle, newComTitle, newComDescript + '2', newComRules, token);
+    community.patchCommunitybyTitle(newComTitle, newComTitle, newComDescript + '3', newComRules, token);
+    community.patchCommunitybyTitle(newComTitle, newComTitle, newComDescript + '4', newComRules, token);
+    community.patchCommunitybyTitle(newComTitle, newComTitle, newComDescript + '5', newComRules, token);
+    await community.patchCommunitybyTitle(newComTitle, newComTitle, newComDescript + '6', newComRules, token);
     response = await community.getCommunitybyTitle(newComTitle, token);
   });
   
@@ -133,7 +133,7 @@ describe('Edit Community - With login and token, running multiple edits synchron
   });
 
   test('API returns description - ""', () => {
-    expect(response.text).toBe("");
+    expect(response.text).toContain(newComDescript + "6");
   });
 });
 
@@ -145,10 +145,10 @@ describe('Removing new Community', () => {
   });
 });
 
-describe('Removing updated Community', () => {
-  test('API returns a successful response - code 200', async() => {
+describe('Removing old Community', () => {
+  test('API returns a unsuccessful response - code 404', async() => {
       response = await community.deleteCommunity(updatedCommunityTitle, token);
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(404);
   });
 });
 

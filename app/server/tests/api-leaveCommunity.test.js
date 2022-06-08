@@ -88,6 +88,23 @@ describe('Leave Community by Title - With Login, but already left', () => {
   });
 });
 
+describe('Get Community Members - With Login, testing with "new" community', () => {
+  let response = '';
+
+  beforeAll(async() => {
+      response = await community.getCommunityMembers(newComTitle, 'true', token);
+  }); 
+
+  test('API returns a successful response - code 200', () => {
+      expect(response.status).toBe(200);
+  });
+
+  test('API returns the member count of 0', () => {
+      expect('' + response.text + '').toContain('0');
+  });
+});
+
+
 
 describe('Deleting new Community', () => {
   test('API returns a successful response - code 200', async() => {
@@ -103,11 +120,11 @@ describe('Leave Community by Title - With Login, but community does not exist', 
     response = await community.leaveCommunity(newComTitle, token);
   });
   
-  test('API returns a unsuccessful response - code 403', () => {
+  test('API returns a unsuccessful response - code 404', () => {
     expect(response.status).toBe(404);
   });
 
-  test('API returns description - "Community already exists."', () => {
+  test('API returns description - "Community not found."', () => {
     expect('' + response.text + '').toContain("Community not found.");
   });
 });

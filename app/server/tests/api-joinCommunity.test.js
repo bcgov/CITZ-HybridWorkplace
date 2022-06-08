@@ -3,9 +3,6 @@ let { AuthFunctions } = require('./functions/authFunctions.js');
 let user = new AuthFunctions();
 let token = '';
 
-const welComTitle = "Welcome";
-const welComDescript = "Welcome to theNeighbourhood";
-const welComRules = "string";
 
 const newComTitle = "hello join";
 const newComDescript = "world";
@@ -83,6 +80,24 @@ describe('Join Community by Title - With Login, but already a member', () => {
 });
 
 
+describe('Get Community Members - With Login, testing with "new" community', () => {
+  let response = '';
+
+  beforeAll(async() => {
+      response = await community.getCommunityMembers(newComTitle, 'true', token);
+  }); 
+
+  test('API returns a successful response - code 200', () => {
+      expect(response.status).toBe(200);
+  });
+
+  test('API returns the member count of 1', () => {
+      expect('' + response.text + '').toContain('1');
+  });
+});
+
+
+
 describe('Deleting new Community', () => {
   test('API returns a successful response - code 200', async() => {
     response = await community.deleteCommunity(newComTitle, token);
@@ -97,7 +112,7 @@ describe('Join Community by Title - With Login, but community does not exist', (
     response = await community.joinCommunity(newComTitle, token);
   });
   
-  test('API returns a unsuccessful response - code 403', () => {
+  test('API returns a unsuccessful response - code 404', () => {
     expect(response.status).toBe(404);
   });
 
