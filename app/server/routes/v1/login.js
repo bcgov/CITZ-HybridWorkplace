@@ -63,10 +63,7 @@ const User = require("../../models/user.model");
  *                properties:
  *                  token:
  *                    type: string
- *                    description: Access token with short expiry.
- *                  refresh_token:
- *                    type: string
- *                    description: Refresh token with longer expiry.
+ *                    description: Access token.
  *        '400':
  *          description: Bad Request.
  */
