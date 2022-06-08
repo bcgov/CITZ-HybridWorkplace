@@ -25,8 +25,8 @@ import { createSuccess, createError } from "./alertDuck";
 const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_COMMUNITIES";
 const ADD_POST = "CITZ-HYBRIDWORKPLACE/POST/ADD_COMMUNITY";
 const REMOVE_POST = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_POST";
-const ADD_TAG = "CITZ-HYBRIDWORKPLACE/POST/ADD_TAG";
-const UNTAG = "CITZ-HYBRIDWORKPLACE/POST/UNTAG";
+const TAG_POST = "CITZ-HYBRIDWORKPLACE/POST/TAG_POST";
+const UNTAG_POST = "CITZ-HYBRIDWORKPLACE/POST/UNTAG_POST";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
@@ -52,6 +52,13 @@ export const getPosts = () => async (dispatch, getState) => {
       throw new Error(`${response.status} ${response.statusText}`);
 
     let posts = await response.json();
+
+    //Modifies each post and adds a userTag field which shows the tag the user has given it
+    posts = posts.map((post) => ({
+      ...post,
+      userTag: post.tags.find((tag) => tag.taggedBy[0] === authState.user.id)
+        ?.tag,
+    }));
 
     dispatch({
       type: GET_POSTS,
@@ -190,6 +197,8 @@ export const tagPost = (postId, tag) => async (dispatch, getState) => {
     if (!response.ok)
       throw new Error(`${response.status} ${response.statusText}`);
 
+    dispatch({ type: TAG_POST, payload: { postId, tag } });
+
     createSuccess(`Successfully Tagged Post`)(dispatch);
   } catch (err) {
     console.error(err);
@@ -221,6 +230,10 @@ export const unTagPost = (postId, tag) => async (dispatch, getState) => {
     if (!response.ok)
       throw new Error(`${response.status} ${response.statusText}`);
 
+    dispatch({
+      type: UNTAG_POST,
+      payload: { postId },
+    });
     createSuccess(`Successfully Untagged Post`)(dispatch);
   } catch (err) {
     console.error(err);
@@ -232,8 +245,8 @@ export const unTagPost = (postId, tag) => async (dispatch, getState) => {
 };
 
 const initialState = {
-  items: [], //communitys
-  item: {}, //single community
+  items: [], //posts
+  item: {}, //single post
 };
 
 export function postReducer(state = initialState, action) {
@@ -253,11 +266,24 @@ export function postReducer(state = initialState, action) {
         ...state,
         items: state.items.filter((item) => item._id !== action.payload),
       };
-    //TODO: Implement redux functionality for tagging state
-    case ADD_TAG:
-      return {};
-    case UNTAG:
-      return {};
+    case TAG_POST:
+      return {
+        ...state,
+        items: state.items.map((element) =>
+          element._id === action.payload.postId
+            ? { ...element, userTag: action.payload.tag }
+            : element
+        ),
+      };
+    case UNTAG_POST:
+      return {
+        ...state,
+        items: state.items.map((element) =>
+          element._id === action.payload.postId
+            ? { ...element, userTag: undefined }
+            : element
+        ),
+      };
     default:
       return state;
   }
