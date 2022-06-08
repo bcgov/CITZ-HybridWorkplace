@@ -38,7 +38,7 @@ import { flagPost } from "../../redux/ducks/postDuck";
 import PropTypes from "prop-types";
 import { useState } from "react";
 
-const FlagPost = (props) => {
+const FlagPostModal = (props) => {
   //TODO: Get list of flags from API
   const flags = [
     "Inappropriate",
@@ -99,7 +99,7 @@ const FlagPost = (props) => {
   );
 };
 
-FlagPost.propTypes = {
+FlagPostModal.propTypes = {
   open: PropTypes.bool,
   closeFlagPostModal: PropTypes.func,
 };
@@ -114,4 +114,4 @@ const mapActionsToProps = {
   flagPost,
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(FlagPost);
+export default connect(mapStateToProps, mapActionsToProps)(FlagPostModal);

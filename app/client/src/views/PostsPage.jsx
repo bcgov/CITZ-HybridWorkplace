@@ -16,26 +16,27 @@
 
 /**
  * Application entry point
- * @author [Zach Bourque](bettesworthjayna@gmail.com)
+ * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
 
-import { Dialog, DialogContent, DialogTitle, Grid } from "@mui/material";
-import CreateCommunity from "../createCommunity";
+import React, { useState } from "react";
 
-const AddCommunity = (props) => {
+import PostsList from "../components/PostsList";
+import AddPostModal from "../components/modals/AddPostModal";
+
+const PostsPage = () => {
+  const [show, setShow] = useState(false);
+
   return (
-    <Dialog onClose={props.onClose} open={props.open} fullWidth="md">
-      <DialogTitle>Create a Community</DialogTitle>
-      <DialogContent>
-        <Grid container justifyContent="center" alignItems="center">
-          <Grid item>
-            <CreateCommunity onClose={props.onClose} />
-          </Grid>
-        </Grid>
-      </DialogContent>
-    </Dialog>
+    <div>
+      <h1>Posts</h1>
+      <PostsList />
+      <br />
+      <button onClick={() => setShow(true)}>Add Post</button>
+      <AddPostModal onClose={() => setShow(false)} show={show} />
+    </div>
   );
 };
 
-export default AddCommunity;
+export default PostsPage;

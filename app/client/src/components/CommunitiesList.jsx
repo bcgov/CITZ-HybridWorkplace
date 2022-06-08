@@ -16,7 +16,7 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
  */
 
@@ -25,52 +25,39 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
 import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
 
-import {
-  getUsersCommunities,
-  leaveCommunity,
-  joinCommunity,
-} from "../redux/ducks/communityDuck";
-import JoinButton from "./joinButton";
+import { getCommunities } from "../redux/ducks/communityDuck";
+import JoinButton from "./JoinButton";
 
-const UsersCommunitiesList = (props) => {
+const CommunitiesList = (props) => {
   useEffect(() => {
-    props.getUsersCommunities();
+    props.getCommunities();
   }, []);
 
   return (
     <div>
-      {props.communities.usersCommunities.map((community) => (
+      {props.communities.items.map((community) => (
         <div key={community._id}>
           <Paper
             sx={{
-              px: 0.5,
+              px: 1,
+              py: 0,
               margin: "auto",
             }}
             variant="outlined"
             square
           >
-            <Grid container spacing={1} alignItems="center">
-              <Grid item xs={9}>
-                <Typography p={1.5} variant="p" component="p">
-                  {community.title}
-                </Typography>
-              </Grid>
-
-              <Grid item xs={3} textAlign="center">
-                <JoinButton community={community} />
-              </Grid>
-            </Grid>
+            <h3>{community.title}</h3>
+            <p>{community.description}</p>
           </Paper>
+          <JoinButton community={community} />
         </div>
       ))}
     </div>
   );
 };
 
-UsersCommunitiesList.propTypes = {
+CommunitiesList.propTypes = {
   getCommunities: PropTypes.func.isRequired,
   communities: PropTypes.array.isRequired,
 };
@@ -79,13 +66,4 @@ const mapStateToProps = (state) => ({
   communities: state.communities,
 });
 
-const mapActionsToProps = {
-  getUsersCommunities,
-  leaveCommunity,
-  joinCommunity,
-};
-
-export default connect(
-  mapStateToProps,
-  mapActionsToProps
-)(UsersCommunitiesList);
+export default connect(mapStateToProps, { getCommunities })(CommunitiesList);

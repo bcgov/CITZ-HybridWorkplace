@@ -20,7 +20,6 @@
  * @module
  */
 
-import tag from "../../components/tag";
 import { createSuccess, createError } from "./alertDuck";
 
 const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_COMMUNITIES";
