@@ -26,6 +26,7 @@ const SET_USERS_COMMUNITIES =
 const ADD_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/ADD_COMMUNITY";
 const JOIN_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/JOIN_COMMUNITY";
 const LEAVE_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/LEAVE_COMMUNITY";
+const DELETE_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/DELETE_COMMUNITY";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
@@ -205,6 +206,37 @@ export const leaveCommunity = (communityName) => async (dispatch, getState) => {
   }
 };
 
+export const deleteCommunity =
+  (communityName) => async (dispatch, getState) => {
+    let successful = true;
+    try {
+      const authState = getState().auth;
+      const token = authState.accessToken;
+      if (!token) throw new Error(noTokenText);
+
+      const response = await fetch(`${apiURI}/api/community/${communityName}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok)
+        throw new Error(`${response.status} ${response.statusText}`);
+
+      dispatch({
+        type: DELETE_COMMUNITY,
+        payload: communityName,
+      });
+    } catch (err) {
+      console.error(err);
+      successful = false;
+    } finally {
+      return successful;
+    }
+  };
+
 const initialState = {
   usersCommunities: [], //users communities
   items: [], //communitys
@@ -243,6 +275,14 @@ export function communityReducer(state = initialState, action) {
         usersCommunities: state.usersCommunities?.filter(
           (item, index) => item.title !== action.payload
         ),
+      };
+    case DELETE_COMMUNITY:
+      return {
+        ...state,
+        usersCommunities: state.usersCommunities.filter(
+          (item) => item.title !== action.payload
+        ),
+        items: state.items.filter((item) => item.title !== action.payload),
       };
     default:
       return state;

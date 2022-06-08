@@ -23,11 +23,10 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-
-import Paper from "@mui/material/Paper";
+import DeleteCommunityModal from "./modals/DeleteCommunityModal";
+import Community from "./Community";
 
 import { getCommunities } from "../redux/ducks/communityDuck";
-import JoinButton from "./JoinButton";
 
 const CommunitiesList = (props) => {
   useEffect(() => {
@@ -37,22 +36,9 @@ const CommunitiesList = (props) => {
   return (
     <div>
       {props.communities.items.map((community) => (
-        <div key={community._id}>
-          <Paper
-            sx={{
-              px: 1,
-              py: 0,
-              margin: "auto",
-            }}
-            variant="outlined"
-            square
-          >
-            <h3>{community.title}</h3>
-            <p>{community.description}</p>
-          </Paper>
-          <JoinButton community={community} />
-        </div>
+        <Community community={community} />
       ))}
+      <DeleteCommunityModal />
     </div>
   );
 };
