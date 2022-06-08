@@ -325,7 +325,7 @@ router.get("/community/:title", async (req, res) => {
  *                  $ref: '#/components/schemas/Post/properties/pinned'
  *      responses:
  *        '404':
- *          description: User not found. **||** <br>Post not found. **||** <br>Community not found.
+ *          description: User not found. **||** <br>Post not found.
  *        '403':
  *          description: Community can't have more than 3 pinned posts. **||** <br>One of the fields you tried to edit, can not be edited. **||** <br>Only creator of post can edit post.
  *        '204':
@@ -348,15 +348,10 @@ router.patch("/:id", async (req, res) => {
       throw new ResponseError(403, "Only creator of post can edit post.");
 
     if (req.body.pinned === true) {
-      // Trying to pin edited post
-      const community = await Community.findOne({
-        title: req.body.community || post.community,
-      });
-      if (!community) throw new ResponseError(404, "Community not found.");
-
+      // Trying to pin post
       if (
         (await Post.count({
-          community: req.body.community || post.community,
+          community: post.community,
           pinned: true,
         })) >= 3
       )
@@ -375,7 +370,8 @@ router.patch("/:id", async (req, res) => {
         key === "creator" ||
         key === "tags" ||
         key === "flags" ||
-        key === "createdOn"
+        key === "createdOn" ||
+        key === "community"
       ) {
         throw new ResponseError(403, `${key} can not be edited.`);
       }
