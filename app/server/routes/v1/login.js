@@ -23,6 +23,7 @@
 require("dotenv").config();
 const express = require("express");
 const bcrypt = require("bcryptjs"); // hashing passwords
+const ResponseError = require("../../responseError");
 
 const router = express.Router();
 
@@ -51,10 +52,8 @@ const User = require("../../models/user.model");
  *                password:
  *                  $ref: '#/components/schemas/User/properties/password'
  *      responses:
- *        '404':
- *          description: User not found.
- *        '403':
- *          description: Community already exists.
+ *        '401':
+ *          description: Invalid username or password.
  *        '201':
  *          description: Successfully logged in.
  *          content:
@@ -64,10 +63,7 @@ const User = require("../../models/user.model");
  *                properties:
  *                  token:
  *                    type: string
- *                    description: Access token with short expiry.
- *                  refresh_token:
- *                    type: string
- *                    description: Refresh token with longer expiry.
+ *                    description: Access token.
  *        '400':
  *          description: Bad Request.
  */
@@ -79,7 +75,7 @@ router.post("/", async (req, res) => {
       username: req.body.username,
     });
 
-    if (!user) return res.status(404).send("User not found.");
+    if (!user) throw new ResponseError(401, "Invalid username or password.");
 
     const isPasswordValid = await bcrypt.compare(
       req.body.password,
@@ -109,8 +105,10 @@ router.post("/", async (req, res) => {
       // Send JWT
       return res.status(201).json({ token });
     }
-    return res.status(400).send("Bad Request");
+    throw new ResponseError(401, "Invalid username or password.");
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

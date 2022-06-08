@@ -23,6 +23,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs"); // hashing passwords
 const moment = require("moment");
+const ResponseError = require("../../responseError");
 
 const router = express.Router();
 
@@ -52,7 +53,7 @@ const Community = require("../../models/community.model");
  *                  $ref: '#/components/schemas/User/properties/password'
  *      responses:
  *        '403':
- *          description: Forbidden (IDIR or email already exists).
+ *          description: IDIR or email already exists.
  *        '201':
  *          description: Registered.
  *        '400':
@@ -69,7 +70,7 @@ router.post("/", async (req, res) => {
         $or: [{ username: req.body.username }, { email: req.body.email }],
       })
     )
-      return res.status(403).send("IDIR or email already exists.");
+      throw new ResponseError(403, "IDIR or email already exists.");
 
     const user = await User.create({
       username: req.body.username,
@@ -98,7 +99,8 @@ router.post("/", async (req, res) => {
 
     return res.status(201).send("Registered.");
   } catch (err) {
-    console.log(err);
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
