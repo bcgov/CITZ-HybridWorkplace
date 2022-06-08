@@ -19,7 +19,7 @@ import { openFlagPostModal } from "../redux/ducks/modalDuck";
 import { openDeletePostModal } from "../redux/ducks/modalDuck";
 import { useState } from "react";
 import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
-import TagsList from "./tagsList";
+import TagsList from "./TagsList";
 
 const Post = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);

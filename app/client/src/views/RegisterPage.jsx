@@ -26,7 +26,7 @@ import { connect } from "react-redux";
 import { register } from "../redux/ducks/authDuck";
 import "../views/Styles/register.css";
 
-function App(props) {
+function RegisterPage(props) {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -192,4 +192,4 @@ function App(props) {
   );
 }
 
-export default connect(null, { register })(App);
+export default connect(null, { register })(RegisterPage);

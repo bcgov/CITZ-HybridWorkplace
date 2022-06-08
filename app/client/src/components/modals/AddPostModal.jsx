@@ -32,7 +32,7 @@ import { Button } from "@mui/material";
 import { getCommunities } from "../../redux/ducks/communityDuck";
 import { createPost } from "../../redux/ducks/postDuck";
 
-const CreatePost = (props) => {
+const AddPostModal = (props) => {
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
 
@@ -123,7 +123,7 @@ const CreatePost = (props) => {
   );
 };
 
-CreatePost.propTypes = {
+AddPostModal.propTypes = {
   getCommunities: PropTypes.func.isRequired,
   communities: PropTypes.array.isRequired,
 };
@@ -134,5 +134,5 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, { getCommunities, createPost })(
-  CreatePost
+  AddPostModal
 );

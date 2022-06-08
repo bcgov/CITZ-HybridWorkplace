@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { tagPost, unTagPost } from "../redux/ducks/postDuck";
-import Tag from "./tag";
+import Tag from "./Tag";
 
 export const TagsList = (props) => {
   return props.post.availableTags ? (

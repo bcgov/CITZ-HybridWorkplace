@@ -21,15 +21,13 @@
  */
 
 import React, { useEffect } from "react";
-import { connect, useDispatch } from "react-redux";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
-import Paper from "@mui/material/Paper";
-
 import { getPosts } from "../redux/ducks/postDuck";
-import Post from "./post";
-import FlagPostModal from "./modals/flagPostModal";
-import DeletePostModal from "./modals/deletePostModal";
+import Post from "./Post";
+import FlagPostModal from "./modals/FlagPostModal";
+import DeletePostModal from "./modals/DeletePostModal";
 
 const PostsList = (props) => {
   useEffect(() => {
