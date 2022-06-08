@@ -21,6 +21,7 @@
  */
 
 const express = require("express");
+const ResponseError = require("../../../responseError");
 
 const router = express.Router();
 
@@ -63,10 +64,12 @@ router.get("/:title", async (req, res) => {
       title: req.params.title,
     }).exec();
 
-    if (!community) return res.status(404).send("Community not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
 
     return res.status(200).json(community.tags);
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -95,12 +98,10 @@ router.get("/:title", async (req, res) => {
  *      responses:
  *        '404':
  *          description: User not found. **||** <br>Community not found. **||** <br>Tag not found in query.
- *        '401':
- *          description: Not Authorized. Only creator of community can edit community.
  *        '403':
- *          description: A community can't have more than 7 tags. **||** <br>No duplicate tags.
+ *          description: A community can't have more than 7 tags. **||** <br>No duplicate tags. **||** <br>Only creator of community can edit community.
  *        '204':
- *          description: Successfully created tag.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
@@ -113,14 +114,15 @@ router.post("/:title", async (req, res) => {
       title: req.params.title,
     }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
-    if (!req.query.tag) return res.status(404).send("Tag not found in query.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
+    if (!req.query.tag) throw new ResponseError(404, "Tag not found in query.");
 
     if (user.username !== community.creator)
-      return res
-        .status(401)
-        .send("Not Authorized. Only creator of community can edit community.");
+      throw new ResponseError(
+        403,
+        "Only creator of community can edit community."
+      );
 
     if (
       await Community.exists({
@@ -128,10 +130,10 @@ router.post("/:title", async (req, res) => {
         "tags.tag": req.query.tag,
       })
     )
-      return res.status(403).send("No duplicate tags.");
+      throw new ResponseError(403, "No duplicate tags.");
 
     if (await Community.exists({ title: community.title, tags: { $size: 7 } }))
-      return res.status(403).send("A community can't have more than 7 tags.");
+      throw new ResponseError(403, "A community can't have more than 7 tags.");
 
     // Add to community
     await Community.updateOne(
@@ -145,8 +147,10 @@ router.post("/:title", async (req, res) => {
       { $push: { availableTags: req.query.tag } }
     );
 
-    return res.status(204).send("");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -175,10 +179,10 @@ router.post("/:title", async (req, res) => {
  *      responses:
  *        '404':
  *          description: User not found. **||** <br>Community not found. **||** <br>Tag not found in query.
- *        '401':
- *          description: Not Authorized. Only creator of community can edit community.
+ *        '403':
+ *          description: Only creator of community can edit community.
  *        '204':
- *          description: Successfully removed tag.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
@@ -191,14 +195,15 @@ router.delete("/:title", async (req, res) => {
       title: req.params.title,
     }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
-    if (!req.query.tag) return res.status(404).send("Tag not found in query.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
+    if (!req.query.tag) throw new ResponseError(404, "Tag not found in query.");
 
     if (user.username !== community.creator)
-      return res
-        .status(401)
-        .send("Not Authorized. Only creator of community can edit community.");
+      throw new ResponseError(
+        403,
+        "Only creator of community can edit community."
+      );
 
     // Remove tag from community
     await Community.updateOne(
@@ -212,8 +217,10 @@ router.delete("/:title", async (req, res) => {
       { $pull: { tags: { tag: req.query.tag }, availableTags: req.query.tag } }
     );
 
-    return res.status(204).send("");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

@@ -6,11 +6,12 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const routesVersioning = require("express-routes-versioning")();
 const rateLimit = require("express-rate-limit");
-const authenticateToken = require("./middleware/authenticateToken");
-const sanitizeInputs = require("./middleware/sanitizeInputs");
 
 const swaggerUI = require("swagger-ui-express");
 const swaggerConf = require("./swagger-conf");
+
+const authenticateToken = require("./middleware/authenticateToken");
+const sanitizeInputs = require("./middleware/sanitizeInputs");
 
 // Version 1 route imports
 const communityRouterV1 = require("./routes/v1/community/community");

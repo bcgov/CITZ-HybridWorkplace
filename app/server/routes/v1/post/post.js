@@ -19,6 +19,7 @@
 
 const express = require("express");
 const moment = require("moment");
+const ResponseError = require("../../../responseError");
 
 const router = express.Router();
 
@@ -71,8 +72,8 @@ router.post("/", async (req, res) => {
     const user = await User.findOne({ username: req.user.username });
     const community = await Community.findOne({ title: req.body.community });
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
 
     if (
       !(await User.exists({
@@ -80,17 +81,19 @@ router.post("/", async (req, res) => {
         "communities.community": community.title,
       }))
     )
-      return res
-        .status(403)
-        .send("Must be a part of community to post in community.");
+      throw new ResponseError(
+        403,
+        "Must be a part of community to post in community."
+      );
 
     if (
       req.body.pinned === true &&
       (await Post.count({ community: community.title, pinned: true })) >= 3
     )
-      return res
-        .status(403)
-        .send("Community can't have more than 3 pinned posts.");
+      throw new ResponseError(
+        403,
+        "Community can't have more than 3 pinned posts."
+      );
 
     const availableTags = community.tags.map((tag) => tag.tag);
 
@@ -100,7 +103,7 @@ router.post("/", async (req, res) => {
       creator: user.id,
       community: req.body.community,
       pinned: req.body.pinned || false,
-      availableTags: availableTags,
+      availableTags,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
 
@@ -120,11 +123,9 @@ router.post("/", async (req, res) => {
 
     return res.status(201).json(post);
   } catch (err) {
-    return res
-      .status(400)
-      .send(
-        `Bad Request. The Post in the body of the Request is either missing or malformed. ${err}`
-      );
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
+    return res.status(400).send(`Bad Request: ${err}`);
   }
 });
 
@@ -158,7 +159,7 @@ router.get("/", async (req, res) => {
   try {
     const user = await User.findOne({ username: req.user.username });
 
-    if (!user) return res.status(404).send("User not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
 
     // If post belongs to community listed in user.communities
     const communities = user.communities.map(
@@ -168,10 +169,12 @@ router.get("/", async (req, res) => {
       sort: { pinned: -1, _id: -1 },
     }).exec();
 
-    if (!posts) return res.status(404).send("Posts not found.");
+    if (!posts) throw new ResponseError(404, "Posts not found.");
 
     return res.status(200).json(posts);
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -210,10 +213,12 @@ router.get("/:id", async (req, res) => {
   try {
     const post = await Post.findOne({ _id: req.params.id }).exec();
 
-    if (!post) return res.status(404).send("Post not found.");
+    if (!post) throw new ResponseError(404, "Post not found.");
 
     return res.status(200).json(post);
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -258,7 +263,7 @@ router.get("/community/:title", async (req, res) => {
   try {
     const community = await Community.findOne({ title: req.params.title });
 
-    if (!community) return res.status(404).send("Community not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
 
     let posts;
 
@@ -278,10 +283,12 @@ router.get("/community/:title", async (req, res) => {
       }).exec();
     }
 
-    if (!posts) return res.status(404).send("Posts not found.");
+    if (!posts) throw new ResponseError(404, "Posts not found.");
 
     return res.status(200).json(posts);
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -318,11 +325,11 @@ router.get("/community/:title", async (req, res) => {
  *                  $ref: '#/components/schemas/Post/properties/pinned'
  *      responses:
  *        '404':
- *          description: User not found. **||** <br>Post not found. **||** <br>Community not found.
+ *          description: User not found. **||** <br>Post not found.
  *        '403':
  *          description: Community can't have more than 3 pinned posts. **||** <br>One of the fields you tried to edit, can not be edited. **||** <br>Only creator of post can edit post.
  *        '204':
- *          description: Post successfully edited.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
@@ -334,30 +341,24 @@ router.patch("/:id", async (req, res) => {
     const user = await User.findOne({ username: req.user.username });
     const post = await Post.findOne({ _id: req.params.id }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!post) return res.status(404).send("Post not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!post) throw new ResponseError(404, "Post not found.");
 
     if (post.creator !== user.id)
-      return res.status(403).send("Only creator of post can edit post.");
+      throw new ResponseError(403, "Only creator of post can edit post.");
 
-    if (req.body.pinned === true && req.body.community) {
-      // pinned and community set in patch
-
-      const community = await Community.findOne({ title: req.body.community });
-      if (!community) return res.status(404).send("Community not found.");
-
+    if (req.body.pinned === true) {
+      // Trying to pin post
       if (
-        (await Post.count({ community: req.body.community, pinned: true })) >= 3
+        (await Post.count({
+          community: post.community,
+          pinned: true,
+        })) >= 3
       )
-        return res
-          .status(403)
-          .send("Community can't have more than 3 pinned posts.");
-    } else if (req.body.pinned === true && !req.body.community) {
-      // pinned set in patch, but not community
-      if ((await Post.count({ community: post.community, pinned: true })) >= 3)
-        return res
-          .status(403)
-          .send("Community can't have more than 3 pinned posts.");
+        throw new ResponseError(
+          403,
+          "Community can't have more than 3 pinned posts."
+        );
     }
 
     // eslint-disable-next-line prefer-const
@@ -369,11 +370,10 @@ router.patch("/:id", async (req, res) => {
         key === "creator" ||
         key === "tags" ||
         key === "flags" ||
-        key === "createdOn"
+        key === "createdOn" ||
+        key === "community"
       ) {
-        return res
-          .status(403)
-          .send("One of the fields you tried to edit, can not be edited.");
+        throw new ResponseError(403, `${key} can not be edited.`);
       }
 
       if (post[key] && post[key] !== req.body[key]) {
@@ -386,8 +386,10 @@ router.patch("/:id", async (req, res) => {
 
     await Post.updateOne({ _id: req.params.id }, query).exec();
 
-    return res.status(204).send("");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -411,10 +413,10 @@ router.patch("/:id", async (req, res) => {
  *      responses:
  *        '404':
  *          description: User not found. **||** <br>Post not found.
- *        '401':
- *          description: Not Authorized. Must be creator of post to delete post.
+ *        '403':
+ *          description: Must be creator of post to delete post.
  *        '204':
- *          description: Post removed.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
@@ -426,14 +428,11 @@ router.delete("/:id", async (req, res) => {
     const user = await User.findOne({ username: req.user.username });
     const post = await Post.findOne({ _id: req.params.id }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!post) return res.status(404).send("Post not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!post) throw new ResponseError(404, "Post not found.");
 
-    if (post.creator !== user.id) {
-      return res
-        .status(401)
-        .send("Not Authorized. Must be creator of post to delete post.");
-    }
+    if (post.creator !== user.id)
+      throw new ResponseError(403, "Must be creator of post to delete post.");
 
     // Remove the comments on post
     await Comment.deleteMany({ post: post.id }).exec();
@@ -459,6 +458,8 @@ router.delete("/:id", async (req, res) => {
 
     return res.status(204).send("Post removed.");
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

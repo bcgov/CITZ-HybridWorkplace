@@ -18,6 +18,7 @@
  */
 
 const express = require("express");
+const ResponseError = require("../../../responseError");
 
 const router = express.Router();
 
@@ -51,7 +52,7 @@ const User = require("../../../models/user.model");
  *        '403':
  *          description: Missing message in body of the request. **||** <br>Must be a part of community to vote.
  *        '204':
- *          description: Success.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
@@ -62,10 +63,10 @@ router.patch("/:id", async (req, res) => {
     const user = await User.findOne({ username: req.user.username });
     const comment = await Comment.findOne({ _id: req.params.id });
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!comment) return res.status(404).send("Comment not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!comment) throw new ResponseError(404, "Comment not found.");
     if (!req.query.vote)
-      return res.status(404).send("Vote not found in query.");
+      throw new ResponseError(404, "Vote not found in query.");
 
     if (
       !(await User.exists({
@@ -73,7 +74,7 @@ router.patch("/:id", async (req, res) => {
         "communities.community": comment.community,
       }))
     )
-      return res.status(403).send("Must be a part of community to vote.");
+      throw new ResponseError(403, "Must be a part of community to vote.");
 
     let query;
 
@@ -128,6 +129,11 @@ router.patch("/:id", async (req, res) => {
             $push: { "downvotes.users": user.id },
           };
           break;
+        default:
+          throw new ResponseError(
+            404,
+            "Vote not found or unrecognized query value."
+          );
       }
     }
 
@@ -135,7 +141,8 @@ router.patch("/:id", async (req, res) => {
 
     return res.status(204).send("");
   } catch (err) {
-    console.log(err);
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

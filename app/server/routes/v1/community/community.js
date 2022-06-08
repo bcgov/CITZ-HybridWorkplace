@@ -22,7 +22,8 @@
 
 const express = require("express");
 const moment = require("moment");
-const ObjectId = require("mongodb").ObjectId;
+const { ObjectId } = require("mongodb");
+const ResponseError = require("../../../responseError");
 
 const router = express.Router();
 
@@ -76,10 +77,10 @@ router.post("/", async (req, res) => {
   try {
     const user = await User.findOne({ username: req.user.username });
 
-    if (!user) return res.status(404).send("User not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
 
     if (await Community.exists({ title: req.body.title })) {
-      return res.status(403).send("Community already exists.");
+      throw new ResponseError(403, "Community already exists.");
     }
 
     // TODO: Validate formatting for tags in request body
@@ -109,13 +110,9 @@ router.post("/", async (req, res) => {
 
     return res.status(201).json(community);
   } catch (err) {
-    console.log(err);
-    return res
-      .status(400)
-      .send(
-        "Bad Request. The Community in the body of the Request is either missing or malformed. " +
-          `${err}`
-      );
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
+    return res.status(400).send(`Bad Request: ${err}`);
   }
 });
 
@@ -154,7 +151,7 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const user = await User.findOne({ username: req.user.username });
-    if (!user) return res.status(404).send("User not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
 
     let communities;
 
@@ -212,10 +209,12 @@ router.get("/", async (req, res) => {
       communities = await Community.find({}, "", { sort: { _id: 1 } }).exec();
     }
 
-    if (!communities) return res.status(404).send("Communities not found.");
+    if (!communities) throw new ResponseError(404, "Communities not found.");
 
     return res.status(200).json(communities);
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -255,10 +254,12 @@ router.get("/:title", async (req, res) => {
       title: req.params.title,
     }).exec();
 
-    if (!community) return res.status(404).send("Community not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
 
     return res.status(200).json(community);
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -293,12 +294,10 @@ router.get("/:title", async (req, res) => {
  *      responses:
  *        '404':
  *          description: User not found. **||** <br>Community not found.
- *        '401':
- *          description: Not Authorized. Only creator of community can edit community.
  *        '403':
- *          description: One of the fields you tried to edit, can not be edited.
+ *          description: One of the fields you tried to edit, can not be edited. **||** <br>Only creator of community can edit community.
  *        '204':
- *          description: Community successfully edited.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
@@ -313,13 +312,14 @@ router.patch("/:title", async (req, res) => {
       title: req.params.title,
     }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
 
     if (user.username !== community.creator)
-      return res
-        .status(401)
-        .send("Not Authorized. Only creator of community can edit community.");
+      throw new ResponseError(
+        403,
+        "Only creator of community can edit community."
+      );
 
     // eslint-disable-next-line prefer-const
     let query = { $set: {} };
@@ -331,9 +331,8 @@ router.patch("/:title", async (req, res) => {
         key === "createdOn" ||
         key === "members"
       )
-        return res
-          .status(403)
-          .send("One of the fields you tried to edit, can not be edited.");
+        throw new ResponseError(403, `${key} can not be edited.`);
+
       // if the field in req.body exists, update/set it
       if (community[key] && community[key] !== req.body[key]) {
         query.$set[key] = req.body[key];
@@ -346,6 +345,8 @@ router.patch("/:title", async (req, res) => {
 
     return res.status(204).send("");
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -369,8 +370,8 @@ router.patch("/:title", async (req, res) => {
  *      responses:
  *        '404':
  *          description: User not found. **||** <br>Community not found.
- *        '401':
- *          description: Not Authorized. Only creator of community can edit community.
+ *        '403':
+ *          description: Only creator of community can edit community.
  *        '200':
  *          description: Community removed.
  *        '400':
@@ -386,13 +387,14 @@ router.delete("/:title", async (req, res) => {
       title: req.params.title,
     }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
 
     if (user.username !== community.creator)
-      return res
-        .status(401)
-        .send("Not Authorized. Only creator of community can edit community.");
+      throw new ResponseError(
+        403,
+        "Only creator of community can edit community."
+      );
 
     // Remove community
     await Community.deleteOne({
@@ -414,6 +416,8 @@ router.delete("/:title", async (req, res) => {
     // TODO: AUTH ONLY MODERATORS OF COMMUNITY
     return res.status(200).send("Community removed.");
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

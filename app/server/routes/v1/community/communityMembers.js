@@ -21,6 +21,7 @@
  */
 
 const express = require("express");
+const ResponseError = require("../../../responseError");
 
 const router = express.Router();
 
@@ -67,14 +68,16 @@ router.get("/:title", async (req, res) => {
     const user = await User.findOne({ username: req.user.username });
     const community = await Community.findOne({ title: req.params.title });
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
 
     if (req.query.count === "true")
       return res.status(200).json({ count: community.members.length || 0 });
 
     return res.status(200).json(community.members);
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -99,7 +102,7 @@ router.get("/:title", async (req, res) => {
  *        '404':
  *          description: User not found. **||** <br>Community not found.
  *        '204':
- *          description: Successfully joined community.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
@@ -112,8 +115,8 @@ router.patch("/join/:title", async (req, res) => {
       title: req.params.title,
     }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
 
     await Community.updateOne(
       { title: community.title },
@@ -129,8 +132,10 @@ router.patch("/join/:title", async (req, res) => {
       }
     );
 
-    return res.status(204).send("");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -155,7 +160,7 @@ router.patch("/join/:title", async (req, res) => {
  *        '404':
  *          description: User not found. **||** <br>Community not found.
  *        '204':
- *          description: Successfully left community.
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
@@ -168,8 +173,8 @@ router.delete("/leave/:title", async (req, res) => {
       title: req.params.title,
     }).exec();
 
-    if (!user) return res.status(404).send("User not found.");
-    if (!community) return res.status(404).send("Community not found.");
+    if (!user) throw new ResponseError(404, "User not found.");
+    if (!community) throw new ResponseError(404, "Community not found.");
 
     // Remove user from community
     await Community.updateOne(
@@ -187,8 +192,10 @@ router.delete("/leave/:title", async (req, res) => {
       }
     );
 
-    return res.status(204).send("");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
+    if (err instanceof ResponseError)
+      return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

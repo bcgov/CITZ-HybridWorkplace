@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-param-reassign */
 /* 
  Copyright © 2022 Province of British Columbia
 
