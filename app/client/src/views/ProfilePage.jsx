@@ -16,7 +16,8 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Brandon Bouchard](brandonjbouchard@gmail.com)
+ * @author [Zach Bourque](zachbourque01@gmail.com)
  * @module
  */
 
@@ -28,7 +29,23 @@ import "./Styles/profile.css";
 import { getProfile } from "../redux/ducks/profileDuck";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { Grid, Paper, Box, Typography, Avatar, Form } from "@mui/material";
+import {
+  Grid,
+  Paper,
+  Box,
+  Typography,
+  Avatar,
+  FormControl,
+  FormLabel,
+  FormControlLabel,
+  RadioGroup,
+  Radio,
+  Chip,
+  Stack,
+  Divider,
+  Switch,
+} from "@mui/material";
+import GroupsIcon from "@mui/icons-material/Groups";
 
 import UsersCommunitiesList from "../components/UsersCommunitiesList";
 import ProfileInfo from "../components/ProfileInfo";
@@ -41,7 +58,12 @@ const ProfilePage = (props) => {
   }, []);
 
   return (
-    <Box sx={{ alignItems: "stretch" }}>
+    <Box
+      sx={{
+        alignItems: "stretch",
+        overflow: "hidden",
+      }}
+    >
       <Grid
         container
         spacing={2}
@@ -57,13 +79,46 @@ const ProfilePage = (props) => {
             justifyContent="space-evenly"
           >
             <Grid item xs={12}>
-              <Avatar src="https://source.unsplash.com/random/150×150/?profile" />
-              <ProfileInfo />
+              <Avatar
+                sx={{ width: 150, height: 150 }}
+                src="https://source.unsplash.com/random/150×150/?profile%20picture"
+              />
+              <br />
+              <Grid item xs={12}>
+                <ProfileInfo />
+              </Grid>
+              <br />
+              <Grid item xs={12}>
+                <Box
+                  sx={{
+                    alignItems: "left",
+                  }}
+                >
+                  <Typography
+                    variant="h6"
+                    style={{ fontWeight: 600, color: "#313132" }}
+                  >
+                    Interests
+                  </Typography>
+                  <Stack direction="column" spacing={1}>
+                    <Stack direction="row" spacing={1}>
+                      <Chip label="DevOps" color="primary" />
+                      <Chip label="Design" color="error" />
+                    </Stack>
+                    <Stack direction="row" spacing={1}>
+                      <Chip label="Frontend Development" color="secondary" />
+                    </Stack>
+                    <Stack direction="row" spacing={1}>
+                      <Chip label="Project Management" color="success" />
+                    </Stack>
+                  </Stack>
+                </Box>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
 
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <Grid container direction="row" justifyContent="space-evenly">
             <Grid item xs={12}>
               <Typography variant="h4" style={{ fontWeight: 600 }}>
@@ -88,14 +143,68 @@ const ProfilePage = (props) => {
                   <Grid item xs={6}>
                     <Box
                       sx={{
-                        backgroundColor: "#036",
-                        color: "white",
-                        px: 1,
-                        py: 0.5,
-                        textAlign: "center",
+                        backgroundColor: "#FFF",
+                        boxShadow: 1,
+                        borderRadius: "10px",
+                        color: "#313132",
+                        py: 1,
+                        px: 2,
+                        textAlign: "start",
+                        height: "auto",
                       }}
                     >
-                      <p>{element.title}</p>
+                      <Typography variant="h6" style={{ fontWeight: 600 }}>
+                        {element.title}
+                      </Typography>
+                      <Stack direction="row" spacing={1}>
+                        <GroupsIcon fontSize="small" />
+                        <Typography
+                          variant="p"
+                          style={{
+                            color: "#999",
+                            paddingLeft: "0.5em",
+                          }}
+                        >
+                          {element.members.length}
+                        </Typography>
+                      </Stack>
+                      <br />
+                      <Stack direction="row" spacing={2}>
+                        <Typography
+                          variant="p"
+                          style={{ fontWeight: 600, color: "#313132" }}
+                        >
+                          Joined:
+                        </Typography>
+                        <Typography
+                          variant="p"
+                          style={{
+                            fontWeight: 600,
+                            color: "#999",
+                          }}
+                        >
+                          2023/01/01
+                        </Typography>
+                      </Stack>
+                      <br />
+                      <Stack direction="row" spacing={2}>
+                        <Typography
+                          variant="p"
+                          style={{ fontWeight: 600, color: "#313132" }}
+                        >
+                          Latest Activity:
+                        </Typography>
+                        <Typography
+                          variant="p"
+                          style={{
+                            fontWeight: 600,
+                            color: "#999",
+                            textAlign: "left",
+                          }}
+                        >
+                          Today 10:36AM
+                        </Typography>
+                      </Stack>
                     </Box>
                   </Grid>
                 ))}
@@ -103,27 +212,113 @@ const ProfilePage = (props) => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={2}></Grid>
-        <Typography variant="h4" style={{ fontWeight: 600 }}>
-          Settings
-        </Typography>
-        <Box
-          sx={{
-            backgroundColor: "#036",
-            color: "white",
-            px: 1,
-            py: 0.5,
-            textAlign: "center",
-          }}
-        >
-          <Typography variant="h6" component="p">
-            Community
+        <Grid item xs={2}>
+          <Typography variant="h4" style={{ fontWeight: 600 }}>
+            Settings
           </Typography>
-        </Box>
+          <br />
+          <Box
+            sx={{
+              color: "#313132",
+              boxShadow: 2,
+              py: 1,
+              px: 2,
+              borderRadius: "10px",
+            }}
+          >
+            <FormControl>
+              <FormLabel id="notification-frequency-radios-label">
+                <Typography variant="h6" style={{ fontWeight: 600 }}>
+                  Notifications
+                </Typography>
+              </FormLabel>
+              <Divider />
+              <RadioGroup
+                aria-labelledby="notification-frequency-radios-label"
+                defaultValue="immediately"
+                name="notification-frequency-radios-group"
+              >
+                <FormControlLabel
+                  value="none"
+                  control={<Radio size="small" />}
+                  label="None"
+                />
+                <FormControlLabel
+                  value="immediately"
+                  control={<Radio size="small" />}
+                  label="Immediately"
+                />
+                <FormControlLabel
+                  value="daily"
+                  control={<Radio size="small" />}
+                  label="Daily"
+                />
+                <FormControlLabel
+                  disabled
+                  value="weekly"
+                  control={<Radio size="small" />}
+                  label="Weekly"
+                />
+                <FormControlLabel
+                  disabled
+                  value="monthly"
+                  control={<Radio size="small" />}
+                  label="Monthly"
+                />
+              </RadioGroup>
+            </FormControl>
+            <Divider />
+            <br />
+            <Stack direction="row" spacing={1}>
+              <Typography variant="p" style={{ fontWeight: 600 }}>
+                Dark Mode
+              </Typography>
+              <Switch />
+            </Stack>
+          </Box>
+        </Grid>
+
         <Grid item xs={8}>
           <Typography variant="h4" style={{ fontWeight: 600 }}>
             Recent Posts
           </Typography>
+          <br />
+          <Stack direction="row" spacing={2}>
+            {props.communities.slice(0, 4).map((element) => (
+              <Box
+                sx={{
+                  borderRadius: "10px",
+                  py: 1,
+                  pr: 4,
+                  width: "600px",
+                  m: 0,
+                }}
+              >
+                <Box
+                  sx={{
+                    backgroundColor: "#003366",
+                    width: "600px",
+                    py: 1,
+                    px: 2,
+                    borderRadius: "10px",
+                  }}
+                >
+                  <Typography
+                    variant="h5"
+                    style={{ fontWeight: 600, color: "#FFF" }}
+                  >
+                    {element.title}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    style={{ fontWeight: 600, color: "#FFF" }}
+                  >
+                    by {element.creator}
+                  </Typography>
+                </Box>
+              </Box>
+            ))}
+          </Stack>
         </Grid>
       </Grid>
     </Box>
