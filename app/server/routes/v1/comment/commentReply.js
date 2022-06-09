@@ -20,6 +20,7 @@
 const express = require("express");
 const moment = require("moment");
 const ResponseError = require("../../../responseError");
+const findSingleDocuments = require("../../../functions/findSingleDocuments");
 
 const router = express.Router();
 
@@ -57,11 +58,12 @@ const User = require("../../../models/user.model");
 // Get all replies to comment with id
 router.get("/:id", async (req, res) => {
   try {
-    const comment = await Comment.findOne({ _id: req.params.id });
-    if (!comment) throw new ResponseError(404, "Comment not found.");
+    const documents = await findSingleDocuments({
+      comment: req.params.id,
+    });
 
     const replies = await Comment.aggregate([
-      { $match: { replyTo: comment.id } },
+      { $match: { replyTo: documents.comment.id } },
       {
         $addFields: {
           votes: {
@@ -122,19 +124,18 @@ router.get("/:id", async (req, res) => {
 // Reply to comment with id
 router.post("/:id", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
-    const comment = await Comment.findOne({ _id: req.params.id });
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      comment: req.params.id,
+    });
 
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!comment) throw new ResponseError(404, "Comment not found.");
-
-    if (comment.replyTo)
+    if (documents.comment.replyTo)
       throw new ResponseError(403, "Not allowed to reply to a reply.");
 
     if (
       !(await User.exists({
-        _id: user.id,
-        "communities.community": comment.community,
+        _id: documents.user.id,
+        "communities.community": documents.comment.community,
       }))
     )
       throw new ResponseError(
@@ -145,16 +146,19 @@ router.post("/:id", async (req, res) => {
     if (!req.body.message || req.body.message === "")
       throw new ResponseError(403, "Missing message in body of the request.");
 
-    await Comment.updateOne({ _id: comment.id }, { hasReplies: true }).exec();
+    await Comment.updateOne(
+      { _id: documents.comment.id },
+      { hasReplies: true }
+    ).exec();
 
     // Create reply
     const reply = await Comment.create({
       message: req.body.message,
-      creator: user.id,
-      post: comment.post,
-      community: comment.community,
+      creator: documents.user.id,
+      post: documents.comment.post,
+      community: documents.comment.community,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
-      replyTo: comment.id,
+      replyTo: documents.comment.id,
     });
 
     return res.status(201).json(reply);

@@ -20,10 +20,11 @@
 const express = require("express");
 const moment = require("moment");
 const ResponseError = require("../../../responseError");
+const checkPatchQuery = require("../../../functions/checkPatchQuery");
+const findSingleDocuments = require("../../../functions/findSingleDocuments");
 
 const router = express.Router();
 
-const Post = require("../../../models/post.model");
 const Comment = require("../../../models/comment.model");
 const User = require("../../../models/user.model");
 
@@ -66,16 +67,15 @@ const User = require("../../../models/user.model");
 // Create comment
 router.post("/", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-    const post = await Post.findOne({ _id: req.body.post });
-
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!post) throw new ResponseError(404, "Post not found.");
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      post: req.body.post,
+    });
 
     if (
       !(await User.exists({
-        _id: user.id,
-        "communities.community": post.community,
+        _id: documents.user.id,
+        "communities.community": documents.post.community,
       }))
     )
       throw new ResponseError(
@@ -88,9 +88,9 @@ router.post("/", async (req, res) => {
 
     const comment = await Comment.create({
       message: req.body.message,
-      creator: user.id,
-      post: post.id,
-      community: post.community,
+      creator: documents.user.id,
+      post: documents.post.id,
+      community: documents.post.community,
       "upvotes.count": 0,
       "downvotes.count": 0,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
@@ -99,8 +99,8 @@ router.post("/", async (req, res) => {
     // Update user engagement
     await User.updateOne(
       {
-        _id: user.id,
-        communities: { $elemMatch: { community: post.community } },
+        _id: documents.user.id,
+        communities: { $elemMatch: { community: documents.post.community } },
       },
       {
         $inc: {
@@ -152,14 +152,13 @@ router.post("/", async (req, res) => {
 // Get all comments from post id, excluding replies
 router.get("/post/:id", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-    const post = await Post.findOne({ _id: req.params.id });
-
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!post) throw new ResponseError(404, "Post not found.");
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      post: req.params.id,
+    });
 
     const comments = await Comment.aggregate([
-      { $match: { post: post.id, replyTo: null } },
+      { $match: { post: documents.post.id, replyTo: null } },
       {
         $addFields: {
           votes: {
@@ -212,11 +211,11 @@ router.get("/post/:id", async (req, res) => {
 // Get comment by id
 router.get("/:id", async (req, res) => {
   try {
-    const comment = await Comment.findOne({ _id: req.params.id }).exec();
+    const documents = await findSingleDocuments({
+      comment: req.params.id,
+    });
 
-    if (!comment) throw new ResponseError(404, "Comment not found.");
-
-    return res.status(200).json(comment);
+    return res.status(200).json(documents.comment);
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
@@ -262,42 +261,27 @@ router.get("/:id", async (req, res) => {
 // Edit comment by id
 router.patch("/:id", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-    const comment = await Comment.findOne({ _id: req.params.id }).exec();
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      comment: req.params.id,
+    });
 
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!comment) throw new ResponseError(404, "Comment not found.");
-
-    if (comment.creator !== user.id)
+    if (documents.comment.creator !== documents.user.id)
       throw new ResponseError(403, "Only creator of comment can edit comment.");
     if (!req.body.message || req.body.message === "")
       throw new ResponseError(403, "Missing message in body of the request.");
 
-    // eslint-disable-next-line prefer-const
-    let query = { $set: {} };
-
-    // eslint-disable-next-line consistent-return
-    Object.keys(req.body).forEach((key) => {
-      if (
-        key === "creator" ||
-        key === "post" ||
-        key === "community" ||
-        key === "createdOn" ||
-        key === "edits" ||
-        key === "replyTo" ||
-        key === "upvotes" ||
-        key === "downvotes"
-      ) {
-        throw new ResponseError(403, "Can only edit the message of a comment.");
-      }
-
-      if (comment[key] && comment[key] !== req.body[key]) {
-        // if the field in req.body exists, update/set it
-        query.$set[key] = req.body[key];
-      } else if (!comment[key]) {
-        query.$set[key] = req.body[key];
-      }
-    });
+    const query = checkPatchQuery(req.body, documents.community, [
+      "creator",
+      "post",
+      "community",
+      "createdOn",
+      "replyTo",
+      "hasReplies",
+      "edits",
+      "upvotes",
+      "downvotes",
+    ]);
 
     // Edit history
     await Comment.updateOne(
@@ -305,7 +289,7 @@ router.patch("/:id", async (req, res) => {
       {
         $push: {
           edits: {
-            precursor: comment.message,
+            precursor: documents.comment.message,
             timeStamp: moment().format("MMMM Do YYYY, h:mm:ss a"),
           },
         },
@@ -314,7 +298,7 @@ router.patch("/:id", async (req, res) => {
 
     await Comment.updateOne({ _id: req.params.id }, query).exec();
 
-    return res.status(204).send("");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
@@ -354,40 +338,37 @@ router.patch("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     // TODO: MODERATORS CAN DELETE COMMENT TOO
-    const user = await User.findOne({ username: req.user.username });
-    const comment = await Comment.findOne({ _id: req.params.id }).exec();
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      comment: req.params.id,
+    });
 
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!comment) throw new ResponseError(404, "Comment not found.");
-
-    if (comment.creator !== user.id) {
+    if (documents.comment.creator !== documents.user.id) {
       throw new ResponseError(
         403,
         "Must be creator of comment to delete comment."
       );
     }
 
-    // Remove the replies to comment
-    await Comment.deleteMany({ replyTo: comment.id }).exec();
-
-    // Remove comment
-    await Comment.deleteOne({ _id: comment.id }).exec();
+    // Remove the replies to comment, then comment
+    await Comment.deleteMany({ replyTo: documents.comment.id }).exec();
+    await Comment.deleteOne({ _id: documents.comment.id }).exec();
 
     // If replyTo comment has no more replies
     if (
-      comment.replyTo &&
-      !(await Comment.exists({ replyTo: comment.replyTo }))
+      documents.comment.replyTo &&
+      !(await Comment.exists({ replyTo: documents.comment.replyTo }))
     )
       await Comment.updateOne(
-        { _id: comment.replyTo },
+        { _id: documents.comment.replyTo },
         { hasReplies: false }
       ).exec();
 
     // Update user engagement
     await User.updateOne(
       {
-        _id: user.id,
-        communities: { $elemMatch: { community: comment.community } },
+        _id: documents.user.id,
+        communities: { $elemMatch: { community: documents.comment.community } },
       },
       {
         $inc: {
@@ -397,7 +378,7 @@ router.delete("/:id", async (req, res) => {
       }
     ).exec();
 
-    return res.status(204).send("Comment removed.");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);

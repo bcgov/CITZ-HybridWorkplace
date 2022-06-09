@@ -19,11 +19,11 @@
 
 const express = require("express");
 const ResponseError = require("../../../responseError");
+const findSingleDocuments = require("../../../functions/findSingleDocuments");
 
 const router = express.Router();
 
 const Post = require("../../../models/post.model");
-const User = require("../../../models/user.model");
 
 /**
  * @swagger
@@ -57,13 +57,11 @@ const User = require("../../../models/user.model");
 // Get post flags by post id
 router.get("/:id", async (req, res) => {
   try {
-    const post = await Post.findOne({
-      _id: req.params.id,
-    }).exec();
+    const documents = await findSingleDocuments({
+      post: req.params.id,
+    });
 
-    if (!post) throw new ResponseError(404, "Post not found.");
-
-    return res.status(200).json(post.flags);
+    return res.status(200).json(documents.post.flags);
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
@@ -106,13 +104,10 @@ router.get("/:id", async (req, res) => {
 // Flag post by post id
 router.post("/:id", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-    const post = await Post.findOne({
-      _id: req.params.id,
-    }).exec();
-
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!post) throw new ResponseError(404, "Post not found.");
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      post: req.params.id,
+    });
 
     // TODO: Set flags in an options collection, that can be edited by admins
     const flags = [
@@ -133,23 +128,27 @@ router.post("/:id", async (req, res) => {
     // If flag isn't set on post
     if (
       !(await Post.exists({
-        _id: post.id,
+        _id: documents.post.id,
         "flags.flag": req.query.flag,
       }))
     ) {
       // Create flag
       await Post.updateOne(
-        { _id: post.id },
-        { $push: { flags: { flag: req.query.flag, flaggedBy: [user.id] } } }
+        { _id: documents.post.id },
+        {
+          $push: {
+            flags: { flag: req.query.flag, flaggedBy: [documents.user.id] },
+          },
+        }
       );
     } else {
       // Add user to flaggedBy
       await Post.updateOne(
         {
-          _id: post.id,
+          _id: documents.post.id,
           flags: { $elemMatch: { flag: req.query.flag } },
         },
-        { $addToSet: { "flags.$.flaggedBy": [user.id] } }
+        { $addToSet: { "flags.$.flaggedBy": [documents.user.id] } }
       );
     }
 
@@ -196,22 +195,20 @@ router.post("/:id", async (req, res) => {
 // Unset flag on post by post id
 router.delete("/:id", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-    const post = await Post.findOne({
-      _id: req.params.id,
-    }).exec();
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      post: req.params.id,
+    });
 
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!post) throw new ResponseError(404, "Post not found.");
     if (!req.query.flag)
       throw new ResponseError(404, "Flag not found in query.");
 
     // Check user has flagged post
     if (
       !(await Post.exists({
-        _id: post.id,
+        _id: documents.post.id,
         "flags.flag": req.query.flag,
-        "flags.flaggedBy": user.id,
+        "flags.flaggedBy": documents.user.id,
       }))
     )
       throw new ResponseError(
@@ -222,10 +219,10 @@ router.delete("/:id", async (req, res) => {
     // Remove user from flaggedBy
     await Post.updateOne(
       {
-        _id: post.id,
+        _id: documents.post.id,
         flags: { $elemMatch: { flag: req.query.flag } },
       },
-      { $pull: { "flags.$.flaggedBy": user.id } }
+      { $pull: { "flags.$.flaggedBy": documents.user.id } }
     );
 
     return res.status(204).send("Success. No content to return.");

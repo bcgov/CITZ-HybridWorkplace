@@ -22,11 +22,11 @@
 
 const express = require("express");
 const ResponseError = require("../../../responseError");
+const findSingleDocuments = require("../../../functions/findSingleDocuments");
 
 const router = express.Router();
 
 const Community = require("../../../models/community.model");
-const User = require("../../../models/user.model");
 
 /**
  * @swagger
@@ -60,13 +60,11 @@ const User = require("../../../models/user.model");
 // Get community flags by community title
 router.get("/:title", async (req, res) => {
   try {
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
+    const documents = await findSingleDocuments({
+      community: req.params.title,
+    });
 
-    if (!community) throw new ResponseError(404, "Community not found.");
-
-    return res.status(200).json(community.flags);
+    return res.status(200).json(documents.community.flags);
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
@@ -109,13 +107,10 @@ router.get("/:title", async (req, res) => {
 // Flag community by community title
 router.post("/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
-
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!community) throw new ResponseError(404, "Community not found.");
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      community: req.params.title,
+    });
 
     // TODO: Set flags in an options collection, that can be edited by admins
     const flags = [
@@ -136,27 +131,31 @@ router.post("/:title", async (req, res) => {
     // If flag isn't set on community
     if (
       !(await Community.exists({
-        title: community.title,
+        title: documents.community.title,
         "flags.flag": req.query.flag,
       }))
     ) {
       // Create flag
       await Community.updateOne(
-        { title: community.title },
-        { $push: { flags: { flag: req.query.flag, flaggedBy: [user.id] } } }
+        { title: documents.community.title },
+        {
+          $push: {
+            flags: { flag: req.query.flag, flaggedBy: [documents.user.id] },
+          },
+        }
       );
     } else {
       // Add user to flaggedBy
       await Community.updateOne(
         {
-          title: community.title,
+          title: documents.community.title,
           flags: { $elemMatch: { flag: req.query.flag } },
         },
-        { $addToSet: { "flags.$.flaggedBy": [user.id] } }
+        { $addToSet: { "flags.$.flaggedBy": [documents.user.id] } }
       );
     }
 
-    return res.status(204).send("");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
@@ -199,22 +198,20 @@ router.post("/:title", async (req, res) => {
 // Unset flag on community by community title
 router.delete("/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      community: req.params.title,
+    });
 
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!community) throw new ResponseError(404, "Community not found.");
     if (!req.query.flag)
       throw new ResponseError(404, "Flag not found in query.");
 
     // Check user has flagged community
     if (
       !(await Community.exists({
-        title: community.title,
+        title: documents.community.title,
         "flags.flag": req.query.flag,
-        "flags.flaggedBy": user.id,
+        "flags.flaggedBy": documents.user.id,
       }))
     )
       throw new ResponseError(
@@ -225,13 +222,13 @@ router.delete("/:title", async (req, res) => {
     // Remove user from flaggedBy
     await Community.updateOne(
       {
-        title: community.title,
+        title: documents.community.title,
         flags: { $elemMatch: { flag: req.query.flag } },
       },
-      { $pull: { "flags.$.flaggedBy": user.id } }
+      { $pull: { "flags.$.flaggedBy": documents.user.id } }
     );
 
-    return res.status(204).send("");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
