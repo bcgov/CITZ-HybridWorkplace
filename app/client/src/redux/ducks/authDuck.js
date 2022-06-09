@@ -24,11 +24,18 @@ const SET_REFRESH_TOKEN = "CITZ-HYBRIDWORKPLACE/AUTH/SET_REFRESH_TOKEN";
 const LOGIN = "CITZ-HYBRIDWORKPLACE/AUTH/LOGIN";
 const LOGOUT = "CITZ-HYBRIDWORKPLACE/AUTH/LOGOUT";
 
-window._env_ = {
-  REACT_APP_API_PORT: 5000,
-  REACT_APP_API_REF: "localhost",
-  REACT_APP_LOCAL_DEV: true,
-};
+/* 
+  If you're running a local dev server using npm run then
+  this will provide the necessary environment variables to 
+  the app.
+*/
+if (!window._env_) {
+  window._env_ = {
+    REACT_APP_API_PORT: 5000,
+    REACT_APP_API_REF: "localhost",
+    REACT_APP_LOCAL_DEV: true,
+  };
+}
 
 const apiURI = !window._env_.REACT_APP_LOCAL_DEV
   ? `${window._env_.REACT_APP_API_REF}`
