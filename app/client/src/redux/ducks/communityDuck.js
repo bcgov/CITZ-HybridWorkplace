@@ -32,10 +32,6 @@ const DELETE_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/DELETE_COMMUNITY";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
-const apiURI = !window._env_.REACT_APP_LOCAL_DEV
-  ? `${window._env_.REACT_APP_API_REF}`
-  : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
-
 export const getCommunities = () => async (dispatch, getState) => {
   let successful = true;
   try {
@@ -46,9 +42,10 @@ export const getCommunities = () => async (dispatch, getState) => {
       headers: {
         authorization: `Bearer ${token}`,
       },
-      dispatch,
+      params: {
+        dispatch,
+      },
     });
-    console.log(response.data);
 
     dispatch({
       type: SET_COMMUNITIES,
@@ -72,8 +69,10 @@ export const getUsersCommunities = () => async (dispatch, getState) => {
       headers: {
         authorization: `Bearer ${token}`,
       },
+      params: {
+        dispatch,
+      },
     });
-    console.log(response.data);
     dispatch({
       type: SET_USERS_COMMUNITIES,
       payload: response.data,
@@ -95,33 +94,32 @@ export const createCommunity =
 
       if (!token) throw new Error(noTokenText);
 
-      const response = await fetch(`${apiURI}/api/community`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
+      const response = await hwp_axios.post(
+        `/api/community`,
+        {
           title: communityData.title,
           description: communityData.description,
           rules: communityData.rules,
           tags: communityData.tags,
-        }),
-      });
-
-      if (!response.ok)
-        throw new Error(`${response.status} ${response.statusText}`);
-
-      const community = await response.json();
+        },
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          params: {
+            dispatch,
+          },
+        }
+      );
 
       dispatch({
         type: ADD_COMMUNITY,
-        payload: community,
+        payload: response.data,
       });
 
       dispatch({
         type: JOIN_COMMUNITY,
-        payload: community.title,
+        payload: response.data.title,
       });
     } catch (err) {
       console.error(err);
@@ -139,19 +137,18 @@ export const joinCommunity = (communityName) => async (dispatch, getState) => {
 
     if (!token) throw new Error(noTokenText);
 
-    const response = await fetch(
-      `${apiURI}/api/community/members/join/${communityName}`,
+    await hwp_axios.patch(
+      `/api/community/members/join/${communityName}`,
+      {},
       {
-        method: "PATCH",
         headers: {
-          "Content-Type": "application/json",
           authorization: `Bearer ${token}`,
+        },
+        params: {
+          dispatch,
         },
       }
     );
-
-    if (!response.ok)
-      throw new Error(`${response.status} ${response.statusText}`);
 
     dispatch({
       type: JOIN_COMMUNITY,
@@ -172,19 +169,17 @@ export const leaveCommunity = (communityName) => async (dispatch, getState) => {
     const token = authState.accessToken;
     if (!token) throw new Error(noTokenText);
 
-    const response = await fetch(
-      `${apiURI}/api/community/members/leave/${communityName}`,
+    const response = await hwp_axios.delete(
+      `/api/community/members/leave/${communityName}`,
       {
-        method: "DELETE",
         headers: {
-          "Content-Type": "application/json",
           authorization: `Bearer ${token}`,
+        },
+        params: {
+          dispatch,
         },
       }
     );
-
-    if (!response.ok)
-      throw new Error(`${response.status} ${response.statusText}`);
 
     dispatch({
       type: LEAVE_COMMUNITY,
@@ -206,16 +201,17 @@ export const deleteCommunity =
       const token = authState.accessToken;
       if (!token) throw new Error(noTokenText);
 
-      const response = await fetch(`${apiURI}/api/community/${communityName}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok)
-        throw new Error(`${response.status} ${response.statusText}`);
+      const response = await hwp_axios.delete(
+        `api/community/${communityName}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          params: {
+            dispatch,
+          },
+        }
+      );
 
       dispatch({
         type: DELETE_COMMUNITY,

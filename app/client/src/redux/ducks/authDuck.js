@@ -24,12 +24,6 @@ const SET_REFRESH_TOKEN = "CITZ-HYBRIDWORKPLACE/AUTH/SET_REFRESH_TOKEN";
 const LOGIN = "CITZ-HYBRIDWORKPLACE/AUTH/LOGIN";
 const LOGOUT = "CITZ-HYBRIDWORKPLACE/AUTH/LOGOUT";
 
-window._env_ = {
-  REACT_APP_API_PORT: 5000,
-  REACT_APP_API_REF: "localhost",
-  REACT_APP_LOCAL_DEV: true,
-};
-
 const apiURI = !window._env_.REACT_APP_LOCAL_DEV
   ? `${window._env_.REACT_APP_API_REF}`
   : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
@@ -126,9 +120,10 @@ export const getAccessToken = () => async (dispatch, getState) => {
     });
 
     if (!res.ok) throw new Error(res.status + " " + res.statusText);
-
+    const data = await res.json();
     dispatch({
-      type: LOGOUT,
+      type: SET_ACCESS_TOKEN,
+      payload: data,
     });
   } catch (err) {
     console.error(err);
@@ -147,9 +142,11 @@ const initialState = {
 export function authReducer(state = initialState, action) {
   switch (action.type) {
     case SET_ACCESS_TOKEN:
+      const decodedToken = jwtDecode(action.payload.token);
       return {
         ...state,
         accessToken: action.payload.token,
+        user: decodedToken,
       };
     case SET_REFRESH_TOKEN:
       return {
