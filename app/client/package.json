@@ -30,8 +30,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "start-mac": "PORT=8080 -e NODE_ENV=development react-scripts start",
-    "start-pc": "set PORT=8080 && -e NODE_ENV=development react-scripts start",
+    "start-mac": "PORT=8080 react-scripts start",
+    "start-pc": "set PORT=8080 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

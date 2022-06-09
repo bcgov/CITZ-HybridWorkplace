@@ -207,7 +207,7 @@ export const leaveCommunity = (communityName) => async (dispatch, getState) => {
 
 const initialState = {
   usersCommunities: [], //users communities
-  items: [], //communitys
+  items: [], //communities
   item: {}, //single community
 };
 
