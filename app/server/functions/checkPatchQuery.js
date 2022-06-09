@@ -31,7 +31,7 @@ const checkPatchQuery = (requestBody, document, blacklistedFields) => {
   let query = { $set: {} };
 
   Object.keys(requestBody).forEach((key) => {
-    if (blacklistedFields.includes(key))
+    if (blacklistedFields.includes(key) || key === "_id")
       throw new ResponseError(403, `${key} can not be edited.`);
 
     if (document[key] && document[key] !== requestBody[key]) {
