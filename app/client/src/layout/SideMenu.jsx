@@ -66,7 +66,7 @@ const SideMenu = (props) => {
             </Link>
           </li>
           <li>
-            <Link to="./profile/:id">
+            <Link to={`./profile/${props.auth.user.username}`}>
               <Person /> Profile
             </Link>
           </li>
@@ -96,7 +96,9 @@ const SideMenu = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+});
 
 const mapDispatchToProps = { logout };
 

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Province of British Columbia
+// Copyright Â© 2022 Province of British Columbia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ class App extends Component {
             element={<PrivateComponent component={<AboutPage />} />}
           />
           <Route
-            path="/profile/:id"
+            path="/profile/:username"
             element={<PrivateComponent component={<ProfilePage />} />}
           />
           <Route

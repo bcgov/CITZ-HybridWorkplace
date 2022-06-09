@@ -1,5 +1,5 @@
 /* 
- Copyright © 2022 Province of British Columbia
+ Copyright Â© 2022 Province of British Columbia
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
  * Application entry point
  * @author [Zach Bourque](zachbourque01@gmail.com)
  * @module
+
  */
 
 const SET_USER = "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_USER";
@@ -34,13 +35,10 @@ export const getProfile = (username) => async (dispatch, getState) => {
     const token = getState().auth.accessToken;
     if (!token) throw new Error(noTokenText);
 
-    const response = await fetch(`${apiURI}/api/profile`, {
+    const response = await fetch(`${apiURI}/api/user/${username}`, {
       headers: {
         authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        username,
-      }),
     });
 
     if (!response.ok) {
@@ -48,6 +46,7 @@ export const getProfile = (username) => async (dispatch, getState) => {
     }
 
     const user = await response.json();
+    console.log("user: ", user);
 
     dispatch({
       type: SET_USER,

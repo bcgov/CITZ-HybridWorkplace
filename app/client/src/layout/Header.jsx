@@ -31,7 +31,7 @@ import { connect } from "react-redux";
 const Header = (props) => {
   return (
     <div className="header">
-      <img src={BCLogo} className="App-logo" alt="logo" />
+      <img src={BCLogo} className="app-logo" alt="logo" />
       <h2> The Neighbourhood </h2>
       {props.auth.accessToken !== "" && <SideMenu />}
     </div>

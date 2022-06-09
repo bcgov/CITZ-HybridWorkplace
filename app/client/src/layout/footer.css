@@ -20,22 +20,22 @@
  * @module
  */
 
- .footer {
-    background-color: #036;
-    display: inline-flex;
-    padding: 5px;
-    flex-flow: row wrap;
-    text-align: center;
-    position: fixed;
-    margin:auto;
-    width:100%;
-    clear: both;
-    color: white;
-    bottom: 0px;
-    height: 45px;
-    left: 0px;
-    border-top: solid;
-    border-top-color: #e3a82b; /* BC Yellow*/
-    border-top-width: 3px;
-    
-  }
+.footer {
+  background-color: #036;
+  display: inline-flex;
+  padding-block: 10px;
+  padding-left: 5%;
+  flex-flow: row wrap;
+  text-align: center;
+  position: fixed;
+  width: 100%;
+  clear: both;
+  color: white;
+  bottom: 0px;
+  height: 45px;
+  left: 0px;
+  border-top: solid;
+  border-top-color: #e3a82b; /* BC Yellow*/
+  border-top-width: 3px;
+  overflow: hidden;
+}
