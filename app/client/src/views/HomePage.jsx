@@ -34,12 +34,9 @@ import UsersCommunitiesList from "../components/UsersCommunitiesList";
 import Posts from "../components/PostsList";
 import PostModal from "../components/modals/AddPostModal";
 import AddCommunityModal from "../components/modals/AddCommunityModal";
-import { useDispatch } from "react-redux";
-import HWPAxios from "../axiosInstance";
 
 const HomePage = (props) => {
   const [show, setShow] = useState(false);
-  const dispatch = useDispatch();
 
   const [createCommunityOpen, setCreateCommunityOpen] = useState(false);
 
@@ -113,18 +110,6 @@ const HomePage = (props) => {
           </Paper>
         </Grid>
       </Grid>
-      <Button
-        onClick={() => {
-          HWPAxios.get("/api/health", {
-            headers: {
-              authorization: props.auth,
-            },
-            dispatch,
-          });
-        }}
-      >
-        HELLO THERE
-      </Button>
     </div>
   );
 };
