@@ -24,11 +24,13 @@ const SET_REFRESH_TOKEN = "CITZ-HYBRIDWORKPLACE/AUTH/SET_REFRESH_TOKEN";
 const LOGIN = "CITZ-HYBRIDWORKPLACE/AUTH/LOGIN";
 const LOGOUT = "CITZ-HYBRIDWORKPLACE/AUTH/LOGOUT";
 
-window._env_ = {
-  REACT_APP_API_PORT: 5000,
-  REACT_APP_API_REF: "localhost",
-  REACT_APP_LOCAL_DEV: true,
-};
+if (process.env.NODE_ENV === "development") {
+  window._env_ = {
+    REACT_APP_API_PORT: 5000,
+    REACT_APP_API_REF: "localhost",
+    REACT_APP_LOCAL_DEV: true,
+  };
+}
 
 const apiURI = !window._env_.REACT_APP_LOCAL_DEV
   ? `${window._env_.REACT_APP_API_REF}`

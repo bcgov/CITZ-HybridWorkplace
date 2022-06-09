@@ -10,16 +10,22 @@ To get around this there are a few steps.
 
 # Env Variables in React with Docker-Compose
 
-You have 2 options when using docker-compose to build your conatiners.
+You have 2 options when using docker-compose to build your containers.
 The goal is to copy the .env file into the container for development or the .env-template for production.
 
 - **Option 1**: The easiest is to have a .env file in the app/client directory. Since this is where your Dockerfile is located, your Dockerfile has access to all the files in this directory. You can copy the .env file or .env-template file into the container using 'COPY .env .' or 'COPY .env-template .'
 
 - **Option 2**: This is the option we went with. Use a single .env file in the root of the project to serve all our containers. The initial problem with this is that our Dockerfile is located 2 directories down from root level so if we told docker-compose the build 'context' was the 'app/client' directory it would not be able to access the .env file in the root directory. To fix this, in the docker-compose you need to specify the build 'context: .' which is root level, and then specify a location for the Dockerfile like 'dockerfile: ./app/client/Dockerfile'. Then any previous copy operations in the Dockerfile need to be prefixed with 'app/client/' because our context level is now 2 directories higher. The only exception is when copying the .env file like 'COPY .env .' which accesses the file from our context level, in this case root level.
 
-- **Local Development vs OpenShift Production switching**: We need to use .env for developement and .env-template for production. In development, we copy the .env file to the container so that we have both sides of the environment variables, the key and the value. In production, we don't have access to the .env because it is in the .gitignore. The first step to getting around this is to use the .env-template file instead. I'll elaborate on how we use these files in the next section.
+- **Local Development vs OpenShift Production switching**: We need to use .env for development and .env-template for production. In development, we copy the .env file to the container so that we have both sides of the environment variables, the key and the value. In production, we don't have access to the .env because it is in the .gitignore. The first step to getting around this is to use the .env-template file instead. I'll elaborate on how we use these files in the next section.
 
 In order to seamlessly switch between the .env and the .env-template we do something clever. We create an environment variable in the .env file called 'ENV_FILE' with the value '.env'. For development this will specify we are using the .env file. In the docker-compose, we set an 'args' argument called 'env' that is populated with the 'ENV_FILE' variable, or is given a default value of '.env-template' if the variable can't be found. Next we need to use this argument in the Dockerfile by specifying 'ARG env' and then changing our copy command to 'COPY $env .' so it will copy either the .env or .env-template to the container depending on development or production.
+
+#### Frontend hot reloading
+
+For hot reloading to work for development, run the docker-compose file in the project root directory. After the containers are running the frontend container will need to be stopped. Next, run either the `npm run start-mac` or `npm run start-pc` commands depending on your operating system. This will run a local development server which responds immediately to changes in the frontend source code while still being connected to the containers providing the backend services.
+
+To accommodate this implementation, within the authDuck file there is a locally defined window.\_env\_ object which provides the environment variables needed to connect to the backend containers.
 
 # Using .env and .env-template in React
 
