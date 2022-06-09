@@ -19,7 +19,7 @@
 
 import jwtDecode from "jwt-decode";
 
-const SET_ACCESS_TOKEN = "CITZ-HYBRIDWORKPLACE/AUTH/SET_ACCESS_TOKEN";
+export const SET_ACCESS_TOKEN = "CITZ-HYBRIDWORKPLACE/AUTH/SET_ACCESS_TOKEN";
 const SET_REFRESH_TOKEN = "CITZ-HYBRIDWORKPLACE/AUTH/SET_REFRESH_TOKEN";
 const LOGIN = "CITZ-HYBRIDWORKPLACE/AUTH/LOGIN";
 const LOGOUT = "CITZ-HYBRIDWORKPLACE/AUTH/LOGOUT";
@@ -96,6 +96,29 @@ export const logout = () => async (dispatch) => {
   let successful = true;
   try {
     const res = await fetch(`${apiURI}/api/logout`, {
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) throw new Error(res.status + " " + res.statusText);
+
+    dispatch({
+      type: LOGOUT,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
+export const getAccessToken = () => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const res = await fetch(`${apiURI}/api/token`, {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",

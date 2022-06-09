@@ -20,6 +20,8 @@
  * @module
  */
 
+import hwp_axios from "../../axiosInstance";
+
 const SET_COMMUNITIES = "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_COMMUNITIES";
 const SET_USERS_COMMUNITIES =
   "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_USERS_COMMUNITIES";
@@ -40,21 +42,17 @@ export const getCommunities = () => async (dispatch, getState) => {
     const token = getState().auth.accessToken;
     if (!token) throw new Error(noTokenText);
 
-    const response = await fetch(`${apiURI}/api/community`, {
+    const response = await hwp_axios.get("/api/community", {
       headers: {
         authorization: `Bearer ${token}`,
       },
+      dispatch,
     });
-
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
-    }
-
-    const communities = await response.json();
+    console.log(response.data);
 
     dispatch({
       type: SET_COMMUNITIES,
-      payload: communities,
+      payload: response.data,
     });
   } catch (err) {
     console.error(err);
@@ -70,21 +68,15 @@ export const getUsersCommunities = () => async (dispatch, getState) => {
     const token = getState().auth.accessToken;
     if (!token) throw new Error(noTokenText);
 
-    const response = await fetch(`${apiURI}/api/community?orderBy=lastJoined`, {
+    const response = await hwp_axios.get(`/api/community?orderBy=lastJoined`, {
       headers: {
         authorization: `Bearer ${token}`,
       },
     });
-
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
-    }
-
-    const communities = await response.json();
-
+    console.log(response.data);
     dispatch({
       type: SET_USERS_COMMUNITIES,
-      payload: communities,
+      payload: response.data,
     });
   } catch (err) {
     console.error(err);
@@ -100,7 +92,7 @@ export const createCommunity =
     try {
       const authState = getState().auth;
       const token = authState.accessToken;
-      const username = authState.user.username;
+
       if (!token) throw new Error(noTokenText);
 
       const response = await fetch(`${apiURI}/api/community`, {
