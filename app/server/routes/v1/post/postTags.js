@@ -20,6 +20,7 @@
 const express = require("express");
 const ResponseError = require("../../../responseError");
 const findSingleDocuments = require("../../../functions/findSingleDocuments");
+const checkUserIsMemberOfCommunity = require("../../../functions/checkUserIsMemberOfCommunity");
 
 const router = express.Router();
 
@@ -111,6 +112,11 @@ router.post("/:id", async (req, res) => {
     });
 
     if (!req.query.tag) throw new ResponseError(404, "Tag not found in query.");
+
+    await checkUserIsMemberOfCommunity(
+      documents.user.username,
+      documents.post.community
+    );
 
     // Check community has tag
     if (

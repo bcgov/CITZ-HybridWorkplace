@@ -20,13 +20,15 @@
 const express = require("express");
 const moment = require("moment");
 const ResponseError = require("../../../responseError");
+
 const checkPatchQuery = require("../../../functions/checkPatchQuery");
 const findSingleDocuments = require("../../../functions/findSingleDocuments");
+const checkUserIsMemberOfCommunity = require("../../../functions/checkUserIsMemberOfCommunity");
+const updateCommunityEngagement = require("../../../functions/updateCommunityEngagement");
 
 const router = express.Router();
 
 const Comment = require("../../../models/comment.model");
-const User = require("../../../models/user.model");
 
 /**
  * @swagger
@@ -53,7 +55,7 @@ const User = require("../../../models/user.model");
  *        '404':
  *          description: User not found. **||** <br>Post not found.
  *        '403':
- *          description: Missing message in body of the request. **||** <br>Must be a part of community to post in community.
+ *          description: Missing message in body of the request. **||** <br>User must be a part of community.
  *        '201':
  *          description: Comment successfully created.
  *          content:
@@ -72,16 +74,10 @@ router.post("/", async (req, res) => {
       post: req.body.post,
     });
 
-    if (
-      !(await User.exists({
-        _id: documents.user.id,
-        "communities.community": documents.post.community,
-      }))
-    )
-      throw new ResponseError(
-        403,
-        "Must be a part of community to comment in community."
-      );
+    await checkUserIsMemberOfCommunity(
+      documents.user.username,
+      documents.post.community
+    );
 
     if (!req.body.message || req.body.message === "")
       throw new ResponseError(403, "Missing message in body of the request.");
@@ -96,19 +92,11 @@ router.post("/", async (req, res) => {
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
 
-    // Update user engagement
-    await User.updateOne(
-      {
-        _id: documents.user.id,
-        communities: { $elemMatch: { community: documents.post.community } },
-      },
-      {
-        $inc: {
-          "communities.$.engagement":
-            process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT,
-        },
-      }
-    ).exec();
+    await updateCommunityEngagement(
+      documents.user.username,
+      documents.post.community,
+      process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT || 1
+    );
 
     return res.status(201).json(comment);
   } catch (err) {
@@ -364,19 +352,11 @@ router.delete("/:id", async (req, res) => {
         { hasReplies: false }
       ).exec();
 
-    // Update user engagement
-    await User.updateOne(
-      {
-        _id: documents.user.id,
-        communities: { $elemMatch: { community: documents.comment.community } },
-      },
-      {
-        $inc: {
-          "communities.$.engagement":
-            -process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT,
-        },
-      }
-    ).exec();
+    await updateCommunityEngagement(
+      documents.user.username,
+      documents.comment.community,
+      -process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT || -1
+    );
 
     return res.status(204).send("Success. No content to return.");
   } catch (err) {

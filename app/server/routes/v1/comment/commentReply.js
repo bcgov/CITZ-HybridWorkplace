@@ -20,12 +20,14 @@
 const express = require("express");
 const moment = require("moment");
 const ResponseError = require("../../../responseError");
+
 const findSingleDocuments = require("../../../functions/findSingleDocuments");
+const checkUserIsMemberOfCommunity = require("../../../functions/checkUserIsMemberOfCommunity");
+const updateCommunityEngagement = require("../../../functions/updateCommunityEngagement");
 
 const router = express.Router();
 
 const Comment = require("../../../models/comment.model");
-const User = require("../../../models/user.model");
 
 /**
  * @swagger
@@ -110,7 +112,7 @@ router.get("/:id", async (req, res) => {
  *        '404':
  *          description: User not found. **||** <br>Comment not found.
  *        '403':
- *          description: Missing message in body of the request. **||** <br>Must be a part of community to post in community. **||** <br>Not allowed to reply to a reply.
+ *          description: Missing message in body of the request. **||** <br>User must be a part of community. **||** <br>Not allowed to reply to a reply.
  *        '201':
  *          description: Reply successfully created.
  *          content:
@@ -132,16 +134,10 @@ router.post("/:id", async (req, res) => {
     if (documents.comment.replyTo)
       throw new ResponseError(403, "Not allowed to reply to a reply.");
 
-    if (
-      !(await User.exists({
-        _id: documents.user.id,
-        "communities.community": documents.comment.community,
-      }))
-    )
-      throw new ResponseError(
-        403,
-        "Must be a part of community to comment in community."
-      );
+    await checkUserIsMemberOfCommunity(
+      documents.user.username,
+      documents.comment.community
+    );
 
     if (!req.body.message || req.body.message === "")
       throw new ResponseError(403, "Missing message in body of the request.");
@@ -160,6 +156,12 @@ router.post("/:id", async (req, res) => {
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
       replyTo: documents.comment.id,
     });
+
+    await updateCommunityEngagement(
+      documents.user.username,
+      documents.comment.community,
+      process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT || 1
+    );
 
     return res.status(201).json(reply);
   } catch (err) {

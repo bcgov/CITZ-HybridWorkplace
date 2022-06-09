@@ -175,7 +175,7 @@ router.delete("/leave/:title", async (req, res) => {
     // Remove user from community
     await Community.updateOne(
       { title: documents.community.title },
-      { $pull: { members: documents.Routeruser.id } }
+      { $pull: { members: documents.user.id } }
     );
 
     // Remove community from user's communities array

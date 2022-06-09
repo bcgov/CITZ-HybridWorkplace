@@ -19,12 +19,13 @@
 
 const express = require("express");
 const ResponseError = require("../../../responseError");
+
 const findSingleDocuments = require("../../../functions/findSingleDocuments");
+const checkUserIsMemberOfCommunity = require("../../../functions/checkUserIsMemberOfCommunity");
 
 const router = express.Router();
 
 const Comment = require("../../../models/comment.model");
-const User = require("../../../models/user.model");
 
 /**
  * @swagger
@@ -51,7 +52,7 @@ const User = require("../../../models/user.model");
  *        '404':
  *          description: User not found. **||** <br>Comment not found. **||** <br>Vote not found in query.
  *        '403':
- *          description: Missing message in body of the request. **||** <br>Must be a part of community to vote.
+ *          description: Missing message in body of the request. **||** <br>User must be a part of community.
  *        '204':
  *          description: Success. No content to return.
  *        '400':
@@ -69,13 +70,10 @@ router.patch("/:id", async (req, res) => {
     if (!req.query.vote)
       throw new ResponseError(404, "Vote not found in query.");
 
-    if (
-      !(await User.exists({
-        _id: documents.user.id,
-        "communities.community": documents.comment.community,
-      }))
-    )
-      throw new ResponseError(403, "Must be a part of community to vote.");
+    await checkUserIsMemberOfCommunity(
+      documents.user.username,
+      documents.comment.community
+    );
 
     let query;
 

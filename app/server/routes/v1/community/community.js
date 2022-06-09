@@ -24,8 +24,10 @@ const express = require("express");
 const moment = require("moment");
 const { ObjectId } = require("mongodb");
 const ResponseError = require("../../../responseError");
+
 const checkPatchQuery = require("../../../functions/checkPatchQuery");
 const findSingleDocuments = require("../../../functions/findSingleDocuments");
+const updateCommunityEngagement = require("../../../functions/updateCommunityEngagement");
 
 const router = express.Router();
 
@@ -98,17 +100,10 @@ router.post("/", async (req, res) => {
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
 
-    await User.updateOne(
-      { username: documents.user.username },
-      {
-        $push: {
-          communities: {
-            community: community.title,
-            engagement:
-              process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMUNITY || 0,
-          },
-        },
-      }
+    await updateCommunityEngagement(
+      documents.user.username,
+      community.title,
+      process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMUNITY || 0
     );
 
     return res.status(201).json(community);
@@ -405,7 +400,6 @@ router.delete("/:title", async (req, res) => {
     // Remove comments from posts in community
     await Comment.deleteMany({ community: documents.community.title }).exec();
 
-    // TODO: AUTH ONLY MODERATORS OF COMMUNITY
     return res.status(200).send("Community removed.");
   } catch (err) {
     if (err instanceof ResponseError)
