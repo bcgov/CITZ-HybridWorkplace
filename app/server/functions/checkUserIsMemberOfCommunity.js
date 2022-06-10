@@ -16,26 +16,25 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
  */
 
-import { createStore, applyMiddleware, compose } from "redux";
-import thunk from "redux-thunk";
-import rootReducer from "./redux";
+const ResponseError = require("../responseError");
+const User = require("../models/user.model");
 
-const initialState = {};
-
-const middleware = [thunk];
-
-const store = createStore(
-  rootReducer,
-  initialState,
-  compose(
-    applyMiddleware(...middleware)
-    //window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__() //extentions for working with redux on chrome.
-    //comment out above line if you want this to work on other browsers.
+// Throws error if user is not a member of community.
+const checkUserIsMemberOfCommunity = async (username, community) => {
+  if (
+    !(await User.findOne({
+      username,
+      "communities.community": community,
+    }))
   )
-);
+    throw new ResponseError(
+      403,
+      `User must be a part of community: ${community}.`
+    );
+};
 
-export default store;
+module.exports = checkUserIsMemberOfCommunity;

@@ -35,7 +35,7 @@ import Posts from "../components/PostsList";
 import PostModal from "../components/modals/AddPostModal";
 import AddCommunityModal from "../components/modals/AddCommunityModal";
 
-const HomePage = () => {
+const HomePage = (props) => {
   const [show, setShow] = useState(false);
 
   const [createCommunityOpen, setCreateCommunityOpen] = useState(false);
@@ -121,6 +121,7 @@ HomePage.propTypes = {
 
 const mapStateToProps = (state) => ({
   communities: state.communities.items,
+  auth: state.auth.accessToken,
 });
 
 export default connect(mapStateToProps, {})(HomePage);

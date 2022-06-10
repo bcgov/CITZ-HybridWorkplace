@@ -21,6 +21,7 @@
  */
 
 import { createSuccess, createError } from "./alertDuck";
+import hwp_axios from "../../axiosInstance";
 
 const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_COMMUNITIES";
 const ADD_POST = "CITZ-HYBRIDWORKPLACE/POST/ADD_COMMUNITY";
@@ -29,10 +30,6 @@ const TAG_POST = "CITZ-HYBRIDWORKPLACE/POST/TAG_POST";
 const UNTAG_POST = "CITZ-HYBRIDWORKPLACE/POST/UNTAG_POST";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
-
-const apiURI = !window._env_.REACT_APP_LOCAL_DEV
-  ? `${window._env_.REACT_APP_API_REF}`
-  : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
 
 export const getPosts = () => async (dispatch, getState) => {
   let successful = true;
@@ -43,18 +40,17 @@ export const getPosts = () => async (dispatch, getState) => {
 
     if (!token) throw new Error(noTokenText);
 
-    const response = await fetch(`${apiURI}/api/post`, {
+    const response = await hwp_axios.get(`/api/post`, {
       headers: {
         authorization: `Bearer ${token}`,
       },
+      params: {
+        dispatch,
+      },
     });
-    if (!response.ok)
-      throw new Error(`${response.status} ${response.statusText}`);
-
-    let posts = await response.json();
 
     //Modifies each post and adds a userTag field which shows the tag the user has given it
-    posts = posts.map((post) => ({
+    const posts = response.data.map((post) => ({
       ...post,
       userTag: post.tags.find((tag) => tag.taggedBy[0] === authState.user.id)
         ?.tag,
@@ -80,28 +76,27 @@ export const createPost = (postData) => async (dispatch, getState) => {
 
     if (!token) throw new Error(noTokenText);
 
-    const response = await fetch(`${apiURI}/api/post`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
+    const response = await hwp_axios.post(
+      `/api/post`,
+      {
         title: postData.title,
         message: postData.message,
         creator: postData.creator,
         community: postData.community,
-      }),
-    });
-
-    if (!response.ok)
-      throw new Error(`${response.status} ${response.statusText}`);
-
-    const data = await response.json();
+      },
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        params: {
+          dispatch,
+        },
+      }
+    );
 
     dispatch({
       type: ADD_POST,
-      payload: data,
+      payload: response.data,
     });
   } catch (err) {
     console.error(err);
@@ -121,14 +116,14 @@ export const deletePost = (postId) => async (dispatch, getState) => {
 
     if (!token) throw new Error(noTokenText);
 
-    const response = await fetch(`${apiURI}/api/post/${postId}`, {
-      method: "DELETE",
+    const response = await hwp_axios.delete(`/api/post/${postId}`, {
       headers: {
         authorization: `Bearer ${token}`,
       },
+      params: {
+        dispatch,
+      },
     });
-    if (!response.ok)
-      throw new Error(`${response.status} ${response.statusText}`);
 
     dispatch({
       type: REMOVE_POST,
@@ -154,17 +149,18 @@ export const flagPost = (postId, flag) => async (dispatch, getState) => {
 
     if (!token) throw new Error(noTokenText);
 
-    const response = await fetch(
-      `${apiURI}/api/post/flags/${postId}?flag=${flag}`,
+    const response = await hwp_axios.post(
+      `/api/post/flags/${postId}?flag=${flag}`,
+      {},
       {
-        method: "POST",
         headers: {
           authorization: `Bearer ${token}`,
         },
+        params: {
+          dispatch,
+        },
       }
     );
-    if (!response.ok)
-      throw new Error(`${response.status} ${response.statusText}`);
 
     createSuccess(`Successfully Flagged Post For Reason: ${flag}`)(dispatch);
   } catch (err) {
@@ -185,17 +181,18 @@ export const tagPost = (postId, tag) => async (dispatch, getState) => {
 
     if (!token) throw new Error(noTokenText);
 
-    const response = await fetch(
-      `${apiURI}/api/post/tags/${postId}?tag=${tag}`,
+    const response = await hwp_axios.post(
+      `/api/post/tags/${postId}?tag=${tag}`,
+      {},
       {
-        method: "POST",
         headers: {
           authorization: `Bearer ${token}`,
         },
+        params: {
+          dispatch,
+        },
       }
     );
-    if (!response.ok)
-      throw new Error(`${response.status} ${response.statusText}`);
 
     dispatch({ type: TAG_POST, payload: { postId, tag } });
 
@@ -218,17 +215,17 @@ export const unTagPost = (postId, tag) => async (dispatch, getState) => {
 
     if (!token) throw new Error(noTokenText);
 
-    const response = await fetch(
-      `${apiURI}/api/post/tags/${postId}?tag=${tag}`,
+    const response = await hwp_axios.delete(
+      `/api/post/tags/${postId}?tag=${tag}`,
       {
-        method: "DELETE",
         headers: {
           authorization: `Bearer ${token}`,
         },
+        params: {
+          dispatch,
+        },
       }
     );
-    if (!response.ok)
-      throw new Error(`${response.status} ${response.statusText}`);
 
     dispatch({
       type: UNTAG_POST,

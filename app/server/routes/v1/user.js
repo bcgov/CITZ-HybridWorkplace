@@ -22,6 +22,8 @@
 
 const express = require("express");
 const ResponseError = require("../../responseError");
+const checkPatchQuery = require("../../functions/checkPatchQuery");
+const findSingleDocuments = require("../../functions/findSingleDocuments");
 
 const router = express.Router();
 
@@ -67,17 +69,17 @@ const User = require("../../models/user.model");
 // Get user
 router.get("/", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-
-    if (!user) throw new ResponseError(404, "User not found.");
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+    });
 
     return res.status(200).json({
-      username: user.username,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      bio: user.bio,
-      title: user.title,
+      username: documents.user.username,
+      email: documents.user.email,
+      firstName: documents.user.firstName,
+      lastName: documents.user.lastName,
+      bio: documents.user.bio,
+      title: documents.user.title,
     });
   } catch (err) {
     if (err instanceof ResponseError)
@@ -126,24 +128,17 @@ router.get("/", async (req, res) => {
 // Edit user
 router.patch("/", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-
-    if (!user) throw new ResponseError(404, "User not found.");
-
-    // eslint-disable-next-line prefer-const
-    let query = { $set: {} };
-
-    Object.keys(req.body).forEach((key) => {
-      if (key === "username" || key === "registeredOn")
-        throw new ResponseError(403, `${key} can not be edited.`);
-
-      // if the field in req.body exists, update/set it
-      if (user[key] && user[key] !== req.body[key]) {
-        query.$set[key] = req.body[key];
-      } else if (!user[key]) {
-        query.$set[key] = req.body[key];
-      }
+    const documents = await findSingleDocuments({
+      user: req.user.username,
     });
+
+    const query = checkPatchQuery(req.body, documents.user, [
+      "username",
+      "password",
+      "refreshToken",
+      "registeredOn",
+      "communities",
+    ]);
 
     await User.updateOne({ username: req.user.username }, query).exec();
 
@@ -201,17 +196,17 @@ router.patch("/", async (req, res) => {
 // Get user by username
 router.get("/:username", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.params.username }).exec();
-
-    if (!user) throw new ResponseError(404, "User not found.");
+    const documents = await findSingleDocuments({
+      user: req.params.username,
+    });
 
     return res.status(200).json({
-      username: user.username,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      bio: user.bio,
-      title: user.title,
+      username: documents.user.username,
+      email: documents.user.email,
+      firstName: documents.user.firstName,
+      lastName: documents.user.lastName,
+      bio: documents.user.bio,
+      title: documents.user.title,
     });
   } catch (err) {
     if (err instanceof ResponseError)
@@ -250,14 +245,14 @@ router.get("/:username", async (req, res) => {
 // Remove user by username
 router.delete("/:username", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.params.username }).exec();
+    const documents = await findSingleDocuments({
+      user: req.params.username,
+    });
 
-    if (!user) throw new ResponseError(404, "User not found.");
-
-    if (user.username !== req.user.username)
+    if (documents.user.username !== req.user.username)
       throw new ResponseError(403, "Must be account owner to remove user.");
 
-    await User.deleteOne({ username: user.username }).exec();
+    await User.deleteOne({ username: documents.user.username }).exec();
 
     return res.status(204).send("Success. No content to return.");
   } catch (err) {

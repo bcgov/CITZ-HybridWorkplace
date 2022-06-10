@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /* eslint-disable no-param-reassign */
 /* 
  Copyright © 2022 Province of British Columbia
@@ -30,7 +29,7 @@ const asyncHandler = require("express-async-handler");
  * Does NOT work with req.params, BUT params are passed as a string
  * instead of an object so there should be no worries of injection.
  */
-sanitize = (input) => {
+const sanitize = (input) => {
   if (input instanceof Object) {
     Object.keys(input).forEach((key) => {
       if (/^\$/.test(key)) {

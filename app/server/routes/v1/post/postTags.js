@@ -19,11 +19,12 @@
 
 const express = require("express");
 const ResponseError = require("../../../responseError");
+const findSingleDocuments = require("../../../functions/findSingleDocuments");
+const checkUserIsMemberOfCommunity = require("../../../functions/checkUserIsMemberOfCommunity");
 
 const router = express.Router();
 
 const Post = require("../../../models/post.model");
-const User = require("../../../models/user.model");
 const Community = require("../../../models/community.model");
 
 /**
@@ -58,11 +59,11 @@ const Community = require("../../../models/community.model");
 // Get post tags by post id
 router.get("/:id", async (req, res) => {
   try {
-    const post = await Post.findOne({ _id: req.params.id }).exec();
+    const documents = await findSingleDocuments({
+      post: req.params.id,
+    });
 
-    if (!post) throw new ResponseError(404, "Post not found.");
-
-    return res.status(200).json(post.tags);
+    return res.status(200).json(documents.post.tags);
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
@@ -105,17 +106,22 @@ router.get("/:id", async (req, res) => {
 // Tag post by id
 router.post("/:id", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-    const post = await Post.findOne({ _id: req.params.id }).exec();
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      post: req.params.id,
+    });
 
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!post) throw new ResponseError(404, "Post not found.");
     if (!req.query.tag) throw new ResponseError(404, "Tag not found in query.");
+
+    await checkUserIsMemberOfCommunity(
+      documents.user.username,
+      documents.post.community
+    );
 
     // Check community has tag
     if (
       !(await Community.exists({
-        title: post.community,
+        title: documents.post.community,
         "tags.tag": req.query.tag,
       }))
     )
@@ -124,8 +130,8 @@ router.post("/:id", async (req, res) => {
     // Check duplicate tag
     if (
       await Post.exists({
-        _id: post.id,
-        "tags.taggedBy": user.id,
+        _id: documents.post.id,
+        "tags.taggedBy": documents.user.id,
       })
     )
       throw new ResponseError(403, "Limit 1 tag per post, per user.");
@@ -133,29 +139,36 @@ router.post("/:id", async (req, res) => {
     // If tag isn't set on post
     if (
       !(await Post.exists({
-        _id: post.id,
+        _id: documents.post.id,
         "tags.tag": req.query.tag,
       }))
     ) {
       // Create tag
       await Post.updateOne(
-        { _id: post.id },
-        { $push: { tags: { tag: req.query.tag, taggedBy: [user.id] } } }
+        { _id: documents.post.id },
+        {
+          $push: {
+            tags: { tag: req.query.tag, taggedBy: [documents.user.id] },
+          },
+        }
       );
     } else {
       // Add user to taggedBy
       await Post.updateOne(
         {
-          _id: post.id,
+          _id: documents.post.id,
           flags: { $elemMatch: { tag: req.query.tag } },
         },
-        { $addToSet: { "tags.$.taggedBy": [user.id] } }
+        { $addToSet: { "tags.$.taggedBy": [documents.user.id] } }
       );
     }
 
     // Increment tag count in community
     await Community.updateOne(
-      { title: post.community, tags: { $elemMatch: { tag: req.query.tag } } },
+      {
+        title: documents.post.community,
+        tags: { $elemMatch: { tag: req.query.tag } },
+      },
       { $inc: { "tags.$.count": 1 } }
     );
 
@@ -198,30 +211,32 @@ router.post("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     // TODO: MODERATORS CAN EDIT POST TOO
-    const user = await User.findOne({ username: req.user.username });
-    const post = await Post.findOne({ _id: req.params.id }).exec();
-
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!post) throw new ResponseError(404, "Post not found.");
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      post: req.params.id,
+    });
 
     // Check user has tagged post
     if (
       !(await Post.exists({
-        _id: post.id,
-        "tags.taggedBy": user.id,
+        _id: documents.post.id,
+        "tags.taggedBy": documents.user.id,
       }))
     )
       throw new ResponseError(403, "User has not tagged post.");
 
     const selectedTag = await Post.findOne(
-      { _id: post.id },
-      { tags: { $elemMatch: { taggedBy: user.id } } }
+      { _id: documents.post.id },
+      { tags: { $elemMatch: { taggedBy: documents.user.id } } }
     );
 
     // Remove user from taggedBy
     await Post.updateOne(
-      { _id: post.id, tags: { $elemMatch: { taggedBy: user.id } } },
-      { $pull: { "tags.$.taggedBy": user.id } }
+      {
+        _id: documents.post.id,
+        tags: { $elemMatch: { taggedBy: documents.user.id } },
+      },
+      { $pull: { "tags.$.taggedBy": documents.user.id } }
     );
 
     // Remove tag from post if taggedBy is length 1 (only user)
@@ -229,7 +244,7 @@ router.delete("/:id", async (req, res) => {
       // Remove tag
       await Post.updateOne(
         {
-          _id: post.id,
+          _id: documents.post.id,
           // eslint-disable-next-line no-underscore-dangle
           tags: { $elemMatch: { _id: selectedTag.tags[0]._id } },
         },
@@ -241,7 +256,7 @@ router.delete("/:id", async (req, res) => {
     // Decrement tag count in community
     await Community.updateOne(
       {
-        title: post.community,
+        title: documents.post.community,
         tags: { $elemMatch: { tag: selectedTag.tags[0].tag } },
       },
       { $inc: { "tags.$.count": -1 } }

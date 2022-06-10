@@ -20,14 +20,11 @@
  * @module
 
  */
+import hwp_axios from "../../axiosInstance";
 
 const SET_USER = "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_USER";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
-
-const apiURI = !window._env_.REACT_APP_LOCAL_DEV
-  ? `${window._env_.REACT_APP_API_REF}`
-  : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
 
 export const getProfile = (username) => async (dispatch, getState) => {
   let successful = true;
@@ -35,22 +32,18 @@ export const getProfile = (username) => async (dispatch, getState) => {
     const token = getState().auth.accessToken;
     if (!token) throw new Error(noTokenText);
 
-    const response = await fetch(`${apiURI}/api/user/${username}`, {
+    const response = await hwp_axios.get(`/api/user/${username}`, {
       headers: {
         authorization: `Bearer ${token}`,
       },
+      params: {
+        dispatch,
+      },
     });
-
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
-    }
-
-    const user = await response.json();
-    console.log("user: ", user);
 
     dispatch({
       type: SET_USER,
-      payload: user,
+      payload: response.data,
     });
   } catch (err) {
     console.error(err);

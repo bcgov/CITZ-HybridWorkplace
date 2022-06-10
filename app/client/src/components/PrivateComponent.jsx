@@ -1,15 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { connect } from "react-redux";
 import { createError } from "../redux/ducks/alertDuck";
+import { getAccessToken } from "../redux/ducks/authDuck";
 import PropTypes from "prop-types";
+import { useEffect } from "react";
+import { CircularProgress, Grid } from "@mui/material";
 
 const PrivateComponent = (props) => {
-  const isLoggedIn = props.accessToken !== "";
-  if (!isLoggedIn) {
-    props.createError(`Must log in before accessing page`);
-  }
-  return isLoggedIn ? props.component : <Navigate to="/login" />;
+  const [loading, setLoading] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(props.accessToken !== "");
+  useEffect(() => {
+    (async () => {
+      if (loggedIn) {
+        setLoading(false);
+      } else {
+        const successful = await props.getAccessToken();
+        setLoggedIn(successful);
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  return loading ? (
+    <CircularProgress color="primary" />
+  ) : loggedIn ? (
+    props.component
+  ) : (
+    <Navigate to="/login" />
+  );
 };
 
 PrivateComponent.propTypes = {
@@ -18,6 +37,6 @@ PrivateComponent.propTypes = {
 
 const mapStateToProps = (state) => ({ accessToken: state.auth.accessToken });
 
-const mapActionsToProps = { createError };
+const mapActionsToProps = { createError, getAccessToken };
 
 export default connect(mapStateToProps, mapActionsToProps)(PrivateComponent);

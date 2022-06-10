@@ -16,26 +16,24 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
  */
 
-import { createStore, applyMiddleware, compose } from "redux";
-import thunk from "redux-thunk";
-import rootReducer from "./redux";
+const User = require("../models/user.model");
 
-const initialState = {};
+const updateCommunityEngagement = async (username, community, value) => {
+  await User.updateOne(
+    {
+      username,
+      communities: { $elemMatch: { community } },
+    },
+    {
+      $inc: {
+        "communities.$.engagement": value,
+      },
+    }
+  );
+};
 
-const middleware = [thunk];
-
-const store = createStore(
-  rootReducer,
-  initialState,
-  compose(
-    applyMiddleware(...middleware)
-    //window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__() //extentions for working with redux on chrome.
-    //comment out above line if you want this to work on other browsers.
-  )
-);
-
-export default store;
+module.exports = updateCommunityEngagement;

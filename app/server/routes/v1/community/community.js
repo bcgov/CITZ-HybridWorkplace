@@ -25,6 +25,10 @@ const moment = require("moment");
 const { ObjectId } = require("mongodb");
 const ResponseError = require("../../../responseError");
 
+const checkPatchQuery = require("../../../functions/checkPatchQuery");
+const findSingleDocuments = require("../../../functions/findSingleDocuments");
+const updateCommunityEngagement = require("../../../functions/updateCommunityEngagement");
+
 const router = express.Router();
 
 const Community = require("../../../models/community.model");
@@ -75,37 +79,31 @@ const Comment = require("../../../models/comment.model");
 // Create community
 router.post("/", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-
-    if (!user) throw new ResponseError(404, "User not found.");
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+    });
 
     if (await Community.exists({ title: req.body.title })) {
       throw new ResponseError(403, "Community already exists.");
     }
 
     // TODO: Validate formatting for tags in request body
+    // TODO: Prevent spaces or special characters in community title
 
     const community = await Community.create({
       title: req.body.title,
       description: req.body.description,
-      creator: user.username,
-      members: [user.id],
+      creator: documents.user.username,
+      members: [documents.user.id],
       rules: req.body.rules,
       tags: req.body.tags,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
 
-    await User.updateOne(
-      { username: user.username },
-      {
-        $push: {
-          communities: {
-            community: community.title,
-            engagement:
-              process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMUNITY || 0,
-          },
-        },
-      }
+    await updateCommunityEngagement(
+      documents.user.username,
+      community.title,
+      process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMUNITY || 0
     );
 
     return res.status(201).json(community);
@@ -150,14 +148,15 @@ router.post("/", async (req, res) => {
 // Get all communities or all communities user is a part of
 router.get("/", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-    if (!user) throw new ResponseError(404, "User not found.");
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+    });
 
     let communities;
 
     if (req.query.orderBy === "lastJoined") {
       // Ordered by last joined
-      communities = await Community.find({ members: user.id }, "", {
+      communities = await Community.find({ members: documents.user.id }, "", {
         sort: { _id: -1 },
       }).exec();
     } else if (req.query.orderBy === "engagement") {
@@ -199,7 +198,7 @@ router.get("/", async (req, res) => {
         { $unwind: "$members" },
         {
           $match: {
-            members: new ObjectId(user.id),
+            members: new ObjectId(documents.user.id),
           },
         },
         { $sort: { engagement: -1, _id: -1 } },
@@ -250,13 +249,11 @@ router.get("/", async (req, res) => {
 // Get community by title
 router.get("/:title", async (req, res) => {
   try {
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
+    const documents = await findSingleDocuments({
+      community: req.params.title,
+    });
 
-    if (!community) throw new ResponseError(404, "Community not found.");
-
-    return res.status(200).json(community);
+    return res.status(200).json(documents.community);
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
@@ -295,7 +292,7 @@ router.get("/:title", async (req, res) => {
  *        '404':
  *          description: User not found. **||** <br>Community not found.
  *        '403':
- *          description: One of the fields you tried to edit, can not be edited. **||** <br>Only creator of community can edit community.
+ *          description: One of the fields you tried to edit, can not be edited. **||** <br>Only creator of community can edit community. **||** <br>Community already exists with that title.
  *        '204':
  *          description: Success. No content to return.
  *        '400':
@@ -307,43 +304,36 @@ router.get("/:title", async (req, res) => {
 router.patch("/:title", async (req, res) => {
   try {
     // TODO: AUTH USER IS MODERATOR
-    const user = await User.findOne({ username: req.user.username });
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      community: req.params.title,
+    });
 
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!community) throw new ResponseError(404, "Community not found.");
-
-    if (user.username !== community.creator)
+    if (documents.user.username !== documents.community.creator)
       throw new ResponseError(
         403,
         "Only creator of community can edit community."
       );
 
-    // eslint-disable-next-line prefer-const
-    let query = { $set: {} };
+    // TODO: Prevent spaces or special characters in community title
 
-    Object.keys(req.body).forEach((key) => {
-      if (
-        key === "tags" ||
-        key === "flags" ||
-        key === "createdOn" ||
-        key === "members"
-      )
-        throw new ResponseError(403, `${key} can not be edited.`);
+    if (req.body.title && (await Community.exists({ title: req.body.title })))
+      throw new ResponseError(403, "Community already exists with that title.");
 
-      // if the field in req.body exists, update/set it
-      if (community[key] && community[key] !== req.body[key]) {
-        query.$set[key] = req.body[key];
-      } else if (!community[key]) {
-        query.$set[key] = req.body[key];
-      }
-    });
+    const query = checkPatchQuery(req.body, documents.community, [
+      "tags",
+      "flags",
+      "createdOn",
+      "members",
+      "creator",
+    ]);
 
-    await Community.updateOne({ title: community.title }, query).exec();
+    await Community.updateOne(
+      { title: documents.community.title },
+      query
+    ).exec();
 
-    return res.status(204).send("");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
@@ -379,18 +369,15 @@ router.patch("/:title", async (req, res) => {
  */
 
 // Remove community by title
-// TODO: AUTH
+// TODO: AUTH moderators
 router.delete("/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      community: req.params.title,
+    });
 
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!community) throw new ResponseError(404, "Community not found.");
-
-    if (user.username !== community.creator)
+    if (documents.user.username !== documents.community.creator)
       throw new ResponseError(
         403,
         "Only creator of community can edit community."
@@ -403,17 +390,16 @@ router.delete("/:title", async (req, res) => {
 
     // Remove reference to community from users
     await User.updateMany(
-      { "communities.community": community.title },
-      { $pull: { communities: { community: community.title } } }
+      { "communities.community": documents.community.title },
+      { $pull: { communities: { community: documents.community.title } } }
     ).exec();
 
     // Remove posts from community
-    await Post.deleteMany({ community: community.title }).exec();
+    await Post.deleteMany({ community: documents.community.title }).exec();
 
     // Remove comments from posts in community
-    await Comment.deleteMany({ community: community.title }).exec();
+    await Comment.deleteMany({ community: documents.community.title }).exec();
 
-    // TODO: AUTH ONLY MODERATORS OF COMMUNITY
     return res.status(200).send("Community removed.");
   } catch (err) {
     if (err instanceof ResponseError)
