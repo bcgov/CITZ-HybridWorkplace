@@ -1,5 +1,6 @@
-let community = require('./functions/communityFunctions.js');
+let { CommunityFunctions } = require('./functions/communityFunctions.js');
 let { AuthFunctions } = require('./functions/authFunctions.js');
+let community = new CommunityFunctions ();
 let user = new AuthFunctions();
 let token = '';
 
@@ -63,7 +64,7 @@ describe('Get Community by Title - With Login, testing with null', () => {
 
 describe('Creating new Community', () => {
   test('API returns a successful response - code 201', async() => {
-      response = await community.createCommunity(newComTitle, newComDescript, newComRules, newComTags, token);
+      let response = await community.createCommunity(newComTitle, newComDescript, newComRules, newComTags, token);
       expect(response.status).toBe(201);
   });
 });
@@ -89,8 +90,8 @@ describe('Get Community by Title - With Login, testing with new Community', () =
 
 describe('Deleting new Community', () => {
   test('API returns a successful response - code 200', async() => {
-       response = await community.deleteCommunity(newComTitle, token);
-       expect(response.status).toBe(200);
+      let response = await community.deleteCommunity(newComTitle, token);
+      expect(response.status).toBe(200);
   });
 });
 
@@ -120,7 +121,7 @@ describe('Get Community by Title - With Login, testing with new Community after 
 
 describe('Creating new Community with " " as title', () => {
   test('API returns a successful response - code 201',async() => {
-      response = await community.createCommunity(' ', newComDescript, newComRules, newComTags, token);
+      let response = await community.createCommunity(' ', newComDescript, newComRules, newComTags, token);
       expect(response.status).toBe(201);
   });
 });
@@ -146,7 +147,7 @@ describe('Get Community by Title - With Login, testing with new " " Community', 
 
 describe('Deleting new Community', () => {
   test('API returns a successful response - code 200', async() => {
-       response = await community.deleteCommunity(" ",token);
-       expect(response.status).toBe(200);
+      let response = await community.deleteCommunity(" ",token);
+      expect(response.status).toBe(200);
   });
 });
