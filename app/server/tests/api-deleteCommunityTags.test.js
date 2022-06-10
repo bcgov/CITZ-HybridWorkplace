@@ -66,7 +66,6 @@ describe('Get Communities tags', () => {
   });
 });
 
-// Testing the get communities function after logging in
 describe('Delete Communities tags - After Login on new community', () => {
     let response = '';
 
