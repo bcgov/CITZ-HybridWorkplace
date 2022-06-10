@@ -1,8 +1,9 @@
 const { AuthFunctions } = require('./functions/authFunctions');
 const { password, name, email } = require('./functions/randomizer');
 const { PostFunctions } = require('./functions/postFunctions');
-const community = require('./functions/communityFunctions');
+const { CommunityFunctions } = require('./functions/communityFunctions.js');
 
+let community = new CommunityFunctions();
 let auth = new AuthFunctions();
 let post = new PostFunctions();
 

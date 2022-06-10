@@ -4,9 +4,8 @@ const request = supertest(endpoint);
 
 class CommunityFunctions{
 
-    constructor(){
+    constructor() {
     }
-
 
     getCommunities(token){
         return request
