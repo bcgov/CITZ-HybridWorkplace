@@ -12,9 +12,13 @@ const PrivateComponent = (props) => {
   const [loggedIn, setLoggedIn] = useState(props.accessToken !== "");
   useEffect(() => {
     (async () => {
-      const successful = await props.getAccessToken();
-      setLoggedIn(successful);
-      setLoading(false);
+      if (loggedIn) {
+        setLoading(false);
+      } else {
+        const successful = await props.getAccessToken();
+        setLoggedIn(successful);
+        setLoading(false);
+      }
     })();
   }, []);
 
