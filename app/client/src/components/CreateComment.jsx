@@ -38,7 +38,7 @@ export const CreateComment = (props) => {
           </Stack>
         </>
       ) : (
-        <Button onClick={handleAddCommentButton}>Add Comment</Button>
+        <Button onClick={handleAddCommentButton}>+ Add Comment</Button>
       )}
     </>
   );

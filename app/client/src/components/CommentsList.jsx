@@ -5,7 +5,7 @@ import { getComments } from "../redux/ducks/postDuck";
 
 export const CommentsList = (props) => {
   useEffect(() => {
-    props.getComments(props.postId);
+    props.comments || props.getComments(props.postId);
   }, []);
   return (
     props.comments?.map((comment) => <Comment comment={comment} />) || (

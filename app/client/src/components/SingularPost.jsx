@@ -34,7 +34,7 @@ const SingularPost = (props) => {
   let { id } = useParams();
 
   useEffect(() => {
-    props.getPost(id);
+    props.post._id === id || props.getPost(id);
   }, []);
 
   const handleFlagPostClick = () => {
@@ -98,21 +98,15 @@ const SingularPost = (props) => {
           <TagsList post={props.post} />
         </CardActions>
       </Card>
-      {console.log(props.post)}
       <CreateComment post={props.post} />
       <CommentsList comments={props.post.comments} />
     </div>
   );
 };
 
-SingularPost.propTypes = {
-  joinCommunity: PropTypes.func.isRequired,
-};
+SingularPost.propTypes = {};
 
 const mapStateToProps = (state) => ({
-  flagPostOpen: state.modal.flagPost.open,
-  deletePostOpen: state.modal.deletePost.open,
-  fetchedPost: state.posts.item,
   post: state.posts.item,
 });
 
