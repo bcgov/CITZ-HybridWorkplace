@@ -21,6 +21,7 @@
  */
 
 import "./App.css";
+import "@bcgov/bc-sans/css/BCSans.css";
 
 import Routes from "./Routes";
 import Container from "@mui/material/Container";
@@ -39,6 +40,9 @@ function App() {
   const theme = createTheme({
     palette: {
       mode: "light",
+    },
+    typography: {
+      fontFamily: "BCSans",
     },
   });
 

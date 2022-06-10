@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Province of British Columbia
+// Copyright Â© 2022 Province of British Columbia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { getProfile } from "../redux/ducks/profileDuck";
 import PropTypes from "prop-types";
+import { Typography } from "@mui/material";
 
 const ProfileInfo = (props) => {
   useEffect(() => {
@@ -32,12 +33,28 @@ const ProfileInfo = (props) => {
 
   return (
     <div>
-      <h3>{props.profile.username || ""}</h3>
-      <h4>{props.profile.firstName + " " + props.profile.lastName}</h4>
-      <p> {props.profile.email} </p>
-      <p> {props.profile.title || ""} </p>
+      <Typography variant="h4" style={{ fontWeight: 600, color: "#313132" }}>
+        {props.profile.username}
+      </Typography>
+      <Typography variant="h5">
+        {!(props.profile.firstName || props.profile.lastName) ||
+          "No name to display"}
+      </Typography>
+      <Typography variant="body2"> {props.profile.email} </Typography>
+      <Typography variant="body2">
+        {props.profile.title || "No title to display"}
+      </Typography>
       <br />
-      <p> {props.profile.bio || ""} </p>
+      <Typography variant="h6" style={{ fontWeight: 600, color: "#313132" }}>
+        Joined
+      </Typography>
+      <Typography variant="p" style={{ fontWeight: 600, color: "#999" }}>
+        {props.profile.registeredOn || "No join date to display"}
+      </Typography>
+      <br />
+      <Typography variant="h6" style={{ fontWeight: 600, color: "#313132" }}>
+        Posts
+      </Typography>
     </div>
   );
 };
@@ -51,8 +68,6 @@ const mapStateToProps = (state) => ({
   profile: state.profile.user,
 });
 
-const mapActionsToProps = {
-  getProfile,
-};
+const mapActionsToProps = { getProfile };
 
 export default connect(mapStateToProps, mapActionsToProps)(ProfileInfo);

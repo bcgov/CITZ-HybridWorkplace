@@ -95,7 +95,6 @@ function deleteCommunityTags(title, tag, token) {
         .query(`tag=${ tag }`);
 }
 
-module.exports = {getCommunities, getCommunitybyTitle,createCommunity,deleteCommunity,
-    patchCommunitybyTitle,joinCommunity,leaveCommunity,setCommunityRules,
-    getCommunityRules, setCommunityTags, getCommunityTags, getCommunityMembers, setCommunityTags, deleteCommunityTags };
-    
+module.exports = { getCommunities, getCommunitybyTitle,createCommunity,deleteCommunity,
+    patchCommunitybyTitle, joinCommunity, leaveCommunity, setCommunityRules, getCommunityRules,
+    setCommunityTags, getCommunityTags, deleteCommunityTags };   

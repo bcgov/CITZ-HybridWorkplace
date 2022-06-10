@@ -20,23 +20,27 @@
  * @module
  */
 
+/************************DELETE TYPES************************/
 const OPEN_DELETE_POST_MODAL =
   "CITZ-HYBRIDWORKPLACE/DELETE/OPEN_DELETE_POST_MODAL";
 const CLOSE_DELETE_POST_MODAL =
   "CITZ-HYBRIDWORKPLACE/DELETE/CLOSE_DELETE_POST_MODAL";
+
 const OPEN_DELETE_COMMUNITY_MODAL =
   "CITZ-HYBRIDWORKPLACE/DELETE/OPEN_DELETE_COMMUNITY_MODAL";
 const CLOSE_DELETE_COMMUNITY_MODAL =
   "CITZ-HYBRIDWORKPLACE/DELETE/CLOSE_DELETE_COMMUNITY_MODAL";
 
+/************************FLAG TYPES************************/
 const OPEN_FLAG_POST_MODAL = "CITZ-HYBRIDWORKPLACE/FLAG/OPEN_FLAG_POST_MODAL";
 const CLOSE_FLAG_POST_MODAL = "CITZ-HYBRIDWORKPLACE/FLAG/CLOSE_FLAG_POST_MODAL";
+
 const OPEN_FLAG_COMMUNITY_MODAL =
   "CITZ-HYBRIDWORKPLACE/FLAG/OPEN_FLAG_COMMUNITY_MODAL";
 const CLOSE_FLAG_COMMUNITY_MODAL =
   "CITZ-HYBRIDWORKPLACE/FLAG/CLOSE_FLAG_COMMUNITY_MODAL";
 
-/*********************** DELETE MODAL ACTIONS***********************/
+/*********************** DELETE ACTIONS***********************/
 export const openDeletePostModal = (post) => (dispatch) => {
   closeDeleteCommunityModal()(dispatch);
   dispatch({ type: OPEN_DELETE_POST_MODAL, payload: post });
@@ -52,7 +56,7 @@ export const openDeleteCommunityModal = (community) => (dispatch) => {
 };
 
 export const closeDeleteCommunityModal = () => (dispatch) => {
-  dispatch({ type: OPEN_DELETE_COMMUNITY_MODAL });
+  dispatch({ type: CLOSE_DELETE_COMMUNITY_MODAL });
 };
 
 /*********************** FLAG MODAL ACTIONS***********************/
@@ -73,6 +77,7 @@ export const closeFlagCommunityModal = () => (dispatch) => {
   dispatch({ type: OPEN_FLAG_COMMUNITY_MODAL });
 };
 
+/************************MODAL REDUCER************************/
 const initialState = {
   deletePost: { open: false, post: {} },
   deleteCommunity: { open: false, community: {} },
