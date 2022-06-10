@@ -61,7 +61,7 @@ function getCommunityMembers(title, count, token) {
         .query(`count=${count}`);
 }
 
-function setCommunityRules(title,rules,token){
+function setCommunityRules(title, rules, token){
     return request
         .put(`/community/rules/${title}`)
         .set({authorization: `Bearer ${token}`})
