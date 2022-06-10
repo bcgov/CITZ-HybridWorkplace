@@ -1,3 +1,11 @@
+/* for swagger login tests
+{
+  "username": "test2",
+  "password": "Tester123!"
+}
+*/
+
+
 const supertest = require('supertest');
 const endpoint = process.env.API_REF;
 const request = supertest(endpoint);
@@ -87,4 +95,3 @@ class CommunityFunctions{
 }
 
 module.exports = { CommunityFunctions };
-    
