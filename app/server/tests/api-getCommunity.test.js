@@ -1,8 +1,8 @@
-let community = require('./functions/communityFunctions.js');
+let { CommunityFunctions } = require('./functions/communityFunctions.js');
 let { AuthFunctions } = require('./functions/authFunctions.js');
-
-let token = '';
+let community = new CommunityFunctions ();
 let user = new AuthFunctions();
+let token = '';
 
 const welComTitle = "Welcome";
 const welComDescript = "The Neighbourhood";
