@@ -4,8 +4,6 @@ let community = new CommunityFunctions ();
 let user = new AuthFunctions();
 let token = '';
 
-const welComTitle = "Welcome";
-
 const newComTitle = "hello create";
 const newComDescript = "world";
 const newComRules = "1. rules";
@@ -15,8 +13,32 @@ const newComTags = [{
 }];
 
 const updatedTags = "new";
-const updatedTags2 = "new new";
 
+const specialTag = '$@#*()#@*()$()&&&*@$@&';
+const linkTag = 'https://hwp-express-api-d63404-dev.apps.silver.devops.gov.bc.ca/api';
+const arrayTag = ["Matt"];
+const arrayTag2 = ["Welcome", "to", "the"];
+const intTag = 1231;
+const jsonTag = JSON.stringify({
+  "colors": [
+    {
+      "color": "black",
+      "category": "hue",
+      "type": "primary",
+      "code": {
+        "rgba": [255,255,255,1],
+        "hex": "#000"
+      }
+    },
+    {
+      "color": "white",
+      "category": "value",
+      "code": {
+        "rgba": [0,0,0,1],
+        "hex": "#FFF"
+      }
+    }
+]});
 
 describe('Logging in the test user', () => {
   test('API returns a successful response - code 201', async () => {
@@ -24,24 +46,6 @@ describe('Logging in the test user', () => {
     token = response.body.token;
     expect(response.status).toBe(201);
   });
-});
-
-
-// Testing the get communities function after logging in
-describe('Get Communities Tags - After Login with welcome community', () => {
-    let response = '';
-  
-    beforeAll( async() => {
-      response = await community.getCommunityTags(welComTitle, token);
-    });
-  
-    test('API returns a successful response - code 200', () => {
-      expect(response.status).toBe(200);
-    });
-  
-    test('API returns the "Welcome" community tags', () => {
-      expect(" " + response.text+ " ").toContain("[]");
-    });
 });
   
 describe('Creating new Community', () => {
@@ -64,41 +68,88 @@ describe('Set Communities tags - After Login on new community', () => {
         expect(response.status).toBe(204);
     });
 
-    test('API returns the "Welcome" community tags in its response body', () => {
+    test('API returns the updated tag', () => {
         expect(" " + response.text + " ").toContain(updatedTags);
     });
 });
 
 describe('Get Communities Tags - After Login with new community (2)', () => {
-  let response = '';
-
-  beforeAll( async() => {
-    response = await community.getCommunityTags(welComTitle, token);
-  });
-
-  test('API returns a successful response - code 200', () => {
-    expect(response.status).toBe(200);
-  });
-
-  test('API returns the updated tag', () => {
+  test('API returns the updated tag',  async () => {
+    response = await community.getCommunityTags(newComTitle, token);
     expect(" " + response.text+ " ").toContain(updatedTags);
   });
 });
 
 // Testing the get communities function after logging in
-describe('Set Communities tags - on new community, with string tag', () => {
+describe('Set Communities tags - on new community, with link tag', () => {
   let response = '';
 
   beforeAll( async() => {
-      response = await community.setCommunityTags(newComTitle, updatedTags, token);
+      response = await community.setCommunityTags(newComTitle, linkTag, token);
   });
 
-  test('API returns a successful response - code 204', () => {
-      expect(response.status).toBe(204);
+  test('API returns a unsuccessful response - code 403', () => {
+      expect(response.status).toBe(403);
+  });
+});
+
+describe('Set Communities tags - on new community, with array tag (1 element)', () => {
+  let response = '';
+
+  beforeAll( async() => {
+      response = await community.setCommunityTags(newComTitle, arrayTag, token);
   });
 
-  test('API returns the "Welcome" community tags in its response body', () => {
-      expect(" " + response.text + " ").toContain(updatedTags);
+  test('API returns a unsuccessful response - code 403', () => {
+      expect(response.status).toBe(403);
+  });
+});
+
+describe('Set Communities tags - on new community, with array tag (3 elements)', () => {
+  let response = '';
+
+  beforeAll( async() => {
+      response = await community.setCommunityTags(newComTitle, arrayTag2, token);
+  });
+
+  test('API returns a unsuccessful response - code 403', () => {
+      expect(response.status).toBe(403);
+  });
+});
+
+describe('Set Communities tags - on new community, with int tag', () => {
+  let response = '';
+
+  beforeAll( async() => {
+      response = await community.setCommunityTags(newComTitle, intTag, token);
+  });
+
+  test('API returns a unsuccessful response - code 403', () => {
+      expect(response.status).toBe(403);
+  });
+});
+
+describe('Set Communities tags - on new community, with json tag', () => {
+  let response = '';
+
+  beforeAll( async() => {
+      response = await community.setCommunityTags(newComTitle, jsonTag, token);
+  });
+
+  test('API returns a unsuccessful response - code 403', () => {
+      expect(response.status).toBe(403);
+  });
+});
+
+describe('Set Communities tags - on new community, with special characters tag', () => {
+  let response = '';
+
+  beforeAll( async() => {
+      response = await community.setCommunityTags(newComTitle, specialTag, token);
+  });
+
+  test('API returns a unsuccessful response - code 403', () => {
+      expect(response.status).toBe(403);
   });
 });
 

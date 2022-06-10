@@ -61,6 +61,13 @@ describe('Set Communities tag to updatedTags', () => {
   });
 });
 
+describe('Get Communities tags', () => {
+  test('API returns the updated tag', async () => {
+    response = await community.getCommunityTags(newComTitle, token);
+    expect(" " + response.text+ " ").toContain(updatedTags);
+  });
+});
+
 // Testing the get communities function after logging in
 describe('Delete Communities tags - After Login on new community', () => {
     let response = '';
@@ -76,6 +83,13 @@ describe('Delete Communities tags - After Login on new community', () => {
     test('API returns resonse - "Tag removed."', () => {
         expect(" " + response.text + " ").toContain('Tag removed.');
     });
+});
+
+describe('Get Communities Tags after tag deletion', () => {
+  test('API returns the updated tag', async () => {
+    response = await community.getCommunityTags(newComTitle, token);
+    expect(" " + response.text+ " ").not.toContain(updatedTags);
+  });
 });
 
 // Testing the get communities function after logging in
