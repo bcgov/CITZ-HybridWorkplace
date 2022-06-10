@@ -22,6 +22,7 @@
 
 const express = require("express");
 const ResponseError = require("../../../responseError");
+const findSingleDocuments = require("../../../functions/findSingleDocuments");
 
 const router = express.Router();
 
@@ -65,16 +66,17 @@ const User = require("../../../models/user.model");
 // Get all community members by community title or count
 router.get("/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-    const community = await Community.findOne({ title: req.params.title });
-
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!community) throw new ResponseError(404, "Community not found.");
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      community: req.params.title,
+    });
 
     if (req.query.count === "true")
-      return res.status(200).json({ count: community.members.length || 0 });
+      return res
+        .status(200)
+        .json({ count: documents.community.members.length || 0 });
 
-    return res.status(200).json(community.members);
+    return res.status(200).json(documents.community.members);
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
@@ -110,24 +112,21 @@ router.get("/:title", async (req, res) => {
 // Join community by title
 router.patch("/join/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
-
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!community) throw new ResponseError(404, "Community not found.");
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      community: req.params.title,
+    });
 
     await Community.updateOne(
-      { title: community.title },
-      { $addToSet: { members: user.id } }
+      { title: documents.community.title },
+      { $addToSet: { members: documents.user.id } }
     );
 
     await User.updateOne(
-      { username: user.username },
+      { username: documents.user.username },
       {
         $addToSet: {
-          communities: { community: community.title, engagement: 0 },
+          communities: { community: documents.community.title, engagement: 0 },
         },
       }
     );
@@ -168,26 +167,23 @@ router.patch("/join/:title", async (req, res) => {
 // Leave community by title
 router.delete("/leave/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
-
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!community) throw new ResponseError(404, "Community not found.");
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      community: req.params.title,
+    });
 
     // Remove user from community
     await Community.updateOne(
-      { title: community.title },
-      { $pull: { members: user.id } }
+      { title: documents.community.title },
+      { $pull: { members: documents.user.id } }
     );
 
     // Remove community from user's communities array
     await User.updateOne(
-      { username: user.username },
+      { username: documents.user.username },
       {
         $pull: {
-          communities: { community: community.title },
+          communities: { community: documents.community.title },
         },
       }
     );

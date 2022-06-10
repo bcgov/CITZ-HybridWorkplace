@@ -22,11 +22,11 @@
 
 const express = require("express");
 const ResponseError = require("../../../responseError");
+const findSingleDocuments = require("../../../functions/findSingleDocuments");
 
 const router = express.Router();
 
 const Community = require("../../../models/community.model");
-const User = require("../../../models/user.model");
 
 /**
  * @swagger
@@ -67,22 +67,19 @@ const User = require("../../../models/user.model");
 // Set community rules by title
 router.put("/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      community: req.params.title,
+    });
 
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!community) throw new ResponseError(404, "Community not found.");
-
-    if (user.username !== community.creator)
+    if (documents.user.username !== documents.community.creator)
       throw new ResponseError(
         403,
         "Only creator of community can edit community."
       );
 
     await Community.updateOne(
-      { title: community.title },
+      { title: documents.community.title },
       { $set: { rules: req.body.rules } }
     ).exec();
 
@@ -125,13 +122,11 @@ router.put("/:title", async (req, res) => {
 // Get community rules by title
 router.get("/:title", async (req, res) => {
   try {
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
+    const documents = await findSingleDocuments({
+      community: req.params.title,
+    });
 
-    if (!community) throw new ResponseError(404, "Community not found.");
-
-    return res.status(200).json(community.rules);
+    return res.status(200).json(documents.community.rules);
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);

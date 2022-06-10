@@ -91,7 +91,7 @@ router.post("/", async (req, res) => {
 
       // Add or replace refresh token to db
       await User.updateOne(
-        { user: user.username },
+        { username: user.username },
         { refreshToken: hashedRefreshToken }
       );
 

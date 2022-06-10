@@ -21,10 +21,13 @@ const express = require("express");
 const moment = require("moment");
 const ResponseError = require("../../../responseError");
 
+const findSingleDocuments = require("../../../functions/findSingleDocuments");
+const checkUserIsMemberOfCommunity = require("../../../functions/checkUserIsMemberOfCommunity");
+const updateCommunityEngagement = require("../../../functions/updateCommunityEngagement");
+
 const router = express.Router();
 
 const Comment = require("../../../models/comment.model");
-const User = require("../../../models/user.model");
 
 /**
  * @swagger
@@ -57,11 +60,12 @@ const User = require("../../../models/user.model");
 // Get all replies to comment with id
 router.get("/:id", async (req, res) => {
   try {
-    const comment = await Comment.findOne({ _id: req.params.id });
-    if (!comment) throw new ResponseError(404, "Comment not found.");
+    const documents = await findSingleDocuments({
+      comment: req.params.id,
+    });
 
     const replies = await Comment.aggregate([
-      { $match: { replyTo: comment.id } },
+      { $match: { replyTo: documents.comment.id } },
       {
         $addFields: {
           votes: {
@@ -108,7 +112,7 @@ router.get("/:id", async (req, res) => {
  *        '404':
  *          description: User not found. **||** <br>Comment not found.
  *        '403':
- *          description: Missing message in body of the request. **||** <br>Must be a part of community to post in community. **||** <br>Not allowed to reply to a reply.
+ *          description: Missing message in body of the request. **||** <br>User must be a part of community. **||** <br>Not allowed to reply to a reply.
  *        '201':
  *          description: Reply successfully created.
  *          content:
@@ -122,40 +126,42 @@ router.get("/:id", async (req, res) => {
 // Reply to comment with id
 router.post("/:id", async (req, res) => {
   try {
-    const user = await User.findOne({ name: req.user.name });
-    const comment = await Comment.findOne({ _id: req.params.id });
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      comment: req.params.id,
+    });
 
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!comment) throw new ResponseError(404, "Comment not found.");
-
-    if (comment.replyTo)
+    if (documents.comment.replyTo)
       throw new ResponseError(403, "Not allowed to reply to a reply.");
 
-    if (
-      !(await User.exists({
-        _id: user.id,
-        "communities.community": comment.community,
-      }))
-    )
-      throw new ResponseError(
-        403,
-        "Must be a part of community to comment in community."
-      );
+    await checkUserIsMemberOfCommunity(
+      documents.user.username,
+      documents.comment.community
+    );
 
     if (!req.body.message || req.body.message === "")
       throw new ResponseError(403, "Missing message in body of the request.");
 
-    await Comment.updateOne({ _id: comment.id }, { hasReplies: true }).exec();
+    await Comment.updateOne(
+      { _id: documents.comment.id },
+      { hasReplies: true }
+    ).exec();
 
     // Create reply
     const reply = await Comment.create({
       message: req.body.message,
-      creator: user.id,
-      post: comment.post,
-      community: comment.community,
+      creator: documents.user.id,
+      post: documents.comment.post,
+      community: documents.comment.community,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
-      replyTo: comment.id,
+      replyTo: documents.comment.id,
     });
+
+    await updateCommunityEngagement(
+      documents.user.username,
+      documents.comment.community,
+      process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT || 1
+    );
 
     return res.status(201).json(reply);
   } catch (err) {
