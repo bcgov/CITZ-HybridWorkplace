@@ -17,7 +17,6 @@ describe('Logging in the test user', () => {
 });
 
 
-// Testing the get communities function after logging in
 describe('Get Communities - After Login', () => {
   let response = '';
 

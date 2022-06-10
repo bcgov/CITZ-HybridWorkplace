@@ -26,7 +26,6 @@ describe('Logging in the test user', () => {
 });
 
 
-// Testing the get community by title function with the "Welcome" community after logging in
 describe('Get Community by Title - With Login, testing with "Welcome" community', () => {
   let response = '';
 
@@ -44,7 +43,7 @@ describe('Get Community by Title - With Login, testing with "Welcome" community'
   });
 });
 
-//Testing the get community function with the "Welcome" community after logging in, but with null as the token
+
 describe('Get Community by Title - With Login, testing with null', () => {
   let response = '';
 
@@ -70,7 +69,6 @@ describe('Creating new Community', () => {
 });
 
 
-//Testing the get community function with the "Welcome" community after logging in, but with null as the token
 describe('Get Community by Title - With Login, testing with new Community', () => {
   let response = '';
 
@@ -96,7 +94,6 @@ describe('Deleting new Community', () => {
 });
 
 
-//Testing the get community function with the "Welcome" community after logging in, but with null as the token
 describe('Get Community by Title - With Login, testing with new Community after the deletion', () => {
   let response = '';
 
@@ -118,7 +115,6 @@ describe('Get Community by Title - With Login, testing with new Community after 
 });
 
 
-
 describe('Creating new Community with " " as title', () => {
   test('API returns a successful response - code 201',async() => {
       let response = await community.createCommunity(' ', newComDescript, newComRules, newComTags, token);
@@ -127,7 +123,6 @@ describe('Creating new Community with " " as title', () => {
 });
 
 
-//Testing the get community function with the "Welcome" community after logging in, but with null as the token
 describe('Get Community by Title - With Login, testing with new " " Community', () => {
   let response = '';
 

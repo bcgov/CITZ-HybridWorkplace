@@ -24,7 +24,6 @@ describe('Logging in the test user', () => {
 });
 
 
-// Testing the get communities function after logging in
 describe('Get Communities Tags  - After Login', () => {
   let response = '';
 
@@ -49,7 +48,7 @@ describe('Creating new Community', () => {
     });
 });
 
-// Testing the get communities function after logging in
+
 describe('Get Community Tags - After Login on new community', () => {
     let response = '';
   

@@ -27,7 +27,6 @@ describe('Logging in the test user', () => {
 });
 
 
-// Testing the get communities function after logging in
 describe('Get Communities Tags - After Login with welcome community', () => {
     let response = '';
   
@@ -53,7 +52,6 @@ describe('Creating new Community', () => {
 });
 
 
-// Testing the get communities function after logging in
 describe('Set Communities tag to updatedTags', () => {
   test('API returns a successful response - code 204', async() => {
     let response = await community.setCommunityTags(newComTitle, updatedTags, token);
@@ -68,7 +66,7 @@ describe('Get Communities tags', () => {
   });
 });
 
-// Testing the get communities function after logging in
+
 describe('Delete Communities tags - After Login on new community', () => {
     let response = '';
 
@@ -92,7 +90,7 @@ describe('Get Communities Tags after tag deletion', () => {
   });
 });
 
-// Testing the get communities function after logging in
+
 describe('Delete Communities tags - After Login on new community, tag does not exist', () => {
   let response = '';
 
