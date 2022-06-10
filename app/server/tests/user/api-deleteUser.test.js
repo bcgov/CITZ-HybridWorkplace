@@ -1,6 +1,6 @@
-const { AuthFunctions } = require('./functions/authFunctions');
-const user = require('./functions/userFunctions');
-const { password, name, email } = require('./functions/randomizer');
+const { AuthFunctions } = require('../functions/authFunctions');
+const user = require('../functions/userFunctions');
+const { password, name, email } = require('../functions/randomizer');
 
 let auth = new AuthFunctions();
 
@@ -21,10 +21,10 @@ describe('Delete users with /user/{name}', () => {
         await auth.deleteUsers();
     });
 
-    test('Trying to delete a user other than yourself should be rejected - returns 401', async () => {
+    test('Trying to delete a user other than yourself should be rejected - returns 403', async () => {
         await auth.register('Todd', 'todd@gmail.com', 'Todd123!'); // Create new user
         response = await user.deleteUserByName(loginResponse.body.token, 'Todd'); // Try to delete user with original token
-        expect(response.statusCode).toBe(401); // Not authorized
+        expect(response.statusCode).toBe(403); // Authorized, but not allowed to do that
     });
 
     test('User is deleted upon request - returns 204', async () => {
@@ -40,9 +40,9 @@ describe('Delete users with /user/{name}', () => {
         expect(response.statusCode).toBe(404); // User not found
     });
 
-    test('Trying to delete a user with an invalid token should be rejected - returns 403', async () => {
+    test('Trying to delete a user with an invalid token should be rejected - returns 401', async () => {
         await auth.register('Josie', 'josie@gmail.com', 'josie123!'); // Create new user
         response = await user.deleteUserByName('reallybadtokenimeansobadithurts', 'Josie'); // Try to delete user with bad token
-        expect(response.statusCode).toBe(403); // Forbidden
+        expect(response.statusCode).toBe(401); // Invalid token
     });
 }); 

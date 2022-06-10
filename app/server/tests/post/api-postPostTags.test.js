@@ -1,7 +1,7 @@
-const { AuthFunctions } = require('./functions/authFunctions');
-const { password, name, email } = require('./functions/randomizer');
-const { PostFunctions } = require('./functions/postFunctions');
-const { CommunityFunctions } = require('./functions/communityFunctions.js');
+const { AuthFunctions } = require('../functions/authFunctions');
+const { password, name, email } = require('../functions/randomizer');
+const { PostFunctions } = require('../functions/postFunctions');
+const { CommunityFunctions } = require('../functions/communityFunctions.js');
 
 let community = new CommunityFunctions();
 let auth = new AuthFunctions();
@@ -106,13 +106,14 @@ describe('Testing user\'s ability to POST Post Tags', () => {
         );
     });
 
+    // TODO: Currently returns 400
     test('User cannot tag post when providing a non-existant post id - returns 404', async () => {
-        response = await post.setPostTags('kdls;hiowkl;sdkhflw', 'bad post id', loginResponse.body.token);
+        response = await post.setPostTags('kdls;hiowkl;sdkhflw', 'my tag', loginResponse.body.token);
         expect(response.status).toBe(404);
     });
 
-    test('User cannot tag post when providing an invalid user token - returns 403', async () => {
-        response = await post.setPostTags(postResponse.body._id, 'bad token', 'kdslfhsdfhiuwhl');
-        expect(response.status).toBe(403);
+    test('User cannot tag post when providing an invalid user token - returns 401', async () => {
+        response = await post.setPostTags(postResponse.body._id, 'my tag', 'kdslfhsdfhiuwhl');
+        expect(response.status).toBe(401);
     });
 });

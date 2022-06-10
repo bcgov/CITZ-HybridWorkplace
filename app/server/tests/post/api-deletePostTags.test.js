@@ -1,7 +1,7 @@
-const { AuthFunctions } = require('./functions/authFunctions');
-const { password, name, email } = require('./functions/randomizer');
-const { PostFunctions } = require('./functions/postFunctions');
-const { CommunityFunctions } = require('./functions/communityFunctions.js');
+const { AuthFunctions } = require('../functions/authFunctions');
+const { password, name, email } = require('../functions/randomizer');
+const { PostFunctions } = require('../functions/postFunctions');
+const { CommunityFunctions } = require('../functions/communityFunctions.js');
 
 let community = new CommunityFunctions();
 let auth = new AuthFunctions();
@@ -61,12 +61,13 @@ describe('Testing user\'s ability to DELETE Post Tags', () => {
         expect(response.status).toBe(403);
     });
 
-    test('User receives 403 error when using an invalid token', async () => {
-        await post.createPostTags(postResponse.body._id, tag1, loginResponse.body.token);
+    test('User receives 401 error when using an invalid token', async () => {
+        await post.setPostTags(postResponse.body._id, tag1, loginResponse.body.token);
         response = await post.deletePostTags(postResponse.body._id, 'invalidtokensRus');
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(401);
     });
 
+    // TODO: Currently returns 400
     test('User receives 404 error when trying to delete tags from non-existant post', async () => {
         response = await post.deletePostTags('htkeiodjkfldsjifo', loginResponse.body.token);
         expect(response.status).toBe(404);

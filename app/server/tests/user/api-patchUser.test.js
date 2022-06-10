@@ -1,6 +1,6 @@
-const { AuthFunctions } = require('./functions/authFunctions');
-const user = require('./functions/userFunctions');
-const { password, name, email } = require('./functions/randomizer');
+const { AuthFunctions } = require('../functions/authFunctions');
+const user = require('../functions/userFunctions');
+const { password, name, email } = require('../functions/randomizer');
 
 let auth = new AuthFunctions();
 
@@ -51,7 +51,7 @@ describe('Edit the information of users with /user/{name}', () => {
         expect(result.body.email).toBe(userEmail);
     });
 
-    test('Try to set email to blank string value - should not return 204', async () => {
+    test('Try to set email to blank string value - returns 403', async () => {
         let body = {
             "email": ""
         }
@@ -59,7 +59,7 @@ describe('Edit the information of users with /user/{name}', () => {
         expect(response.status).toBe(403);
     });
 
-    test('Try to set email to invalid email - should not return 204', async () => {
+    test('Try to set email to invalid email - returns 403', async () => {
         let body = {
             "email": "best@email@ever"
         }
@@ -75,21 +75,21 @@ describe('Edit the information of users with /user/{name}', () => {
         expect(response.status).toBe(403);
     });
 
-    test('Try to edit data using a bad token - returns 403', async () => {
+    test('Try to edit data using a bad token - returns 401', async () => {
         let body = {
             "email": "mynewemail@gmail.com"
         }
-        response = await user.editUserByObject('thisisasupergoodtokenthatwillmostdefinitelypass', body);
-        expect(response.status).toBe(403);
+        response = await user.editUserByObject('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyOWY4YTI3NDI0MDdmMWViZmUwZjVmMiIsInVzZXJuYW1lIjoiaGVscCIsImVtYWlsIjoiaGVscEBnb3YuYmMuY2EiLCJpYXQiOjE2NTQ4ODc0NjEsImV4cCI6MTY1NDg4ODA2MX0.c3eR-NaD22cLiWZKPeLg41FWWzQ1bLo29bNmMJT34aE', body);
+        expect(response.status).toBe(401); // Invalid token
     });
 
-    test('Try add a key that is not in the user model - should not return 204', async () => {
+    test('Try add a key that is not in the user model - returns 204, but is not added', async () => {
         let body = {
             "favouriteDrink": "eggnog"
         }
         response = await user.editUserByObject(loginResponse.body.token, body);
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(204); // Handles request ok!
         response = await user.getUserByName(loginResponse.body.token, userName);
-        expect(response.body.favouriteDrink).toBeFalsy();
+        expect(response.body.favouriteDrink).toBeFalsy(); // Not actually added
     });
 });

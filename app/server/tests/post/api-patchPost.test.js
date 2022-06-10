@@ -1,7 +1,7 @@
-const { AuthFunctions } = require('./functions/authFunctions');
-const { password, name, email } = require('./functions/randomizer');
-const { PostFunctions } = require('./functions/postFunctions');
-const { CommunityFunctions } = require('./functions/communityFunctions.js');
+const { AuthFunctions } = require('../functions/authFunctions');
+const { password, name, email } = require('../functions/randomizer');
+const { PostFunctions } = require('../functions/postFunctions');
+const { CommunityFunctions } = require('../functions/communityFunctions.js');
 
 let community = new CommunityFunctions();
 let auth = new AuthFunctions();
@@ -33,30 +33,27 @@ describe('Testing user\'s ability to edit posts from their communities', () => {
     });
 
     test('User can edit posts by id - returns 204', async () => {
-        response = await post.editPost(postResponse.body._id, 'Thundercats Retreat!', 'Hijacked', 'Thundercats', loginResponse.body.token);
+        response = await post.editPost(postResponse.body._id, 'Thundercats Retreat!', 'Hijacked', false, loginResponse.body.token);
         expect(response.status).toBe(204); // Post edited
         response = await post.getPostById(postResponse.body._id, loginResponse.body.token);
         expect(response.body.title).toBe('Thundercats Retreat!'); // Post title should match updated title
     });
 
+    // TODO: currently returns 400
     test('User cannot edit posts with an invalid id - returns 404', async () => {
-        response = await post.editPost('D78943207', 'Thundercats Retreat!', 'Hijacked', 'Thundercats', loginResponse.body.token);
+        response = await post.editPost('D78943207', 'Thundercats Retreat!', 'Hijacked', false, loginResponse.body.token);
         expect(response.status).toBe(404); // Post not edited
     });
 
-    test('User cannot edit posts where the community does not exist - returns 404', async () => {
-        response = await post.editPost(postResponse.body._id, 'Thundercats Retreat!', 'Hijacked', 'BobsBurgers', loginResponse.body.token);
-        expect(response.status).toBe(404); // Post not edited
+    test('User cannot edit posts where token is invalid - returns 401', async () => {
+        response = await post.editPost(postResponse.body._id, 'Thundercats Retreat!', 'Hijacked', false, 'flip those burgers');
+        expect(response.status).toBe(401); // Post not edited
     });
 
-    test('User cannot edit posts where token is invalid - returns 403', async () => {
-        response = await post.editPost(postResponse.body._id, 'Thundercats Retreat!', 'Hijacked', 'Thundercats', 'flip those burgers');
-        expect(response.status).toBe(403); // Post not edited
-    });
-
+    // TODO?: currently succeeds with 204, but should it?
     test('User cannot edit posts where the user is no longer in the community - returns 403', async () => {
         await community.leaveCommunity('Thundercats', loginResponse.body.token);
-        response = await post.editPost(postResponse.body._id, 'Thundercats Retreat!', 'Hijacked', 'Thundercats', loginResponse.body.token);
+        response = await post.editPost(postResponse.body._id, 'Thundercats Retreat!', 'Hijacked', false, loginResponse.body.token);
         expect(response.status).toBe(403); // Post not edited
     });
 });

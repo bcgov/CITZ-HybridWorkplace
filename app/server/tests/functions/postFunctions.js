@@ -34,11 +34,11 @@ class PostFunctions{
             .set({authorization: `Bearer ${ token }`});
     } 
 
-    async editPost(id, newTitle, newMessage, newCommunity, token){
+    async editPost(id, newTitle, newMessage, pinned, token){
         return await request
             .patch(`/post/${ id }`)
             .set({authorization: `Bearer ${ token }`})
-            .send({"title":newTitle, "message":newMessage, "community":newCommunity})
+            .send({"title":newTitle, "message":newMessage, "pinned": pinned})
     } 
 
     async deletePost(id, token){

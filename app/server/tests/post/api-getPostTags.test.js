@@ -1,7 +1,7 @@
-const { AuthFunctions } = require('./functions/authFunctions');
-const { password, name, email } = require('./functions/randomizer');
-const { PostFunctions } = require('./functions/postFunctions');
-const { CommunityFunctions } = require('./functions/communityFunctions.js');
+const { AuthFunctions } = require('../functions/authFunctions');
+const { password, name, email } = require('../functions/randomizer');
+const { PostFunctions } = require('../functions/postFunctions');
+const { CommunityFunctions } = require('../functions/communityFunctions.js');
 
 let community = new CommunityFunctions();
 let auth = new AuthFunctions();
@@ -54,13 +54,14 @@ describe('Testing user\'s ability to GET Post Tags', () => {
         );
     });
 
+    // TODO: Currently returns 400
     test('User receives 404 error when post does not exist', async () => {
         response = await post.getPostTags('jkldsfjiowhiowekldhf', loginResponse.body.token);
         expect(response.status).toBe(404);
     });
 
-    test('User receives 403 error when using an invalid token', async () => {
+    test('User receives 401 error when using an invalid token', async () => {
         response = await post.getPostTags(postResponse.body._id, 'invalidtokensRus');
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(401);
     });
 });
