@@ -22,6 +22,7 @@
 
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
+import { getProfile } from "../redux/ducks/profileDuck";
 import PropTypes from "prop-types";
 import { Typography } from "@mui/material";
 
@@ -67,6 +68,6 @@ const mapStateToProps = (state) => ({
   profile: state.profile.user,
 });
 
-const mapActionsToProps = {};
+const mapActionsToProps = { getProfile };
 
 export default connect(mapStateToProps, mapActionsToProps)(ProfileInfo);
