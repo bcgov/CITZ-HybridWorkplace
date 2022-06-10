@@ -52,7 +52,6 @@ describe('Creating new Community', () => {
 });
 
 
-// Testing the get communities function after logging in
 describe('Set Communities tag to updatedTags', () => {
   test('API returns a successful response - code 204', async() => {
     let response = await community.setCommunityTags(newComTitle, updatedTags, token);
