@@ -79,7 +79,6 @@ describe('Get Communities Tags - After Login with new community (2)', () => {
   });
 });
 
-// Testing the get communities function after logging in
 describe('Set Communities tags - on new community, with link tag', () => {
   let response = '';
 
