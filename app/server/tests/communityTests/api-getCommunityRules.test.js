@@ -1,5 +1,5 @@
-let { CommunityFunctions } = require('./functions/communityFunctions.js');
-let { AuthFunctions } = require('./functions/authFunctions.js');
+let { CommunityFunctions } = require('../functions/communityFunctions.js');
+let { AuthFunctions } = require('../functions/authFunctions.js');
 let community = new CommunityFunctions ();
 let user = new AuthFunctions();
 let token = '';
@@ -30,7 +30,6 @@ describe('Creating new Community', () => {
     });
 });
 
-// Testing the get communities function after logging in
 describe('Get Communities - After Login on new community', () => {
     let response = '';
   

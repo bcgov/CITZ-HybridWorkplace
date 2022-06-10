@@ -1,7 +1,7 @@
 module.exports = {
     verbose: true,
     testMatch: [
-        "**/tests/*.test.js"
+        "**/*.test.js"
     ],
     collectCoverage: false,
     coverageDirectory: "./tests/coverage",

@@ -1,5 +1,5 @@
-let { CommunityFunctions } = require('./functions/communityFunctions.js');
-let { AuthFunctions } = require('./functions/authFunctions.js');
+let { CommunityFunctions } = require('../functions/communityFunctions.js');
+let { AuthFunctions } = require('../functions/authFunctions.js');
 let community = new CommunityFunctions ();
 let user = new AuthFunctions();
 let token = '';
@@ -8,8 +8,7 @@ const newComTitle = "hello create";
 const newComDescript = "world";
 const newComRules = "1. rules";
 const newComTags = [{
-    "tag": "Informative",
-    "count": 1
+    "tag": "Informative"
 }];
 
 const updatedTags = "new";
@@ -56,6 +55,10 @@ describe('Creating new Community', () => {
   });
 });
 
+<<<<<<< HEAD:app/server/tests/communityTests/api-setCommunityTags.test.js
+
+=======
+>>>>>>> dc6a72a97db9365e2c65ae637a303c2a44c31c08:app/server/tests/api-setCommunityTags.test.js
 describe('Set Communities tags - After Login on new community', () => {
     let response = '';
 
@@ -79,6 +82,10 @@ describe('Get Communities Tags - After Login with new community (2)', () => {
   });
 });
 
+<<<<<<< HEAD:app/server/tests/communityTests/api-setCommunityTags.test.js
+
+=======
+>>>>>>> dc6a72a97db9365e2c65ae637a303c2a44c31c08:app/server/tests/api-setCommunityTags.test.js
 describe('Set Communities tags - on new community, with link tag', () => {
   let response = '';
 

@@ -1,5 +1,5 @@
-let { CommunityFunctions } = require('./functions/communityFunctions.js');
-let { AuthFunctions } = require('./functions/authFunctions.js');
+let { CommunityFunctions } = require('../functions/communityFunctions.js');
+let { AuthFunctions } = require('../functions/authFunctions.js');
 let community = new CommunityFunctions ();
 let user = new AuthFunctions();
 let token = '';
@@ -48,6 +48,10 @@ describe('Creating new Community', () => {
     });
 });
 
+<<<<<<< HEAD:app/server/tests/communityTests/api-getCommunityTags.test.js
+
+=======
+>>>>>>> dc6a72a97db9365e2c65ae637a303c2a44c31c08:app/server/tests/api-getCommunityTags.test.js
 describe('Get Community Tags - After Login on new community', () => {
     let response = '';
   

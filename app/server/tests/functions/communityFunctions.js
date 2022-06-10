@@ -5,7 +5,6 @@
 }
 */
 
-
 const supertest = require('supertest');
 const endpoint = process.env.API_REF;
 const request = supertest(endpoint);
@@ -90,7 +89,27 @@ class CommunityFunctions{
         return request
             .delete(`/community/tags/${title}`)
             .set({authorization: `Bearer ${token}`})
-            .query({'tag': tag});
+            .query(`tag=${ tag }`);
+    }
+
+    getCommunityFlags(title, token) {
+        return request
+            .get(`/community/flags/${title}`)
+            .set({authorization: `Bearer ${token}`})
+    }
+
+    setCommunityFlags(title, flag, token) {
+        return request
+            .post(`/community/flags/${title}`)
+            .set({authorization: `Bearer ${token}`})
+            .query(`flag=${ flag }`);
+    }
+
+    deleteCommunityFlags(title, flag, token) {
+        return request
+            .delete(`/community/flags/${title}`)
+            .set({authorization: `Bearer ${token}`})
+            .query(`flag=${ flag }`);
     }
 }
 
