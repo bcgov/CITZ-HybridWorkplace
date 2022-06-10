@@ -77,7 +77,7 @@ router.get("/", async (req, res) => {
 
     await User.updateOne({ username: user.username }, { refreshToken: "" });
     res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "None" });
-    res.status(204).send("Success. No content to return.");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
