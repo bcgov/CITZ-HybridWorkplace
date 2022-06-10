@@ -19,11 +19,10 @@
 
 import jwtDecode from "jwt-decode";
 
-const SET_ACCESS_TOKEN = "CITZ-HYBRIDWORKPLACE/AUTH/SET_ACCESS_TOKEN";
+export const SET_ACCESS_TOKEN = "CITZ-HYBRIDWORKPLACE/AUTH/SET_ACCESS_TOKEN";
 const SET_REFRESH_TOKEN = "CITZ-HYBRIDWORKPLACE/AUTH/SET_REFRESH_TOKEN";
 const LOGIN = "CITZ-HYBRIDWORKPLACE/AUTH/LOGIN";
 const LOGOUT = "CITZ-HYBRIDWORKPLACE/AUTH/LOGOUT";
-
 /* 
   If you're running a local dev server using npm run then
   this will provide the necessary environment variables to 
@@ -36,7 +35,6 @@ if (!window._env_) {
     REACT_APP_LOCAL_DEV: true,
   };
 }
-
 const apiURI = !window._env_.REACT_APP_LOCAL_DEV
   ? `${window._env_.REACT_APP_API_REF}`
   : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
@@ -122,6 +120,30 @@ export const logout = () => async (dispatch) => {
   }
 };
 
+export const getAccessToken = () => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const res = await fetch(`${apiURI}/api/token`, {
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) throw new Error(res.status + " " + res.statusText);
+    const data = await res.json();
+    dispatch({
+      type: SET_ACCESS_TOKEN,
+      payload: data,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
 const initialState = {
   refreshToken: "",
   accessToken: "",
@@ -131,9 +153,11 @@ const initialState = {
 export function authReducer(state = initialState, action) {
   switch (action.type) {
     case SET_ACCESS_TOKEN:
+      const decodedToken = jwtDecode(action.payload.token);
       return {
         ...state,
         accessToken: action.payload.token,
+        user: decodedToken,
       };
     case SET_REFRESH_TOKEN:
       return {

@@ -20,6 +20,8 @@
  * @module
  */
 
+import hwp_axios from "../../axiosInstance";
+
 const SET_COMMUNITIES = "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_COMMUNITIES";
 const SET_USERS_COMMUNITIES =
   "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_USERS_COMMUNITIES";
@@ -30,31 +32,24 @@ const DELETE_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/DELETE_COMMUNITY";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
-const apiURI = !window._env_.REACT_APP_LOCAL_DEV
-  ? `${window._env_.REACT_APP_API_REF}`
-  : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
-
 export const getCommunities = () => async (dispatch, getState) => {
   let successful = true;
   try {
     const token = getState().auth.accessToken;
     if (!token) throw new Error(noTokenText);
 
-    const response = await fetch(`${apiURI}/api/community`, {
+    const response = await hwp_axios.get("/api/community", {
       headers: {
         authorization: `Bearer ${token}`,
       },
+      params: {
+        dispatch,
+      },
     });
-
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
-    }
-
-    const communities = await response.json();
 
     dispatch({
       type: SET_COMMUNITIES,
-      payload: communities,
+      payload: response.data,
     });
   } catch (err) {
     console.error(err);
@@ -70,21 +65,17 @@ export const getUsersCommunities = () => async (dispatch, getState) => {
     const token = getState().auth.accessToken;
     if (!token) throw new Error(noTokenText);
 
-    const response = await fetch(`${apiURI}/api/community?orderBy=lastJoined`, {
+    const response = await hwp_axios.get(`/api/community?orderBy=lastJoined`, {
       headers: {
         authorization: `Bearer ${token}`,
       },
+      params: {
+        dispatch,
+      },
     });
-
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
-    }
-
-    const communities = await response.json();
-
     dispatch({
       type: SET_USERS_COMMUNITIES,
-      payload: communities,
+      payload: response.data,
     });
   } catch (err) {
     console.error(err);
@@ -100,36 +91,35 @@ export const createCommunity =
     try {
       const authState = getState().auth;
       const token = authState.accessToken;
-      const username = authState.user.username;
+
       if (!token) throw new Error(noTokenText);
 
-      const response = await fetch(`${apiURI}/api/community`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
+      const response = await hwp_axios.post(
+        `/api/community`,
+        {
           title: communityData.title,
           description: communityData.description,
           rules: communityData.rules,
           tags: communityData.tags,
-        }),
-      });
-
-      if (!response.ok)
-        throw new Error(`${response.status} ${response.statusText}`);
-
-      const community = await response.json();
+        },
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          params: {
+            dispatch,
+          },
+        }
+      );
 
       dispatch({
         type: ADD_COMMUNITY,
-        payload: community,
+        payload: response.data,
       });
 
       dispatch({
         type: JOIN_COMMUNITY,
-        payload: community.title,
+        payload: response.data.title,
       });
     } catch (err) {
       console.error(err);
@@ -147,19 +137,18 @@ export const joinCommunity = (communityName) => async (dispatch, getState) => {
 
     if (!token) throw new Error(noTokenText);
 
-    const response = await fetch(
-      `${apiURI}/api/community/members/join/${communityName}`,
+    await hwp_axios.patch(
+      `/api/community/members/join/${communityName}`,
+      {},
       {
-        method: "PATCH",
         headers: {
-          "Content-Type": "application/json",
           authorization: `Bearer ${token}`,
+        },
+        params: {
+          dispatch,
         },
       }
     );
-
-    if (!response.ok)
-      throw new Error(`${response.status} ${response.statusText}`);
 
     dispatch({
       type: JOIN_COMMUNITY,
@@ -180,19 +169,17 @@ export const leaveCommunity = (communityName) => async (dispatch, getState) => {
     const token = authState.accessToken;
     if (!token) throw new Error(noTokenText);
 
-    const response = await fetch(
-      `${apiURI}/api/community/members/leave/${communityName}`,
+    const response = await hwp_axios.delete(
+      `/api/community/members/leave/${communityName}`,
       {
-        method: "DELETE",
         headers: {
-          "Content-Type": "application/json",
           authorization: `Bearer ${token}`,
+        },
+        params: {
+          dispatch,
         },
       }
     );
-
-    if (!response.ok)
-      throw new Error(`${response.status} ${response.statusText}`);
 
     dispatch({
       type: LEAVE_COMMUNITY,
@@ -214,16 +201,17 @@ export const deleteCommunity =
       const token = authState.accessToken;
       if (!token) throw new Error(noTokenText);
 
-      const response = await fetch(`${apiURI}/api/community/${communityName}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok)
-        throw new Error(`${response.status} ${response.statusText}`);
+      const response = await hwp_axios.delete(
+        `api/community/${communityName}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          params: {
+            dispatch,
+          },
+        }
+      );
 
       dispatch({
         type: DELETE_COMMUNITY,
