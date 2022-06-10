@@ -1,5 +1,5 @@
-let community = require('./functions/communityFunctions.js');
-let { AuthFunctions } = require('./functions/authFunctions.js');
+let community = require('../functions/communityFunctions.js');
+let { AuthFunctions } = require('../functions/authFunctions.js');
 
 let token = '';
 let user = new AuthFunctions();

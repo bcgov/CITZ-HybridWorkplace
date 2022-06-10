@@ -1,5 +1,5 @@
-let { CommunityFunctions } = require('./functions/communityFunctions.js');
-let { AuthFunctions } = require('./functions/authFunctions.js');
+let { CommunityFunctions } = require('../functions/communityFunctions.js');
+let { AuthFunctions } = require('../functions/authFunctions.js');
 let community = new CommunityFunctions ();
 let user = new AuthFunctions();
 let token = '';
@@ -8,8 +8,7 @@ const newComTitle = "hello create";
 const newComDescript = "world";
 const newComRules = "1. rules";
 const newComTags = [{
-    "tag": "Informative",
-    "count": 1
+    "tag": "Informative"
 }];
 
 const updatedTags = "new";
@@ -80,7 +79,7 @@ describe('Get Communities Tags - After Login with new community (2)', () => {
   });
 });
 
-// Testing the get communities function after logging in
+
 describe('Set Communities tags - on new community, with link tag', () => {
   let response = '';
 
