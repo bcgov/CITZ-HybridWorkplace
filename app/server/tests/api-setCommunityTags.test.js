@@ -56,7 +56,6 @@ describe('Creating new Community', () => {
   });
 });
 
-// Testing the get communities function after logging in
 describe('Set Communities tags - After Login on new community', () => {
     let response = '';
 
