@@ -66,7 +66,7 @@ class PostFunctions{
             .set({authorization: `Bearer ${ token }`});
     } 
 
-    async createPostTags(id, tag, token){
+    async setPostTags(id, tag, token){
         return await request
             .post(`/post/tags/${ id }`)
             .set({authorization: `Bearer ${ token }`})
@@ -86,17 +86,18 @@ class PostFunctions{
             .set({authorization: `Bearer ${ token }`});
     } 
 
-    async createPostFlags(id, flag, token){
+    async setPostFlags(id, flag, token){
         return await request
             .post(`/post/flags/${ id }`)
             .set({authorization: `Bearer ${ token }`})
             .query(`flag=${ flag }`);
     } 
 
-    async deletePostFlags(id, token){
+    async deletePostFlags(id, flag, token){
         return await request
             .delete(`/post/flags/${ id }`)
-            .set({authorization: `Bearer ${ token }`});
+            .set({authorization: `Bearer ${ token }`})
+            .query(`flag=${ flag }`);
     }
 }
 
