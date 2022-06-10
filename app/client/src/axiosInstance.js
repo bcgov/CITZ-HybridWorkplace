@@ -26,7 +26,7 @@ const hwp_axios = axios.create({
  */
 hwp_axios.interceptors.request.use(
   async (config) => {
-    //If the access token, or dipatch function aren't passed, return the default.
+    //If the access token, or dispatch function aren't passed, return the default.
     if (!config.headers.authorization || !config.params.dispatch) {
       return config;
     }
