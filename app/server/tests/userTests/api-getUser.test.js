@@ -1,6 +1,6 @@
-const { AuthFunctions } = require('./functions/authFunctions');
-const user = require('./functions/userFunctions');
-const { password, name, email } = require('./functions/randomizer');
+const { AuthFunctions } = require('../functions/authFunctions');
+const user = require('../functions/userFunctions');
+const { password, name, email } = require('../functions/randomizer');
 
 let auth = new AuthFunctions();
 
@@ -35,7 +35,7 @@ describe('Get the current user\'s information with /user', () => {
         expect(response.body.title).not.toBeTruthy();
     });
 
-    xtest('After setting all keys, they are returned by the /user endpoint', async () => {
+    test('After setting all keys, they are returned by the /user endpoint', async () => {
         let body = {
             "email": email.gen(),
             "firstName": "newFirstName",
@@ -54,9 +54,9 @@ describe('Get the current user\'s information with /user', () => {
         expect(response.body.title).toBeTruthy();
     });
 
-    test('User info should not be returned if token does not match user - returns 403', async () => {
+    test('User info should not be returned if token does not match user - returns 401', async () => {
         response = await user.getUser('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdDEiLCJlbWFpbCI6InRlc3QxQGdvdi5iYy5jYSIsImZpcnN0X25hbWUiOiJTYXJhaCIsImxhc3RfbmFtZSI6IkdyYWNlIiwidGl0bGUiOiJKci4gU29mdHdhcmUgRW5naW5lZXIiLCJiaW8iOiJIaSBJJ20gbmV3ISBKdXN0IG1vdmVkIGZyb20gdGhlIE90dGF3YSIsImlhdCI6MTY1Mzk0NjQ4NiwiZXhwIjoxNjUzOTQ3MDg2fQ.V0tpcWboZG5dHEkh94gw2pNGqZj2DY7EjC42EZBdcYQ');
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(401); // Invalid token
     });
 });
 
@@ -107,9 +107,9 @@ describe('Get information of other users with /user/{name}', () => {
         expect(loginResponse.status).toBe(201);
     });
 
-    test('Trying to get a user with a bad token rejects the request - returns 403', async () => {
+    test('Trying to get a user with a bad token rejects the request - returns 401', async () => {
         let tempResponse = await user.getUserByName('thistokenisillegitimate', userName);
-        expect(tempResponse.status).toBe(403);
+        expect(tempResponse.status).toBe(401);
     });
 
     test('Trying to get data of another user - returns 200', async () => {

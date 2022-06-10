@@ -1,7 +1,7 @@
-const { AuthFunctions } = require('./functions/authFunctions');
-const { password, name, email } = require('./functions/randomizer');
-const { PostFunctions } = require('./functions/postFunctions');
-const { CommunityFunctions } = require('./functions/communityFunctions.js');
+const { AuthFunctions } = require('../functions/authFunctions');
+const { password, name, email } = require('../functions/randomizer');
+const { PostFunctions } = require('../functions/postFunctions');
+const { CommunityFunctions } = require('../functions/communityFunctions.js');
 
 let community = new CommunityFunctions();
 let auth = new AuthFunctions();
@@ -66,11 +66,13 @@ describe('Testing user\'s ability to POST Post Flags', () => {
     });
 
     test('User can flag posts multiple times, but flag only added if unique - returns 204', async () => {
+        // Need a clean post first
+        let tempPostResponse =  await post.createPost(randomText, randomText, communityName, loginResponse.body.token);
         // Trying to add same tag
-        await post.setPostFlags(postResponse.body._id, flags[3], loginResponse.body.token);
-        response = await post.setPostFlags(postResponse.body._id, flags[3], loginResponse.body.token);
+        await post.setPostFlags(tempPostResponse.body._id, flags[3], loginResponse.body.token);
+        response = await post.setPostFlags(tempPostResponse.body._id, flags[3], loginResponse.body.token);
         expect(response.status).toBe(204);
-        response = await post.getPostFlags(postResponse.body._id, loginResponse.body.token);
+        response = await post.getPostFlags(tempPostResponse.body._id, loginResponse.body.token);
         expect(response.body).toEqual(
             expect.arrayContaining([{
             "_id": expect.any(String),
@@ -80,9 +82,9 @@ describe('Testing user\'s ability to POST Post Flags', () => {
         );
         expect(response.body).toHaveLength(1);
         // Second, unique tag added
-        response = await post.setPostFlags(postResponse.body._id, flags[4], loginResponse.body.token);
+        response = await post.setPostFlags(tempPostResponse.body._id, flags[4], loginResponse.body.token);
         expect(response.status).toBe(204);
-        response = await post.getPostFlags(postResponse.body._id, loginResponse.body.token);
+        response = await post.getPostFlags(tempPostResponse.body._id, loginResponse.body.token);
         expect(response.body).toEqual(
             expect.arrayContaining([{
             "_id": expect.any(String),
@@ -99,8 +101,8 @@ describe('Testing user\'s ability to POST Post Flags', () => {
         expect(response.status).toBe(404);
     });
 
-    test('User cannot flag posts using an invalid token - returns 403', async () => {
+    test('User cannot flag posts using an invalid token - returns 401', async () => {
         response = await post.setPostFlags(postResponse.body._id, flags[0], 'invalidToken');
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(401);
     });
 });

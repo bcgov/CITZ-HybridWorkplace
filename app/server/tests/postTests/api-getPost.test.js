@@ -1,7 +1,7 @@
-const { AuthFunctions } = require('./functions/authFunctions');
-const { password, name, email } = require('./functions/randomizer');
-const { PostFunctions } = require('./functions/postFunctions');
-const { CommunityFunctions } = require('./functions/communityFunctions.js');
+const { AuthFunctions } = require('../functions/authFunctions');
+const { password, name, email } = require('../functions/randomizer');
+const { PostFunctions } = require('../functions/postFunctions');
+const { CommunityFunctions } = require('../functions/communityFunctions.js');
 
 let community = new CommunityFunctions();
 let auth = new AuthFunctions();
@@ -56,18 +56,20 @@ describe('Testing user\'s ability to get posts from their communities', () => {
         expect(response.status).toBe(200);
     });
 
+    // TODO: Currently returns 400
     test('Post with a non-existant id is not returned - returns 404', async () => {
         response = await post.getPostById('whoablackbetty', loginResponse.body.token);
         expect(response.status).toBe(404);
     });
 
-    test('Post is not returned when using invalid token - returns 403', async () => {
+    test('Post is not returned when using invalid token - returns 401', async () => {
         let postResponse = await post.createPost('Meow Mix', 'Please deliver', 'Thundercats', loginResponse.body.token);
         let id = postResponse.body._id;
         response = await post.getPostById(id, 'mytokenisnotgood');
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(401);
     });
 
+    // TODO: Currently returns 401, but user is authorized, just not for this.
     test('Post is not returned if user is not part of that community - returns 403', async () => {
         let postResponse = await post.createPost('Meow Mix', 'Please deliver', 'Thundercats', loginResponse.body.token);
         let id = postResponse.body._id;
