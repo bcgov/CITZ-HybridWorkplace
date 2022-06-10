@@ -120,3 +120,4 @@ describe('Join Community by Title - With Login, but community does not exist', (
     expect('' + response.text + '').toContain("Community not found.");
   });
 });
+
