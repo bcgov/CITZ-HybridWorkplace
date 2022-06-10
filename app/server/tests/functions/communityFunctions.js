@@ -1,3 +1,11 @@
+/* for swagger login tests
+{
+  "username": "test2",
+  "password": "Tester123!"
+}
+*/
+
+
 const supertest = require('supertest');
 const endpoint = process.env.API_REF;
 const request = supertest(endpoint);
@@ -27,11 +35,11 @@ function deleteCommunity(title, token) {
         .set({authorization: `Bearer ${token}`});
 } 
 
-function patchCommunitybyTitle(title, newTitle, newDescription, newRules, newTags, token) {
+function patchCommunitybyTitle(title, newTitle, newDescription, newRules, token){
     return request
         .patch(`/community/${title}`)
         .set({authorization: `Bearer ${token}`})
-        .send({'title': newTitle, 'description': newDescription, 'rules': newRules, 'tags': newTags});
+        .send({'title': newTitle, 'description': newDescription, 'rules': newRules});
 } 
 
 function joinCommunity(title, token) {
@@ -46,7 +54,14 @@ function leaveCommunity(title, token) {
         .set({authorization: `Bearer ${token}`})
 }
 
-function setCommunityRules(title, rules, token) {
+function getCommunityMembers(title, count, token) {
+    return request
+        .get(`/community/members/${title}`)
+        .set({authorization: `Bearer ${token}`})
+        .query(`count=${count}`);
+}
+
+function setCommunityRules(title, rules, token){
     return request
         .put(`/community/rules/${title}`)
         .set({authorization: `Bearer ${token}`})
@@ -77,10 +92,9 @@ function deleteCommunityTags(title, tag, token) {
     return request
         .delete(`/community/tags/${title}`)
         .set({authorization: `Bearer ${token}`})
-        .query({'tag': tag});
+        .query(`tag=${ tag }`);
 }
 
 module.exports = { getCommunities, getCommunitybyTitle,createCommunity,deleteCommunity,
     patchCommunitybyTitle, joinCommunity, leaveCommunity, setCommunityRules, getCommunityRules,
-    setCommunityTags, getCommunityTags, deleteCommunityTags };
-    
+    setCommunityTags, getCommunityTags, deleteCommunityTags };   
