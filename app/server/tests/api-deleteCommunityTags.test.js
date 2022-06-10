@@ -52,6 +52,15 @@ describe('Creating new Community', () => {
   });
 });
 
+
+// Testing the get communities function after logging in
+describe('Set Communities tag to updatedTags', () => {
+  test('API returns a successful response - code 204', async() => {
+    let response = await community.setCommunityTags(newComTitle, updatedTags, token);
+    expect(response.status).toBe(204);
+  });
+});
+
 // Testing the get communities function after logging in
 describe('Delete Communities tags - After Login on new community', () => {
     let response = '';
@@ -69,22 +78,22 @@ describe('Delete Communities tags - After Login on new community', () => {
     });
 });
 
-describe('Get Community by Title - With Login, testing with new " " Community', () => {
-    let response = '';
-  
-    beforeAll(async() => {
-      response = await community.getCommunitybyTitle(newComTitle, token);
-    });
-  
-    test('API returns a successful response - code 200', () => {
-      expect(response.status).toBe(200);
-    });
-  
-    test('API returns description -  includes new community Title',() => {
-      expect('' + response.text + '').toContain(updatedTags);
-    });
+// Testing the get communities function after logging in
+describe('Delete Communities tags - After Login on new community, tag does not exist', () => {
+  let response = '';
+
+  beforeAll( async() => {
+      response = await community.deleteCommunityTags(newComTitle, updatedTags, token);
   });
-  
+
+  test('API returns a successful response - code 404', () => {
+      expect(response.status).toBe(404);
+  });
+
+  test('API returns resonse - "Tag not found."', () => {
+      expect(" " + response.text + " ").toContain('Tag not found.');
+  });
+});
 
 
 describe('Deleting new Community', () => {

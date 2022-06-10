@@ -69,22 +69,38 @@ describe('Set Communities tags - After Login on new community', () => {
     });
 });
 
-describe('Get Community by Title - With Login, testing with new " " Community', () => {
-    let response = '';
-  
-    beforeAll(async() => {
-      response = await community.getCommunitybyTitle(newComTitle, token);
-    });
-  
-    test('API returns a successful response - code 200', () => {
-      expect(response.status).toBe(200);
-    });
-  
-    test('API returns description -  includes new community Title',() => {
-      expect('' + response.text + '').toContain(updatedTags);
-    });
+describe('Get Communities Tags - After Login with new community (2)', () => {
+  let response = '';
+
+  beforeAll( async() => {
+    response = await community.getCommunityTags(welComTitle, token);
   });
-  
+
+  test('API returns a successful response - code 200', () => {
+    expect(response.status).toBe(200);
+  });
+
+  test('API returns the updated tag', () => {
+    expect(" " + response.text+ " ").toContain(updatedTags);
+  });
+});
+
+// Testing the get communities function after logging in
+describe('Set Communities tags - on new community, with string tag', () => {
+  let response = '';
+
+  beforeAll( async() => {
+      response = await community.setCommunityTags(newComTitle, updatedTags, token);
+  });
+
+  test('API returns a successful response - code 204', () => {
+      expect(response.status).toBe(204);
+  });
+
+  test('API returns the "Welcome" community tags in its response body', () => {
+      expect(" " + response.text + " ").toContain(updatedTags);
+  });
+});
 
 
 describe('Deleting new Community', () => {
