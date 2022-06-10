@@ -81,6 +81,8 @@ router.get("/:id", async (req, res) => {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -125,6 +127,7 @@ router.get("/:id", async (req, res) => {
 
 // Reply to comment with id
 router.post("/:id", async (req, res) => {
+  req.log.setRequestBody(req.body, false);
   try {
     const documents = await findSingleDocuments({
       user: req.user.username,
@@ -168,6 +171,8 @@ router.post("/:id", async (req, res) => {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 

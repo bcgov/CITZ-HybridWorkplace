@@ -70,6 +70,7 @@ const User = require("../../models/user.model");
 
 // Login
 router.post("/", async (req, res) => {
+  req.log.setRequestBody(req.body, true);
   try {
     const user = await User.findOne({
       username: req.body.username,

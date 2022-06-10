@@ -66,6 +66,7 @@ const Community = require("../../../models/community.model");
 
 // Set community rules by title
 router.put("/:title", async (req, res) => {
+  req.log.setRequestBody(req.body, false);
   try {
     const documents = await findSingleDocuments({
       user: req.user.username,

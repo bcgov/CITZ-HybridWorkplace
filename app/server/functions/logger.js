@@ -38,6 +38,10 @@ const maskFields = [
   "members",
   "creator",
   "refreshToken",
+  "taggedBy",
+  "flaggedBy",
+  "users",
+  "moderators",
 ];
 const mask = (object, maskIds) => {
   Object.keys(object).forEach((key) => {
@@ -71,8 +75,9 @@ class Logger {
     this.error = error;
   }
 
-  addAction(action) {
-    action.timeSince = Math.floor(Date.now() - this.startTime);
+  addAction(actionDesc) {
+    const action = { desc: actionDesc };
+    action.timeSince = `${Math.floor(Date.now() - this.startTime)}ms`;
     this.actions.push(action);
   }
 
@@ -107,23 +112,21 @@ class Logger {
         msg += c.bold.success(
           `${this.level} (${this.status}): [${this.method}] ${this.endpoint}`
         );
-        msg += ", ";
         break;
-      case "Warn":
+      case "ResponseError":
         msg += c.bold.warn(
-          `${this.level} (${this.status}): [${this.method}] ${this.endpoint}`
+          `${this.level} (${this.status}): [${this.method}] ${this.endpoint}, `
         );
-        msg += ", ";
-        msg += c.bold.warn(`ResponseError${c.warn(`: "${this.error}"`)}`);
+        msg += c.red(`"${this.error}"`);
         break;
       case "Error":
         msg += c.bold.error(
-          `${this.level} (${this.status}): [${this.method}] ${this.endpoint}`
+          `${this.level} (${this.status}): [${this.method}] ${this.endpoint}, `
         );
-        msg += ", ";
+        msg += c.red(`"${this.error}"`);
         break;
       default:
-        msg += `${this.level} (${this.status}): [${this.method}] ${this.endpoint}, `;
+        msg += `${this.level} (${this.status}): [${this.method}] ${this.endpoint}`;
         break;
     }
 

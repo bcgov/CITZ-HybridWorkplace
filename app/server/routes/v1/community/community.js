@@ -59,8 +59,6 @@ const Comment = require("../../../models/comment.model");
  *                  $ref: '#/components/schemas/Community/properties/description'
  *                rules:
  *                  $ref: '#/components/schemas/Community/properties/rules'
- *                tags:
- *                  $ref: '#/components/schemas/Community/properties/tags'
  *      responses:
  *        '404':
  *          description: User not found.
@@ -78,18 +76,24 @@ const Comment = require("../../../models/comment.model");
 
 // Create community
 router.post("/", async (req, res) => {
+  req.log.setRequestBody(req.body, false);
   try {
+    req.log.addAction("Finding user.");
     const documents = await findSingleDocuments({
       user: req.user.username,
     });
+    req.log.addAction("User found.");
 
+    req.log.addAction("Check community already exists.");
     if (await Community.exists({ title: req.body.title })) {
+      req.log.setLastActionError();
       throw new ResponseError(403, "Community already exists.");
     }
 
     // TODO: Validate formatting for tags in request body
     // TODO: Prevent spaces or special characters in community title
 
+    req.log.addAction("Creating community.");
     const community = await Community.create({
       title: req.body.title,
       description: req.body.description,
@@ -99,18 +103,26 @@ router.post("/", async (req, res) => {
       tags: req.body.tags,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
+    req.log.addAction("Community created.");
 
+    req.log.addAction("Update community engagement.");
     await updateCommunityEngagement(
       documents.user.username,
       community.title,
       process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMUNITY || 0
     );
 
+    req.log.setResponse(201, "Success", null);
     return res.status(201).json(community);
   } catch (err) {
-    if (err instanceof ResponseError)
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -215,6 +227,8 @@ router.get("/", async (req, res) => {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -258,6 +272,8 @@ router.get("/:title", async (req, res) => {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -302,6 +318,7 @@ router.get("/:title", async (req, res) => {
 // Edit community by title
 // TODO: AUTH
 router.patch("/:title", async (req, res) => {
+  req.log.setRequestBody(req.body, false);
   try {
     // TODO: AUTH USER IS MODERATOR
     const documents = await findSingleDocuments({
@@ -338,6 +355,8 @@ router.patch("/:title", async (req, res) => {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -405,6 +424,8 @@ router.delete("/:title", async (req, res) => {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 

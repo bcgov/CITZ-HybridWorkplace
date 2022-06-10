@@ -68,6 +68,7 @@ const Comment = require("../../../models/comment.model");
 
 // Create comment
 router.post("/", async (req, res) => {
+  req.log.setRequestBody(req.body, false);
   try {
     const documents = await findSingleDocuments({
       user: req.user.username,
@@ -103,6 +104,8 @@ router.post("/", async (req, res) => {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -164,6 +167,8 @@ router.get("/post/:id", async (req, res) => {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -208,6 +213,8 @@ router.get("/:id", async (req, res) => {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -291,6 +298,8 @@ router.patch("/:id", async (req, res) => {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -363,6 +372,8 @@ router.delete("/:id", async (req, res) => {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 

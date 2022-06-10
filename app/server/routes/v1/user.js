@@ -22,6 +22,7 @@
 
 const express = require("express");
 const ResponseError = require("../../responseError");
+
 const checkPatchQuery = require("../../functions/checkPatchQuery");
 const findSingleDocuments = require("../../functions/findSingleDocuments");
 
@@ -127,6 +128,7 @@ router.get("/", async (req, res) => {
 
 // Edit user
 router.patch("/", async (req, res) => {
+  req.log.setRequestBody(req.body, true);
   try {
     const documents = await findSingleDocuments({
       user: req.user.username,

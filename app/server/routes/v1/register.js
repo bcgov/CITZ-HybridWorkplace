@@ -62,6 +62,7 @@ const Community = require("../../models/community.model");
 
 // Register User
 router.post("/", async (req, res) => {
+  req.log.setRequestBody(req.body, true);
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 

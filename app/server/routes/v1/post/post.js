@@ -71,6 +71,7 @@ const Comment = require("../../../models/comment.model");
 
 // Create post
 router.post("/", async (req, res) => {
+  req.log.setRequestBody(req.body, false);
   try {
     const documents = await findSingleDocuments({
       user: req.user.username,
@@ -310,8 +311,6 @@ router.get("/community/:title", async (req, res) => {
  *                  $ref: '#/components/schemas/Post/properties/title'
  *                message:
  *                  $ref: '#/components/schemas/Post/properties/message'
- *                community:
- *                  $ref: '#/components/schemas/Community/properties/title'
  *                pinned:
  *                  $ref: '#/components/schemas/Post/properties/pinned'
  *      responses:
@@ -327,6 +326,7 @@ router.get("/community/:title", async (req, res) => {
 
 // Edit post by id
 router.patch("/:id", async (req, res) => {
+  req.log.setRequestBody(req.body, false);
   try {
     // TODO: MODERATORS CAN EDIT POST TOO
     const documents = await findSingleDocuments({

@@ -144,6 +144,8 @@ router.patch("/:id", async (req, res) => {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
