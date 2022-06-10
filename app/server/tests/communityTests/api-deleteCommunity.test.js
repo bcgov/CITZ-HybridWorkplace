@@ -21,7 +21,6 @@ describe('Logging in the test user', () => {
 });
 
 
-// Testing the delete communities function after logging in
 describe('Delete Communities - After Login', () => {
   let response = '';
   
@@ -40,7 +39,6 @@ describe('Delete Communities - After Login', () => {
 });
 
 
-//Testing the get community function with the "Welcome" community after logging in, but with null as the token
 describe('Get Community by Title - With Login, testing with new Community after the deletion', () => {
   let response = '';
 

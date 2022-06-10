@@ -30,7 +30,6 @@ describe('Creating new Community', () => {
     });
 });
 
-// Testing the get communities function after logging in
 describe('Get Communities - After Login on new community', () => {
     let response = '';
   

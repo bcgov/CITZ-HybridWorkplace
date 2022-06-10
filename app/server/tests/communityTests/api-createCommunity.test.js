@@ -1,5 +1,5 @@
-let { CommunityFunctions } = require('./functions/communityFunctions.js');
-let { AuthFunctions } = require('./functions/authFunctions.js');
+let { CommunityFunctions } = require('../functions/communityFunctions.js');
+let { AuthFunctions } = require('../functions/authFunctions.js');
 let community = new CommunityFunctions ();
 let user = new AuthFunctions();
 let token = '';
@@ -15,6 +15,8 @@ const newComTags = [{
     "tag": "Informative",
 }];
 
+const htmlComs = '<p> Matts Amazing Community that can not be deleted </p>';
+const entityCodeComs = '&#338 &#339 &#352';
 const specialCom = '$@#*()#@*()$()&&&*@$@&';
 const linkCom = 'https://hwp-express-api-d63404-dev.apps.silver.devops.gov.bc.ca/api';
 const arrayCom = ["Matt"];
@@ -139,8 +141,8 @@ describe('Create Communities by Title - After Login, with token, but getting an 
     expect(response.status).toBe(403);
   });
 
-  test('API returns description -  "Invalid token."', () => {
-    expect(response.text).toBe("Heelllooo.");
+  test('API returns description -  "Invalid Entry."', () => {
+    expect(response.text).toBe("Invalid Entry.");
   });
 });
 
@@ -153,8 +155,8 @@ describe('Create Communities by Title - After Login, with token, but getting an 
     expect(response.status).toBe(403);
   });
 
-  test('API returns description -  "Invalid token."', () => {
-    expect(response.text).toBe("Heelllooo.");
+  test('API returns description -  "Invalid Entry."', () => {
+    expect(response.text).toBe("Invalid Entry.");
   });
 });
 
@@ -168,8 +170,8 @@ describe('Create Communities by Title - After Login, with token, but getting a j
     expect(response.status).toBe(403);
   });
 
-  test('API returns description -  "Invalid token."', () => {
-    expect(response.text).toBe("Heelllooo.");
+  test('API returns description -  "Invalid Entry."', () => {
+    expect(response.text).toBe("Invalid Entry.");
   });
 });
 
@@ -183,8 +185,51 @@ describe('Create Communities by Title - After Login, with token, but getting a l
     expect(response.status).toBe(403);
   });
 
-  test('API returns description -  "Invalid token."', () => {
-    expect(response.text).toBe("Heelllooo.");
+  test('API returns description -  "Invalid Entry."', () => {
+    expect(response.text).toBe("Invalid Entry.");
+  });
+});
+
+
+describe('Create Communities by Title - After Login, with token, but getting special characters', () => {
+  beforeAll( async() => {
+    response = await community.createCommunity(specialCom, newComDescript, newComRules, newComTags, token);
+  });
+
+  test('API returns a unsuccessful response - code 403', () => {
+    expect(response.status).toBe(403);
+  });
+
+  test('API returns description -  "Invalid Entry."', () => {
+    expect(response.text).toBe("Invalid Entry.");
+  });
+});
+
+describe('Create Communities by Title - After Login, with token, but getting html entity codes', () => {
+  beforeAll( async() => {
+    response = await community.createCommunity(entityCodeComs, newComDescript, newComRules, newComTags, token);
+  });
+
+  test('API returns a unsuccessful response - code 403', () => {
+    expect(response.status).toBe(403);
+  });
+
+  test('API returns description -  "Invalid Entry."', () => {
+    expect(response.text).toBe("Invalid Entry.");
+  });
+});
+
+describe('Create Communities by Title - After Login, with token, but getting html code', () => {
+  beforeAll( async() => {
+    response = await community.createCommunity(htmlComs, newComDescript, newComRules, newComTags, token);
+  });
+
+  test('API returns a unsuccessful response - code 403', () => {
+    expect(response.status).toBe(403);
+  });
+
+  test('API returns description -  "Invalid Entry."', () => {
+    expect(response.text).toBe("Invalid Entry.");
   });
 });
 
@@ -228,6 +273,21 @@ describe('Deleting all createdCommunity', () => {
 
   test('API returns a successful response - code 200 (removes linkCommunity)', async() => {
     response = await community.deleteCommunity(linkCom, token);
+    expect(response.status).toBe(200);
+  });
+
+  test('API returns a successful response - code 200 (removes specialCommunity)', async() => {
+    response = await community.deleteCommunity(specialCom, token);
+    expect(response.status).toBe(200);
+  });
+
+  test('API returns a successful response - code 200 (removes entityCommunity)', async() => {
+    response = await community.deleteCommunity(entityCodeComs, token);
+    expect(response.status).toBe(200);
+  });
+
+  test('API returns a successful response - code 200 (removes htmlCommunity)', async() => {
+    response = await community.deleteCommunity(htmlComs, token);
     expect(response.status).toBe(200);
   });
 });
