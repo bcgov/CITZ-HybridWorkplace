@@ -20,10 +20,12 @@
 const express = require("express");
 const ResponseError = require("../../../responseError");
 
+const findSingleDocuments = require("../../../functions/findSingleDocuments");
+const checkUserIsMemberOfCommunity = require("../../../functions/checkUserIsMemberOfCommunity");
+
 const router = express.Router();
 
 const Comment = require("../../../models/comment.model");
-const User = require("../../../models/user.model");
 
 /**
  * @swagger
@@ -50,7 +52,7 @@ const User = require("../../../models/user.model");
  *        '404':
  *          description: User not found. **||** <br>Comment not found. **||** <br>Vote not found in query.
  *        '403':
- *          description: Missing message in body of the request. **||** <br>Must be a part of community to vote.
+ *          description: Missing message in body of the request. **||** <br>User must be a part of community.
  *        '204':
  *          description: Success. No content to return.
  *        '400':
@@ -60,58 +62,55 @@ const User = require("../../../models/user.model");
 // Upvote/downvote or unset vote comment
 router.patch("/:id", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-    const comment = await Comment.findOne({ _id: req.params.id });
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      comment: req.params.id,
+    });
 
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!comment) throw new ResponseError(404, "Comment not found.");
     if (!req.query.vote)
       throw new ResponseError(404, "Vote not found in query.");
 
-    if (
-      !(await User.exists({
-        _id: user.id,
-        "communities.community": comment.community,
-      }))
-    )
-      throw new ResponseError(403, "Must be a part of community to vote.");
+    await checkUserIsMemberOfCommunity(
+      documents.user.username,
+      documents.comment.community
+    );
 
     let query;
 
-    if (comment.upvotes.users.includes(user.id)) {
+    if (documents.comment.upvotes.users.includes(documents.user.id)) {
       // User has already upvoted
       switch (req.query.vote) {
         case "down":
           // Change to downvote
           query = {
             $inc: { "upvotes.count": -1, "downvotes.count": 1 },
-            $pull: { "upvotes.users": user.id },
-            $push: { "downvotes.users": user.id },
+            $pull: { "upvotes.users": documents.user.id },
+            $push: { "downvotes.users": documents.user.id },
           };
           break;
         default:
           // Unvote
           query = {
             $inc: { "upvotes.count": -1 },
-            $pull: { "upvotes.users": user.id },
+            $pull: { "upvotes.users": documents.user.id },
           };
       }
-    } else if (comment.downvotes.users.includes(user.id)) {
+    } else if (documents.comment.downvotes.users.includes(documents.user.id)) {
       // User has already downvoted
       switch (req.query.vote) {
         case "up":
           // Change to upvote
           query = {
             $inc: { "upvotes.count": 1, "downvotes.count": -1 },
-            $pull: { "downvotes.users": user.id },
-            $push: { "upvotes.users": user.id },
+            $pull: { "downvotes.users": documents.user.id },
+            $push: { "upvotes.users": documents.user.id },
           };
           break;
         default:
           // Unvote
           query = {
             $inc: { "downvotes.count": -1 },
-            $pull: { "downvotes.users": user.id },
+            $pull: { "downvotes.users": documents.user.id },
           };
       }
     } else {
@@ -120,13 +119,13 @@ router.patch("/:id", async (req, res) => {
         case "up":
           query = {
             $inc: { "upvotes.count": 1 },
-            $push: { "upvotes.users": user.id },
+            $push: { "upvotes.users": documents.user.id },
           };
           break;
         case "down":
           query = {
             $inc: { "downvotes.count": 1 },
-            $push: { "downvotes.users": user.id },
+            $push: { "downvotes.users": documents.user.id },
           };
           break;
         default:
@@ -137,9 +136,10 @@ router.patch("/:id", async (req, res) => {
       }
     }
 
-    if (query) await Comment.updateOne({ _id: comment.id }, query).exec();
+    if (query)
+      await Comment.updateOne({ _id: documents.comment.id }, query).exec();
 
-    return res.status(204).send("");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);

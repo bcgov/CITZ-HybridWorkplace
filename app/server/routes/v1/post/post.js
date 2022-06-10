@@ -21,11 +21,14 @@ const express = require("express");
 const moment = require("moment");
 const ResponseError = require("../../../responseError");
 
+const checkPatchQuery = require("../../../functions/checkPatchQuery");
+const findSingleDocuments = require("../../../functions/findSingleDocuments");
+const checkUserIsMemberOfCommunity = require("../../../functions/checkUserIsMemberOfCommunity");
+const updateCommunityEngagement = require("../../../functions/updateCommunityEngagement");
+
 const router = express.Router();
 
 const Post = require("../../../models/post.model");
-const User = require("../../../models/user.model");
-const Community = require("../../../models/community.model");
 const Comment = require("../../../models/comment.model");
 
 /**
@@ -55,7 +58,7 @@ const Comment = require("../../../models/comment.model");
  *        '404':
  *          description: User not found. **||** <br>Community not found.
  *        '403':
- *          description: Community can't have more than 3 pinned posts. **||** <br>Must be a part of community to post in community.
+ *          description: Community can't have more than 3 pinned posts. **||** <br>User must be a part of community.
  *        '201':
  *          description: Post successfully created.
  *          content:
@@ -69,57 +72,45 @@ const Comment = require("../../../models/comment.model");
 // Create post
 router.post("/", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-    const community = await Community.findOne({ title: req.body.community });
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      community: req.body.community,
+    });
 
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!community) throw new ResponseError(404, "Community not found.");
-
-    if (
-      !(await User.exists({
-        _id: user.id,
-        "communities.community": community.title,
-      }))
-    )
-      throw new ResponseError(
-        403,
-        "Must be a part of community to post in community."
-      );
+    await checkUserIsMemberOfCommunity(
+      documents.user.username,
+      documents.community.title
+    );
 
     if (
       req.body.pinned === true &&
-      (await Post.count({ community: community.title, pinned: true })) >= 3
+      (await Post.count({
+        community: documents.community.title,
+        pinned: true,
+      })) >= 3
     )
       throw new ResponseError(
         403,
         "Community can't have more than 3 pinned posts."
       );
 
-    const availableTags = community.tags.map((tag) => tag.tag);
+    const availableTags = documents.community.tags.map((tag) => tag.tag);
 
     const post = await Post.create({
       title: req.body.title,
       message: req.body.message,
-      creator: user.id,
+      creator: documents.user.id,
       community: req.body.community,
       pinned: req.body.pinned || false,
       availableTags,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
 
-    // Update user engagement
-    await User.updateOne(
-      {
-        _id: user.id,
-        communities: { $elemMatch: { community: req.body.community } },
-      },
-      {
-        $inc: {
-          "communities.$.engagement":
-            process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_POST,
-        },
-      }
-    ).exec();
+    await updateCommunityEngagement(
+      documents.user.username,
+      documents.community.title,
+      process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_POST || 1
+    );
 
     return res.status(201).json(post);
   } catch (err) {
@@ -157,12 +148,12 @@ router.post("/", async (req, res) => {
 // Get all posts from communities user is apart of
 router.get("/", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-
-    if (!user) throw new ResponseError(404, "User not found.");
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+    });
 
     // If post belongs to community listed in user.communities
-    const communities = user.communities.map(
+    const communities = documents.user.communities.map(
       (community) => community.community
     );
     const posts = await Post.find({ community: { $in: communities } }, "", {
@@ -211,11 +202,11 @@ router.get("/", async (req, res) => {
 // Get post by id
 router.get("/:id", async (req, res) => {
   try {
-    const post = await Post.findOne({ _id: req.params.id }).exec();
+    const documents = await findSingleDocuments({
+      post: req.params.id,
+    });
 
-    if (!post) throw new ResponseError(404, "Post not found.");
-
-    return res.status(200).json(post);
+    return res.status(200).json(documents.post);
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
@@ -261,16 +252,16 @@ router.get("/:id", async (req, res) => {
 // Get all posts from community title (Optional query param 'tag' only returns posts tagged with 'tag')
 router.get("/community/:title", async (req, res) => {
   try {
-    const community = await Community.findOne({ title: req.params.title });
-
-    if (!community) throw new ResponseError(404, "Community not found.");
+    const documents = await findSingleDocuments({
+      community: req.params.title,
+    });
 
     let posts;
 
     if (req.query.tag) {
       // Return community posts by tag set in query
       posts = await Post.find(
-        { community: community.title, "tags.tag": req.query.tag },
+        { community: documents.community.title, "tags.tag": req.query.tag },
         "",
         {
           sort: { pinned: -1, _id: -1 },
@@ -278,7 +269,7 @@ router.get("/community/:title", async (req, res) => {
       ).exec();
     } else {
       // Return all community posts
-      posts = await Post.find({ community: community.title }, "", {
+      posts = await Post.find({ community: documents.community.title }, "", {
         sort: { pinned: -1, _id: -1 },
       }).exec();
     }
@@ -338,20 +329,19 @@ router.get("/community/:title", async (req, res) => {
 router.patch("/:id", async (req, res) => {
   try {
     // TODO: MODERATORS CAN EDIT POST TOO
-    const user = await User.findOne({ username: req.user.username });
-    const post = await Post.findOne({ _id: req.params.id }).exec();
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      post: req.params.id,
+    });
 
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!post) throw new ResponseError(404, "Post not found.");
-
-    if (post.creator !== user.id)
+    if (documents.post.creator !== documents.user.id)
       throw new ResponseError(403, "Only creator of post can edit post.");
 
     if (req.body.pinned === true) {
       // Trying to pin post
       if (
         (await Post.count({
-          community: post.community,
+          community: documents.post.community,
           pinned: true,
         })) >= 3
       )
@@ -361,30 +351,16 @@ router.patch("/:id", async (req, res) => {
         );
     }
 
-    // eslint-disable-next-line prefer-const
-    let query = { $set: {} };
+    const query = checkPatchQuery(req.body, documents.post, [
+      "creator",
+      "community",
+      "createdOn",
+      "availableTags",
+      "tags",
+      "flags",
+    ]);
 
-    // eslint-disable-next-line consistent-return
-    Object.keys(req.body).forEach((key) => {
-      if (
-        key === "creator" ||
-        key === "tags" ||
-        key === "flags" ||
-        key === "createdOn" ||
-        key === "community"
-      ) {
-        throw new ResponseError(403, `${key} can not be edited.`);
-      }
-
-      if (post[key] && post[key] !== req.body[key]) {
-        // if the field in req.body exists, update/set it
-        query.$set[key] = req.body[key];
-      } else if (!post[key]) {
-        query.$set[key] = req.body[key];
-      }
-    });
-
-    await Post.updateOne({ _id: req.params.id }, query).exec();
+    await Post.updateOne({ _id: documents.post.id }, query).exec();
 
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
@@ -425,38 +401,29 @@ router.patch("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     // TODO: MODERATORS CAN DELETE POST TOO
-    const user = await User.findOne({ username: req.user.username });
-    const post = await Post.findOne({ _id: req.params.id }).exec();
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      post: req.params.id,
+    });
 
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!post) throw new ResponseError(404, "Post not found.");
-
-    if (post.creator !== user.id)
+    if (documents.post.creator !== documents.user.id)
       throw new ResponseError(403, "Must be creator of post to delete post.");
 
     // Remove the comments on post
-    await Comment.deleteMany({ post: post.id }).exec();
+    await Comment.deleteMany({ post: documents.post.id }).exec();
 
     // Remove post
     await Post.deleteOne({
-      _id: post.id,
+      _id: documents.post.id,
     }).exec();
 
-    // Update user engagement
-    await User.updateOne(
-      {
-        _id: user.id,
-        communities: { $elemMatch: { community: post.community } },
-      },
-      {
-        $inc: {
-          "communities.$.engagement":
-            -process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_POST,
-        },
-      }
-    ).exec();
+    await updateCommunityEngagement(
+      documents.user.username,
+      documents.post.community,
+      -process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_POST || -1
+    );
 
-    return res.status(204).send("Post removed.");
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);

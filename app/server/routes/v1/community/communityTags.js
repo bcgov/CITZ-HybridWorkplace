@@ -22,11 +22,11 @@
 
 const express = require("express");
 const ResponseError = require("../../../responseError");
+const findSingleDocuments = require("../../../functions/findSingleDocuments");
 
 const router = express.Router();
 
 const Community = require("../../../models/community.model");
-const User = require("../../../models/user.model");
 const Post = require("../../../models/post.model");
 
 /**
@@ -60,13 +60,11 @@ const Post = require("../../../models/post.model");
 // Get community tags by title
 router.get("/:title", async (req, res) => {
   try {
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
+    const documents = await findSingleDocuments({
+      community: req.params.title,
+    });
 
-    if (!community) throw new ResponseError(404, "Community not found.");
-
-    return res.status(200).json(community.tags);
+    return res.status(200).json(documents.community.tags);
   } catch (err) {
     if (err instanceof ResponseError)
       return res.status(err.status).send(err.message);
@@ -109,16 +107,14 @@ router.get("/:title", async (req, res) => {
 // Create community tag by community title
 router.post("/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      community: req.params.title,
+    });
 
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!community) throw new ResponseError(404, "Community not found.");
     if (!req.query.tag) throw new ResponseError(404, "Tag not found in query.");
 
-    if (user.username !== community.creator)
+    if (documents.user.username !== documents.community.creator)
       throw new ResponseError(
         403,
         "Only creator of community can edit community."
@@ -126,24 +122,29 @@ router.post("/:title", async (req, res) => {
 
     if (
       await Community.exists({
-        title: community.title,
+        title: documents.community.title,
         "tags.tag": req.query.tag,
       })
     )
       throw new ResponseError(403, "No duplicate tags.");
 
-    if (await Community.exists({ title: community.title, tags: { $size: 7 } }))
+    if (
+      await Community.exists({
+        title: documents.community.title,
+        tags: { $size: 7 },
+      })
+    )
       throw new ResponseError(403, "A community can't have more than 7 tags.");
 
     // Add to community
     await Community.updateOne(
-      { title: community.title },
+      { title: documents.community.title },
       { $push: { tags: { tag: req.query.tag, count: 0 } } }
     );
 
     // Add to availableTags array on posts
     await Post.updateMany(
-      { community: community.title },
+      { community: documents.community.title },
       { $push: { availableTags: req.query.tag } }
     );
 
@@ -190,16 +191,14 @@ router.post("/:title", async (req, res) => {
 // Remove community tag by community title
 router.delete("/:title", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.user.username });
-    const community = await Community.findOne({
-      title: req.params.title,
-    }).exec();
+    const documents = await findSingleDocuments({
+      user: req.user.username,
+      community: req.params.title,
+    });
 
-    if (!user) throw new ResponseError(404, "User not found.");
-    if (!community) throw new ResponseError(404, "Community not found.");
     if (!req.query.tag) throw new ResponseError(404, "Tag not found in query.");
 
-    if (user.username !== community.creator)
+    if (documents.user.username !== documents.community.creator)
       throw new ResponseError(
         403,
         "Only creator of community can edit community."
@@ -207,13 +206,13 @@ router.delete("/:title", async (req, res) => {
 
     // Remove tag from community
     await Community.updateOne(
-      { title: community.title },
+      { title: documents.community.title },
       { $pull: { tags: { tag: req.query.tag } } }
     );
 
     // Remove tag from posts within community
     await Post.updateMany(
-      { community: community.title },
+      { community: documents.community.title },
       { $pull: { tags: { tag: req.query.tag }, availableTags: req.query.tag } }
     );
 
