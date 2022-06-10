@@ -31,7 +31,6 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import {
   Grid,
-  Paper,
   Box,
   Typography,
   Avatar,
@@ -47,7 +46,6 @@ import {
 } from "@mui/material";
 import GroupsIcon from "@mui/icons-material/Groups";
 
-import UsersCommunitiesList from "../components/UsersCommunitiesList";
 import ProfileInfo from "../components/ProfileInfo";
 
 const ProfilePage = (props) => {
@@ -138,6 +136,7 @@ const ProfilePage = (props) => {
               <Typography variant="h4" style={{ fontWeight: 600 }}>
                 Pinned Communities
               </Typography>
+              <br />
               <Grid container spacing={2}>
                 {props.communities.slice(0, 4).map((element) => (
                   <Grid item xs={6}>
@@ -332,7 +331,7 @@ ProfilePage.propTypes = {
 
 const mapStateToProps = (state) => ({
   profile: state.profile.user,
-  communities: state.communities.items,
+  communities: state.communities.usersCommunities,
 });
 
 const mapActionsToProps = { getProfile };

@@ -32,7 +32,7 @@ describe('Testing user\'s ability to DELETE Post Tags', () => {
         postResponse = await post.createPost(randomText, randomText, communityName, loginResponse.body.token);
 
         // Tag that post
-        await post.createPostTags(postResponse.body._id, tag1, loginResponse.body.token);
+        await post.setPostTags(postResponse.body._id, tag1, loginResponse.body.token);
     });
 
     afterAll(async ()=> {
