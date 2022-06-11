@@ -32,6 +32,7 @@ const TAG_POST = "CITZ-HYBRIDWORKPLACE/POST/TAG_POST";
 const UNTAG_POST = "CITZ-HYBRIDWORKPLACE/POST/UNTAG_POST";
 const SET_COMMENTS = "CITZ-HYBRIDWORKPLACE/POST/SET_COMMENTS";
 const ADD_COMMENT = "CITZ-HYBRIDWORKPLACE/POST/ADD_COMMENT";
+const REMOVE_COMMENT = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_COMMENT";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
@@ -391,6 +392,37 @@ export const createComment = (post, comment) => async (dispatch, getState) => {
   }
 };
 
+export const deleteComment = (commentId) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    //TODO: Throw error if given delete is not in list of available deletes
+    if (commentId === "") throw new Error("Error: Invalid Input");
+    const authState = getState().auth;
+    const token = authState.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await hwp_axios.delete(`/api/comment/${commentId}`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      params: {
+        dispatch,
+      },
+    });
+
+    dispatch({
+      type: REMOVE_COMMENT,
+      payload: commentId,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
 const initialState = {
   items: [], //posts
   item: {}, //single post
@@ -461,6 +493,16 @@ export function postReducer(state = initialState, action) {
         item: {
           ...state.item,
           comments: [action.payload, ...state.item.comments],
+        },
+      };
+    case REMOVE_COMMENT:
+      return {
+        ...state,
+        item: {
+          ...state.item,
+          comments: state.item.comments.filter(
+            (comment) => comment._id !== action.payload
+          ),
         },
       };
     default:
