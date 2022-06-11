@@ -23,7 +23,15 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { Dialog, TextField } from "@mui/material";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Dialog,
+  Stack,
+  TextField,
+} from "@mui/material";
 import "./addPost.css";
 
 import Paper from "@mui/material/Paper";
@@ -34,6 +42,10 @@ const EditPostModal = (props) => {
   const [title, setTitle] = useState(props.post.title);
   const [message, setMessage] = useState(props.post.message);
 
+  useEffect(() => {
+    setTitle(props.post.title);
+    setMessage(props.post.message);
+  }, [props.post]);
   const registerPost = async (event) => {
     event.preventDefault();
     const post = {
@@ -58,30 +70,36 @@ const EditPostModal = (props) => {
   };
   return (
     <Dialog onClose={props.closeEditPostModal} open={props.open} fullWidth="md">
-      <Paper>
+      <Card>
+        <CardHeader title="Edit Post" />
+        <CardContent>
+          <Stack spacing={2}>
+            <TextField
+              onChange={onTitleChange}
+              placeholder="Title"
+              value={title}
+              label="Title"
+              size="small"
+            />
+            <br />
+            <TextField
+              onChange={onMessageChange}
+              name="message"
+              placeholder="Message"
+              multiline
+              value={message}
+              label="Message"
+              size="small"
+              minRows={4}
+            />
+            <Button id="submit" onClick={registerPost}>
+              Edit Post
+            </Button>
+          </Stack>
+        </CardContent>
+
         <br />
-        <h1>Edit Post</h1>
-        <form onSubmit={registerPost}>
-          <TextField
-            onChange={onTitleChange}
-            name="title"
-            placeholder="Title"
-            value={title}
-            defaultValue={props.post.title}
-          />
-          <br />
-          <TextField
-            onChange={onMessageChange}
-            name="message"
-            placeholder="Message"
-            multiline
-            value={message}
-            defaultValue={props.post.message}
-          />
-          <input type="submit" value="Submit" id="submit" />
-        </form>
-        <br />
-      </Paper>
+      </Card>
     </Dialog>
   );
 };
