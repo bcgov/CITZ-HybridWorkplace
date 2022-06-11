@@ -115,10 +115,12 @@ router.post("/", async (req, res) => {
     req.log.setResponse(201, "Success", null);
     return res.status(201).json(community);
   } catch (err) {
+    // Excplicitly thrown error
     if (err instanceof ResponseError) {
       req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
     }
+    // Bad Request
     req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
   } finally {
@@ -222,10 +224,16 @@ router.get("/", async (req, res) => {
 
     if (!communities) throw new ResponseError(404, "Communities not found.");
 
+    req.log.setResponse(200, "Success", null);
     return res.status(200).json(communities);
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Excplicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
   } finally {
     req.log.print();
@@ -267,10 +275,16 @@ router.get("/:title", async (req, res) => {
       community: req.params.title,
     });
 
+    req.log.setResponse(200, "Success", null);
     return res.status(200).json(documents.community);
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Excplicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
   } finally {
     req.log.print();
@@ -350,10 +364,16 @@ router.patch("/:title", async (req, res) => {
       query
     ).exec();
 
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Excplicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
   } finally {
     req.log.print();
@@ -381,8 +401,8 @@ router.patch("/:title", async (req, res) => {
  *          description: User not found. **||** <br>Community not found.
  *        '403':
  *          description: Only creator of community can edit community.
- *        '200':
- *          description: Community removed.
+ *        '204':
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
@@ -419,10 +439,16 @@ router.delete("/:title", async (req, res) => {
     // Remove comments from posts in community
     await Comment.deleteMany({ community: documents.community.title }).exec();
 
-    return res.status(200).send("Community removed.");
+    req.log.setResponse(204, "Success", null);
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Excplicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
   } finally {
     req.log.print();

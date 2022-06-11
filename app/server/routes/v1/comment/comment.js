@@ -99,10 +99,16 @@ router.post("/", async (req, res) => {
       process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT || 1
     );
 
+    req.log.setResponse(201, "Success", null);
     return res.status(201).json(comment);
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Excplicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
   } finally {
     req.log.print();
@@ -162,10 +168,16 @@ router.get("/post/:id", async (req, res) => {
 
     if (!comments) throw new ResponseError(404, "Comments not found.");
 
+    req.log.setResponse(200, "Success", null);
     return res.status(200).json(comments);
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Excplicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
   } finally {
     req.log.print();
@@ -208,6 +220,7 @@ router.get("/:id", async (req, res) => {
       comment: req.params.id,
     });
 
+    req.log.setResponse(200, "Success", null);
     return res.status(200).json(documents.comment);
   } catch (err) {
     if (err instanceof ResponseError)
@@ -293,10 +306,16 @@ router.patch("/:id", async (req, res) => {
 
     await Comment.updateOne({ _id: req.params.id }, query).exec();
 
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Excplicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
   } finally {
     req.log.print();
@@ -367,10 +386,16 @@ router.delete("/:id", async (req, res) => {
       -process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT || -1
     );
 
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Excplicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
   } finally {
     req.log.print();

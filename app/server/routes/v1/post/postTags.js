@@ -63,11 +63,19 @@ router.get("/:id", async (req, res) => {
       post: req.params.id,
     });
 
+    req.log.setResponse(200, "Success", null);
     return res.status(200).json(documents.post.tags);
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Excplicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -172,11 +180,19 @@ router.post("/:id", async (req, res) => {
       { $inc: { "tags.$.count": 1 } }
     );
 
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Excplicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -262,11 +278,19 @@ router.delete("/:id", async (req, res) => {
       { $inc: { "tags.$.count": -1 } }
     );
 
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Excplicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 

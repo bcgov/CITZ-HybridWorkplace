@@ -74,6 +74,7 @@ router.get("/", async (req, res) => {
       user: req.user.username,
     });
 
+    req.log.setResponse(200, "Success", null);
     return res.status(200).json({
       username: documents.user.username,
       email: documents.user.email,
@@ -83,9 +84,16 @@ router.get("/", async (req, res) => {
       title: documents.user.title,
     });
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Excplicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -144,11 +152,19 @@ router.patch("/", async (req, res) => {
 
     await User.updateOne({ username: req.user.username }, query).exec();
 
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Excplicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -202,6 +218,7 @@ router.get("/:username", async (req, res) => {
       user: req.params.username,
     });
 
+    req.log.setResponse(200, "Success", null);
     return res.status(200).json({
       username: documents.user.username,
       email: documents.user.email,
@@ -211,9 +228,16 @@ router.get("/:username", async (req, res) => {
       title: documents.user.title,
     });
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Excplicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -256,11 +280,19 @@ router.delete("/:username", async (req, res) => {
 
     await User.deleteOne({ username: documents.user.username }).exec();
 
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Excplicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 

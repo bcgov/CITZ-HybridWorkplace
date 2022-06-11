@@ -84,11 +84,19 @@ router.put("/:title", async (req, res) => {
       { $set: { rules: req.body.rules } }
     ).exec();
 
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Excplicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -127,11 +135,19 @@ router.get("/:title", async (req, res) => {
       community: req.params.title,
     });
 
+    req.log.setResponse(200, "Success", null);
     return res.status(200).json(documents.community.rules);
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Excplicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
