@@ -71,18 +71,22 @@ const Comment = require("../../../models/comment.model");
 
 // Create post
 router.post("/", async (req, res) => {
-  req.log.setRequestBody(req.body, false);
   try {
+    req.log.addAction("Finding user and community.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       community: req.body.community,
     });
+    req.log.addAction("User and community found.");
 
+    req.log.addAction("Checking user is member of community.");
     await checkUserIsMemberOfCommunity(
       documents.user.username,
       documents.community.title
     );
+    req.log.addAction("User is member of community.");
 
+    req.log.addAction("Checking if pinned field is set in req body.");
     if (
       req.body.pinned === true &&
       (await Post.count({
@@ -95,8 +99,10 @@ router.post("/", async (req, res) => {
         "Community can't have more than 3 pinned posts."
       );
 
+    req.log.addAction("Getting available tags from community.");
     const availableTags = documents.community.tags.map((tag) => tag.tag);
 
+    req.log.addAction("Creating post.");
     const post = await Post.create({
       title: req.body.title,
       message: req.body.message,
@@ -106,17 +112,20 @@ router.post("/", async (req, res) => {
       availableTags,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
+    req.log.addAction("Post created.");
 
+    req.log.addAction("Updating community engagement.");
     await updateCommunityEngagement(
       documents.user.username,
       documents.community.title,
       process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_POST || 1
     );
+    req.log.addAction("Community engagement updated.");
 
     req.log.setResponse(201, "Success", null);
     return res.status(201).json(post);
   } catch (err) {
-    // Excplicitly thrown error
+    // Explicitly thrown error
     if (err instanceof ResponseError) {
       req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
@@ -157,24 +166,29 @@ router.post("/", async (req, res) => {
 // Get all posts from communities user is apart of
 router.get("/", async (req, res) => {
   try {
+    req.log.addAction("Finding user.");
     const documents = await findSingleDocuments({
       user: req.user.username,
     });
+    req.log.addAction("User found.");
 
     // If post belongs to community listed in user.communities
+    req.log.addAction("Finding communities user is member of.");
     const communities = documents.user.communities.map(
       (community) => community.community
     );
+    req.log.addAction("Communities found. Finding posts from communities.");
     const posts = await Post.find({ community: { $in: communities } }, "", {
       sort: { pinned: -1, _id: -1 },
     }).exec();
 
     if (!posts) throw new ResponseError(404, "Posts not found.");
+    req.log.addAction("Posts found.");
 
     req.log.setResponse(200, "Success", null);
     return res.status(200).json(posts);
   } catch (err) {
-    // Excplicitly thrown error
+    // Explicitly thrown error
     if (err instanceof ResponseError) {
       req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
@@ -219,14 +233,16 @@ router.get("/", async (req, res) => {
 // Get post by id
 router.get("/:id", async (req, res) => {
   try {
+    req.log.addAction("Finding post.");
     const documents = await findSingleDocuments({
       post: req.params.id,
     });
+    req.log.addAction("Post found.");
 
     req.log.setResponse(200, "Success", null);
     return res.status(200).json(documents.post);
   } catch (err) {
-    // Excplicitly thrown error
+    // Explicitly thrown error
     if (err instanceof ResponseError) {
       req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
@@ -277,14 +293,18 @@ router.get("/:id", async (req, res) => {
 // Get all posts from community title (Optional query param 'tag' only returns posts tagged with 'tag')
 router.get("/community/:title", async (req, res) => {
   try {
+    req.log.addAction("Finding community.");
     const documents = await findSingleDocuments({
       community: req.params.title,
     });
+    req.log.addAction("Community found.");
 
     let posts;
 
+    req.log.addAction("Checking tag query.");
     if (req.query.tag) {
       // Return community posts by tag set in query
+      req.log.addAction("Finding posts in community with tag.");
       posts = await Post.find(
         { community: documents.community.title, "tags.tag": req.query.tag },
         "",
@@ -294,17 +314,19 @@ router.get("/community/:title", async (req, res) => {
       ).exec();
     } else {
       // Return all community posts
+      req.log.addAction("Finding posts in community.");
       posts = await Post.find({ community: documents.community.title }, "", {
         sort: { pinned: -1, _id: -1 },
       }).exec();
     }
 
     if (!posts) throw new ResponseError(404, "Posts not found.");
+    req.log.addAction("Posts found.");
 
     req.log.setResponse(200, "Success", null);
     return res.status(200).json(posts);
   } catch (err) {
-    // Excplicitly thrown error
+    // Explicitly thrown error
     if (err instanceof ResponseError) {
       req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
@@ -358,19 +380,24 @@ router.get("/community/:title", async (req, res) => {
 
 // Edit post by id
 router.patch("/:id", async (req, res) => {
-  req.log.setRequestBody(req.body, false);
   try {
     // TODO: MODERATORS CAN EDIT POST TOO
+    req.log.addAction("Finding user and post.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       post: req.params.id,
     });
+    req.log.addAction("User and post found.");
 
+    req.log.addAction("Checking user is creator of post.");
     if (documents.post.creator !== documents.user.id)
       throw new ResponseError(403, "Only creator of post can edit post.");
+    req.log.addAction("User is creator of post.");
 
+    req.log.addAction("Checking if pinned field set in req body.");
     if (req.body.pinned === true) {
       // Trying to pin post
+      req.log.addAction("Checking number of pinned posts in community.");
       if (
         (await Post.count({
           community: documents.post.community,
@@ -383,6 +410,7 @@ router.patch("/:id", async (req, res) => {
         );
     }
 
+    req.log.addAction("Checking edit query.");
     const query = checkPatchQuery(req.body, documents.post, [
       "creator",
       "community",
@@ -391,13 +419,16 @@ router.patch("/:id", async (req, res) => {
       "tags",
       "flags",
     ]);
+    req.log.addAction("Edit query has been cleaned.");
 
+    req.log.addAction("Updating post with query.");
     await Post.updateOne({ _id: documents.post.id }, query).exec();
+    req.log.addAction("Post updated.");
 
     req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    // Excplicitly thrown error
+    // Explicitly thrown error
     if (err instanceof ResponseError) {
       req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
@@ -441,32 +472,42 @@ router.patch("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     // TODO: MODERATORS CAN DELETE POST TOO
+    req.log.addAction("Finding user and post.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       post: req.params.id,
     });
+    req.log.addAction("User and post found.");
 
+    req.log.addAction("Checking user is creator of post.");
     if (documents.post.creator !== documents.user.id)
       throw new ResponseError(403, "Must be creator of post to delete post.");
+    req.log.addAction("User is creator of post.");
 
     // Remove the comments on post
+    req.log.addAction("Removing comments on post.");
     await Comment.deleteMany({ post: documents.post.id }).exec();
+    req.log.addAction("Comments removed from post.");
 
     // Remove post
+    req.log.addAction("Removing post.");
     await Post.deleteOne({
       _id: documents.post.id,
     }).exec();
+    req.log.addAction("Post removed.");
 
+    req.log.addAction("Updating community engagement.");
     await updateCommunityEngagement(
       documents.user.username,
       documents.post.community,
       -process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_POST || -1
     );
+    req.log.addAction("Community engagement updated.");
 
     req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    // Excplicitly thrown error
+    // Explicitly thrown error
     if (err instanceof ResponseError) {
       req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);

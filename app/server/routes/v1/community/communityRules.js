@@ -66,28 +66,33 @@ const Community = require("../../../models/community.model");
 
 // Set community rules by title
 router.put("/:title", async (req, res) => {
-  req.log.setRequestBody(req.body, false);
   try {
+    req.log.addAction("Finding user and community.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       community: req.params.title,
     });
+    req.log.addAction("User and community found.");
 
+    req.log.addAction("Checking user is creator of community.");
     if (documents.user.username !== documents.community.creator)
       throw new ResponseError(
         403,
         "Only creator of community can edit community."
       );
+    req.log.addAction("User is creator of community.");
 
+    req.log.addAction("Updating community rules.");
     await Community.updateOne(
       { title: documents.community.title },
       { $set: { rules: req.body.rules } }
     ).exec();
+    req.log.addAction("Community rules updated.");
 
     req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    // Excplicitly thrown error
+    // Explicitly thrown error
     if (err instanceof ResponseError) {
       req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
@@ -131,14 +136,16 @@ router.put("/:title", async (req, res) => {
 // Get community rules by title
 router.get("/:title", async (req, res) => {
   try {
+    req.log.addAction("Finding community.");
     const documents = await findSingleDocuments({
       community: req.params.title,
     });
+    req.log.addAction("Community found.");
 
     req.log.setResponse(200, "Success", null);
     return res.status(200).json(documents.community.rules);
   } catch (err) {
-    // Excplicitly thrown error
+    // Explicitly thrown error
     if (err instanceof ResponseError) {
       req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);

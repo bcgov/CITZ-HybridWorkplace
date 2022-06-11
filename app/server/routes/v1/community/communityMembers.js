@@ -66,11 +66,14 @@ const User = require("../../../models/user.model");
 // Get all community members by community title or count
 router.get("/:title", async (req, res) => {
   try {
+    req.log.addAction("Finding user and community.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       community: req.params.title,
     });
+    req.log.addAction("User and community found.");
 
+    req.log.addAction("Checking count query.");
     if (req.query.count === "true")
       return res
         .status(200)
@@ -79,7 +82,7 @@ router.get("/:title", async (req, res) => {
     req.log.setResponse(204, "Success", null);
     return res.status(200).json(documents.community.members);
   } catch (err) {
-    // Excplicitly thrown error
+    // Explicitly thrown error
     if (err instanceof ResponseError) {
       req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
@@ -120,16 +123,21 @@ router.get("/:title", async (req, res) => {
 // Join community by title
 router.patch("/join/:title", async (req, res) => {
   try {
+    req.log.addAction("Finding user and community.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       community: req.params.title,
     });
+    req.log.addAction("User and community found.");
 
+    req.log.addAction("Updating community members.");
     await Community.updateOne(
       { title: documents.community.title },
       { $addToSet: { members: documents.user.id } }
     );
+    req.log.addAction("Community members updated.");
 
+    req.log.addAction("Updating user community list.");
     await User.updateOne(
       { username: documents.user.username },
       {
@@ -138,11 +146,12 @@ router.patch("/join/:title", async (req, res) => {
         },
       }
     );
+    req.log.addAction("User community list updated.");
 
     req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    // Excplicitly thrown error
+    // Explicitly thrown error
     if (err instanceof ResponseError) {
       req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
@@ -183,18 +192,23 @@ router.patch("/join/:title", async (req, res) => {
 // Leave community by title
 router.delete("/leave/:title", async (req, res) => {
   try {
+    req.log.addAction("Finding user and community.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       community: req.params.title,
     });
+    req.log.addAction("User and community found.");
 
     // Remove user from community
+    req.log.addAction("Removing user from community members.");
     await Community.updateOne(
       { title: documents.community.title },
       { $pull: { members: documents.user.id } }
     );
+    req.log.addAction("User removed from community members.");
 
     // Remove community from user's communities array
+    req.log.addAction("Removing community from user's community list.");
     await User.updateOne(
       { username: documents.user.username },
       {
@@ -203,11 +217,12 @@ router.delete("/leave/:title", async (req, res) => {
         },
       }
     );
+    req.log.addAction("Community removed from user's community list.");
 
     req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    // Excplicitly thrown error
+    // Explicitly thrown error
     if (err instanceof ResponseError) {
       req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);

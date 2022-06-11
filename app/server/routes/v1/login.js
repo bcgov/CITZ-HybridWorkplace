@@ -70,38 +70,49 @@ const User = require("../../models/user.model");
 
 // Login
 router.post("/", async (req, res) => {
-  req.log.setRequestBody(req.body, true);
   try {
+    req.log.addAction("Finding user.");
     const user = await User.findOne({
       username: req.body.username,
     });
 
     if (!user) throw new ResponseError(401, "Invalid username or password.");
+    req.log.addAction("User found.");
 
+    req.log.addAction("Checking password is valid.");
     const isPasswordValid = await bcrypt.compare(
       req.body.password,
       user.password
     );
 
     if (isPasswordValid) {
+      req.log.addAction("Password is valid.");
       // Create JWTs
+      req.log.addAction("Generating tokens.");
       const token = generateToken(user);
       const refreshToken = generateRefreshToken(user);
+      req.log.addAction("Tokens generated.");
 
+      req.log.addAction("Hashing refresh token.");
       const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+      req.log.addAction("Refresh token hashed.");
 
       // Add or replace refresh token to db
+      req.log.addAction("Updating refresh token in database.");
       await User.updateOne(
         { username: user.username },
         { refreshToken: hashedRefreshToken }
       );
+      req.log.addAction("Refresh token in database updated.");
 
       // Create JWT Refresh Cookie (HTTPOnly - JS can't touch)
+      req.log.addAction("Creating jwt cookie.");
       res.cookie("jwt", refreshToken, {
         httpOnly: true,
         secure: true,
         sameSite: "None",
       });
+      req.log.addAction("jwt cookie created.");
 
       // Send JWT
       req.log.setResponse(201, "Success", null);
@@ -109,7 +120,7 @@ router.post("/", async (req, res) => {
     }
     throw new ResponseError(401, "Invalid username or password.");
   } catch (err) {
-    // Excplicitly thrown error
+    // Explicitly thrown error
     if (err instanceof ResponseError) {
       req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);

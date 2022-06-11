@@ -22,6 +22,8 @@
 const moment = require("moment");
 const c = require("ansi-colors");
 
+const enabled = process.env.ENABLE_API_REQUEST_LOGS === "true";
+
 c.theme({
   error: c.red,
   success: c.greenBright,
@@ -43,30 +45,28 @@ const maskFields = [
   "users",
   "moderators",
 ];
-const mask = (object, maskIds) => {
+const mask = (object) => {
   Object.keys(object).forEach((key) => {
-    if (maskIds && (key === "_id" || key === "id")) {
-      // Mask ids
-      object[key] = "***";
-    } else if (maskFields.includes(key)) {
+    if (maskFields.includes(key)) {
       // Replace value with mask
       object[key] = "***";
+    }
+    if (object[key] instanceof Object) {
+      // Recursion for nested objects
+      mask(object[key]);
     }
   });
   return object;
 };
 
 class Logger {
-  constructor(endpoint, method) {
+  constructor(endpoint, method, requestBody) {
     this.endpoint = endpoint;
     this.method = method;
+    this.requestBody = requestBody ? mask(requestBody) : {};
     this.getCurrentTime();
     this.startTime = Date.now();
     this.actions = [];
-  }
-
-  setRequestBody(requestBody, maskIds) {
-    this.requestBody = mask(requestBody, maskIds);
   }
 
   setResponse(status, level, error) {
@@ -79,10 +79,6 @@ class Logger {
     const action = { desc: actionDesc };
     action.timeSince = `${Math.floor(Date.now() - this.startTime)}ms`;
     this.actions.push(action);
-  }
-
-  setLastActionError() {
-    this.actions[this.actions.length - 1].error = true;
   }
 
   getCurrentTime() {
@@ -114,12 +110,16 @@ class Logger {
         );
         break;
       case "ResponseError":
+        if (this.actions.length > 0)
+          this.actions[this.actions.length - 1].error = true;
         msg += c.bold.warn(
           `${this.level} (${this.status}): [${this.method}] ${this.endpoint}, `
         );
         msg += c.red(`"${this.error}"`);
         break;
       case "Error":
+        if (this.actions.length > 0)
+          this.actions[this.actions.length - 1].error = true;
         msg += c.bold.error(
           `${this.level} (${this.status}): [${this.method}] ${this.endpoint}, `
         );
@@ -160,13 +160,15 @@ class Logger {
   }
 
   print() {
-    this.generateLogMessage();
-    this.duration = Math.floor(Date.now() - this.startTime);
-    console.log(
-      `${this.message}, ${c.bold(`Duration`)}: ${c.duration(
-        `${this.duration}ms`
-      )}`
-    );
+    if (enabled) {
+      this.generateLogMessage();
+      this.duration = Math.floor(Date.now() - this.startTime);
+      console.log(
+        `${this.message}, ${c.bold(`Duration`)}: ${c.duration(
+          `${this.duration}ms`
+        )}`
+      );
+    }
   }
 }
 

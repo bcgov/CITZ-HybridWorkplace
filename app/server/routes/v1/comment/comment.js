@@ -68,21 +68,26 @@ const Comment = require("../../../models/comment.model");
 
 // Create comment
 router.post("/", async (req, res) => {
-  req.log.setRequestBody(req.body, false);
   try {
+    req.log.addAction("Finding user and post.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       post: req.body.post,
     });
+    req.log.addAction("User and post found.");
 
+    req.log.addAction("Checking user is member of community.");
     await checkUserIsMemberOfCommunity(
       documents.user.username,
       documents.post.community
     );
+    req.log.addAction("User is member of community.");
 
+    req.log.addAction("Checking message in req body.");
     if (!req.body.message || req.body.message === "")
       throw new ResponseError(403, "Missing message in body of the request.");
 
+    req.log.addAction("Creating comment.");
     const comment = await Comment.create({
       message: req.body.message,
       creator: documents.user.id,
@@ -92,17 +97,20 @@ router.post("/", async (req, res) => {
       "downvotes.count": 0,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
+    req.log.addAction("Comment created.");
 
+    req.log.addAction("Updating community engagement.");
     await updateCommunityEngagement(
       documents.user.username,
       documents.post.community,
       process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT || 1
     );
+    req.log.addAction("Community engagement updated.");
 
     req.log.setResponse(201, "Success", null);
     return res.status(201).json(comment);
   } catch (err) {
-    // Excplicitly thrown error
+    // Explicitly thrown error
     if (err instanceof ResponseError) {
       req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
@@ -149,11 +157,14 @@ router.post("/", async (req, res) => {
 // Get all comments from post id, excluding replies
 router.get("/post/:id", async (req, res) => {
   try {
+    req.log.addAction("Finding user and post.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       post: req.params.id,
     });
+    req.log.addAction("User and post found.");
 
+    req.log.addAction("Finding comments on post.");
     const comments = await Comment.aggregate([
       { $match: { post: documents.post.id, replyTo: null } },
       {
@@ -167,11 +178,12 @@ router.get("/post/:id", async (req, res) => {
     ]).exec();
 
     if (!comments) throw new ResponseError(404, "Comments not found.");
+    req.log.addAction("Comments found.");
 
     req.log.setResponse(200, "Success", null);
     return res.status(200).json(comments);
   } catch (err) {
-    // Excplicitly thrown error
+    // Explicitly thrown error
     if (err instanceof ResponseError) {
       req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
@@ -216,9 +228,11 @@ router.get("/post/:id", async (req, res) => {
 // Get comment by id
 router.get("/:id", async (req, res) => {
   try {
+    req.log.addAction("Finding comment.");
     const documents = await findSingleDocuments({
       comment: req.params.id,
     });
+    req.log.addAction("Comment found.");
 
     req.log.setResponse(200, "Success", null);
     return res.status(200).json(documents.comment);
@@ -269,16 +283,21 @@ router.get("/:id", async (req, res) => {
 // Edit comment by id
 router.patch("/:id", async (req, res) => {
   try {
+    req.log.addAction("Finding user and comment.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       comment: req.params.id,
     });
+    req.log.addAction("User and comment found.");
 
+    req.log.addAction("Checking user is creator of comment.");
     if (documents.comment.creator !== documents.user.id)
       throw new ResponseError(403, "Only creator of comment can edit comment.");
+    req.log.addAction("Checking message in req body.");
     if (!req.body.message || req.body.message === "")
       throw new ResponseError(403, "Missing message in body of the request.");
 
+    req.log.addAction("Checking edit query.");
     const query = checkPatchQuery(req.body, documents.community, [
       "creator",
       "post",
@@ -290,8 +309,10 @@ router.patch("/:id", async (req, res) => {
       "upvotes",
       "downvotes",
     ]);
+    req.log.addAction("Edit query has been cleaned.");
 
     // Edit history
+    req.log.addAction("Updating edit history.");
     await Comment.updateOne(
       { _id: req.params.id },
       {
@@ -303,13 +324,16 @@ router.patch("/:id", async (req, res) => {
         },
       }
     ).exec();
+    req.log.addAction("Edit history updated.");
 
+    req.log.addAction("Updating comment with query.");
     await Comment.updateOne({ _id: req.params.id }, query).exec();
+    req.log.addAction("Comment edited.");
 
     req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    // Excplicitly thrown error
+    // Explicitly thrown error
     if (err instanceof ResponseError) {
       req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
@@ -354,42 +378,54 @@ router.patch("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     // TODO: MODERATORS CAN DELETE COMMENT TOO
+    req.log.addAction("Finding user and comment.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       comment: req.params.id,
     });
+    req.log.addAction("User and comment found.");
 
-    if (documents.comment.creator !== documents.user.id) {
+    req.log.addAction("Checking user is creator of comment.");
+    if (documents.comment.creator !== documents.user.id)
       throw new ResponseError(
         403,
         "Must be creator of comment to delete comment."
       );
-    }
+    req.log.addAction("User is creator of comment.");
 
     // Remove the replies to comment, then comment
+    req.log.addAction("Removing replies to comment.");
     await Comment.deleteMany({ replyTo: documents.comment.id }).exec();
+    req.log.addAction("Replies removed. Removing comment.");
     await Comment.deleteOne({ _id: documents.comment.id }).exec();
+    req.log.addAction("Comment removed.");
 
     // If replyTo comment has no more replies
+    req.log.addAction("Checking if replyTo comment has no more replies.");
     if (
       documents.comment.replyTo &&
       !(await Comment.exists({ replyTo: documents.comment.replyTo }))
-    )
+    ) {
+      req.log.addAction("Setting hasReplies on replyTo comment to false.");
       await Comment.updateOne(
         { _id: documents.comment.replyTo },
         { hasReplies: false }
       ).exec();
+      req.log.addAction("hasReplies set to false.");
+    }
 
+    req.log.addAction("Updating community engagement.");
     await updateCommunityEngagement(
       documents.user.username,
       documents.comment.community,
       -process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT || -1
     );
+    req.log.addAction("Community engagement updated.");
 
     req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    // Excplicitly thrown error
+    // Explicitly thrown error
     if (err instanceof ResponseError) {
       req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
