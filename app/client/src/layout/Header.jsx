@@ -32,9 +32,10 @@ import {
   Avatar,
   Badge,
   Stack,
+  Icon,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import MenuIcon from "@mui/icons-material/Menu";
+import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import "./header.css";
 import BCLogo from "./icons/BCLogo.svg";
 import SideMenu from "./SideMenu";
@@ -84,7 +85,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
     backgroundColor: "#44b700",
     color: "#44b700",
-    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    boxShadow: `0 0 0 1px ${theme.palette.background.paper}`,
     "&::after": {
       position: "absolute",
       top: 0,
@@ -97,7 +98,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
-const menuId = "primary-search-account-menu";
+const menuId = "account-avatar";
 // props: {darkMode, setDarkMode}
 // <SideMenu darkMode={darkMode} setDarkMode={setDarkMode}/>
 const Header = (props) => {
@@ -109,18 +110,36 @@ const Header = (props) => {
     >
       <AppBar
         sx={{
-          borderBottom: "solid",
-          borderBottomColor: "secondary",
-          borderBottomWidth: "0.4vh",
+          borderBottom: 3,
+          borderColor: (theme) => theme.palette.secondary.main,
         }}
         position="static"
       >
         <Toolbar>
+          <Box
+            sx={{
+              ml: 3,
+            }}
+          >
+            <IconButton>
+              <Icon
+                sx={{
+                  width: "7em",
+                  height: "auto",
+                }}
+              >
+                <img src={BCLogo} />
+              </Icon>
+            </IconButton>
+          </Box>
           <Typography
             variant="h6"
             noWrap
             component="div"
-            sx={{ display: { xs: "none", sm: "block" } }}
+            sx={{
+              display: { xs: "none", sm: "block" },
+              fontWeight: 600,
+            }}
           >
             The Neighbourhood
           </Typography>
@@ -134,7 +153,12 @@ const Header = (props) => {
               inputProps={{ "aria-label": "search" }}
             />
           </Search>
-          <Box sx={{ display: { xs: "none", md: "flex" } }}>
+          <Box
+            sx={{
+              display: { xs: "none", md: "flex" },
+              mr: "2%",
+            }}
+          >
             <IconButton
               size="large"
               edge="end"
@@ -151,9 +175,18 @@ const Header = (props) => {
                 <Avatar
                   alt="user account avatar"
                   src="https://source.unsplash.com/random/150×150/?profile%20picture"
+                  sx={{
+                    boxShadow: `0 0 0 2px #FFF`,
+                  }}
                 />
               </StyledBadge>
             </IconButton>
+          </Box>
+          <Box
+            sx={{
+              display: { xs: "none", md: "flex" },
+            }}
+          >
             <IconButton
               size="large"
               edge="start"
@@ -161,7 +194,9 @@ const Header = (props) => {
               aria-label="open drawer"
               sx={{ mr: 2 }}
             >
-              {props.auth.accessToken !== "" && <MenuIcon />}
+              {props.auth.accessToken !== "" && (
+                <MenuRoundedIcon fontSize="large" />
+              )}
             </IconButton>
           </Box>
         </Toolbar>
