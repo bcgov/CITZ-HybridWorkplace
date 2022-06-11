@@ -39,49 +39,55 @@ import Page404 from "./views/Page404";
 //Components
 import EditProfile from "./components/EditProfile";
 import NewCommunity from "./components/NewCommunity";
+import Post from "./components/Post";
+import SingularPost from "./components/SingularPost";
 
-class App extends Component {
-  render() {
-    return (
-      <div className="Routes">
-        <Routes>
-          <Route path="/" exact element={<Register />} />
-          <Route path="/login" exact element={<LoginPage />} />
-          <Route
-            path="/home"
-            exact
-            element={<PrivateComponent component={<HomePage />} />}
-          />
-          <Route
-            path="/about"
-            exact
-            element={<PrivateComponent component={<AboutPage />} />}
-          />
-          <Route
-            path="/profile/:username"
-            element={<PrivateComponent component={<ProfilePage />} />}
-          />
-          <Route
-            path="/profile/:id/edit"
-            element={<PrivateComponent component={<EditProfile />} />}
-          />
-          <Route
-            path="/communities"
-            element={<PrivateComponent component={<CommunitiesPage />} />}
-          />
-          <Route
-            path="/newCommunity"
-            element={<PrivateComponent component={<NewCommunity />} />}
-          />
-          <Route
-            path="/posts"
-            element={<PrivateComponent component={<PostsPage />} />}
-          />
-          <Route path="*" exact element={<Page404 />}></Route>
-        </Routes>
-      </div>
-    );
-  }
-}
+const App = () => {
+  return (
+    <div className="Routes">
+      <Routes>
+        <Route path="/" exact element={<Register />} />
+        <Route path="/login" exact element={<LoginPage />} />
+        <Route
+          path="/home"
+          exact
+          element={<PrivateComponent component={<HomePage />} />}
+        />
+        <Route
+          path="/about"
+          exact
+          element={<PrivateComponent component={<AboutPage />} />}
+        />
+        <Route
+          path="/profile/:username"
+          element={<PrivateComponent component={<ProfilePage />} />}
+        />
+        <Route
+          path="/profile/:id/edit"
+          element={<PrivateComponent component={<EditProfile />} />}
+        />
+        <Route
+          path="/communities"
+          element={<PrivateComponent component={<CommunitiesPage />} />}
+        />
+        <Route
+          path="/newCommunity"
+          element={<PrivateComponent component={<NewCommunity />} />}
+        />
+        <Route
+          path="/posts"
+          element={<PrivateComponent component={<PostsPage />} />}
+        />
+        <Route
+          path="/post/:id"
+          element={
+            <PrivateComponent component={<SingularPost showComments />} />
+          }
+        />
+        <Route path="*" exact element={<Page404 />}></Route>
+      </Routes>
+    </div>
+  );
+};
 
 export default App;
