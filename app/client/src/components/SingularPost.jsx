@@ -17,54 +17,41 @@ import FlagTwoToneIcon from "@mui/icons-material/FlagTwoTone";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import {
-  openFlagPostModal,
-  openDeletePostModal,
-  openEditPostModal,
-} from "../redux/ducks/modalDuck";
+import { openFlagPostModal } from "../redux/ducks/modalDuck";
+import { openDeletePostModal } from "../redux/ducks/modalDuck";
 import { useState } from "react";
 import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
-import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import TagsList from "./TagsList";
 import { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getPost } from "../redux/ducks/postDuck";
-import { useNavigate } from "react-router-dom";
+import CommentsList from "./CommentsList";
+import CreateComment from "./CreateComment";
 
-const Post = (props) => {
+const SingularPost = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
+
   let { id } = useParams();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!props.post) {
-      props.getPost(id);
-    }
+    props.post._id === id || props.getPost(id);
   }, []);
 
-  const post = props.post || props.fetchedPost;
-
   const handleFlagPostClick = () => {
-    props.openFlagPostModal(post);
+    props.openFlagPostModal(props.post);
     handleMenuClose();
   };
 
   const handleDeletePostClick = () => {
-    props.openDeletePostModal(post);
-    handleMenuClose();
-  };
-
-  const handleEditPostClick = () => {
-    props.openEditPostModal(post);
+    props.openDeletePostModal(props.post);
     handleMenuClose();
   };
 
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
-  const handlePostClick = () => navigate(`/post/${post._id}`);
 
   return (
-    <div key={post._id}>
+    <div key={props.post._id}>
       <Card
         sx={{
           px: 1,
@@ -98,52 +85,35 @@ const Post = (props) => {
                     </ListItemIcon>
                     <ListItemText>Delete</ListItemText>
                   </MenuItem>
-                  <MenuItem onClick={handleEditPostClick}>
-                    <ListItemIcon>
-                      <EditTwoToneIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText>Edit</ListItemText>
-                  </MenuItem>
                 </MenuList>
               </Menu>
             </>
           }
-          title={
-            <Typography
-              variant="h4"
-              onClick={handlePostClick}
-              style={{ cursor: "pointer" }}
-            >
-              {post.title}
-            </Typography>
-          }
+          title={<Typography variant="h4">{props.post.title}</Typography>}
         />
-        <CardContent onClick={handlePostClick} style={{ cursor: "pointer" }}>
-          <Typography variant="body1">{post.message}</Typography>
+        <CardContent>
+          <Typography variant="body1">{props.post.message}</Typography>
         </CardContent>
         <CardActions>
-          <TagsList post={post} />
+          <TagsList post={props.post} />
         </CardActions>
       </Card>
+      <CreateComment post={props.post} />
+      <CommentsList comments={props.post.comments} />
     </div>
   );
 };
 
-Post.propTypes = {
-  joinCommunity: PropTypes.func.isRequired,
-};
+SingularPost.propTypes = {};
 
 const mapStateToProps = (state) => ({
-  flagPostOpen: state.modal.flagPost.open,
-  deletePostOpen: state.modal.deletePost.open,
-  fetchedPost: state.posts.item,
+  post: state.posts.item,
 });
 
 const mapActionsToProps = {
   openFlagPostModal,
   openDeletePostModal,
-  openEditPostModal,
   getPost,
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(Post);
+export default connect(mapStateToProps, mapActionsToProps)(SingularPost);
