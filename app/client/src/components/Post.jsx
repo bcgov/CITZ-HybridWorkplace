@@ -15,10 +15,14 @@ import FlagTwoToneIcon from "@mui/icons-material/FlagTwoTone";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { openFlagPostModal } from "../redux/ducks/modalDuck";
-import { openDeletePostModal } from "../redux/ducks/modalDuck";
+import {
+  openFlagPostModal,
+  openDeletePostModal,
+  openEditPostModal,
+} from "../redux/ducks/modalDuck";
 import { useState } from "react";
 import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
+import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import TagsList from "./TagsList";
 
 const Post = (props) => {
@@ -33,6 +37,11 @@ const Post = (props) => {
 
   const handleDeletePostClick = () => {
     props.openDeletePostModal(post);
+    handleMenuClose();
+  };
+
+  const handleEditPostClick = () => {
+    props.openEditPostModal(post);
     handleMenuClose();
   };
 
@@ -74,6 +83,12 @@ const Post = (props) => {
                     </ListItemIcon>
                     <ListItemText>Delete</ListItemText>
                   </MenuItem>
+                  <MenuItem onClick={handleEditPostClick}>
+                    <ListItemIcon>
+                      <EditTwoToneIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Edit</ListItemText>
+                  </MenuItem>
                 </MenuList>
               </Menu>
             </>
@@ -103,6 +118,7 @@ const mapStateToProps = (state) => ({
 const mapActionsToProps = {
   openFlagPostModal,
   openDeletePostModal,
+  openEditPostModal,
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(Post);
