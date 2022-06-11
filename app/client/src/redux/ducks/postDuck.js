@@ -27,6 +27,7 @@ const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_POSTS";
 const GET_POST = "CITZ-HYBRIDWORKPLACE/POST/GET_POST";
 const ADD_POST = "CITZ-HYBRIDWORKPLACE/POST/ADD_POST";
 const REMOVE_POST = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_POST";
+const EDIT_POST = "CITZ-HYBRIDWORKPLACE/POST/EDIT_POST";
 const TAG_POST = "CITZ-HYBRIDWORKPLACE/POST/TAG_POST";
 const UNTAG_POST = "CITZ-HYBRIDWORKPLACE/POST/UNTAG_POST";
 const SET_COMMENTS = "CITZ-HYBRIDWORKPLACE/POST/SET_COMMENTS";
@@ -177,6 +178,43 @@ export const deletePost = (postId) => async (dispatch, getState) => {
       payload: postId,
     });
     createSuccess(`Successfully Deleted Post`)(dispatch);
+  } catch (err) {
+    console.error(err);
+    successful = false;
+    createError("Unexpected error occurred")(dispatch);
+  } finally {
+    return successful;
+  }
+};
+
+export const editPost = (newPost) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    //TODO: Throw error if given delete is not in list of available deletes
+    const authState = getState().auth;
+    const token = authState.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await hwp_axios.patch(
+      `/api/post/${newPost.id}`,
+      {
+        ...newPost,
+      },
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        params: {
+          dispatch,
+        },
+      }
+    );
+    dispatch({
+      type: EDIT_POST,
+      payload: newPost,
+    });
+    createSuccess(`Successfully Edited Post`)(dispatch);
   } catch (err) {
     console.error(err);
     successful = false;
@@ -379,6 +417,20 @@ export function postReducer(state = initialState, action) {
       return {
         ...state,
         items: state.items.filter((item) => item._id !== action.payload),
+      };
+    case EDIT_POST:
+      return {
+        ...state,
+        items: state.items.map((post) =>
+          post._id === action.payload.id
+            ? {
+                ...post,
+                title: action.payload.title,
+                message: action.payload.message,
+                pinned: action.payload.pinned,
+              }
+            : post
+        ),
       };
     case TAG_POST:
       return {
