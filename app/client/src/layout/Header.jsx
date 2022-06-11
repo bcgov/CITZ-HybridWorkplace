@@ -105,10 +105,16 @@ const Header = (props) => {
     <Box
       sx={{
         flexGrow: 1,
-        backgroundColor: "#003366",
       }}
     >
-      <AppBar position="static">
+      <AppBar
+        sx={{
+          borderBottom: "solid",
+          borderBottomColor: "secondary",
+          borderBottomWidth: "0.4vh",
+        }}
+        position="static"
+      >
         <Toolbar>
           <Typography
             variant="h6"
