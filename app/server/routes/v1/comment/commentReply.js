@@ -60,10 +60,13 @@ const Comment = require("../../../models/comment.model");
 // Get all replies to comment with id
 router.get("/:id", async (req, res) => {
   try {
+    req.log.addAction("Finding comment.");
     const documents = await findSingleDocuments({
       comment: req.params.id,
     });
+    req.log.addAction("Comment found.");
 
+    req.log.addAction("Finding replies.");
     const replies = await Comment.aggregate([
       { $match: { replyTo: documents.comment.id } },
       {
@@ -75,12 +78,20 @@ router.get("/:id", async (req, res) => {
       },
       { $sort: { votes: -1, _id: 1 } },
     ]).exec();
+    req.log.addAction("Replies found.");
 
     return res.status(200).json(replies);
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -126,28 +137,38 @@ router.get("/:id", async (req, res) => {
 // Reply to comment with id
 router.post("/:id", async (req, res) => {
   try {
+    req.log.addAction("Finding user and comment.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       comment: req.params.id,
     });
+    req.log.addAction("User and comment found.");
 
+    req.log.addAction("Checking reply is not replying to a reply.");
     if (documents.comment.replyTo)
       throw new ResponseError(403, "Not allowed to reply to a reply.");
+    req.log.addAction("replyTo comment is not a reply.");
 
+    req.log.addAction("Checking user is member of community.");
     await checkUserIsMemberOfCommunity(
       documents.user.username,
       documents.comment.community
     );
+    req.log.addAction("User is member of community.");
 
+    req.log.addAction("Checking message in req body.");
     if (!req.body.message || req.body.message === "")
       throw new ResponseError(403, "Missing message in body of the request.");
 
+    req.log.addAction("Updating hasReplies on replyTo comment.");
     await Comment.updateOne(
       { _id: documents.comment.id },
       { hasReplies: true }
     ).exec();
+    req.log.addAction("hasReplies updated.");
 
     // Create reply
+    req.log.addAction("Creating reply.");
     const reply = await Comment.create({
       message: req.body.message,
       creator: documents.user.id,
@@ -156,18 +177,28 @@ router.post("/:id", async (req, res) => {
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
       replyTo: documents.comment.id,
     });
+    req.log.addAction("Reply created.");
 
+    req.log.addAction("Updating community engagement.");
     await updateCommunityEngagement(
       documents.user.username,
       documents.comment.community,
       process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT || 1
     );
+    req.log.addAction("Community engagement updated.");
 
     return res.status(201).json(reply);
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 

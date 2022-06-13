@@ -62,26 +62,34 @@ const Comment = require("../../../models/comment.model");
 // Upvote/downvote or unset vote comment
 router.patch("/:id", async (req, res) => {
   try {
+    req.log.addAction("Finding user and comment.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       comment: req.params.id,
     });
+    req.log.addAction("User and comment found.");
 
-    if (!req.query.vote)
+    req.log.addAction("Checking vote query field exists.");
+    if (!req.query.vote || req.query.vote === "")
       throw new ResponseError(404, "Vote not found in query.");
 
+    req.log.addAction("Checking user is member of community.");
     await checkUserIsMemberOfCommunity(
       documents.user.username,
       documents.comment.community
     );
+    req.log.addAction("User is member of community.");
 
     let query;
 
+    req.log.addAction("Setting vote query.");
     if (documents.comment.upvotes.users.includes(documents.user.id)) {
       // User has already upvoted
+      req.log.addAction("User has already upvoted.");
       switch (req.query.vote) {
         case "down":
           // Change to downvote
+          req.log.addAction("Changing vote to downvote.");
           query = {
             $inc: { "upvotes.count": -1, "downvotes.count": 1 },
             $pull: { "upvotes.users": documents.user.id },
@@ -90,6 +98,7 @@ router.patch("/:id", async (req, res) => {
           break;
         default:
           // Unvote
+          req.log.addAction("Setting query to unvote.");
           query = {
             $inc: { "upvotes.count": -1 },
             $pull: { "upvotes.users": documents.user.id },
@@ -97,9 +106,11 @@ router.patch("/:id", async (req, res) => {
       }
     } else if (documents.comment.downvotes.users.includes(documents.user.id)) {
       // User has already downvoted
+      req.log.addAction("User has already downvoted.");
       switch (req.query.vote) {
         case "up":
           // Change to upvote
+          req.log.addAction("Changing vote to upvote.");
           query = {
             $inc: { "upvotes.count": 1, "downvotes.count": -1 },
             $pull: { "downvotes.users": documents.user.id },
@@ -108,6 +119,7 @@ router.patch("/:id", async (req, res) => {
           break;
         default:
           // Unvote
+          req.log.addAction("Setting query to unvote.");
           query = {
             $inc: { "downvotes.count": -1 },
             $pull: { "downvotes.users": documents.user.id },
@@ -115,14 +127,17 @@ router.patch("/:id", async (req, res) => {
       }
     } else {
       // User has not voted
+      req.log.addAction("User has not voted.");
       switch (req.query.vote) {
         case "up":
+          req.log.addAction("Setting query to upvote.");
           query = {
             $inc: { "upvotes.count": 1 },
             $push: { "upvotes.users": documents.user.id },
           };
           break;
         case "down":
+          req.log.addAction("Setting query to downvote.");
           query = {
             $inc: { "downvotes.count": 1 },
             $push: { "downvotes.users": documents.user.id },
@@ -136,14 +151,23 @@ router.patch("/:id", async (req, res) => {
       }
     }
 
+    req.log.addAction("Updating comment with vote query.");
     if (query)
       await Comment.updateOne({ _id: documents.comment.id }, query).exec();
+    req.log.addAction("Comment updated.");
 
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 

@@ -60,14 +60,22 @@ const Community = require("../../../models/community.model");
 // Get community flags by community title
 router.get("/:title", async (req, res) => {
   try {
+    req.log.addAction("Finding community.");
     const documents = await findSingleDocuments({
       community: req.params.title,
     });
+    req.log.addAction("Community found.");
 
+    req.log.setResponse(200, "Success", null);
     return res.status(200).json(documents.community.flags);
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -105,12 +113,15 @@ router.get("/:title", async (req, res) => {
  */
 
 // Flag community by community title
+// TODO: Allow setting of multiple flags at once
 router.post("/:title", async (req, res) => {
   try {
+    req.log.addAction("Finding user and community.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       community: req.params.title,
     });
+    req.log.addAction("User and community found.");
 
     // TODO: Set flags in an options collection, that can be edited by admins
     const flags = [
@@ -122,13 +133,16 @@ router.post("/:title", async (req, res) => {
       "Against Community Rules",
     ];
 
+    req.log.addAction("Checking flag is valid.");
     if (!flags.includes(req.query.flag))
       throw new ResponseError(
         403,
         "Invalid flag. Use one of [Inappropriate, Hate, Harassment or Bullying, Spam, Misinformation, Against Community Rules]"
       );
+    req.log.addAction("Flag is valid.");
 
     // If flag isn't set on community
+    req.log.addAction("Updating community flags.");
     if (
       !(await Community.exists({
         title: documents.community.title,
@@ -136,6 +150,7 @@ router.post("/:title", async (req, res) => {
       }))
     ) {
       // Create flag
+      req.log.addAction("Adding flag to community.");
       await Community.updateOne(
         { title: documents.community.title },
         {
@@ -146,6 +161,7 @@ router.post("/:title", async (req, res) => {
       );
     } else {
       // Add user to flaggedBy
+      req.log.addAction("Adding user to flaggedBy.");
       await Community.updateOne(
         {
           title: documents.community.title,
@@ -154,11 +170,18 @@ router.post("/:title", async (req, res) => {
         { $addToSet: { "flags.$.flaggedBy": [documents.user.id] } }
       );
     }
+    req.log.addAction("Community flag set.");
 
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });
@@ -198,15 +221,19 @@ router.post("/:title", async (req, res) => {
 // Unset flag on community by community title
 router.delete("/:title", async (req, res) => {
   try {
+    req.log.addAction("Finding user and community.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       community: req.params.title,
     });
+    req.log.addAction("User and community found.");
 
-    if (!req.query.flag)
+    req.log.addAction("Checking flag query.");
+    if (!req.query.flag || req.query.flag === "")
       throw new ResponseError(404, "Flag not found in query.");
 
     // Check user has flagged community
+    req.log.addAction("Checking user has flagged community.");
     if (
       !(await Community.exists({
         title: documents.community.title,
@@ -220,6 +247,7 @@ router.delete("/:title", async (req, res) => {
       );
 
     // Remove user from flaggedBy
+    req.log.addAction("Removing user from flaggedBy.");
     await Community.updateOne(
       {
         title: documents.community.title,
@@ -227,11 +255,18 @@ router.delete("/:title", async (req, res) => {
       },
       { $pull: { "flags.$.flaggedBy": documents.user.id } }
     );
+    req.log.addAction("User removed from flaggedBy.");
 
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
   }
 });

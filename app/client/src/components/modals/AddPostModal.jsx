@@ -37,7 +37,7 @@ const AddPostModal = (props) => {
   const [message, setMessage] = useState("");
 
   const [creator, setCreator] = useState(props.auth.user.username);
-  const [community, setCommunity] = useState("");
+  const [community, setCommunity] = useState(props.communityName || "");
 
   useEffect(() => {
     props.getCommunities();
@@ -98,20 +98,24 @@ const AddPostModal = (props) => {
               value={message}
             />
             <br />
-            <p>Choose a Community:</p>
-            {props.communities.map((comm) => (
-              <div key={comm._id}>
-                {/* TODO: change button input for choosing community to radio  */}
-                <Button
-                  onClick={() => onCommunityClick(comm.title)}
-                  variant={`${
-                    comm.title === community ? "contained" : "outlined"
-                  }`}
-                >
-                  {comm.title}{" "}
-                </Button>
-              </div>
-            ))}
+            {!props.communityName && (
+              <>
+                <p>Choose a Community:</p>
+                {props.communities.map((comm) => (
+                  <div key={comm._id}>
+                    {/* TODO: change button input for choosing community to radio  */}
+                    <Button
+                      onClick={() => onCommunityClick(comm.title)}
+                      variant={`${
+                        comm.title === community ? "contained" : "outlined"
+                      }`}
+                    >
+                      {comm.title}{" "}
+                    </Button>
+                  </div>
+                ))}
+              </>
+            )}
             <input type="submit" value="Submit" id="submit" />
           </form>
           <br />
