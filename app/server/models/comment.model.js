@@ -93,6 +93,7 @@ const Comment = new mongoose.Schema(
   {
     message: { type: String, required: true },
     creator: { type: String, required: true },
+    creatorName: { type: String },
     post: { type: String, required: true },
     community: { type: String, required: true },
     createdOn: { type: String, required: true },

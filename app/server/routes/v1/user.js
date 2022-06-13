@@ -28,6 +28,7 @@ const findSingleDocuments = require("../../functions/findSingleDocuments");
 const router = express.Router();
 
 const User = require("../../models/user.model");
+const Comment = require("../../models/comment.model");
 
 /**
  * @swagger
@@ -139,6 +140,17 @@ router.patch("/", async (req, res) => {
       "registeredOn",
       "communities",
     ]);
+
+    const firstName = req.body.firstName || documents.user.firstName;
+    const lastName = req.body.lastName || documents.user.lastName;
+
+    if (firstName && lastName) {
+      const creatorName = `${firstName} ${lastName}`;
+      await Comment.updateMany(
+        { creator: documents.user.id },
+        { $set: { creatorName } }
+      );
+    }
 
     await User.updateOne({ username: req.user.username }, query).exec();
 
