@@ -1,24 +1,36 @@
 import { Chip } from "@mui/material";
 import React, { useState } from "react";
+import { Badge } from "@mui/material";
 import { connect } from "react-redux";
 
 export const Tag = (props) => {
   const [clicked, setClicked] = useState(props.clicked);
+  const [tagCount, setTagCount] = useState(props.numTags)
+  const [loading, setLoading] = useState(false)
 
   const handleRemoveTag = async () => {
-    setClicked(false);
+
+    setLoading(true)
     const successful = await props.unTagPost(props.postId, props.name);
-    if (!successful) {
-      setClicked(true);
+
+    if (successful === true) {
+      setTagCount(tagCount - 1)
+      setClicked(false)
     }
+    setLoading(false)
   };
 
   const handleTagPost = async () => {
-    setClicked(true);
+
+    setLoading(true)
     const successful = await props.tagPost(props.postId, props.name);
-    if (!successful) {
-      setClicked(false);
+
+    if (successful === true) {
+      setTagCount(tagCount + 1)
+      setClicked(true)
     }
+    setLoading(false)
+
   };
 
   const randomColor = () => {
@@ -36,12 +48,17 @@ export const Tag = (props) => {
   const color = useState(randomColor())[0];
 
   return (
+    <Badge badgeContent={tagCount} color="error">
+
+
     <Chip
       label={props.name}
       color={props.color || color}
       variant={clicked ? "filled" : "outlined"}
       onClick={clicked ? handleRemoveTag : handleTagPost}
+      disabled={loading}
     ></Chip>
+        </Badge>
   );
 };
 
