@@ -52,36 +52,56 @@ const User = require("../../models/user.model");
 router.get("/", async (req, res) => {
   try {
     // Get refresh token from cookies
+    req.log.addAction("Finding jwt cookie.");
     if (!(req.cookies && req.cookies.jwt))
       throw new ResponseError(404, "Cookie not found.");
     const refreshToken = req.cookies.jwt;
+    req.log.addAction("jwt cookie found.");
 
     // Verify token
     let tokenUser;
 
+    req.log.addAction("Verifying refresh token.");
     jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
       if (err) throw new ResponseError(403, "Invalid token.");
       tokenUser = user;
     });
+    req.log.addAction("Refresh token verified.");
 
+    req.log.addAction("Finding user.");
     const user = await User.findOne({ username: tokenUser.username });
     if (!user) throw new ResponseError(404, "User not found.");
+    req.log.addAction("User found.");
 
     // Compare refreshToken to user.refresh_token from db
+    req.log.addAction("Checking refresh token is valid.");
     const isRefreshTokenValid = await bcrypt.compare(
       refreshToken,
       user.refreshToken
     );
 
     if (!isRefreshTokenValid) throw new ResponseError(403, "Invalid token.");
+    req.log.addAction("Refresh token is valid.");
 
+    req.log.addAction("Updating refresh token for user.");
     await User.updateOne({ username: user.username }, { refreshToken: "" });
+    req.log.addAction("Refresh token updated for user. Clearing jwt cookie.");
     res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "None" });
+    req.log.addAction("jwt cookie set to clear.");
+
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 

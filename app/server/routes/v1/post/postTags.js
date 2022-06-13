@@ -59,15 +59,25 @@ const Community = require("../../../models/community.model");
 // Get post tags by post id
 router.get("/:id", async (req, res) => {
   try {
+    req.log.addAction("Finding post.");
     const documents = await findSingleDocuments({
       post: req.params.id,
     });
+    req.log.addAction("Post found.");
 
+    req.log.setResponse(200, "Success", null);
     return res.status(200).json(documents.post.tags);
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -106,19 +116,26 @@ router.get("/:id", async (req, res) => {
 // Tag post by id
 router.post("/:id", async (req, res) => {
   try {
+    req.log.addAction("Finding user and post.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       post: req.params.id,
     });
+    req.log.addAction("User and post found.");
 
-    if (!req.query.tag) throw new ResponseError(404, "Tag not found in query.");
+    req.log.addAction("checking tag query.");
+    if (!req.query.tag || req.query.tag === "")
+      throw new ResponseError(404, "Tag not found in query.");
 
+    req.log.addAction("Checking user is member of community.");
     await checkUserIsMemberOfCommunity(
       documents.user.username,
       documents.post.community
     );
+    req.log.addAction("User is member of community.");
 
     // Check community has tag
+    req.log.addAction("Checking community has tag.");
     if (
       !(await Community.exists({
         title: documents.post.community,
@@ -126,8 +143,10 @@ router.post("/:id", async (req, res) => {
       }))
     )
       throw new ResponseError(403, "Tag must be used by community.");
+    req.log.addAction("Community has tag.");
 
     // Check duplicate tag
+    req.log.addAction("Checking duplicate tag.");
     if (
       await Post.exists({
         _id: documents.post.id,
@@ -137,6 +156,7 @@ router.post("/:id", async (req, res) => {
       throw new ResponseError(403, "Limit 1 tag per post, per user.");
 
     // If tag isn't set on post
+    req.log.addAction("Checking if tag isn't set on post.");
     if (
       !(await Post.exists({
         _id: documents.post.id,
@@ -144,6 +164,7 @@ router.post("/:id", async (req, res) => {
       }))
     ) {
       // Create tag
+      req.log.addAction("Creating tag on post.");
       await Post.updateOne(
         { _id: documents.post.id },
         {
@@ -152,8 +173,10 @@ router.post("/:id", async (req, res) => {
           },
         }
       );
+      req.log.addAction("Tag created on post.");
     } else {
       // Add user to taggedBy
+      req.log.addAction("Adding user to taggedBy.");
       await Post.updateOne(
         {
           _id: documents.post.id,
@@ -161,9 +184,11 @@ router.post("/:id", async (req, res) => {
         },
         { $addToSet: { "tags.$.taggedBy": [documents.user.id] } }
       );
+      req.log.addAction("User added to taggedBy.");
     }
 
     // Increment tag count in community
+    req.log.addAction("Incrementing tag count in community.");
     await Community.updateOne(
       {
         title: documents.post.community,
@@ -171,12 +196,21 @@ router.post("/:id", async (req, res) => {
       },
       { $inc: { "tags.$.count": 1 } }
     );
+    req.log.addAction("Tag count incremented.");
 
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -211,12 +245,15 @@ router.post("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     // TODO: MODERATORS CAN EDIT POST TOO
+    req.log.addAction("Finding user and post.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       post: req.params.id,
     });
+    req.log.addAction("User and post found.");
 
     // Check user has tagged post
+    req.log.addAction("Checking if user has tagged post.");
     if (
       !(await Post.exists({
         _id: documents.post.id,
@@ -224,13 +261,18 @@ router.delete("/:id", async (req, res) => {
       }))
     )
       throw new ResponseError(403, "User has not tagged post.");
+    req.log.addAction("User has tagged post.");
 
+    // Get tag that user has tagged the post with
+    req.log.addAction("Finding selected tag on post.");
     const selectedTag = await Post.findOne(
       { _id: documents.post.id },
       { tags: { $elemMatch: { taggedBy: documents.user.id } } }
     );
+    req.log.addAction("Selected tag found.");
 
     // Remove user from taggedBy
+    req.log.addAction("Removing user from taggedBy.");
     await Post.updateOne(
       {
         _id: documents.post.id,
@@ -238,10 +280,13 @@ router.delete("/:id", async (req, res) => {
       },
       { $pull: { "tags.$.taggedBy": documents.user.id } }
     );
+    req.log.addAction("User removed from taggedBy.");
 
     // Remove tag from post if taggedBy is length 1 (only user)
+    req.log.addAction("Checking if taggedBy only includes user.");
     if (selectedTag.tags[0].taggedBy.length === 1) {
       // Remove tag
+      req.log.addAction("Removing tag from post.");
       await Post.updateOne(
         {
           _id: documents.post.id,
@@ -254,6 +299,7 @@ router.delete("/:id", async (req, res) => {
     }
 
     // Decrement tag count in community
+    req.log.addAction("Decrementing tag count in community.");
     await Community.updateOne(
       {
         title: documents.post.community,
@@ -261,12 +307,21 @@ router.delete("/:id", async (req, res) => {
       },
       { $inc: { "tags.$.count": -1 } }
     );
+    req.log.addAction("Tag count decremented.");
 
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
