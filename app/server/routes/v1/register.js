@@ -63,22 +63,29 @@ const Community = require("../../models/community.model");
 // Register User
 router.post("/", async (req, res) => {
   try {
+    req.log.addAction("Hashing password.");
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    req.log.addAction("Password hashed.");
 
+    req.log.addAction("Checking if user already exists.");
     if (
       await User.exists({
         $or: [{ username: req.body.username }, { email: req.body.email }],
       })
     )
       throw new ResponseError(403, "IDIR or email already exists.");
+    req.log.addAction("User does not already exist.");
 
+    req.log.addAction("Creating user.");
     const user = await User.create({
       username: req.body.username,
       email: req.body.email,
       password: hashedPassword,
       registeredOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
+    req.log.addAction("User created.");
 
+    req.log.addAction("Adding user to Welcome community members.");
     await Community.updateOne(
       { title: "Welcome" },
       {
@@ -87,7 +94,9 @@ router.post("/", async (req, res) => {
         },
       }
     );
+    req.log.addAction("User added to Welcome community members.");
 
+    req.log.addAction("Updating user's community list.");
     await User.updateOne(
       { username: req.body.username },
       {
@@ -96,12 +105,21 @@ router.post("/", async (req, res) => {
         },
       }
     );
+    req.log.addAction("User's community list updated.");
 
+    req.log.setResponse(201, "Success", null);
     return res.status(201).send("Registered.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 

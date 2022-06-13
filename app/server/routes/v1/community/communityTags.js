@@ -60,15 +60,25 @@ const Post = require("../../../models/post.model");
 // Get community tags by title
 router.get("/:title", async (req, res) => {
   try {
+    req.log.addAction("Finding community.");
     const documents = await findSingleDocuments({
       community: req.params.title,
     });
+    req.log.addAction("Community found.");
 
+    req.log.setResponse(200, "Success", null);
     return res.status(200).json(documents.community.tags);
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -107,19 +117,26 @@ router.get("/:title", async (req, res) => {
 // Create community tag by community title
 router.post("/:title", async (req, res) => {
   try {
+    req.log.addAction("Finding user and community.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       community: req.params.title,
     });
+    req.log.addAction("User and community found.");
 
-    if (!req.query.tag) throw new ResponseError(404, "Tag not found in query.");
+    req.log.addAction("Checking tag query.");
+    if (!req.query.tag || req.query.tag === "")
+      throw new ResponseError(404, "Tag not found in query.");
 
+    req.log.addAction("Checking user is creator of community.");
     if (documents.user.username !== documents.community.creator)
       throw new ResponseError(
         403,
         "Only creator of community can edit community."
       );
+    req.log.addAction("User is creator of community.");
 
+    req.log.addAction("Checking if community tag is already set.");
     if (
       await Community.exists({
         title: documents.community.title,
@@ -128,6 +145,7 @@ router.post("/:title", async (req, res) => {
     )
       throw new ResponseError(403, "No duplicate tags.");
 
+    req.log.addAction("Checking community tags limit.");
     if (
       await Community.exists({
         title: documents.community.title,
@@ -137,22 +155,34 @@ router.post("/:title", async (req, res) => {
       throw new ResponseError(403, "A community can't have more than 7 tags.");
 
     // Add to community
+    req.log.addAction("Updating community tags.");
     await Community.updateOne(
       { title: documents.community.title },
       { $push: { tags: { tag: req.query.tag, count: 0 } } }
     );
+    req.log.addAction("Community tags updated.");
 
     // Add to availableTags array on posts
+    req.log.addAction("Updating availableTags on posts in community.");
     await Post.updateMany(
       { community: documents.community.title },
       { $push: { availableTags: req.query.tag } }
     );
+    req.log.addAction("Community posts updated.");
 
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -191,36 +221,54 @@ router.post("/:title", async (req, res) => {
 // Remove community tag by community title
 router.delete("/:title", async (req, res) => {
   try {
+    req.log.addAction("Finding user and community.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       community: req.params.title,
     });
+    req.log.addAction("User and community found.");
 
-    if (!req.query.tag) throw new ResponseError(404, "Tag not found in query.");
+    req.log.addAction("Checking tag query.");
+    if (!req.query.tag || req.query.tag === "")
+      throw new ResponseError(404, "Tag not found in query.");
 
+    req.log.addAction("Checking user is creator of community.");
     if (documents.user.username !== documents.community.creator)
       throw new ResponseError(
         403,
         "Only creator of community can edit community."
       );
+    req.log.addAction("User is creator of community.");
 
     // Remove tag from community
+    req.log.addAction("Updating community tags.");
     await Community.updateOne(
       { title: documents.community.title },
       { $pull: { tags: { tag: req.query.tag } } }
     );
+    req.log.addAction("Community tags updated.");
 
     // Remove tag from posts within community
+    req.log.addAction("Removing tag from posts in community.");
     await Post.updateMany(
       { community: documents.community.title },
       { $pull: { tags: { tag: req.query.tag }, availableTags: req.query.tag } }
     );
+    req.log.addAction("Tag on posts in community removed.");
 
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 

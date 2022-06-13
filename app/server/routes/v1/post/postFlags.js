@@ -57,15 +57,25 @@ const Post = require("../../../models/post.model");
 // Get post flags by post id
 router.get("/:id", async (req, res) => {
   try {
+    req.log.addAction("Finding post.");
     const documents = await findSingleDocuments({
       post: req.params.id,
     });
+    req.log.addAction("Post found.");
 
+    req.log.setResponse(200, "Success", null);
     return res.status(200).json(documents.post.flags);
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -104,10 +114,12 @@ router.get("/:id", async (req, res) => {
 // Flag post by post id
 router.post("/:id", async (req, res) => {
   try {
+    req.log.addAction("Finding user and post.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       post: req.params.id,
     });
+    req.log.addAction("User and post found.");
 
     // TODO: Set flags in an options collection, that can be edited by admins
     const flags = [
@@ -119,6 +131,7 @@ router.post("/:id", async (req, res) => {
       "Against Community Rules",
     ];
 
+    req.log.addAction("Checking flag query is valid.");
     if (!flags.includes(req.query.flag))
       throw new ResponseError(
         403,
@@ -126,6 +139,7 @@ router.post("/:id", async (req, res) => {
       );
 
     // If flag isn't set on post
+    req.log.addAction("Checking if flag is set on post.");
     if (
       !(await Post.exists({
         _id: documents.post.id,
@@ -133,6 +147,7 @@ router.post("/:id", async (req, res) => {
       }))
     ) {
       // Create flag
+      req.log.addAction("Creating flag on post.");
       await Post.updateOne(
         { _id: documents.post.id },
         {
@@ -143,6 +158,7 @@ router.post("/:id", async (req, res) => {
       );
     } else {
       // Add user to flaggedBy
+      req.log.addAction("Adding user to flaggedBy.");
       await Post.updateOne(
         {
           _id: documents.post.id,
@@ -152,11 +168,19 @@ router.post("/:id", async (req, res) => {
       );
     }
 
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -195,15 +219,19 @@ router.post("/:id", async (req, res) => {
 // Unset flag on post by post id
 router.delete("/:id", async (req, res) => {
   try {
+    req.log.addAction("Finding user and post.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       post: req.params.id,
     });
+    req.log.addAction("User and post found.");
 
-    if (!req.query.flag)
+    req.log.addAction("Checking flag query.");
+    if (!req.query.flag || req.query.flag === "")
       throw new ResponseError(404, "Flag not found in query.");
 
     // Check user has flagged post
+    req.log.addAction("Checking user has flagged post with flag.");
     if (
       !(await Post.exists({
         _id: documents.post.id,
@@ -215,8 +243,10 @@ router.delete("/:id", async (req, res) => {
         403,
         `User has not flagged post with ${req.query.flag}.`
       );
+    req.log.addAction("User has flagged post with flag.");
 
     // Remove user from flaggedBy
+    req.log.addAction("Removing user from flaggedBy.");
     await Post.updateOne(
       {
         _id: documents.post.id,
@@ -224,12 +254,21 @@ router.delete("/:id", async (req, res) => {
       },
       { $pull: { "flags.$.flaggedBy": documents.user.id } }
     );
+    req.log.addAction("User removed from flaggedBy.");
 
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
