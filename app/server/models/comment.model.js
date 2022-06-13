@@ -35,6 +35,8 @@
  *          description: Body of the comment.
  *        creator:
  *          $ref: '#/components/schemas/User/properties/id'
+ *        creatorName:
+ *          type: string
  *        post:
  *          $ref: '#/components/schemas/Post/properties/id'
  *        createdOn:
