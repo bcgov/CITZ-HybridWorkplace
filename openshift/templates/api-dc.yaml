@@ -118,6 +118,8 @@ objects:
                   value: '5'
                 - name: COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT
                   value: '1'
+                - name: ENABLE_API_REQUEST_LOGS
+                  value: 'true'
               resources: {}
               terminationMessagePath: /dev/termination-log
               terminationMessagePolicy: File
