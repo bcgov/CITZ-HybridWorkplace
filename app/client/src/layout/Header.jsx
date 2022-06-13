@@ -21,6 +21,7 @@
  */
 
 import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { styled, alpha } from "@mui/material/styles";
 import {
   Box,
@@ -44,17 +45,21 @@ import PersonIcon from "@mui/icons-material/Person";
 import PeopleIcon from "@mui/icons-material/People";
 import ForumIcon from "@mui/icons-material/Forum";
 import SearchIcon from "@mui/icons-material/Search";
+import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import "./header.css";
 import BCLogo from "./icons/BCLogo.svg";
 import SideMenu from "./SideMenu";
 import { connect } from "react-redux";
+import { getProfile } from "../redux/ducks/profileDuck";
 
 // props: {darkMode, setDarkMode}
 // <SideMenu darkMode={darkMode} setDarkMode={setDarkMode}/>
 const Header = (props) => {
   const [menuOpen, setMenuOpen] = React.useState({ right: false });
+
+  const navigate = useNavigate();
 
   const toggleDrawer = (anchor, open) => (event) => {
     if (
@@ -64,7 +69,7 @@ const Header = (props) => {
       return;
     }
 
-    setMenuOpen({ menuOpen, anchor: open });
+    setMenuOpen({ ...menuOpen, [anchor]: open });
   };
 
   const Search = styled("div")(({ theme }) => ({
@@ -126,31 +131,53 @@ const Header = (props) => {
 
   const menuId = "account-avatar";
 
-  const menuItems = ["Home", "Posts", "Communities", "Profile", "Log Out"];
-  const menu = (anchor) => (
+  const menuItems = [
+    {
+      itemText: "Home",
+      itemIcon: <HomeIcon />,
+      itemLink: "/home",
+    },
+    {
+      itemText: "Profile",
+      itemIcon: <PersonIcon />,
+      itemLink: `/profile/${props.auth.user.username}`,
+    },
+    {
+      itemText: "Posts",
+      itemIcon: <ForumIcon />,
+      itemLink: "/posts",
+    },
+    {
+      itemText: "Communities",
+      itemIcon: <PeopleIcon />,
+      itemLink: "/communities",
+    },
+    {
+      itemText: "About",
+      itemIcon: <QuestionMarkIcon />,
+      itemLink: "/about",
+    },
+    {
+      itemText: "Log Out",
+      itemIcon: <LogoutIcon />,
+      itemLink: "/logout",
+    },
+  ];
+  const menu = () => (
     <Box
       sx={{
         display: { xs: "none", md: "flex" },
       }}
     >
-      <List>
-        {menuItems.map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index === 0 ? (
-                  <HomeIcon />
-                ) : index === 1 ? (
-                  <ForumIcon />
-                ) : index === 2 ? (
-                  <PeopleIcon />
-                ) : index === 3 ? (
-                  <PersonIcon />
-                ) : (
-                  <LogoutIcon />
-                )}
-              </ListItemIcon>
-              <ListItemText primary={text} />
+      <List onClick={toggleDrawer("right", false)}>
+        {menuItems.map((menuItem) => (
+          <ListItem key={menuItem.itemText} disablePadding>
+            <ListItemButton
+              onClick={() => navigate(menuItem.itemLink)}
+              value={menuItem.itemLink}
+            >
+              <ListItemIcon>{menuItem.itemIcon}</ListItemIcon>
+              <ListItemText primary={menuItem.itemText} />
             </ListItemButton>
           </ListItem>
         ))}
@@ -246,8 +273,8 @@ const Header = (props) => {
                 edge="start"
                 color="inherit"
                 aria-label="open drawer"
-                onClick={toggleDrawer("right", false)}
-                onKeyDown={toggleDrawer("right", false)}
+                onClick={toggleDrawer("right", true)}
+                onKeyDown={toggleDrawer("right", true)}
                 sx={{ mr: 2 }}
               >
                 <MenuRoundedIcon fontSize="large" />
@@ -257,7 +284,7 @@ const Header = (props) => {
                 open={menuOpen["right"]}
                 onClose={toggleDrawer("right", false)}
               >
-                {menu("right")}
+                {menu()}
               </Drawer>
             </>
           )}

@@ -37,7 +37,8 @@ const ProfileInfo = (props) => {
         {props.profile.username}
       </Typography>
       <Typography variant="h5">
-        {!(props.profile.firstName || props.profile.lastName) ||
+        {props.profile.firstName ||
+          props.profile.lastName ||
           "No name to display"}
       </Typography>
       <Typography variant="body2"> {props.profile.email} </Typography>
