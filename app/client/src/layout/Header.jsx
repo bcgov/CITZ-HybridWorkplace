@@ -21,16 +21,7 @@
  */
 
 import React from "react";
-<<<<<<< HEAD
 import { Link, useNavigate } from "react-router-dom";
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-import { Link, useNavigate } from "react-router-dom";
-=======
->>>>>>> 4dc8e94 ([ref: hwp-349] Changes header bar into an AppBar)
->>>>>>> 188daad ([ref: hwp-280] Implements MUI Drawer for Side Menu)
 import { styled, alpha } from "@mui/material/styles";
 import {
   Box,
@@ -41,10 +32,6 @@ import {
   InputBase,
   Avatar,
   Badge,
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 188daad ([ref: hwp-280] Implements MUI Drawer for Side Menu)
   Icon,
   List,
   ListItem,
@@ -61,24 +48,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-<<<<<<< HEAD
-=======
->>>>>>> bebdecb ([ref: hwp-280] Implements MUI Drawer for Side Menu)
-=======
-  Stack,
-  Icon,
-} from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-<<<<<<< HEAD
-import MenuIcon from "@mui/icons-material/Menu";
->>>>>>> 4dc8e94 ([ref: hwp-349] Changes header bar into an AppBar)
-=======
-import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
->>>>>>> c192701 ([ref: hwp-349] BCLogo in the header bar)
->>>>>>> 188daad ([ref: hwp-280] Implements MUI Drawer for Side Menu)
 import "./header.css";
 import BCLogo from "./icons/BCLogo.svg";
-import SideMenu from "./SideMenu";
 import { connect } from "react-redux";
 import { getProfile } from "../redux/ducks/profileDuck";
 
@@ -272,243 +243,105 @@ const Header = (props) => {
   );
 
   return (
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-    <div className="header">
-      <img src={BCLogo} className="app-logo" alt="logo" />
-      <h2> The Neighbourhood </h2>
-      {props.auth.accessToken !== "" && <SideMenu />}
-    </div>
-=======
->>>>>>> 188daad ([ref: hwp-280] Implements MUI Drawer for Side Menu)
-    <Box
+    <AppBar
       sx={{
-        flexGrow: 1,
+        borderBottom: 3,
+        borderColor: (theme) => theme.palette.secondary.main,
       }}
+      position="static"
     >
-      <AppBar
-        sx={{
-          borderBottom: 3,
-          borderColor: (theme) => theme.palette.secondary.main,
-        }}
-        position="static"
-      >
-        <Toolbar>
-          <Box
-            sx={{
-              ml: 3,
-            }}
-          >
-            <IconButton>
-              <Icon
-                sx={{
-                  width: "7em",
-                  height: "auto",
-                }}
-              >
-                <img src={BCLogo} />
-              </Icon>
-            </IconButton>
-          </Box>
-<<<<<<< HEAD
-=======
-=======
-    <Box
-      sx={{
-        flexGrow: 1,
-      }}
-    >
-      <AppBar
-        sx={{
-          borderBottom: 3,
-          borderColor: (theme) => theme.palette.secondary.main,
-        }}
-        position="static"
-      >
-        <Toolbar>
-<<<<<<< HEAD
->>>>>>> 4dc8e94 ([ref: hwp-349] Changes header bar into an AppBar)
-=======
-          <Box
-            sx={{
-              ml: 3,
-            }}
-          >
-            <IconButton>
-              <Icon
-                sx={{
-                  width: "7em",
-                  height: "auto",
-                }}
-              >
-                <img src={BCLogo} />
-              </Icon>
-            </IconButton>
-          </Box>
->>>>>>> c192701 ([ref: hwp-349] BCLogo in the header bar)
->>>>>>> 188daad ([ref: hwp-280] Implements MUI Drawer for Side Menu)
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c192701 ([ref: hwp-349] BCLogo in the header bar)
->>>>>>> 188daad ([ref: hwp-280] Implements MUI Drawer for Side Menu)
-            sx={{
-              display: { xs: "none", sm: "block" },
-              fontWeight: 600,
-            }}
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-            sx={{ display: { xs: "none", sm: "block" } }}
->>>>>>> 4dc8e94 ([ref: hwp-349] Changes header bar into an AppBar)
-=======
->>>>>>> c192701 ([ref: hwp-349] BCLogo in the header bar)
->>>>>>> 188daad ([ref: hwp-280] Implements MUI Drawer for Side Menu)
-          >
-            The Neighbourhood
-          </Typography>
-          <Box sx={{ flexGrow: 1 }} />
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 188daad ([ref: hwp-280] Implements MUI Drawer for Side Menu)
+      <Toolbar>
+        <Box
+          sx={{
+            ml: 3,
+          }}
+        >
+          <IconButton>
+            <Icon
+              sx={{
+                width: "7em",
+                height: "auto",
+              }}
+            >
+              <img src={BCLogo} />
+            </Icon>
+          </IconButton>
+        </Box>
+        <Typography
+          variant="h6"
+          noWrap
+          component="div"
+          sx={{
+            display: { xs: "none", sm: "block" },
+            fontWeight: 600,
+          }}
+        >
+          The Neighbourhood
+        </Typography>
+        <Box sx={{ flexGrow: 1 }} />
 
-          {props.auth.accessToken !== "" && (
-            <>
-              <Search>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder="Search…"
-                  inputProps={{ "aria-label": "search" }}
-                />
-              </Search>
-              <Box
-                sx={{
-                  display: { xs: "none", md: "flex" },
-                  mr: "2%",
-                }}
-              >
-                <IconButton
-                  size="large"
-                  edge="end"
-                  aria-label="account of current user"
-                  aria-controls={menuId}
-                  aria-haspopup="true"
-                  color="inherit"
-                >
-                  <StyledBadge
-                    overlap="circular"
-                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                    variant="dot"
-                  >
-                    <Avatar
-                      alt="user account avatar"
-                      src="https://source.unsplash.com/random/150×150/?profile%20picture"
-                      sx={{
-                        boxShadow: `0 0 0 2px #FFF`,
-                      }}
-                    />
-                  </StyledBadge>
-                </IconButton>
-              </Box>
+        {props.auth.accessToken !== "" && (
+          <>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ "aria-label": "search" }}
+              />
+            </Search>
+            <Box
+              sx={{
+                display: { xs: "none", md: "flex" },
+                mr: "2%",
+              }}
+            >
               <IconButton
                 size="large"
-                edge="start"
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
                 color="inherit"
-                aria-label="open drawer"
-                onClick={toggleDrawer("right", true)}
-                onKeyDown={toggleDrawer("right", true)}
-                sx={{ mr: 2 }}
               >
-                <MenuRoundedIcon fontSize="large" />
+                <StyledBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  variant="dot"
+                >
+                  <Avatar
+                    alt="user account avatar"
+                    src="https://source.unsplash.com/random/150×150/?profile%20picture"
+                    sx={{
+                      boxShadow: `0 0 0 2px #FFF`,
+                    }}
+                  />
+                </StyledBadge>
               </IconButton>
-              <Drawer
-                anchor="right"
-                open={menuOpen["right"]}
-                onClose={toggleDrawer("right", false)}
-              >
-                {menu()}
-              </Drawer>
-            </>
-          )}
-        </Toolbar>
-      </AppBar>
-    </Box>
-<<<<<<< HEAD
-=======
->>>>>>> bebdecb ([ref: hwp-280] Implements MUI Drawer for Side Menu)
-=======
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ "aria-label": "search" }}
-            />
-          </Search>
-          <Box
-            sx={{
-              display: { xs: "none", md: "flex" },
-              mr: "2%",
-            }}
-          >
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              color="inherit"
-            >
-              <StyledBadge
-                overlap="circular"
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                variant="dot"
-              >
-                <Avatar
-                  alt="user account avatar"
-                  src="https://source.unsplash.com/random/150×150/?profile%20picture"
-                  sx={{
-                    boxShadow: `0 0 0 2px #FFF`,
-                  }}
-                />
-              </StyledBadge>
-            </IconButton>
-          </Box>
-          <Box
-            sx={{
-              display: { xs: "none", md: "flex" },
-            }}
-          >
+            </Box>
             <IconButton
               size="large"
               edge="start"
               color="inherit"
               aria-label="open drawer"
+              onClick={toggleDrawer("right", true)}
+              onKeyDown={toggleDrawer("right", true)}
               sx={{ mr: 2 }}
             >
-              {props.auth.accessToken !== "" && (
-                <MenuRoundedIcon fontSize="large" />
-              )}
+              <MenuRoundedIcon fontSize="large" />
             </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
-    </Box>
->>>>>>> 4dc8e94 ([ref: hwp-349] Changes header bar into an AppBar)
->>>>>>> 188daad ([ref: hwp-280] Implements MUI Drawer for Side Menu)
+            <Drawer
+              anchor="right"
+              open={menuOpen["right"]}
+              onClose={toggleDrawer("right", false)}
+            >
+              {menu()}
+            </Drawer>
+          </>
+        )}
+      </Toolbar>
+    </AppBar>
   );
 };
 
