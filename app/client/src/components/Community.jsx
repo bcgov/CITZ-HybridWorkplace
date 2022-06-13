@@ -20,9 +20,11 @@ import { openDeleteCommunityModal } from "../redux/ducks/modalDuck";
 import { useState } from "react";
 import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
 import JoinButton from "./JoinButton";
+import { useNavigate } from "react-router-dom";
 
 const Community = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const navigate = useNavigate();
 
   const { community } = props;
 
@@ -38,6 +40,7 @@ const Community = (props) => {
 
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
+  const handleCommunityClick = () => navigate(`/community/${community.title}`);
 
   return (
     <div key={community._id}>
@@ -51,6 +54,7 @@ const Community = (props) => {
         square
       >
         <CardHeader
+          onClick={handleCommunityClick}
           action={
             props.username === community.creator && (
               <>

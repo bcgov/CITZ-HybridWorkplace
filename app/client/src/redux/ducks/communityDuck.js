@@ -23,14 +23,53 @@
 import hwp_axios from "../../axiosInstance";
 
 const SET_COMMUNITIES = "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_COMMUNITIES";
+const GET_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/GET_COMMUNITY";
 const SET_USERS_COMMUNITIES =
   "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_USERS_COMMUNITIES";
 const ADD_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/ADD_COMMUNITY";
 const JOIN_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/JOIN_COMMUNITY";
 const LEAVE_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/LEAVE_COMMUNITY";
 const DELETE_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/DELETE_COMMUNITY";
+const GET_COMMUNITY_POSTS =
+  "CITZ-HYBRIDWORKPLACE/COMMUNITY/GET_COMMUNITY_POSTS";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
+
+const getUserTag = (post, userId) => {
+  try {
+    return post.tags.find((tag) => tag.taggedBy.find((user) => user === userId))
+      ?.tag;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getCommunity = (title) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const token = getState().auth.accessToken;
+    if (!token) throw new Error(noTokenText);
+
+    const response = await hwp_axios.get(`/api/community/${title}`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      params: {
+        dispatch,
+      },
+    });
+
+    dispatch({
+      type: GET_COMMUNITY,
+      payload: response.data,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
 
 export const getCommunities = () => async (dispatch, getState) => {
   let successful = true;
@@ -76,6 +115,42 @@ export const getUsersCommunities = () => async (dispatch, getState) => {
     dispatch({
       type: SET_USERS_COMMUNITIES,
       payload: response.data,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
+export const getCommunityPosts = (title) => async (dispatch, getState) => {
+  let successful = true;
+
+  try {
+    const authState = getState().auth;
+    const token = authState.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await hwp_axios.get(`/api/post/community/${title}`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      params: {
+        dispatch,
+      },
+    });
+
+    //Modifies each post and adds a userTag field which shows the tag the user has given it
+    const posts = response.data.map((post) => ({
+      ...post,
+      userTag: getUserTag(post, authState.user.id),
+    }));
+
+    dispatch({
+      type: GET_COMMUNITY_POSTS,
+      payload: posts,
     });
   } catch (err) {
     console.error(err);
@@ -233,6 +308,16 @@ const initialState = {
 
 export function communityReducer(state = initialState, action) {
   switch (action.type) {
+    case GET_COMMUNITY_POSTS:
+      return {
+        ...state,
+        item: { ...state.item, posts: action.payload },
+      };
+    case GET_COMMUNITY:
+      return {
+        ...state,
+        item: { ...state.item, ...action.payload },
+      };
     case SET_COMMUNITIES:
       return {
         ...state,
