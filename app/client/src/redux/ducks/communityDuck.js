@@ -29,8 +29,19 @@ const ADD_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/ADD_COMMUNITY";
 const JOIN_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/JOIN_COMMUNITY";
 const LEAVE_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/LEAVE_COMMUNITY";
 const DELETE_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/DELETE_COMMUNITY";
+const GET_COMMUNITY_POSTS =
+  "CITZ-HYBRIDWORKPLACE/COMMUNITY/GET_COMMUNITY_POSTS";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
+
+const getUserTag = (post, userId) => {
+  try {
+    return post.tags.find((tag) => tag.taggedBy.find((user) => user === userId))
+      ?.tag;
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 export const getCommunities = () => async (dispatch, getState) => {
   let successful = true;
@@ -76,6 +87,42 @@ export const getUsersCommunities = () => async (dispatch, getState) => {
     dispatch({
       type: SET_USERS_COMMUNITIES,
       payload: response.data,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
+export const getCommunityPosts = (title) => async (dispatch, getState) => {
+  let successful = true;
+
+  try {
+    const authState = getState().auth;
+    const token = authState.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await hwp_axios.get(`/api/post/community/${title}`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      params: {
+        dispatch,
+      },
+    });
+
+    //Modifies each post and adds a userTag field which shows the tag the user has given it
+    const posts = response.data.map((post) => ({
+      ...post,
+      userTag: getUserTag(post, authState.user.id),
+    }));
+
+    dispatch({
+      type: GET_COMMUNITY_POSTS,
+      payload: posts,
     });
   } catch (err) {
     console.error(err);
@@ -242,6 +289,11 @@ export function communityReducer(state = initialState, action) {
       return {
         ...state,
         usersCommunities: action.payload,
+      };
+    case GET_COMMUNITY_POSTS:
+      return {
+        ...state,
+        item: { ...state.item, posts: action.payload },
       };
     case ADD_COMMUNITY:
       return {

@@ -24,7 +24,12 @@ const asyncHandler = require("express-async-handler");
 const Logger = require("../functions/logger");
 
 const initLogger = asyncHandler(async (req, res, next) => {
-  req.log = new Logger(req.originalUrl.toUpperCase(), req.method, req.body);
+  const copyReqBody = JSON.stringify(req.body);
+  req.log = new Logger(
+    req.originalUrl.toUpperCase(),
+    req.method,
+    JSON.parse(copyReqBody)
+  );
   next();
 });
 

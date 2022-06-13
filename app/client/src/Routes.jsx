@@ -33,13 +33,13 @@ import HomePage from "./views/HomePage";
 import AboutPage from "./views/AboutPage";
 import ProfilePage from "./views/ProfilePage";
 import CommunitiesPage from "./views/CommunitiesPage";
+import CommunityPage from "./views/CommunityPage";
 import PostsPage from "./views/PostsPage";
 import Page404 from "./views/Page404";
 
 //Components
 import EditProfile from "./components/EditProfile";
 import NewCommunity from "./components/NewCommunity";
-import Post from "./components/Post";
 import SingularPost from "./components/SingularPost";
 
 const App = () => {
@@ -77,6 +77,10 @@ const App = () => {
         <Route
           path="/posts"
           element={<PrivateComponent component={<PostsPage />} />}
+        />
+        <Route
+          path="/community/:title"
+          element={<PrivateComponent component={<CommunityPage />} />}
         />
         <Route
           path="/post/:id"
