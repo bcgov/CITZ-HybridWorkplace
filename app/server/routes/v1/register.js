@@ -82,6 +82,7 @@ router.post("/", async (req, res) => {
       email: req.body.email,
       password: hashedPassword,
       registeredOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
+      postCount: 0,
     });
     req.log.addAction("User created.");
 

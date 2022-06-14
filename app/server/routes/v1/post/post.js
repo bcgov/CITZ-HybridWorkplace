@@ -30,6 +30,7 @@ const router = express.Router();
 
 const Post = require("../../../models/post.model");
 const Comment = require("../../../models/comment.model");
+const User = require("../../../models/user.model");
 
 /**
  * @swagger
@@ -121,6 +122,13 @@ router.post("/", async (req, res) => {
       process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_POST || 1
     );
     req.log.addAction("Community engagement updated.");
+
+    req.log.addAction("Updating user post count.");
+    await User.updateOne(
+      { _id: documents.user.id },
+      { $inc: { postCount: 1 } }
+    );
+    req.log.addAction("User post count updated.");
 
     req.log.setResponse(201, "Success", null);
     return res.status(201).json(post);
@@ -503,6 +511,13 @@ router.delete("/:id", async (req, res) => {
       -process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_POST || -1
     );
     req.log.addAction("Community engagement updated.");
+
+    req.log.addAction("Updating user post count.");
+    await User.updateOne(
+      { _id: documents.user.id },
+      { $inc: { postCount: -1 } }
+    );
+    req.log.addAction("User post count updated.");
 
     req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
