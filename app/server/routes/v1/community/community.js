@@ -102,6 +102,17 @@ router.post("/", async (req, res) => {
     });
     req.log.addAction("Community created.");
 
+    req.log.addAction("Updating user community list.");
+    await User.updateOne(
+      { username: documents.user.username },
+      {
+        $addToSet: {
+          communities: { community: req.body.title },
+        },
+      }
+    );
+    req.log.addAction("User community list updated.");
+
     req.log.addAction("Updating community engagement.");
     await updateCommunityEngagement(
       documents.user.username,
