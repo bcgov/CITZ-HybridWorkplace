@@ -29,6 +29,7 @@ const findSingleDocuments = require("../../functions/findSingleDocuments");
 const router = express.Router();
 
 const User = require("../../models/user.model");
+const Comment = require("../../models/comment.model");
 
 /**
  * @swagger
@@ -154,6 +155,25 @@ router.patch("/", async (req, res) => {
       "communities",
     ]);
     req.log.addAction("Edit query has been cleaned.");
+
+    const firstName = req.body.firstName || documents.user.firstName;
+    const lastName = req.body.lastName || documents.user.lastName;
+
+    // If first or last name was set in request body
+    // and firstName is set either in the request body or in the database.
+    if (
+      (req.body.firstName || req.body.lastName) &&
+      firstName &&
+      firstName !== ""
+    ) {
+      // If last name set in req.body or database, set full name, else just first name
+      const creatorName =
+        lastName && lastName !== "" ? `${firstName} ${lastName}` : firstName;
+      await Comment.updateMany(
+        { creator: documents.user.id },
+        { $set: { creatorName } }
+      );
+    }
 
     req.log.addAction("Updating user.");
     await User.updateOne({ username: req.user.username }, query).exec();

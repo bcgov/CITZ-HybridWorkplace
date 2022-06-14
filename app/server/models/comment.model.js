@@ -35,6 +35,8 @@
  *          description: Body of the comment.
  *        creator:
  *          $ref: '#/components/schemas/User/properties/id'
+ *        creatorName:
+ *          type: string
  *        post:
  *          $ref: '#/components/schemas/Post/properties/id'
  *        createdOn:
@@ -93,6 +95,7 @@ const Comment = new mongoose.Schema(
   {
     message: { type: String, required: true },
     creator: { type: String, required: true },
+    creatorName: { type: String },
     post: { type: String, required: true },
     community: { type: String, required: true },
     createdOn: { type: String, required: true },

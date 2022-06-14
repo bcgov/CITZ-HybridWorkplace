@@ -87,10 +87,16 @@ router.post("/", async (req, res) => {
     if (!req.body.message || req.body.message === "")
       throw new ResponseError(403, "Missing message in body of the request.");
 
+    const creatorName =
+      documents.user.firstName && documents.user.lastName
+        ? `${documents.user.firstName} ${documents.user.lastName}`
+        : documents.user.username;
+
     req.log.addAction("Creating comment.");
     const comment = await Comment.create({
       message: req.body.message,
       creator: documents.user.id,
+      creatorName,
       post: documents.post.id,
       community: documents.post.community,
       "upvotes.count": 0,
