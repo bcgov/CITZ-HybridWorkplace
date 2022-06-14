@@ -29,6 +29,7 @@ const updateCommunityEngagement = require("../../../functions/updateCommunityEng
 const router = express.Router();
 
 const Comment = require("../../../models/comment.model");
+const Post = require("../../../models/post.model");
 
 /**
  * @swagger
@@ -87,16 +88,21 @@ router.post("/", async (req, res) => {
     if (!req.body.message || req.body.message === "")
       throw new ResponseError(403, "Missing message in body of the request.");
 
-    const creatorName =
-      documents.user.firstName && documents.user.lastName
-        ? `${documents.user.firstName} ${documents.user.lastName}`
-        : documents.user.username;
+    req.log.addAction("Getting creator name.");
+    const { firstName, lastName } = documents.user;
+    let creatorName;
+
+    if (firstName && firstName !== "") {
+      // If lastName, set full name, else just firstName
+      creatorName =
+        lastName && lastName !== "" ? `${firstName} ${lastName}` : firstName;
+    }
 
     req.log.addAction("Creating comment.");
     const comment = await Comment.create({
       message: req.body.message,
       creator: documents.user.id,
-      creatorName,
+      creatorName: creatorName || documents.user.username,
       post: documents.post.id,
       community: documents.post.community,
       "upvotes.count": 0,
@@ -112,6 +118,13 @@ router.post("/", async (req, res) => {
       process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT || 1
     );
     req.log.addAction("Community engagement updated.");
+
+    req.log.addAction("Updating post's comment count.");
+    await Post.updateOne(
+      { _id: documents.post.id },
+      { $inc: { commentCount: 1 } }
+    );
+    req.log.addAction("Post's comment count updated.");
 
     req.log.setResponse(201, "Success", null);
     return res.status(201).json(comment);
@@ -427,6 +440,13 @@ router.delete("/:id", async (req, res) => {
       -process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT || -1
     );
     req.log.addAction("Community engagement updated.");
+
+    req.log.addAction("Updating post's comment count.");
+    await Post.updateOne(
+      { _id: documents.post.id },
+      { $inc: { commentCount: -1 } }
+    );
+    req.log.addAction("Post's comment count updated.");
 
     req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");

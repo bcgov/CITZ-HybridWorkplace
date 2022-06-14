@@ -29,6 +29,7 @@ const findSingleDocuments = require("../../functions/findSingleDocuments");
 const router = express.Router();
 
 const User = require("../../models/user.model");
+const Post = require("../../models/post.model");
 const Comment = require("../../models/comment.model");
 
 /**
@@ -173,6 +174,10 @@ router.patch("/", async (req, res) => {
       const creatorName =
         lastName && lastName !== "" ? `${firstName} ${lastName}` : firstName;
       await Comment.updateMany(
+        { creator: documents.user.id },
+        { $set: { creatorName } }
+      );
+      await Post.updateMany(
         { creator: documents.user.id },
         { $set: { creatorName } }
       );

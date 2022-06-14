@@ -103,11 +103,22 @@ router.post("/", async (req, res) => {
     req.log.addAction("Getting available tags from community.");
     const availableTags = documents.community.tags.map((tag) => tag.tag);
 
+    req.log.addAction("Getting creator name.");
+    const { firstName, lastName } = documents.user;
+    let creatorName;
+
+    if (firstName && firstName !== "") {
+      // If lastName, set full name, else just firstName
+      creatorName =
+        lastName && lastName !== "" ? `${firstName} ${lastName}` : firstName;
+    }
+
     req.log.addAction("Creating post.");
     const post = await Post.create({
       title: req.body.title,
       message: req.body.message,
       creator: documents.user.id,
+      creatorName: creatorName || documents.user.username,
       community: req.body.community,
       pinned: req.body.pinned || false,
       availableTags,
@@ -426,6 +437,7 @@ router.patch("/:id", async (req, res) => {
       "availableTags",
       "tags",
       "flags",
+      "commentCount",
     ]);
     req.log.addAction("Edit query has been cleaned.");
 

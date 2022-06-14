@@ -39,6 +39,9 @@
  *          description: Body of the post.
  *        creator:
  *          $ref: '#/components/schemas/User/properties/id'
+ *        creatorName:
+ *          type: String
+ *          description: The full name of the creator.
  *        community:
  *          $ref: '#/components/schemas/Community/properties/title'
  *        pinned:
@@ -46,6 +49,8 @@
  *          description: Pinned posts show at the top of the feed. Limit 3 per community.
  *        createdOn:
  *          type: string
+ *        commentCount:
+ *          type: number
  *        availableTags:
  *          type: array
  *          description: Tags set by moderators of the community.
@@ -94,9 +99,11 @@ const Post = new mongoose.Schema(
     title: { type: String, required: true },
     message: { type: String, required: true },
     creator: { type: String, required: true },
+    creatorName: { type: String },
     community: { type: String, required: true },
     pinned: { type: Boolean },
     createdOn: { type: String, required: true },
+    commentCount: { type: Number },
     availableTags: [String],
     tags: [
       {
