@@ -22,6 +22,7 @@
 
 const express = require("express");
 const ResponseError = require("../../responseError");
+
 const checkPatchQuery = require("../../functions/checkPatchQuery");
 const findSingleDocuments = require("../../functions/findSingleDocuments");
 
@@ -70,10 +71,13 @@ const Comment = require("../../models/comment.model");
 // Get user
 router.get("/", async (req, res) => {
   try {
+    req.log.addAction("Finding user.");
     const documents = await findSingleDocuments({
       user: req.user.username,
     });
+    req.log.addAction("User found.");
 
+    req.log.setResponse(200, "Success", null);
     return res.status(200).json({
       username: documents.user.username,
       email: documents.user.email,
@@ -83,9 +87,16 @@ router.get("/", async (req, res) => {
       title: documents.user.title,
     });
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -129,10 +140,13 @@ router.get("/", async (req, res) => {
 // Edit user
 router.patch("/", async (req, res) => {
   try {
+    req.log.addAction("Finding user.");
     const documents = await findSingleDocuments({
       user: req.user.username,
     });
+    req.log.addAction("User found.");
 
+    req.log.addAction("Checking edit query.");
     const query = checkPatchQuery(req.body, documents.user, [
       "username",
       "password",
@@ -140,6 +154,7 @@ router.patch("/", async (req, res) => {
       "registeredOn",
       "communities",
     ]);
+    req.log.addAction("Edit query has been cleaned.");
 
     const firstName = req.body.firstName || documents.user.firstName;
     const lastName = req.body.lastName || documents.user.lastName;
@@ -160,13 +175,23 @@ router.patch("/", async (req, res) => {
       );
     }
 
+    req.log.addAction("Updating user.");
     await User.updateOne({ username: req.user.username }, query).exec();
+    req.log.addAction("User updated.");
 
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -216,10 +241,13 @@ router.patch("/", async (req, res) => {
 // Get user by username
 router.get("/:username", async (req, res) => {
   try {
+    req.log.addAction("Finding user.");
     const documents = await findSingleDocuments({
       user: req.params.username,
     });
+    req.log.addAction("User found.");
 
+    req.log.setResponse(200, "Success", null);
     return res.status(200).json({
       username: documents.user.username,
       email: documents.user.email,
@@ -229,9 +257,16 @@ router.get("/:username", async (req, res) => {
       title: documents.user.title,
     });
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -265,20 +300,37 @@ router.get("/:username", async (req, res) => {
 // Remove user by username
 router.delete("/:username", async (req, res) => {
   try {
+    req.log.addAction("Finding user.");
     const documents = await findSingleDocuments({
       user: req.params.username,
     });
+    req.log.addAction("User found.");
 
+    req.log.addAction("Checking user is account owner.");
     if (documents.user.username !== req.user.username)
       throw new ResponseError(403, "Must be account owner to remove user.");
+    req.log.addAction("User is account owner.");
 
+    req.log.addAction("Removing user.");
     await User.deleteOne({ username: documents.user.username }).exec();
+    req.log.addAction("User removed.");
 
+    // TODO: Remove user's posts and communities
+    // TODO: What happens if user is the only moderator of a community when user is deleted
+
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 

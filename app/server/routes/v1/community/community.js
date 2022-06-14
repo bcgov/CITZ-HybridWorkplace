@@ -59,8 +59,6 @@ const Comment = require("../../../models/comment.model");
  *                  $ref: '#/components/schemas/Community/properties/description'
  *                rules:
  *                  $ref: '#/components/schemas/Community/properties/rules'
- *                tags:
- *                  $ref: '#/components/schemas/Community/properties/tags'
  *      responses:
  *        '404':
  *          description: User not found.
@@ -79,17 +77,20 @@ const Comment = require("../../../models/comment.model");
 // Create community
 router.post("/", async (req, res) => {
   try {
+    req.log.addAction("Finding user.");
     const documents = await findSingleDocuments({
       user: req.user.username,
     });
+    req.log.addAction("User found.");
 
-    if (await Community.exists({ title: req.body.title })) {
+    req.log.addAction("Checking community already exists.");
+    if (await Community.exists({ title: req.body.title }))
       throw new ResponseError(403, "Community already exists.");
-    }
 
     // TODO: Validate formatting for tags in request body
     // TODO: Prevent spaces or special characters in community title
 
+    req.log.addAction("Creating community.");
     const community = await Community.create({
       title: req.body.title,
       description: req.body.description,
@@ -99,18 +100,29 @@ router.post("/", async (req, res) => {
       tags: req.body.tags,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
+    req.log.addAction("Community created.");
 
+    req.log.addAction("Updating community engagement.");
     await updateCommunityEngagement(
       documents.user.username,
       community.title,
       process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMUNITY || 0
     );
+    req.log.addAction("Community engagement updated.");
 
+    req.log.setResponse(201, "Success", null);
     return res.status(201).json(community);
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -148,19 +160,24 @@ router.post("/", async (req, res) => {
 // Get all communities or all communities user is a part of
 router.get("/", async (req, res) => {
   try {
+    req.log.addAction("Finding user.");
     const documents = await findSingleDocuments({
       user: req.user.username,
     });
+    req.log.addAction("User found.");
 
     let communities;
 
+    req.log.addAction("Checking orderBy query.");
     if (req.query.orderBy === "lastJoined") {
       // Ordered by last joined
+      req.log.addAction("Ordering by last joined. Finding communities.");
       communities = await Community.find({ members: documents.user.id }, "", {
         sort: { _id: -1 },
       }).exec();
     } else if (req.query.orderBy === "engagement") {
       // Order by engagment (posts, comments, votes)
+      req.log.addAction("Ordering by engagement. Finding communities.");
       communities = await Community.aggregate([
         {
           $lookup: {
@@ -205,16 +222,26 @@ router.get("/", async (req, res) => {
       ]).exec();
     } else {
       // Ordered by first created
+      req.log.addAction("Ordering by first created. Finding communities.");
       communities = await Community.find({}, "", { sort: { _id: 1 } }).exec();
     }
 
     if (!communities) throw new ResponseError(404, "Communities not found.");
+    req.log.addAction("Communities found.");
 
+    req.log.setResponse(200, "Success", null);
     return res.status(200).json(communities);
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -249,15 +276,25 @@ router.get("/", async (req, res) => {
 // Get community by title
 router.get("/:title", async (req, res) => {
   try {
+    req.log.addAction("Finding community.");
     const documents = await findSingleDocuments({
       community: req.params.title,
     });
+    req.log.addAction("Community found.");
 
+    req.log.setResponse(200, "Success", null);
     return res.status(200).json(documents.community);
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -304,22 +341,29 @@ router.get("/:title", async (req, res) => {
 router.patch("/:title", async (req, res) => {
   try {
     // TODO: AUTH USER IS MODERATOR
+    req.log.addAction("Finding user and community.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       community: req.params.title,
     });
+    req.log.addAction("User and community found.");
 
+    req.log.addAction("Checking user is creator of community.");
     if (documents.user.username !== documents.community.creator)
       throw new ResponseError(
         403,
         "Only creator of community can edit community."
       );
+    req.log.addAction("User is creator of community.");
 
     // TODO: Prevent spaces or special characters in community title
 
+    req.log.addAction("Checking if community title already exists.");
     if (req.body.title && (await Community.exists({ title: req.body.title })))
       throw new ResponseError(403, "Community already exists with that title.");
+    req.log.addAction("Community title does not already exist.");
 
+    req.log.addAction("Checking edit query.");
     const query = checkPatchQuery(req.body, documents.community, [
       "tags",
       "flags",
@@ -327,17 +371,28 @@ router.patch("/:title", async (req, res) => {
       "members",
       "creator",
     ]);
+    req.log.addAction("Edit query has been cleaned.");
 
+    req.log.addAction("Updating community.");
     await Community.updateOne(
       { title: documents.community.title },
       query
     ).exec();
+    req.log.addAction("Community updated.");
 
+    req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 
@@ -362,8 +417,8 @@ router.patch("/:title", async (req, res) => {
  *          description: User not found. **||** <br>Community not found.
  *        '403':
  *          description: Only creator of community can edit community.
- *        '200':
- *          description: Community removed.
+ *        '204':
+ *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
@@ -372,39 +427,59 @@ router.patch("/:title", async (req, res) => {
 // TODO: AUTH moderators
 router.delete("/:title", async (req, res) => {
   try {
+    req.log.addAction("Finding user and community.");
     const documents = await findSingleDocuments({
       user: req.user.username,
       community: req.params.title,
     });
+    req.log.addAction("User and community found.");
 
+    req.log.addAction("Checking user is creator of community.");
     if (documents.user.username !== documents.community.creator)
       throw new ResponseError(
         403,
         "Only creator of community can edit community."
       );
+    req.log.addAction("User is creator of community.");
 
     // Remove community
+    req.log.addAction("Removing community.");
     await Community.deleteOne({
       title: req.params.title,
     }).exec();
+    req.log.addAction("Community removed.");
 
     // Remove reference to community from users
+    req.log.addAction("Removing community from user community lists.");
     await User.updateMany(
       { "communities.community": documents.community.title },
       { $pull: { communities: { community: documents.community.title } } }
     ).exec();
+    req.log.addAction("Community removed from user community lists.");
 
     // Remove posts from community
+    req.log.addAction("Removing posts from community.");
     await Post.deleteMany({ community: documents.community.title }).exec();
+    req.log.addAction("Posts removed from community.");
 
     // Remove comments from posts in community
+    req.log.addAction("Removing comments from community.");
     await Comment.deleteMany({ community: documents.community.title }).exec();
+    req.log.addAction("Comments removed from community.");
 
-    return res.status(200).send("Community removed.");
+    req.log.setResponse(204, "Success", null);
+    return res.status(204).send("Success. No content to return.");
   } catch (err) {
-    if (err instanceof ResponseError)
+    // Explicitly thrown error
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
       return res.status(err.status).send(err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", err);
     return res.status(400).send(`Bad Request: ${err}`);
+  } finally {
+    req.log.print();
   }
 });
 

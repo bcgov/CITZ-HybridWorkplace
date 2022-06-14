@@ -10,6 +10,7 @@ const rateLimit = require("express-rate-limit");
 const swaggerUI = require("swagger-ui-express");
 const swaggerConf = require("./swagger-conf");
 
+const initLogger = require("./middleware/initLogger");
 const authenticateToken = require("./middleware/authenticateToken");
 const sanitizeInputs = require("./middleware/sanitizeInputs");
 
@@ -87,31 +88,57 @@ function NoMatchFoundCallback(req, res) {
 // Version 1 routes
 function useV1(req, res, next) {
   // Routes
-  app.use("/api/register", registerRouterV1);
-  app.use("/api/login", loginRouterV1);
-  app.use("/api/logout", logoutRouterV1);
-  app.use("/api/token", tokenRouterV1);
+  app.use("/api/register", initLogger, registerRouterV1);
+  app.use("/api/login", initLogger, loginRouterV1);
+  app.use("/api/logout", initLogger, logoutRouterV1);
+  app.use("/api/token", initLogger, tokenRouterV1);
   app.use("/api/health", healthCheckRouterV1);
 
-  app.use("/api/community", authenticateToken, communityRouterV1);
-  app.use("/api/community/flags", authenticateToken, communityFlagsRouterV1);
-  app.use("/api/community/tags", authenticateToken, communityTagsRouterV1);
-  app.use("/api/community/rules", authenticateToken, communityRulesRouterV1);
+  app.use("/api/community", initLogger, authenticateToken, communityRouterV1);
+  app.use(
+    "/api/community/flags",
+    initLogger,
+    authenticateToken,
+    communityFlagsRouterV1
+  );
+  app.use(
+    "/api/community/tags",
+    initLogger,
+    authenticateToken,
+    communityTagsRouterV1
+  );
+  app.use(
+    "/api/community/rules",
+    initLogger,
+    authenticateToken,
+    communityRulesRouterV1
+  );
   app.use(
     "/api/community/members",
+    initLogger,
     authenticateToken,
     communityMembersRouterV1
   );
 
-  app.use("/api/post", authenticateToken, postRouterV1);
-  app.use("/api/post/flags", authenticateToken, postFlagsRouterV1);
-  app.use("/api/post/tags", authenticateToken, postTagsRouterV1);
+  app.use("/api/post", initLogger, authenticateToken, postRouterV1);
+  app.use("/api/post/flags", initLogger, authenticateToken, postFlagsRouterV1);
+  app.use("/api/post/tags", initLogger, authenticateToken, postTagsRouterV1);
 
-  app.use("/api/comment", authenticateToken, commentRouterV1);
-  app.use("/api/comment/reply", authenticateToken, commentReplyRouterV1);
-  app.use("/api/comment/vote", authenticateToken, commentVoteRouterV1);
+  app.use("/api/comment", initLogger, authenticateToken, commentRouterV1);
+  app.use(
+    "/api/comment/reply",
+    initLogger,
+    authenticateToken,
+    commentReplyRouterV1
+  );
+  app.use(
+    "/api/comment/vote",
+    initLogger,
+    authenticateToken,
+    commentVoteRouterV1
+  );
 
-  app.use("/api/user", authenticateToken, userRouterV1);
+  app.use("/api/user", initLogger, authenticateToken, userRouterV1);
 
   next();
 }
