@@ -20,22 +20,25 @@
  * @module
  */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-
+import { getPosts } from "../redux/ducks/postDuck";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import UsersCommunitiesList from "../components/UsersCommunitiesList";
-import Posts from "../components/PostsList";
+import PostsList from "../components/PostsList";
 import PostModal from "../components/modals/AddPostModal";
 import AddCommunityModal from "../components/modals/AddCommunityModal";
 
 const HomePage = (props) => {
+  useEffect(() => {
+    props.getPosts();
+  }, []);
   const [show, setShow] = useState(false);
 
   const [createCommunityOpen, setCreateCommunityOpen] = useState(false);
@@ -71,7 +74,7 @@ const HomePage = (props) => {
 
               <PostModal onClose={() => setShow(false)} show={show} />
             </Box>
-            <Posts />
+            <PostsList posts={props.posts} />
           </Paper>
         </Grid>
         <Grid item xs={4}>
@@ -122,6 +125,7 @@ HomePage.propTypes = {
 const mapStateToProps = (state) => ({
   communities: state.communities.items,
   auth: state.auth.accessToken,
+  posts: state.posts.items,
 });
 
-export default connect(mapStateToProps, {})(HomePage);
+export default connect(mapStateToProps, { getPosts })(HomePage);
