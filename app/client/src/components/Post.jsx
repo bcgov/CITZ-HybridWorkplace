@@ -1,6 +1,7 @@
 import {
   Button,
   Card,
+  Grid,
   CardActions,
   CardContent,
   CardHeader,
@@ -30,6 +31,7 @@ import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getPost } from "../redux/ducks/postDuck";
 import { useNavigate } from "react-router-dom";
+import CommentIcon from "@mui/icons-material/Comment";
 
 const Post = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -62,6 +64,7 @@ const Post = (props) => {
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
   const handlePostClick = () => navigate(`/post/${post._id}`);
+  const handleCommunityClick = (title) => navigate(`/community/${title}`);
 
   return (
     <div key={post._id}>
@@ -109,19 +112,35 @@ const Post = (props) => {
             </>
           }
           title={
-            <Typography
-              variant="h4"
-              onClick={handlePostClick}
-              style={{ cursor: "pointer" }}
-            >
-              {post.title}
-            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={10}>
+                <Typography
+                  variant="h4"
+                  onClick={handlePostClick}
+                  style={{ cursor: "pointer" }}
+                >
+                  {post.title}
+                </Typography>
+              </Grid>
+              <Grid item xs={2}>
+                <Typography
+                  onClick={() => handleCommunityClick(post.community)}
+                >
+                  {post.community}
+                </Typography>
+              </Grid>
+            </Grid>
           }
+          subheader={`by ${post.creatorName}`}
         />
         <CardContent onClick={handlePostClick} style={{ cursor: "pointer" }}>
           <Typography variant="body1">{post.message}</Typography>
         </CardContent>
         <CardActions>
+          <CommentIcon fontSize="small" />
+          <Typography pl="5px" pr="30px">
+            {post.commentCount || 0}
+          </Typography>
           <TagsList post={post} />
         </CardActions>
       </Card>
