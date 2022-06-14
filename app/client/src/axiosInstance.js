@@ -50,11 +50,11 @@ hwp_axios.interceptors.request.use(
 
         config.headers.authorization = `Bearer ${data.token}`;
         config.params.dispatch({ type: SET_ACCESS_TOKEN, payload: data });
-        delete config.params.dispatch;
       }
     } catch (err) {
       console.error(err);
     } finally {
+      delete config.params.dispatch;
       return config;
     }
   },
