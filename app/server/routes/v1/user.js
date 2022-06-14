@@ -144,8 +144,16 @@ router.patch("/", async (req, res) => {
     const firstName = req.body.firstName || documents.user.firstName;
     const lastName = req.body.lastName || documents.user.lastName;
 
-    if (firstName && lastName) {
-      const creatorName = `${firstName} ${lastName}`;
+    // If first or last name was set in request body
+    // and firstName is set either in the request body or in the database.
+    if (
+      (req.body.firstName || req.body.lastName) &&
+      firstName &&
+      firstName !== ""
+    ) {
+      // If last name set in req.body or database, set full name, else just first name
+      const creatorName =
+        lastName && lastName !== "" ? `${firstName} ${lastName}` : firstName;
       await Comment.updateMany(
         { creator: documents.user.id },
         { $set: { creatorName } }
