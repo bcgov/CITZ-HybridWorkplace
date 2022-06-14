@@ -55,12 +55,20 @@
  *          type: string
  *          description: User's title (set in profile).
  *          example: Jr. Software Engineer
+ *        organization:
+ *          type: string
+ *          description: The organization user is a part of.
  *        bio:
  *          type: string
  *          description: User's profile bio (set in profile).
  *          example: Hi I'm new! Just moved from the Ottawa
  *        registeredOn:
  *          type: string
+ *        interests:
+ *          type: array
+ *          description: Topics the user is interested in.
+ *          items:
+ *            type: string
  *        communities:
  *          type: array
  *          description: Communities User has joined.
@@ -90,9 +98,11 @@ const User = new mongoose.Schema(
     firstName: { type: String },
     lastName: { type: String },
     title: { type: String },
+    organization: { type: String },
     bio: { type: String },
     registeredOn: { type: String, required: true },
     communities: [{ community: String, engagement: Number }],
+    interests: [String],
   },
   { collection: "user" }
 );
