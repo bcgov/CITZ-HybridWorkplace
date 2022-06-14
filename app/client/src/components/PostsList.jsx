@@ -20,24 +20,19 @@
  * @module
  */
 
-import React, { useEffect } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
-import { getPosts } from "../redux/ducks/postDuck";
 import Post from "./Post";
 import FlagPostModal from "./modals/FlagPostModal";
 import DeletePostModal from "./modals/DeletePostModal";
 import EditPostModal from "./modals/EditPostModal";
 
 const PostsList = (props) => {
-  useEffect(() => {
-    props.getPosts();
-  }, []);
-
   return (
     <div>
-      {props.posts.map((post) => (
+      {props.posts?.map((post) => (
         <Post post={post} key={post._id} />
       ))}
       <FlagPostModal />
@@ -48,12 +43,9 @@ const PostsList = (props) => {
 };
 
 PostsList.propTypes = {
-  getPosts: PropTypes.func.isRequired,
   posts: PropTypes.array.isRequired,
 };
 
-const mapStateToProps = (state) => ({
-  posts: state.posts.items,
-});
+const mapStateToProps = (state) => ({});
 
-export default connect(mapStateToProps, { getPosts })(PostsList);
+export default connect(mapStateToProps, {})(PostsList);

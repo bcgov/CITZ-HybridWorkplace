@@ -31,7 +31,7 @@ import Typography from "@mui/material/Typography";
 import { connect } from "react-redux";
 import { useParams } from "react-router-dom";
 import PropTypes from "prop-types";
-import Posts from "../components/PostsList";
+import PostsList from "../components/PostsList";
 import PostModal from "../components/modals/AddPostModal";
 import { getCommunityPosts, getCommunity } from "../redux/ducks/communityDuck";
 
@@ -61,7 +61,7 @@ const CommunityPage = (props) => {
               }}
             >
               <Typography variant="h6" component="h5">
-                Posts {console.log(props.community)}
+                Posts
               </Typography>
               <Button onClick={() => setShow(true)}> Add Post </Button>
 
@@ -71,7 +71,7 @@ const CommunityPage = (props) => {
                 show={show}
               />
             </Box>
-            <Posts />
+            <PostsList posts={props.community.posts} />
           </Paper>
         </Grid>
         <Grid item xs={4}>

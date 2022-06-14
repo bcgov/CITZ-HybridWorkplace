@@ -20,18 +20,23 @@
  * @module
  */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import PostsList from "../components/PostsList";
+import { getPosts } from "../redux/ducks/postDuck";
 import AddPostModal from "../components/modals/AddPostModal";
+import { connect } from "react-redux";
 
-const PostsPage = () => {
+const PostsPage = (props) => {
   const [show, setShow] = useState(false);
+  useEffect(() => {
+    props.getPosts();
+  }, []);
 
   return (
     <div>
       <h1>Posts</h1>
-      <PostsList />
+      <PostsList posts={props.posts} />
       <br />
       <button onClick={() => setShow(true)}>Add Post</button>
       <AddPostModal onClose={() => setShow(false)} show={show} />
@@ -39,4 +44,12 @@ const PostsPage = () => {
   );
 };
 
-export default PostsPage;
+const mapStateToProps = (state) => ({
+  posts: state.posts.items,
+});
+
+const mapActionsToProps = {
+  getPosts,
+};
+
+export default connect(mapStateToProps, mapActionsToProps)(PostsPage);
