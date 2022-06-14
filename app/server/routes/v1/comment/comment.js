@@ -317,7 +317,7 @@ router.patch("/:id", async (req, res) => {
       throw new ResponseError(403, "Missing message in body of the request.");
 
     req.log.addAction("Checking edit query.");
-    const query = checkPatchQuery(req.body, documents.community, [
+    const query = checkPatchQuery(req.body, documents.comment, [
       "creator",
       "post",
       "community",
