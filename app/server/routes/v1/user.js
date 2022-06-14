@@ -85,6 +85,8 @@ router.get("/", async (req, res) => {
       lastName: documents.user.lastName,
       bio: documents.user.bio,
       title: documents.user.title,
+      registeredOn: documents.user.registeredOn,
+      postCount: documents.user.postCount,
     });
   } catch (err) {
     // Explicitly thrown error
@@ -153,6 +155,7 @@ router.patch("/", async (req, res) => {
       "refreshToken",
       "registeredOn",
       "communities",
+      "postCount",
     ]);
     req.log.addAction("Edit query has been cleaned.");
 
@@ -255,6 +258,8 @@ router.get("/:username", async (req, res) => {
       lastName: documents.user.lastName,
       bio: documents.user.bio,
       title: documents.user.title,
+      registeredOn: documents.user.registeredOn,
+      postCount: documents.user.postCount,
     });
   } catch (err) {
     // Explicitly thrown error
