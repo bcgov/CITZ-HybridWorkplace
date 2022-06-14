@@ -24,6 +24,7 @@ import hwp_axios from "../../axiosInstance";
 
 const SET_COMMUNITIES = "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_COMMUNITIES";
 const GET_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/GET_COMMUNITY";
+const EDIT_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/GET_COMMUNITY";
 const SET_USERS_COMMUNITIES =
   "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_USERS_COMMUNITIES";
 const ADD_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/ADD_COMMUNITY";
@@ -300,6 +301,38 @@ export const deleteCommunity =
     }
   };
 
+export const editCommunity = (newCommunity) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const authState = getState().auth;
+    const token = authState.accessToken;
+    if (!token) throw new Error(noTokenText);
+
+    const response = await hwp_axios.patch(
+      `api/community/${newCommunity.oldTitle}`,
+      newCommunity,
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        params: {
+          dispatch,
+        },
+      }
+    );
+
+    dispatch({
+      type: EDIT_COMMUNITY,
+      payload: newCommunity,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
 const initialState = {
   usersCommunities: [], //users communities
   items: [], //communities
@@ -317,6 +350,11 @@ export function communityReducer(state = initialState, action) {
       return {
         ...state,
         item: { ...state.item, ...action.payload },
+      };
+    case EDIT_COMMUNITY:
+      return {
+        ...state,
+        item: Object.assign(state.community, action.payload),
       };
     case SET_COMMUNITIES:
       return {
