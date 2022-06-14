@@ -31,15 +31,19 @@ const ProfileInfo = (props) => {
     props.getProfile(props.username);
   });
 
+  const registeredOn = props.profile.registeredOn || "";
+  const registartionDate = registeredOn.split(",")[0];
+
+  let name = props.profile.firstName || props.username;
+  if (props.profile.firstName && props.profile.lastName)
+    name += ` ${props.profile.lastName}`;
+
   return (
     <div>
       <Typography variant="h4" style={{ fontWeight: 600, color: "#313132" }}>
         {props.profile.username}
       </Typography>
-      <Typography variant="h5">
-        {!(props.profile.firstName || props.profile.lastName) ||
-          "No name to display"}
-      </Typography>
+      <Typography variant="h5">{name || "No name to display"}</Typography>
       <Typography variant="body2"> {props.profile.email} </Typography>
       <Typography variant="body2">
         {props.profile.title || "No title to display"}
@@ -49,11 +53,14 @@ const ProfileInfo = (props) => {
         Joined
       </Typography>
       <Typography variant="p" style={{ fontWeight: 600, color: "#999" }}>
-        {props.profile.registeredOn || "No join date to display"}
+        {registartionDate || "No join date to display"}
       </Typography>
       <br />
       <Typography variant="h6" style={{ fontWeight: 600, color: "#313132" }}>
         Posts
+      </Typography>
+      <Typography variant="p" style={{ fontWeight: 600, color: "#999" }}>
+        {props.profile.postCount || 0}
       </Typography>
     </div>
   );
