@@ -40,6 +40,15 @@ function App() {
   const theme = createTheme({
     palette: {
       mode: "light",
+      primary: {
+        main: "#003366",
+      },
+      secondary: {
+        main: "#FDB913",
+      },
+      neutral: {
+        main: "#313132",
+      },
     },
     typography: {
       fontFamily: "BCSans",

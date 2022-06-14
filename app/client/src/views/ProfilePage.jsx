@@ -22,8 +22,7 @@
  */
 
 import React, { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import "./Styles/profile.css";
 import { getProfile } from "../redux/ducks/profileDuck";
