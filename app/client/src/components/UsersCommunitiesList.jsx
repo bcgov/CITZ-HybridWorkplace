@@ -34,11 +34,16 @@ import {
   joinCommunity,
 } from "../redux/ducks/communityDuck";
 import JoinButton from "./JoinButton";
+import { useNavigate } from "react-router-dom";
 
 const UsersCommunitiesList = (props) => {
+  const navigate = useNavigate();
+
   useEffect(() => {
     props.getUsersCommunities();
   }, []);
+
+  const handleCommunityClick = (title) => navigate(`/community/${title}`);
 
   return (
     <div>
@@ -53,7 +58,11 @@ const UsersCommunitiesList = (props) => {
             square
           >
             <Grid container spacing={1} alignItems="center">
-              <Grid item xs={9}>
+              <Grid
+                item
+                xs={9}
+                onClick={() => handleCommunityClick(community.title)}
+              >
                 <Typography p={1.5} variant="p" component="p">
                   {community.title}
                 </Typography>
