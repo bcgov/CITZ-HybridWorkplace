@@ -176,7 +176,7 @@ const Post = (props) => {
               <Grid item xs={2}>
                 <Typography
                   onClick={() => handleCommunityClick(post.community)}
-                  style={{
+                  sx={{
                     cursor: "pointer",
                     textDecoration: commNameHover ? "underline" : "",
                   }}
