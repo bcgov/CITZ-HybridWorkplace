@@ -168,7 +168,7 @@ const Post = (props) => {
                 <Typography
                   variant="h5"
                   onClick={handlePostClick}
-                  style={{ cursor: "pointer" }}
+                  sx={{ cursor: "pointer" }}
                 >
                   <b>{post.title}</b>
                 </Typography>
@@ -176,7 +176,7 @@ const Post = (props) => {
               <Grid item xs={2}>
                 <Typography
                   onClick={() => handleCommunityClick(post.community)}
-                  style={{
+                  sx={{
                     cursor: "pointer",
                     textDecoration: commNameHover ? "underline" : "",
                   }}
@@ -194,7 +194,7 @@ const Post = (props) => {
             </Typography>
           }
         />
-        <CardContent onClick={handlePostClick} style={{ cursor: "pointer" }}>
+        <CardContent onClick={handlePostClick} sx={{ cursor: "pointer" }}>
           <Typography variant="body1">{message}</Typography>
         </CardContent>
         <CardActions>
