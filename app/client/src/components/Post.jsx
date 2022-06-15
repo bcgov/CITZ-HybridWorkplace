@@ -36,6 +36,22 @@ import moment from "moment";
 
 const Post = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const [commNameHover, setCommNameHover] = useState(false);
+  const onCommNameHoverEnter = () => {
+    setCommNameHover(true);
+  };
+  const onCommNameHoverLeave = () => {
+    setCommNameHover(false);
+  };
+
+  const [cardHover, setCardHover] = useState(false);
+  const onCardHoverEnter = () => {
+    setCardHover(true);
+  };
+  const onCardHoverLeave = () => {
+    setCardHover(false);
+  };
   let { id } = useParams();
   const navigate = useNavigate();
 
@@ -103,9 +119,13 @@ const Post = (props) => {
           py: 0,
           margin: "auto",
           borderRadius: "10px",
+          border: 1,
+          borderColor: cardHover ? "gray" : "darkgray",
         }}
         variant="outlined"
         square
+        onMouseEnter={onCardHoverEnter}
+        onMouseLeave={onCardHoverLeave}
       >
         <CardHeader
           sx={{ backgroundColor: "#0072A2", color: "white" }}
@@ -156,6 +176,12 @@ const Post = (props) => {
               <Grid item xs={2}>
                 <Typography
                   onClick={() => handleCommunityClick(post.community)}
+                  style={{
+                    cursor: "pointer",
+                    textDecoration: commNameHover ? "underline" : "",
+                  }}
+                  onMouseEnter={onCommNameHoverEnter}
+                  onMouseLeave={onCommNameHoverLeave}
                 >
                   {post.community}
                 </Typography>
@@ -172,7 +198,10 @@ const Post = (props) => {
           <Typography variant="body1">{message}</Typography>
         </CardContent>
         <CardActions>
-          <CommentIcon fontSize="small" />
+          <IconButton onClick={handlePostClick}>
+            <CommentIcon fontSize="small" />
+          </IconButton>
+
           {post.availableTags.length ? (
             <>
               <Typography pl="5px" pr="30px">
