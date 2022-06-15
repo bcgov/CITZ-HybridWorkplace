@@ -391,6 +391,13 @@ router.patch("/:title", async (req, res) => {
     ).exec();
     req.log.addAction("Community updated.");
 
+    req.log.addAction("Updating posts in community.");
+    await Post.updateMany(
+      { community: documents.community.title },
+      { $set: { community: req.body.title } }
+    ).exec();
+    req.log.addAction("Community posts updated.");
+
     req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
