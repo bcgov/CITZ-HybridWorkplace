@@ -1,6 +1,7 @@
 import {
   Button,
   Card,
+  Grid,
   CardActions,
   CardContent,
   CardHeader,
@@ -27,9 +28,11 @@ import { useParams } from "react-router-dom";
 import { getPost } from "../redux/ducks/postDuck";
 import CommentsList from "./CommentsList";
 import CreateComment from "./CreateComment";
+import { useNavigate } from "react-router-dom";
 
 const SingularPost = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const navigate = useNavigate();
 
   let { id } = useParams();
 
@@ -49,6 +52,7 @@ const SingularPost = (props) => {
 
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
+  const handleCommunityClick = (title) => navigate(`/community/${title}`);
 
   return (
     <div key={props.post._id}>
@@ -89,7 +93,21 @@ const SingularPost = (props) => {
               </Menu>
             </>
           }
-          title={<Typography variant="h4">{props.post.title}</Typography>}
+          title={
+            <Grid container spacing={2}>
+              <Grid item xs={10}>
+                <Typography variant="h4">{props.post.title}</Typography>
+              </Grid>
+              <Grid item xs={2}>
+                <Typography
+                  onClick={() => handleCommunityClick(props.post.community)}
+                >
+                  {props.post.community}
+                </Typography>
+              </Grid>
+            </Grid>
+          }
+          subheader={`by ${props.post.creatorName}`}
         />
         <CardContent>
           <Typography variant="body1">{props.post.message}</Typography>
