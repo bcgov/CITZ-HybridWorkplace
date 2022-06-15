@@ -34,7 +34,10 @@ import { useParams } from "react-router-dom";
 import PropTypes from "prop-types";
 import PostsList from "../components/PostsList";
 import PostModal from "../components/modals/AddPostModal";
+import { openEditCommunityModal } from "../redux/ducks/modalDuck";
 import { getCommunityPosts, getCommunity } from "../redux/ducks/communityDuck";
+import SettingsTwoToneIcon from "@mui/icons-material/SettingsTwoTone";
+import EditCommunityModal from "../components/modals/EditCommunityModal";
 
 const CommunityPage = (props) => {
   const [show, setShow] = useState(false);
@@ -46,6 +49,8 @@ const CommunityPage = (props) => {
     props.getCommunity(title);
   }, []);
 
+  const handleSettingsClick = () =>
+    props.openEditCommunityModal(props.community);
   return (
     <div>
       <Grid container spacing={2}>
@@ -109,8 +114,20 @@ const CommunityPage = (props) => {
               </Typography>
             </Box>
           </Paper>
+          <br />
+          {props.community.creator === props.username && (
+            <Button
+              variant="text"
+              color="inherit"
+              onClick={handleSettingsClick}
+            >
+              <SettingsTwoToneIcon />
+              Settings
+            </Button>
+          )}
         </Grid>
       </Grid>
+      <EditCommunityModal />
     </div>
   );
 };
@@ -123,11 +140,13 @@ CommunityPage.propTypes = {
 
 const mapStateToProps = (state) => ({
   community: state.communities.item,
+  username: state.auth.user.username,
 });
 
 const mapDispatchToProps = {
   getCommunityPosts,
   getCommunity,
+  openEditCommunityModal,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CommunityPage);
