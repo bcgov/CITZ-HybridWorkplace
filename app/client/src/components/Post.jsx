@@ -32,6 +32,7 @@ import { Link, useParams } from "react-router-dom";
 import { getPost } from "../redux/ducks/postDuck";
 import { useNavigate } from "react-router-dom";
 import CommentIcon from "@mui/icons-material/Comment";
+import moment from "moment";
 
 const Post = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -66,22 +67,52 @@ const Post = (props) => {
   const handlePostClick = () => navigate(`/post/${post._id}`);
   const handleCommunityClick = (title) => navigate(`/community/${title}`);
 
+  // Create preview if post message is longer than 250 characters
+  let message = post.message;
+  if (message.length > 250) {
+    message = `${message.substr(0, 249)}...`;
+  }
+
+  // Convert to local time
+  let createdOn =
+    moment(moment.utc(post.createdOn, "MMMM Do YYYY, h:mm:ss a").toDate())
+      .local()
+      .format("MMMM Do YYYY, h:mm:ss a") || "";
+  // Remove milliseconds
+  createdOn = `${createdOn.substr(0, createdOn.length - 6)} ${createdOn.substr(
+    createdOn.length - 2,
+    createdOn.length
+  )}`;
+  const splitCreatedOn = createdOn.split(",");
+
+  const today = moment().format("MMMM Do YYYY");
+  const yesterday = moment().subtract(1, "days").format("MMMM Do YYYY");
+
+  if (splitCreatedOn[0] === today) createdOn = `Today${splitCreatedOn[1]}`;
+  if (splitCreatedOn[0] === yesterday)
+    createdOn = `Yesterday${splitCreatedOn[1]}`;
+
   return (
-    <div key={post._id}>
+    <div
+      key={post._id}
+      style={{ "margin-bottom": "15px", "background-color": "transparent" }}
+    >
       <Card
         sx={{
-          px: 1,
+          px: 0,
           py: 0,
           margin: "auto",
+          borderRadius: "10px",
         }}
         variant="outlined"
         square
       >
         <CardHeader
+          sx={{ backgroundColor: "#0072A2", color: "white" }}
           action={
             <>
               <IconButton aria-label="settings" onClick={handleMenuOpen}>
-                <MoreVertIcon />
+                <MoreVertIcon sx={{ color: "white" }} />
               </IconButton>
               <Menu
                 open={!!anchorEl}
@@ -115,11 +146,11 @@ const Post = (props) => {
             <Grid container spacing={2}>
               <Grid item xs={10}>
                 <Typography
-                  variant="h4"
+                  variant="h5"
                   onClick={handlePostClick}
                   style={{ cursor: "pointer" }}
                 >
-                  {post.title}
+                  <b>{post.title}</b>
                 </Typography>
               </Grid>
               <Grid item xs={2}>
@@ -131,17 +162,37 @@ const Post = (props) => {
               </Grid>
             </Grid>
           }
-          subheader={`by ${post.creatorName}`}
+          subheader={
+            <Typography size="medium" color="white">
+              by {props.post.creatorName}
+            </Typography>
+          }
         />
         <CardContent onClick={handlePostClick} style={{ cursor: "pointer" }}>
-          <Typography variant="body1">{post.message}</Typography>
+          <Typography variant="body1">{message}</Typography>
         </CardContent>
         <CardActions>
           <CommentIcon fontSize="small" />
-          <Typography pl="5px" pr="30px">
-            {post.commentCount || 0}
-          </Typography>
-          <TagsList post={post} />
+          {post.availableTags.length ? (
+            <>
+              <Typography pl="5px" pr="30px">
+                {post.commentCount || 0}
+              </Typography>
+              <TagsList post={post} />
+              <Typography pl="30px" color="#898989">
+                Published: {createdOn}
+              </Typography>
+            </>
+          ) : (
+            <>
+              <Typography pl="5px" pr="5px">
+                {post.commentCount || 0}
+              </Typography>
+              <Typography pl="5px" color="#898989">
+                Published: {createdOn}
+              </Typography>
+            </>
+          )}
         </CardActions>
       </Card>
     </div>

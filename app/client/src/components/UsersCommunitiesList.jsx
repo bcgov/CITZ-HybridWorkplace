@@ -26,7 +26,9 @@ import PropTypes from "prop-types";
 
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import GroupsIcon from "@mui/icons-material/Groups";
 
 import {
   getUsersCommunities,
@@ -48,10 +50,11 @@ const UsersCommunitiesList = (props) => {
   return (
     <div>
       {props.communities.usersCommunities.map((community) => (
-        <div key={community._id}>
+        <div key={community._id} style={{ "margin-bottom": "15px" }}>
           <Paper
             sx={{
               px: 0.5,
+              borderRadius: "10px",
               margin: "auto",
             }}
             variant="outlined"
@@ -63,9 +66,20 @@ const UsersCommunitiesList = (props) => {
                 xs={9}
                 onClick={() => handleCommunityClick(community.title)}
               >
-                <Typography p={1.5} variant="p" component="p">
-                  {community.title}
-                </Typography>
+                <Grid container>
+                  <Grid item xs={12}>
+                    <Typography p={1.5} variant="h7" component="p">
+                      <b>{community.title}</b>
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sx={{ pt: 0, pb: "10px" }}>
+                    <Stack direction="row" spacing={1} sx={{ ml: "15px" }}>
+                      <GroupsIcon sx={{ color: "#898989" }} />
+                      <Typography color="#898989">15</Typography>
+                    </Stack>
+                  </Grid>
+                  <Grid item xs={2}></Grid>
+                </Grid>
               </Grid>
 
               <Grid item xs={3} textAlign="center">

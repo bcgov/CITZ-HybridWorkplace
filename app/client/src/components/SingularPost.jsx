@@ -29,6 +29,7 @@ import { getPost } from "../redux/ducks/postDuck";
 import CommentsList from "./CommentsList";
 import CreateComment from "./CreateComment";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 const SingularPost = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -54,22 +55,41 @@ const SingularPost = (props) => {
   const handleMenuClose = () => setAnchorEl(null);
   const handleCommunityClick = (title) => navigate(`/community/${title}`);
 
+  const availableTags = props.post.availableTags || [];
+
+  let createdOn = props.post.createdOn || "";
+  // Remove milliseconds
+  createdOn = `${createdOn.substr(0, createdOn.length - 6)} ${createdOn.substr(
+    createdOn.length - 2,
+    createdOn.length
+  )}`;
+  const splitCreatedOn = createdOn.split(",");
+
+  const today = moment().format("MMMM Do YYYY");
+  const yesterday = moment().subtract(1, "days").format("MMMM Do YYYY");
+
+  if (splitCreatedOn[0] === today) createdOn = `Today${splitCreatedOn[1]}`;
+  if (splitCreatedOn[0] === yesterday)
+    createdOn = `Yesterday${splitCreatedOn[1]}`;
+
   return (
     <div key={props.post._id}>
       <Card
         sx={{
-          px: 1,
+          px: 0,
           py: 0,
           margin: "auto",
+          borderRadius: "10px",
         }}
         variant="outlined"
         square
       >
         <CardHeader
+          sx={{ backgroundColor: "#0072A2", color: "white" }}
           action={
             <>
               <IconButton aria-label="settings" onClick={handleMenuOpen}>
-                <MoreVertIcon />
+                <MoreVertIcon sx={{ color: "white" }} />
               </IconButton>
               <Menu
                 open={!!anchorEl}
@@ -102,18 +122,29 @@ const SingularPost = (props) => {
                 <Typography
                   onClick={() => handleCommunityClick(props.post.community)}
                 >
-                  {props.post.community}
+                  <b>{props.post.community}</b>
                 </Typography>
               </Grid>
             </Grid>
           }
-          subheader={`by ${props.post.creatorName}`}
+          subheader={
+            <Typography color="white">by {props.post.creatorName}</Typography>
+          }
         />
         <CardContent>
           <Typography variant="body1">{props.post.message}</Typography>
         </CardContent>
         <CardActions>
-          <TagsList post={props.post} />
+          {availableTags.length ? (
+            <>
+              <TagsList post={props.post} />
+              <Typography pl="30px" color="#898989">
+                Published: {createdOn}
+              </Typography>
+            </>
+          ) : (
+            <Typography color="#898989">Published: {createdOn}</Typography>
+          )}
         </CardActions>
       </Card>
       <CreateComment post={props.post} />

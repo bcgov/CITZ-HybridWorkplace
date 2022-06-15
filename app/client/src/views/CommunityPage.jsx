@@ -27,6 +27,7 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import AddIcon from "@mui/icons-material/Add";
 
 import { connect } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -51,6 +52,7 @@ const CommunityPage = (props) => {
         <Grid item xs={8}>
           <Paper>
             <Box
+              mb="15px"
               sx={{
                 backgroundColor: "#036",
                 color: "white",
@@ -58,12 +60,22 @@ const CommunityPage = (props) => {
                 py: 0.5,
                 textAlign: "center",
                 display: "flex",
+                borderRadius: "10px",
               }}
             >
-              <Typography variant="h6" component="h5">
-                Posts
-              </Typography>
-              <Button onClick={() => setShow(true)}> Add Post </Button>
+              <Grid container spacing={1}>
+                <Grid item xs={9}>
+                  <Typography variant="h5" component="h5" pl="175px">
+                    <b>Posts</b>
+                  </Typography>
+                </Grid>
+                <Grid item xs={3} align="right">
+                  <Button onClick={() => setShow(true)}>
+                    <Typography color="white">New</Typography>
+                    <AddIcon sx={{ color: "white" }} />
+                  </Button>
+                </Grid>
+              </Grid>
 
               <PostModal
                 communityName={title}
@@ -79,6 +91,8 @@ const CommunityPage = (props) => {
             <Box
               sx={{
                 backgroundColor: "#036",
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
                 color: "white",
                 px: 1,
                 py: 0.5,
@@ -86,13 +100,14 @@ const CommunityPage = (props) => {
               }}
             >
               <Typography variant="h6" component="h5">
-                {title}
+                <b>{title}</b>
               </Typography>
             </Box>
-            <div>
-              <p>{props.community.description}</p>
-              <br />
-            </div>
+            <Box sx={{ borderRadius: "10px", px: 1, py: 0.5 }}>
+              <Typography sx={{ mt: "10px", mb: "15px" }}>
+                {props.community.description}
+              </Typography>
+            </Box>
           </Paper>
         </Grid>
       </Grid>

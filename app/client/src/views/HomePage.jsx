@@ -34,6 +34,7 @@ import UsersCommunitiesList from "../components/UsersCommunitiesList";
 import PostsList from "../components/PostsList";
 import PostModal from "../components/modals/AddPostModal";
 import AddCommunityModal from "../components/modals/AddCommunityModal";
+import AddIcon from "@mui/icons-material/Add";
 
 const HomePage = (props) => {
   useEffect(() => {
@@ -57,8 +58,10 @@ const HomePage = (props) => {
         <Grid item xs={8}>
           <Paper>
             <Box
+              mb="15px"
               sx={{
                 backgroundColor: "#036",
+                borderRadius: "10px",
                 color: "white",
                 px: 1,
                 py: 0.5,
@@ -66,11 +69,19 @@ const HomePage = (props) => {
                 display: "flex",
               }}
             >
-              <Typography variant="h6" component="h5">
-                {" "}
-                Posts{" "}
-              </Typography>
-              <Button onClick={() => setShow(true)}> Add Post </Button>
+              <Grid container spacing={1}>
+                <Grid item xs={9}>
+                  <Typography variant="h5" component="h5" pl="175px">
+                    <b>Top Posts</b>
+                  </Typography>
+                </Grid>
+                <Grid item xs={3} align="right">
+                  <Button onClick={() => setShow(true)}>
+                    <Typography color="white">New</Typography>
+                    <AddIcon sx={{ color: "white" }} />
+                  </Button>
+                </Grid>
+              </Grid>
 
               <PostModal onClose={() => setShow(false)} show={show} />
             </Box>
@@ -80,8 +91,10 @@ const HomePage = (props) => {
         <Grid item xs={4}>
           <Paper>
             <Box
+              mb="15px"
               sx={{
                 backgroundColor: "#036",
+                borderRadius: "10px",
                 color: "white",
                 px: 1,
                 py: 0.5,
@@ -89,13 +102,14 @@ const HomePage = (props) => {
               }}
             >
               <Typography variant="h6" component="h5">
-                Your Communities
+                <b>Your Communities</b>
               </Typography>
             </Box>
             <UsersCommunitiesList />
             <Box
               sx={{
                 backgroundColor: "#036",
+                borderRadius: "10px",
                 color: "white",
                 px: 1,
                 py: 0.5,
@@ -103,7 +117,10 @@ const HomePage = (props) => {
               }}
             >
               <Button variant="text" onClick={openDialog}>
-                + Create Community
+                <Typography color="white">
+                  <b>Create Community</b>
+                </Typography>
+                <AddIcon sx={{ color: "white" }} />
               </Button>
               <AddCommunityModal
                 onClose={closeDialog}
