@@ -56,7 +56,7 @@ const Community = (props) => {
       >
         <CardHeader
           onClick={handleCommunityClick}
-          style={{ cursor: "pointer" }}
+          sx={{ cursor: "pointer" }}
           action={
             props.username === community.creator && (
               <>
