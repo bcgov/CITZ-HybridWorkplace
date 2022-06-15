@@ -18,16 +18,18 @@
  * Application entry point
  * @author [Brandon Bouchard](brandonjbouchard@gmail.com)
  * @author [Zach Bourque](zachbourque01@gmail.com)
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
  */
 
-import React, { useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-
 import "./Styles/profile.css";
+import React, { useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { getProfile } from "../redux/ducks/profileDuck";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import moment from "moment";
+
 import {
   Grid,
   Box,
@@ -52,7 +54,32 @@ const ProfilePage = (props) => {
 
   useEffect(() => {
     props.getProfile(username);
-  }, []);
+  });
+
+  const convertDate = (date) => {
+    const today = moment().format("MMMM Do YYYY");
+    const yesterday = moment().subtract(1, "days").format("MMMM Do YYYY");
+
+    // Convert to local time
+    let convertedDate =
+      moment(moment.utc(date, "MMMM Do YYYY, h:mm:ss a").toDate())
+        .local()
+        .format("MMMM Do YYYY, h:mm:ss a") || "";
+    // Remove milliseconds
+    convertedDate = `${convertedDate.substring(
+      0,
+      convertedDate.length - 6
+    )} ${convertedDate.substring(
+      convertedDate.length - 2,
+      convertedDate.length
+    )}`;
+    const splitDate = convertedDate.split(",");
+
+    if (splitDate[0] === today) convertedDate = `Today,${splitDate[1]}`;
+    if (splitDate[0] === yesterday) convertedDate = `Yesterday,${splitDate[1]}`;
+
+    return convertedDate;
+  };
 
   return (
     <Box
@@ -133,7 +160,7 @@ const ProfilePage = (props) => {
           <Grid container direction="row" justifyContent="space-evenly">
             <Grid item xs={12}>
               <Typography variant="h4" style={{ fontWeight: 600 }}>
-                Pinned Communities
+                Your Communities
               </Typography>
               <br />
               <Grid container spacing={2}>
@@ -163,29 +190,10 @@ const ProfilePage = (props) => {
                             paddingLeft: "0.5em",
                           }}
                         >
-                          {element.members.length}
+                          {element.memberCount || 0}
                         </Typography>
                       </Stack>
-                      <br />
-                      <Stack direction="row" spacing={2}>
-                        <Typography
-                          variant="p"
-                          style={{ fontWeight: 600, color: "#313132" }}
-                        >
-                          Joined:
-                        </Typography>
-                        <Typography
-                          variant="p"
-                          style={{
-                            fontWeight: 600,
-                            color: "#999",
-                          }}
-                        >
-                          2023/01/01
-                        </Typography>
-                      </Stack>
-                      <br />
-                      <Stack direction="row" spacing={2}>
+                      <Stack sx={{ mt: "5px" }}>
                         <Typography
                           variant="p"
                           style={{ fontWeight: 600, color: "#313132" }}
@@ -195,12 +203,11 @@ const ProfilePage = (props) => {
                         <Typography
                           variant="p"
                           style={{
-                            fontWeight: 600,
                             color: "#999",
                             textAlign: "left",
                           }}
                         >
-                          Today 10:36AM
+                          {convertDate(element.latestActivity)}
                         </Typography>
                       </Stack>
                     </Box>
@@ -312,7 +319,7 @@ const ProfilePage = (props) => {
                     variant="caption"
                     style={{ fontWeight: 600, color: "#FFF" }}
                   >
-                    by {element.creator}
+                    by {element.creatorName}
                   </Typography>
                 </Box>
               </Box>

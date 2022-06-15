@@ -39,7 +39,7 @@ const SingularPost = (props) => {
 
   useEffect(() => {
     props.post._id === id || props.getPost(id);
-  }, []);
+  });
 
   const handleFlagPostClick = () => {
     props.openFlagPostModal(props.post);
@@ -57,7 +57,11 @@ const SingularPost = (props) => {
 
   const availableTags = props.post.availableTags || [];
 
-  let createdOn = props.post.createdOn || "";
+  // Convert to local time
+  let createdOn =
+    moment(moment.utc(props.post.createdOn, "MMMM Do YYYY, h:mm:ss a").toDate())
+      .local()
+      .format("MMMM Do YYYY, h:mm:ss a") || "";
   // Remove milliseconds
   createdOn = `${createdOn.substr(0, createdOn.length - 6)} ${createdOn.substr(
     createdOn.length - 2,
