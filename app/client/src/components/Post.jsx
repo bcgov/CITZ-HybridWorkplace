@@ -36,16 +36,9 @@ import moment from "moment";
 
 const Post = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  let { id } = useParams();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!props.post) {
-      props.getPost(id);
-    }
-  }, []);
-
-  const post = props.post || props.fetchedPost;
+  const post = props.post;
 
   const handleFlagPostClick = () => {
     props.openFlagPostModal(post);
@@ -95,7 +88,7 @@ const Post = (props) => {
   return (
     <div
       key={post._id}
-      style={{ "margin-bottom": "15px", "background-color": "transparent" }}
+      style={{ marginBottom: "15px", backgroundColor: "transparent" }}
     >
       <Card
         sx={{
@@ -200,14 +193,13 @@ const Post = (props) => {
 };
 
 Post.propTypes = {
-  joinCommunity: PropTypes.func.isRequired,
+  openFlagPostModal: PropTypes.func.isRequired,
+  openDeletePostModal: PropTypes.func.isRequired,
+  openEditPostModal: PropTypes.func.isRequired,
+  getPost: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => ({
-  flagPostOpen: state.modal.flagPost.open,
-  deletePostOpen: state.modal.deletePost.open,
-  fetchedPost: state.posts.item,
-});
+const mapStateToProps = (state) => ({});
 
 const mapActionsToProps = {
   openFlagPostModal,

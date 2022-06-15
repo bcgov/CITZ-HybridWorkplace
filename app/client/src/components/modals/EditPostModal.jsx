@@ -69,7 +69,7 @@ const EditPostModal = (props) => {
     setMessage(event.target.value);
   };
   return (
-    <Dialog onClose={props.closeEditPostModal} open={props.open} fullWidth="md">
+    <Dialog onClose={props.closeEditPostModal} open={props.open} fullWidth>
       <Card>
         <CardHeader title="Edit Post" />
         <CardContent>

@@ -13,14 +13,20 @@ export const AlertList = ({ alerts }) => {
         zIndex: 1,
       }}
     >
-      {alerts.errors.map((element) => (
-        <Alert severity="error">{element}</Alert>
+      {alerts.errors.map((element, index) => (
+        <Alert severity="error" key={index + element}>
+          {element}
+        </Alert>
       ))}
-      {alerts.warnings.map((element) => (
-        <Alert severity="warning">{element}</Alert>
+      {alerts.warnings.map((element, index) => (
+        <Alert severity="warning" key={index + element}>
+          {element}
+        </Alert>
       ))}
-      {alerts.successes.map((element) => (
-        <Alert severity="success">{element}</Alert>
+      {alerts.successes.map((element, index) => (
+        <Alert severity="success" key={index + element}>
+          {element}
+        </Alert>
       ))}
     </div>
   );

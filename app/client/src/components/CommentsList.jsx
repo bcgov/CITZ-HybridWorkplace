@@ -10,17 +10,17 @@ export const CommentsList = (props) => {
   }, []);
   return (
     <>
-      {props.comments?.map((comment) => <Comment comment={comment} />) || (
-        <p>This post has no comments.</p>
-      )}
+      {props.comments?.map((comment) => (
+        <Comment comment={comment} key={comment._id} />
+      ))}
       <DeleteCommentModal />
     </>
   );
 };
 
 const mapStateToProps = (state) => ({
-  postId: state.posts.item._id,
   comments: state.posts.item.comments,
+  postId: state.posts.item._id,
 });
 
 const mapDispatchToProps = { getComments };

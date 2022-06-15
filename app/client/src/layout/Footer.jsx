@@ -46,7 +46,7 @@ class Footer extends Component {
     return (
       <div className="footer">
         <StyledLink to="/">Home</StyledLink>
-        <Divider vertical />
+        <Divider />
         <StyledExLink
           href={"placeholder" + "disclaimer"}
           target="_blank"
@@ -54,7 +54,7 @@ class Footer extends Component {
         >
           Disclaimer
         </StyledExLink>
-        <Divider vertical />
+        <Divider />
         <StyledExLink
           href={"placeholder" + "privacy"}
           target="_blank"
@@ -62,7 +62,7 @@ class Footer extends Component {
         >
           Privacy
         </StyledExLink>
-        <Divider vertical />
+        <Divider />
         <StyledExLink
           href={"placeholder" + "accessibility"}
           target="_blank"
@@ -70,7 +70,7 @@ class Footer extends Component {
         >
           Accessibility
         </StyledExLink>
-        <Divider vertical />
+        <Divider />
         <StyledExLink
           href={"placeholder" + "copyright"}
           target="_blank"
@@ -78,7 +78,7 @@ class Footer extends Component {
         >
           Copyright
         </StyledExLink>
-        <Divider vertical />
+        <Divider />
         <StyledExLink
           href="https://github.com/bcgov/CITZ-HybridWorkplace"
           target="_blank"

@@ -46,7 +46,7 @@ const DeleteCommunityModal = (props) => {
     <Dialog
       onClose={props.closeDeleteCommunityModal}
       open={props.open}
-      fullWidth="md"
+      fullWidth
     >
       <DialogTitle>Delete Community</DialogTitle>
       <DialogContent>

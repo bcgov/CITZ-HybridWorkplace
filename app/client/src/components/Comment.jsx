@@ -100,7 +100,7 @@ export const Comment = (props) => {
           )
         }
       />
-      <CardContent sx={{ "padding-top": "0px" }}>
+      <CardContent sx={{ paddingTop: "0px" }}>
         <Grid container spacing={2}>
           <Grid item xs={11}>
             {props.comment.edits.length > 0 && (
