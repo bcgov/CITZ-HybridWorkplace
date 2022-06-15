@@ -37,6 +37,15 @@
  *          example: Welcome to TheNeighbourhood
  *        creator:
  *          $ref: '#/components/schemas/User/properties/id'
+ *        creatorName:
+ *          type: string
+ *          description: Full name of the creator.
+ *        latestActivity:
+ *          type: string
+ *          description: Date and time of last post or comment.
+ *        memberCount:
+ *          type: number
+ *          description: Number of community members.
  *        members:
  *          type: array
  *          description: Users that have joined the community.
@@ -88,7 +97,10 @@ const Community = new mongoose.Schema(
     title: { type: String, required: true, unique: true },
     description: { type: String, required: true },
     creator: { type: String, required: true },
+    creatorName: { type: String },
     createdOn: { type: String, required: true },
+    latestActivity: { type: String },
+    memberCount: { type: Number },
     members: [
       {
         type: mongoose.Schema.Types.ObjectId,

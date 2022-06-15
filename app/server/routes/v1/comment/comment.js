@@ -30,6 +30,7 @@ const router = express.Router();
 
 const Comment = require("../../../models/comment.model");
 const Post = require("../../../models/post.model");
+const Community = require("../../../models/community.model");
 
 /**
  * @swagger
@@ -118,6 +119,13 @@ router.post("/", async (req, res) => {
       process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT || 1
     );
     req.log.addAction("Community engagement updated.");
+
+    req.log.addAction("Updating community latest activity.");
+    await Community.updateOne(
+      { title: comment.community },
+      { $set: { latestActivity: moment().format("MMMM Do YYYY, h:mm:ss a") } }
+    );
+    req.log.addAction("Community latest activity updated.");
 
     req.log.addAction("Updating post's comment count.");
     await Post.updateOne(
@@ -319,6 +327,7 @@ router.patch("/:id", async (req, res) => {
     req.log.addAction("Checking edit query.");
     const query = checkPatchQuery(req.body, documents.comment, [
       "creator",
+      "creatorName",
       "post",
       "community",
       "createdOn",
@@ -443,7 +452,7 @@ router.delete("/:id", async (req, res) => {
 
     req.log.addAction("Updating post's comment count.");
     await Post.updateOne(
-      { _id: documents.post.id },
+      { _id: documents.comment.post },
       { $inc: { commentCount: -1 } }
     );
     req.log.addAction("Post's comment count updated.");

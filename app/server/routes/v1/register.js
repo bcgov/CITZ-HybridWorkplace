@@ -93,6 +93,7 @@ router.post("/", async (req, res) => {
         $push: {
           members: user.id,
         },
+        $inc: { memberCount: 1 },
       }
     );
     req.log.addAction("User added to Welcome community members.");

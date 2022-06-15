@@ -62,7 +62,7 @@ app.use(
 app.use(cookieParser());
 app.use(
   rateLimit({
-    windowMs: 60 * 1000, // 1 minute
+    windowMs: 15 * 1000, // 15 seconds
     max: 100, // Limit each IP to 100 requests per `window`
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers

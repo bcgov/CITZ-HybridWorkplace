@@ -75,7 +75,7 @@ router.put("/:title", async (req, res) => {
     req.log.addAction("User and community found.");
 
     req.log.addAction("Checking user is creator of community.");
-    if (documents.user.username !== documents.community.creator)
+    if (documents.user.id !== documents.community.creator)
       throw new ResponseError(
         403,
         "Only creator of community can edit community."

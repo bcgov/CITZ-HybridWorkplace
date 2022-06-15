@@ -90,15 +90,30 @@ router.post("/", async (req, res) => {
     // TODO: Validate formatting for tags in request body
     // TODO: Prevent spaces or special characters in community title
 
+    req.log.addAction("Getting creator name.");
+    const { firstName, lastName } = documents.user;
+    let creatorName;
+
+    if (firstName && firstName !== "") {
+      // If lastName, set full name, else just firstName
+      creatorName =
+        lastName && lastName !== "" ? `${firstName} ${lastName}` : firstName;
+    }
+
+    const timeStamp = moment().format("MMMM Do YYYY, h:mm:ss a");
+
     req.log.addAction("Creating community.");
     const community = await Community.create({
       title: req.body.title,
       description: req.body.description,
-      creator: documents.user.username,
+      creator: documents.user.id,
+      creatorName: creatorName || documents.user.username,
+      memberCount: 1,
       members: [documents.user.id],
       rules: req.body.rules,
       tags: req.body.tags,
-      createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
+      createdOn: timeStamp,
+      latestActivity: timeStamp,
     });
     req.log.addAction("Community created.");
 
@@ -360,7 +375,7 @@ router.patch("/:title", async (req, res) => {
     req.log.addAction("User and community found.");
 
     req.log.addAction("Checking user is creator of community.");
-    if (documents.user.username !== documents.community.creator)
+    if (documents.user.id !== documents.community.creator)
       throw new ResponseError(
         403,
         "Only creator of community can edit community."
@@ -381,6 +396,9 @@ router.patch("/:title", async (req, res) => {
       "createdOn",
       "members",
       "creator",
+      "creatorName",
+      "memberCount",
+      "latestActivity",
     ]);
     req.log.addAction("Edit query has been cleaned.");
 
@@ -453,7 +471,7 @@ router.delete("/:title", async (req, res) => {
     req.log.addAction("User and community found.");
 
     req.log.addAction("Checking user is creator of community.");
-    if (documents.user.username !== documents.community.creator)
+    if (documents.user.id !== documents.community.creator)
       throw new ResponseError(
         403,
         "Only creator of community can edit community."

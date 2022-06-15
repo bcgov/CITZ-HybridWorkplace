@@ -28,6 +28,7 @@ const updateCommunityEngagement = require("../../../functions/updateCommunityEng
 
 const router = express.Router();
 
+const Community = require("../../../models/community.model");
 const Post = require("../../../models/post.model");
 const Comment = require("../../../models/comment.model");
 const User = require("../../../models/user.model");
@@ -133,6 +134,13 @@ router.post("/", async (req, res) => {
       process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_POST || 1
     );
     req.log.addAction("Community engagement updated.");
+
+    req.log.addAction("Updating community latest activity.");
+    await Community.updateOne(
+      { title: post.community },
+      { $set: { latestActivity: moment().format("MMMM Do YYYY, h:mm:ss a") } }
+    );
+    req.log.addAction("Community latest activity updated.");
 
     req.log.addAction("Updating user post count.");
     await User.updateOne(
