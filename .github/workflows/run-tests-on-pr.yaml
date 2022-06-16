@@ -21,7 +21,8 @@ jobs:
 
       - name: Get current datestamp
         id: date
-        run: echo "::set-output name=date::$(date '+%Y%m%d%H%M%S')"
+        run: |
+          echo "::set-output name=date::$(date '+%Y%m%d%H%M%S')"
 
       - name: Relax Express request limiter
         working-directory: ./app/server
@@ -40,7 +41,8 @@ jobs:
 
       - name: Build file path
         id: results
-        run: echo "::set-output name=results::apiTestResults_${{ steps.date.outputs.date }}_${{ github.event.pull_request.head.ref }}.json"
+        run: |
+          echo "::set-output name=results::apiTestResults_${{ steps.date.outputs.date }}_${{ github.event.pull_request.head.ref }}.json"
 
       - name: Select only json line
         working-directory: ./app/server
