@@ -43,7 +43,7 @@ const PostsList = (props) => {
 };
 
 PostsList.propTypes = {
-  posts: PropTypes.array.isRequired,
+  posts: PropTypes.array,
 };
 
 const mapStateToProps = (state) => ({});

@@ -25,7 +25,7 @@ import CreateCommunity from "../CreateCommunity";
 
 const AddCommunityModal = (props) => {
   return (
-    <Dialog onClose={props.onClose} open={props.open} fullWidth="md">
+    <Dialog onClose={props.onClose} open={props.open} fullWidth>
       <DialogTitle>Create a Community</DialogTitle>
       <DialogContent>
         <Grid container justifyContent="center" alignItems="center">

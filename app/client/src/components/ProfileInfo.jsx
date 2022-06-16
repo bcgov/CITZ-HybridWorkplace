@@ -29,7 +29,7 @@ import { Typography } from "@mui/material";
 const ProfileInfo = (props) => {
   useEffect(() => {
     props.getProfile(props.username);
-  });
+  }, []);
 
   const registeredOn = props.profile.registeredOn || "";
   const registartionDate = registeredOn.split(",")[0];
@@ -68,7 +68,7 @@ const ProfileInfo = (props) => {
 
 ProfileInfo.propTypes = {
   getProfile: PropTypes.func.isRequired,
-  profile: PropTypes.array.isRequired,
+  profile: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({

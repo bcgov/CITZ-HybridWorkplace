@@ -35,8 +35,8 @@ const CommunitiesList = (props) => {
 
   return (
     <div>
-      {props.communities.items.map((community) => (
-        <Community community={community} />
+      {props.communities.map((community) => (
+        <Community community={community} key={community.title} />
       ))}
       <DeleteCommunityModal />
     </div>
@@ -49,7 +49,7 @@ CommunitiesList.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  communities: state.communities,
+  communities: state.communities.items,
 });
 
 export default connect(mapStateToProps, { getCommunities })(CommunitiesList);

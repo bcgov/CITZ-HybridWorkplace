@@ -132,14 +132,9 @@ const HomePage = (props) => {
   );
 };
 
-HomePage.propTypes = {
-  getCommunities: PropTypes.func.isRequired,
-  communities: PropTypes.array.isRequired,
-};
+HomePage.propTypes = { posts: PropTypes.array.isRequired };
 
 const mapStateToProps = (state) => ({
-  communities: state.communities.items,
-  auth: state.auth.accessToken,
   posts: state.posts.items,
 });
 

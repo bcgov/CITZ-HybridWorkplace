@@ -82,7 +82,7 @@ const ProfilePage = (props) => {
               />
               <br />
               <Grid item xs={12}>
-                <ProfileInfo />
+                <ProfileInfo username={username} />
               </Grid>
               <br />
               <Grid item xs={12}>
@@ -138,7 +138,7 @@ const ProfilePage = (props) => {
               <br />
               <Grid container spacing={2}>
                 {props.communities.slice(0, 4).map((element) => (
-                  <Grid item xs={6}>
+                  <Grid item xs={6} key={element._id}>
                     <Box
                       sx={{
                         backgroundColor: "#FFF",
@@ -291,6 +291,7 @@ const ProfilePage = (props) => {
                   width: "600px",
                   m: 0,
                 }}
+                key={element._id}
               >
                 <Box
                   sx={{
@@ -325,7 +326,8 @@ const ProfilePage = (props) => {
 
 ProfilePage.propTypes = {
   getProfile: PropTypes.func.isRequired,
-  profile: PropTypes.array.isRequired,
+  profile: PropTypes.object.isRequired,
+  communities: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = (state) => ({

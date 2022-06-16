@@ -100,12 +100,12 @@ const Community = (props) => {
 };
 
 Community.propTypes = {
-  joinCommunity: PropTypes.func.isRequired,
+  username: PropTypes.string.isRequired,
+  openFlagCommunityModal: PropTypes.func.isRequired,
+  openDeleteCommunityModal: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  flagCommunityOpen: state.modal.flagCommunity.open,
-  deleteCommunityOpen: state.modal.deleteCommunity.open,
   username: state.auth.user.username,
 });
 

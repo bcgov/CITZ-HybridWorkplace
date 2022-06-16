@@ -26,6 +26,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { createCommunity } from "../redux/ducks/communityDuck";
 import { Autocomplete, Button, Chip, TextField } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 
 const CreateCommunity = (props) => {
   const navigate = useNavigate();
@@ -105,14 +106,14 @@ const CreateCommunity = (props) => {
           )}
         />
         <br />
-        <Button
+        <LoadingButton
           variant="contained"
           loading={createCommunityLoading}
           id="submit"
           onClick={registerCommunity}
         >
           Submit
-        </Button>
+        </LoadingButton>
       </form>
     </div>
   );
