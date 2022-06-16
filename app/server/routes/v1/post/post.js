@@ -135,7 +135,7 @@ router.post("/", async (req, res) => {
     );
     req.log.addAction("Community engagement updated.");
 
-    req.log.addAction("Updating community latest activity.");
+    req.log.addAction(`Updating community (${req.body.community}) latest activity.`);
     await Community.updateOne(
       { title: post.community },
       { $set: { latestActivity: moment().format("MMMM Do YYYY, h:mm:ss a") } }
