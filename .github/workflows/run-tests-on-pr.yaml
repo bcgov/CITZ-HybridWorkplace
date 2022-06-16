@@ -31,7 +31,7 @@ jobs:
 
       - name: Build API and Mongo in Docker
         run: |
-          docker-compose up --build hwp-api mongodb
+          docker-compose up -d --build hwp-api mongodb
 
       - name: Run test command
         working-directory: ./app/server
