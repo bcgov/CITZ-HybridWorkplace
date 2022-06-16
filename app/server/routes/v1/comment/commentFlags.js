@@ -141,7 +141,6 @@ router.post("/:id", async (req, res) => {
 
     // If flag isn't set on post
     req.log.addAction("Checking if flag is set on comment.");
-    // a flag even if not set, because of using $addToSet instead of $push
     if (
       !(await Comment.exists({
         _id: documents.comment.id,
