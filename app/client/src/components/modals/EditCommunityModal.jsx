@@ -96,11 +96,7 @@ const EditCommunityModal = (props) => {
   };
 
   return (
-    <Dialog
-      onClose={props.closeEditCommunityModal}
-      open={props.open}
-      fullWidth="md"
-    >
+    <Dialog onClose={props.closeEditCommunityModal} open={props.open} fullWidth>
       <DialogTitle>Edit Community: {props.community.title}</DialogTitle>
       <DialogContent style={{ paddingTop: 5 }}>
         <Stack spacing={3}>

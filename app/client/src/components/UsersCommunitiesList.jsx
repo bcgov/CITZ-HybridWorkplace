@@ -30,11 +30,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import GroupsIcon from "@mui/icons-material/Groups";
 
-import {
-  getUsersCommunities,
-  leaveCommunity,
-  joinCommunity,
-} from "../redux/ducks/communityDuck";
+import { getUsersCommunities } from "../redux/ducks/communityDuck";
 import JoinButton from "./JoinButton";
 import { useNavigate } from "react-router-dom";
 
@@ -49,8 +45,8 @@ const UsersCommunitiesList = (props) => {
 
   return (
     <div>
-      {props.communities.usersCommunities.map((community) => (
-        <div key={community._id} style={{ "margin-bottom": "15px" }}>
+      {props.communities.map((community) => (
+        <div key={community._id} style={{ marginBottom: "15px" }}>
           <Paper
             sx={{
               px: 0.5,
@@ -95,18 +91,16 @@ const UsersCommunitiesList = (props) => {
 };
 
 UsersCommunitiesList.propTypes = {
-  getCommunities: PropTypes.func.isRequired,
   communities: PropTypes.array.isRequired,
+  getUsersCommunities: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  communities: state.communities,
+  communities: state.communities.usersCommunities,
 });
 
 const mapActionsToProps = {
   getUsersCommunities,
-  leaveCommunity,
-  joinCommunity,
 };
 
 export default connect(

@@ -43,11 +43,7 @@ const DeletePostModal = (props) => {
   };
 
   return (
-    <Dialog
-      onClose={props.closeDeletePostModal}
-      open={props.open}
-      fullWidth="md"
-    >
+    <Dialog onClose={props.closeDeletePostModal} open={props.open} fullWidth>
       <DialogTitle>Delete Post</DialogTitle>
       <DialogContent>
         <Grid

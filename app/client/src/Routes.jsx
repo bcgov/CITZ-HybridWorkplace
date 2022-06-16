@@ -64,7 +64,7 @@ const App = () => {
           element={<PrivateComponent component={<ProfilePage />} />}
         />
         <Route
-          path="/profile/:id/edit"
+          path="/profile/:username/edit"
           element={<PrivateComponent component={<EditProfile />} />}
         />
         <Route

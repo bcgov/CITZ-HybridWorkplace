@@ -60,7 +60,7 @@ const FlagPostModal = (props) => {
   };
 
   return (
-    <Dialog onClose={props.closeFlagPostModal} open={props.open} fullWidth="md">
+    <Dialog onClose={props.closeFlagPostModal} open={props.open} fullWidth>
       <DialogTitle>Flag Post</DialogTitle>
       <DialogContent>
         <Grid
@@ -84,7 +84,9 @@ const FlagPostModal = (props) => {
               label="Flag"
             >
               {flags.map((element) => (
-                <MenuItem value={element}>{element}</MenuItem>
+                <MenuItem value={element} key={element}>
+                  {element}
+                </MenuItem>
               ))}
             </Select>
           </Grid>
