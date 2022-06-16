@@ -22,17 +22,14 @@
 
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
+import { Paper, Box, Grid, Stack, Typography } from "@mui/material";
 import GroupsIcon from "@mui/icons-material/Groups";
 
 import { getUsersCommunities } from "../redux/ducks/communityDuck";
 import JoinButton from "./JoinButton";
-import { useNavigate } from "react-router-dom";
 
 const UsersCommunitiesList = (props) => {
   const navigate = useNavigate();
@@ -46,7 +43,7 @@ const UsersCommunitiesList = (props) => {
   return (
     <div>
       {props.communities.map((community) => (
-        <div key={community._id} style={{ marginBottom: "15px" }}>
+        <Box key={community._id} sx={{ mb: "15px" }}>
           <Paper
             sx={{
               px: 0.5,
@@ -72,7 +69,9 @@ const UsersCommunitiesList = (props) => {
                   <Grid item xs={12} sx={{ pt: 0, pb: "10px" }}>
                     <Stack direction="row" spacing={1} sx={{ ml: "15px" }}>
                       <GroupsIcon sx={{ color: "#898989" }} />
-                      <Typography color="#898989">15</Typography>
+                      <Typography color="#898989">
+                        {community.memberCount || 0}
+                      </Typography>
                     </Stack>
                   </Grid>
                   <Grid item xs={2}></Grid>
@@ -84,7 +83,7 @@ const UsersCommunitiesList = (props) => {
               </Grid>
             </Grid>
           </Paper>
-        </div>
+        </Box>
       ))}
     </div>
   );

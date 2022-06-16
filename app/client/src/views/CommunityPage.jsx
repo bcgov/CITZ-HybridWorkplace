@@ -22,12 +22,9 @@
 
 import React, { useState, useEffect } from "react";
 
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import { Grid, Paper, Box, Button, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import SettingsTwoToneIcon from "@mui/icons-material/SettingsTwoTone";
 
 import { connect } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -36,7 +33,6 @@ import PostsList from "../components/PostsList";
 import PostModal from "../components/modals/AddPostModal";
 import { openEditCommunityModal } from "../redux/ducks/modalDuck";
 import { getCommunityPosts, getCommunity } from "../redux/ducks/communityDuck";
-import SettingsTwoToneIcon from "@mui/icons-material/SettingsTwoTone";
 import EditCommunityModal from "../components/modals/EditCommunityModal";
 
 const CommunityPage = (props) => {
@@ -52,7 +48,7 @@ const CommunityPage = (props) => {
   const handleSettingsClick = () =>
     props.openEditCommunityModal(props.community);
   return (
-    <div>
+    <Box>
       <Grid container spacing={2}>
         <Grid item xs={8}>
           <Paper>
@@ -115,7 +111,7 @@ const CommunityPage = (props) => {
             </Box>
           </Paper>
           <br />
-          {props.community.creator === props.username && (
+          {props.community.creator === props.userId && (
             <Button
               variant="text"
               color="inherit"
@@ -128,7 +124,7 @@ const CommunityPage = (props) => {
         </Grid>
       </Grid>
       <EditCommunityModal />
-    </div>
+    </Box>
   );
 };
 
@@ -141,6 +137,7 @@ CommunityPage.propTypes = {
 const mapStateToProps = (state) => ({
   community: state.communities.item,
   username: state.auth.user.username,
+  userId: state.auth.user.id,
 });
 
 const mapDispatchToProps = {
