@@ -36,7 +36,7 @@ const UsersCommunitiesList = (props) => {
 
   useEffect(() => {
     props.getUsersCommunities();
-  });
+  }, []);
 
   const handleCommunityClick = (title) => navigate(`/community/${title}`);
 
