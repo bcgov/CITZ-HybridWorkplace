@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 
 const Community = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
+
   const navigate = useNavigate();
 
   const { community } = props;
@@ -55,6 +56,7 @@ const Community = (props) => {
       >
         <CardHeader
           onClick={handleCommunityClick}
+          sx={{ cursor: "pointer" }}
           action={
             props.username === community.creator && (
               <>

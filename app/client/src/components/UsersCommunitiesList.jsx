@@ -61,6 +61,7 @@ const UsersCommunitiesList = (props) => {
                 item
                 xs={9}
                 onClick={() => handleCommunityClick(community.title)}
+                sx={{ cursor: "pointer" }}
               >
                 <Grid container>
                   <Grid item xs={12}>

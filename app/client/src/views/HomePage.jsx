@@ -56,37 +56,35 @@ const HomePage = (props) => {
     <div>
       <Grid container spacing={2}>
         <Grid item xs={8}>
-          <Paper>
-            <Box
-              mb="15px"
-              sx={{
-                backgroundColor: "#036",
-                borderRadius: "10px",
-                color: "white",
-                px: 1,
-                py: 0.5,
-                textAlign: "center",
-                display: "flex",
-              }}
-            >
-              <Grid container spacing={1}>
-                <Grid item xs={9}>
-                  <Typography variant="h5" component="h5" pl="175px">
-                    <b>Top Posts</b>
-                  </Typography>
-                </Grid>
-                <Grid item xs={3} align="right">
-                  <Button onClick={() => setShow(true)}>
-                    <Typography color="white">New</Typography>
-                    <AddIcon sx={{ color: "white" }} />
-                  </Button>
-                </Grid>
+          <Box
+            mb="15px"
+            sx={{
+              backgroundColor: "#036",
+              borderRadius: "10px",
+              color: "white",
+              px: 1,
+              py: 0.5,
+              textAlign: "center",
+              display: "flex",
+            }}
+          >
+            <Grid container spacing={1}>
+              <Grid item xs={9}>
+                <Typography variant="h5" component="h5" pl="175px">
+                  <b>Top Posts</b>
+                </Typography>
               </Grid>
+              <Grid item xs={3} align="right">
+                <Button onClick={() => setShow(true)}>
+                  <Typography color="white">New</Typography>
+                  <AddIcon sx={{ color: "white" }} />
+                </Button>
+              </Grid>
+            </Grid>
 
-              <PostModal onClose={() => setShow(false)} show={show} />
-            </Box>
-            <PostsList posts={props.posts} />
-          </Paper>
+            <PostModal onClose={() => setShow(false)} show={show} />
+          </Box>
+          <PostsList posts={props.posts} />
         </Grid>
         <Grid item xs={4}>
           <Paper>
