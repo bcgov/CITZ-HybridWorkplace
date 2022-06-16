@@ -133,7 +133,7 @@ router.patch("/join/:title", async (req, res) => {
     req.log.addAction("Updating community members.");
     await Community.updateOne(
       { title: documents.community.title },
-      { $addToSet: { members: documents.user.id } }
+      { $addToSet: { members: documents.user.id }, $inc: { memberCount: 1 } }
     );
     req.log.addAction("Community members updated.");
 
@@ -203,7 +203,7 @@ router.delete("/leave/:title", async (req, res) => {
     req.log.addAction("Removing user from community members.");
     await Community.updateOne(
       { title: documents.community.title },
-      { $pull: { members: documents.user.id } }
+      { $pull: { members: documents.user.id }, $inc: { memberCount: -1 } }
     );
     req.log.addAction("User removed from community members.");
 
