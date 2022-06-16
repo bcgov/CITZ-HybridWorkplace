@@ -54,7 +54,7 @@ const ProfilePage = (props) => {
 
   useEffect(() => {
     props.getProfile(username);
-  });
+  }, []);
 
   const convertDate = (date) => {
     const today = moment().format("MMMM Do YYYY");
