@@ -82,6 +82,20 @@
  *                type: array
  *                items:
  *                  - $ref: '#/components/schemas/User'
+ *        flags:
+ *          type: array
+ *          description: Flags set by users to bring attention to moderators.
+ *          items:
+ *            type: object
+ *            properties:
+ *              flag:
+ *                type: string
+ *                example: Inappropriate
+ *              flaggedBy:
+ *                type: array
+ *                description: Users that have flagged the comment.
+ *                items:
+ *                  - $ref: '#/components/schemas/User'
  *      required:
  *        - message
  *        - creator
@@ -120,6 +134,17 @@ const Comment = new mongoose.Schema(
         },
       ],
     },
+    flags: [
+      {
+        flag: String,
+        flaggedBy: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+          },
+        ],
+      },
+    ],
   },
   { collection: "comment" }
 );
