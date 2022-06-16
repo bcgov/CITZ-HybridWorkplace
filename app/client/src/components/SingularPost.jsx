@@ -39,7 +39,7 @@ const SingularPost = (props) => {
 
   useEffect(() => {
     props.post._id === id || props.getPost(id);
-  });
+  }, []);
 
   const handleFlagPostClick = () => {
     props.openFlagPostModal(props.post);
