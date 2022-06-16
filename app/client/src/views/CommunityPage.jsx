@@ -43,7 +43,7 @@ const CommunityPage = (props) => {
   useEffect(() => {
     props.getCommunityPosts(title);
     props.getCommunity(title);
-  });
+  }, []);
 
   const handleSettingsClick = () =>
     props.openEditCommunityModal(props.community);
