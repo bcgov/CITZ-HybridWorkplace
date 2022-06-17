@@ -298,6 +298,7 @@ const Header = (props) => {
               }}
             >
               <IconButton
+                onClick={() => navigate(`/profile/${props.auth.user.username}`)}
                 size="large"
                 edge="end"
                 aria-label="account of current user"
