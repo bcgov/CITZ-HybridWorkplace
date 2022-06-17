@@ -416,6 +416,13 @@ router.patch("/:title", async (req, res) => {
     ).exec();
     req.log.addAction("Community posts updated.");
 
+    req.log.addAction("Updating user community lists.");
+    await User.updateMany(
+      { communities: { $elemMatch: { community: documents.community.title } } },
+      { $set: { "communities.$.community": req.body.title } }
+    ).exec();
+    req.log.addAction("User community lists updated.");
+
     req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
