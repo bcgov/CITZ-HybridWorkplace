@@ -33,6 +33,8 @@ const UNTAG_POST = "CITZ-HYBRIDWORKPLACE/POST/UNTAG_POST";
 const SET_COMMENTS = "CITZ-HYBRIDWORKPLACE/POST/SET_COMMENTS";
 const ADD_COMMENT = "CITZ-HYBRIDWORKPLACE/POST/ADD_COMMENT";
 const REMOVE_COMMENT = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_COMMENT";
+const REPLY_TO_COMMENT = "CITZ-HYBRIDWORKPLACE/POST/REPLY_TO_COMMENT";
+const SET_COMMENT_REPLIES = "CITZ-HYBRIDWORKPLACE/POST/SET_COMMENT_REPLIES";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
@@ -423,6 +425,75 @@ export const deleteComment = (commentId) => async (dispatch, getState) => {
   }
 };
 
+export const replyToComment =
+  (commentId, reply) => async (dispatch, getState) => {
+    let successful = true;
+    try {
+      //TODO: Throw error if given delete is not in list of available deletes
+      if (commentId === "") throw new Error("Error: Invalid Input");
+      const authState = getState().auth;
+      const token = authState.accessToken;
+
+      if (!token) throw new Error(noTokenText);
+
+      const response = await hwp_axios.post(
+        `/api/comment/reply/${commentId}`,
+        {
+          message: reply,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          params: {
+            dispatch,
+          },
+        }
+      );
+
+      dispatch({
+        type: REPLY_TO_COMMENT,
+        payload: { commentId, comment: response.data },
+      });
+    } catch (err) {
+      console.error(err);
+      successful = false;
+    } finally {
+      return successful;
+    }
+  };
+
+export const getCommentReplies = (commentId) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    //TODO: Throw error if given delete is not in list of available deletes
+    if (commentId === "") throw new Error("Error: Invalid Input");
+    const authState = getState().auth;
+    const token = authState.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await hwp_axios.get(`/api/comment/reply/${commentId}`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      params: {
+        dispatch,
+      },
+    });
+
+    dispatch({
+      type: SET_COMMENT_REPLIES,
+      payload: { commentId, comments: response.data },
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
 const initialState = {
   items: [], //posts
   item: {}, //single post
@@ -502,6 +573,41 @@ export function postReducer(state = initialState, action) {
           ...state.item,
           comments: state.item.comments.filter(
             (comment) => comment._id !== action.payload
+          ),
+        },
+      };
+    case REPLY_TO_COMMENT:
+      return {
+        ...state,
+        item: {
+          ...state.item,
+          comments: state.item.comments.map((comment) => {
+            if (comment._id === action.payload.commentId) {
+              if (!comment.replies) comment.replies = [];
+
+              return {
+                ...comment,
+                replies: [action.payload.comment, ...comment.replies],
+                hasReplies: true,
+              };
+            } else {
+              return comment;
+            }
+          }),
+        },
+      };
+    case SET_COMMENT_REPLIES:
+      return {
+        ...state,
+        item: {
+          ...state.item,
+          comments: state.item.comments.map((comment) =>
+            comment._id === action.payload.commentId
+              ? {
+                  ...comment,
+                  replies: action.payload.comments,
+                }
+              : comment
           ),
         },
       };
