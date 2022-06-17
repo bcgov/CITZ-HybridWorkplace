@@ -41,12 +41,12 @@ export const Comment = (props) => {
     ? props.comment.edits[0].timeStamp || ""
     : "";
   let editDate =
-    moment(moment.utc(editTimeStamp.split(",")[0], "MMMM Do YYYY").toDate())
+    moment(moment.utc(editTimeStamp, "MMMM Do YYYY, h:mm:ss a").toDate())
       .local()
       .format("MMMM Do YYYY") || "";
 
-  if (editDate === today) editDate = `Today`;
-  if (editDate === yesterday) editDate = `Yesterday`;
+  if (editDate.split(",")[0] === today) editDate = `Today`;
+  if (editDate.split(",")[0] === yesterday) editDate = `Yesterday`;
 
   // Convert to local time
   let createdOn =
@@ -56,15 +56,15 @@ export const Comment = (props) => {
       .local()
       .format("MMMM Do YYYY, h:mm:ss a") || "";
   // Remove milliseconds
-  createdOn = `${createdOn.substr(0, createdOn.length - 6)} ${createdOn.substr(
-    createdOn.length - 2,
-    createdOn.length
-  )}`;
+  createdOn = `${createdOn.substring(
+    0,
+    createdOn.length - 6
+  )} ${createdOn.substring(createdOn.length - 2, createdOn.length)}`;
   const splitCreatedOn = createdOn.split(",");
 
-  if (splitCreatedOn[0] === today) createdOn = `Today${splitCreatedOn[1]}`;
+  if (splitCreatedOn[0] === today) createdOn = `Today,${splitCreatedOn[1]}`;
   if (splitCreatedOn[0] === yesterday)
-    createdOn = `Yesterday${splitCreatedOn[1]}`;
+    createdOn = `Yesterday,${splitCreatedOn[1]}`;
 
   return (
     <Card style={{ margin: 10 }}>
