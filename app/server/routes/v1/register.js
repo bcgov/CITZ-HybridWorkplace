@@ -88,20 +88,24 @@ router.post("/", async (req, res) => {
     req.log.addAction("User does not already exist.");
 
     // Input validation
-    const passwordPattern = `/(?=.*d)(?=.*[a-z])(?=.*[A-Z])(?!.*s).{${passwordMinLength},${passwordMaxLength}}/g`;
-    const emailPattern = "/^[w-.]+@([w-]+.)+[w-]{2,4}$/g";
-    const usernamePattern = `/(?!.*s).{${usernameMinLength},${usernameMaxLength}}/g`;
+    const passwordRegexStr = `(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\\s).{${passwordMinLength},${passwordMaxLength}}`;
+    const usernameRegexStr = `(?!.*\\s).{${usernameMinLength},${usernameMaxLength}}`;
+
+    const emailPattern =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const passwordPattern = new RegExp(passwordRegexStr, "g");
+    const usernamePattern = new RegExp(usernameRegexStr, "g");
 
     const passwordError = `Password does not meet requirements: length ${passwordMinLength}-${passwordMaxLength}, must not contain whitespace, must contain at least one (lowercase letter, uppercase letter, number)`;
     const usernameError = `Username does not meet requirements: length ${usernameMinLength}-${usernameMaxLength}, must not contain whitespace.`;
 
-    if (!req.body.password.test(passwordPattern))
+    if (!passwordPattern.test(req.body.password))
       throw new ResponseError(403, passwordError);
 
-    if (!req.body.email.test(emailPattern))
+    if (!emailPattern.test(req.body.email))
       throw new ResponseError(403, "Invalid email.");
 
-    if (!req.body.username.test(usernamePattern))
+    if (!usernamePattern.test(req.body.username))
       throw new ResponseError(403, usernameError);
 
     if (
