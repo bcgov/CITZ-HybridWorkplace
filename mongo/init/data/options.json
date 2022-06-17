@@ -1,6 +1,6 @@
 [
   {
-    "component": "registeration",
+    "component": "registration",
     "options": {
       "passwordMinLength": 8,
       "passwordMaxLength": 250,

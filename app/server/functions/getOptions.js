@@ -28,3 +28,5 @@ const getOptions = async (component) => {
   if (!options) throw new ResponseError(404, "Options not found.");
   return options.options;
 };
+
+module.exports = getOptions;
