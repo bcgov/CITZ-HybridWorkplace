@@ -22,11 +22,7 @@
 
 import React, { useEffect, useState } from "react";
 
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import { Grid, Box, Button, Typography } from "@mui/material";
 import { getPosts } from "../redux/ducks/postDuck";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -53,13 +49,13 @@ const HomePage = (props) => {
   };
 
   return (
-    <div>
+    <Box>
       <Grid container spacing={2}>
         <Grid item xs={8}>
           <Box
             mb="15px"
             sx={{
-              backgroundColor: "#036",
+              backgroundColor: "primary.main",
               borderRadius: "10px",
               color: "white",
               px: 1,
@@ -70,8 +66,15 @@ const HomePage = (props) => {
           >
             <Grid container spacing={1}>
               <Grid item xs={9}>
-                <Typography variant="h5" component="h5" pl="175px">
-                  <b>Top Posts</b>
+                <Typography
+                  variant="h5"
+                  component="h5"
+                  sx={{
+                    fontWeight: 600,
+                    pl: "8em",
+                  }}
+                >
+                  Top Posts
                 </Typography>
               </Grid>
               <Grid item xs={3} align="right">
@@ -87,48 +90,57 @@ const HomePage = (props) => {
           <PostsList posts={props.posts} />
         </Grid>
         <Grid item xs={4}>
-          <Paper>
-            <Box
-              mb="15px"
+          <Box
+            mb="15px"
+            sx={{
+              backgroundColor: "primary.main",
+              borderRadius: "10px",
+              color: "white",
+              px: 1,
+              py: 0.5,
+              textAlign: "center",
+            }}
+          >
+            <Typography
+              variant="h6"
+              component="h5"
               sx={{
-                backgroundColor: "#036",
-                borderRadius: "10px",
-                color: "white",
-                px: 1,
-                py: 0.5,
-                textAlign: "center",
+                fontWeight: 600,
               }}
             >
-              <Typography variant="h6" component="h5">
-                <b>Your Communities</b>
+              Your Communities
+            </Typography>
+          </Box>
+          <UsersCommunitiesList />
+          <Box
+            sx={{
+              backgroundColor: "primary.main",
+              borderRadius: "10px",
+              color: "white",
+              px: 1,
+              py: 0.5,
+              textAlign: "center",
+            }}
+          >
+            <Button variant="text" onClick={openDialog}>
+              <Typography
+                color="white"
+                sx={{
+                  fontWeight: 600,
+                }}
+              >
+                Create Community
               </Typography>
-            </Box>
-            <UsersCommunitiesList />
-            <Box
-              sx={{
-                backgroundColor: "#036",
-                borderRadius: "10px",
-                color: "white",
-                px: 1,
-                py: 0.5,
-                textAlign: "center",
-              }}
-            >
-              <Button variant="text" onClick={openDialog}>
-                <Typography color="white">
-                  <b>Create Community</b>
-                </Typography>
-                <AddIcon sx={{ color: "white" }} />
-              </Button>
-              <AddCommunityModal
-                onClose={closeDialog}
-                open={createCommunityOpen}
-              />
-            </Box>
-          </Paper>
+              <AddIcon sx={{ color: "white" }} />
+            </Button>
+            <AddCommunityModal
+              onClose={closeDialog}
+              open={createCommunityOpen}
+            />
+          </Box>
         </Grid>
       </Grid>
-    </div>
+    </Box>
   );
 };
 
