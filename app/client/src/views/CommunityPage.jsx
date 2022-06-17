@@ -51,66 +51,73 @@ const CommunityPage = (props) => {
     <Box>
       <Grid container spacing={2}>
         <Grid item xs={8}>
-          <Paper>
-            <Box
-              mb="15px"
-              sx={{
-                backgroundColor: "#036",
-                color: "white",
-                px: 1,
-                py: 0.5,
-                textAlign: "center",
-                display: "flex",
-                borderRadius: "10px",
-              }}
-            >
-              <Grid container spacing={1}>
-                <Grid item xs={9}>
-                  <Typography variant="h5" component="h5" pl="175px">
-                    <b>Posts</b>
-                  </Typography>
-                </Grid>
-                <Grid item xs={3} align="right">
-                  <Button onClick={() => setShow(true)}>
-                    <Typography color="white">New</Typography>
-                    <AddIcon sx={{ color: "white" }} />
-                  </Button>
-                </Grid>
+          <Box
+            mb="15px"
+            sx={{
+              backgroundColor: "primary.main",
+              color: "white",
+              px: 1,
+              py: 0.5,
+              textAlign: "center",
+              display: "flex",
+              borderRadius: "10px",
+            }}
+          >
+            <Grid container spacing={1}>
+              <Grid item xs={9}>
+                <Typography
+                  variant="h5"
+                  component="h5"
+                  sx={{
+                    pl: "8em",
+                    fontWeight: 600,
+                  }}
+                >
+                  Posts
+                </Typography>
               </Grid>
+              <Grid item xs={3} align="right">
+                <Button onClick={() => setShow(true)}>
+                  <Typography color="white">New</Typography>
+                  <AddIcon sx={{ color: "white" }} />
+                </Button>
+              </Grid>
+            </Grid>
 
-              <PostModal
-                communityName={title}
-                onClose={() => setShow(false)}
-                show={show}
-              />
-            </Box>
-            <PostsList posts={props.community.posts} />
-          </Paper>
+            <PostModal
+              communityName={title}
+              onClose={() => setShow(false)}
+              show={show}
+            />
+          </Box>
+          <PostsList posts={props.community.posts} />
         </Grid>
-        <Grid item xs={4}>
-          <Paper>
-            <Box
+        <Grid item align="center" xs={4}>
+          <Box
+            sx={{
+              backgroundColor: "primary.main",
+              borderRadius: "10px",
+              color: "white",
+              px: 1,
+              py: 0.5,
+              textAlign: "center",
+            }}
+          >
+            <Typography
+              variant="h6"
+              component="h5"
               sx={{
-                backgroundColor: "#036",
-                borderTopLeftRadius: "10px",
-                borderTopRightRadius: "10px",
-                color: "white",
-                px: 1,
-                py: 0.5,
-                textAlign: "center",
+                fontWeight: 600,
               }}
             >
-              <Typography variant="h6" component="h5">
-                <b>{title}</b>
-              </Typography>
-            </Box>
-            <Box sx={{ borderRadius: "10px", px: 1, py: 0.5 }}>
-              <Typography sx={{ mt: "10px", mb: "15px" }}>
-                {props.community.description}
-              </Typography>
-            </Box>
-          </Paper>
-          <br />
+              {title}
+            </Typography>
+          </Box>
+          <Box sx={{ borderRadius: "10px", px: 1, py: 0.5, mb: 1 }}>
+            <Typography sx={{ my: "10px" }}>
+              {props.community.description}
+            </Typography>
+          </Box>
           {props.community.creator === props.userId && (
             <Button
               variant="text"
