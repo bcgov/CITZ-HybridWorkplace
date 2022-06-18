@@ -25,6 +25,7 @@ const checkPatchQuery = require("../../../functions/checkPatchQuery");
 const findSingleDocuments = require("../../../functions/findSingleDocuments");
 const checkUserIsMemberOfCommunity = require("../../../functions/checkUserIsMemberOfCommunity");
 const updateCommunityEngagement = require("../../../functions/updateCommunityEngagement");
+const getOptions = require("../../../functions/getOptions");
 
 const router = express.Router();
 
@@ -78,6 +79,28 @@ router.post("/", async (req, res) => {
     });
     req.log.addAction("User and post found.");
 
+    req.log.addAction("Finding options.");
+    const {
+      messageMinLength,
+      messageMaxLength,
+      createCommentEngagementWeight,
+    } = await getOptions("comment");
+    req.log.addAction("Options found.");
+
+    req.log.addAction("Trimming leading and trailing spaces.");
+    req.body.message = req.body.message.trim();
+    req.log.addAction(`Comment trimmed: ${req.body.message}.`);
+
+    // Validate comment length
+    const messageLengthError = `message does not meet requirements: length ${messageMinLength}-${messageMaxLength}.`;
+    req.log.addAction("Validating message.");
+    if (
+      req.body.message.length < messageMinLength ||
+      req.body.message.length > messageMaxLength
+    )
+      throw new ResponseError(403, messageLengthError);
+    req.log.addAction("message is valid.");
+
     req.log.addAction("Checking user is member of community.");
     await checkUserIsMemberOfCommunity(
       documents.user.username,
@@ -116,7 +139,7 @@ router.post("/", async (req, res) => {
     await updateCommunityEngagement(
       documents.user.username,
       documents.post.community,
-      process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT || 1
+      createCommentEngagementWeight || 1
     );
     req.log.addAction("Community engagement updated.");
 
@@ -300,7 +323,7 @@ router.get("/:id", async (req, res) => {
  *        '404':
  *          description: User not found. **||** <br>Comment not found.
  *        '403':
- *          description: Missing message in body of the request. **||** <br>Only creator of comment can edit comment. **||** <br>Can only edit the message of a comment.
+ *          description: Missing message in body of the request. **||** <br>Only creator of comment can edit comment. **||** <br>Can only edit the message of a comment. **||** <br>message does not meet requirements.
  *        '204':
  *          description: Success. No content to return.
  *        '400':
@@ -316,6 +339,24 @@ router.patch("/:id", async (req, res) => {
       comment: req.params.id,
     });
     req.log.addAction("User and comment found.");
+
+    req.log.addAction("Finding options.");
+    const { messageMinLength, messageMaxLength } = await getOptions("comment");
+    req.log.addAction("Options found.");
+
+    req.log.addAction("Trimming leading and trailing spaces.");
+    req.body.message = req.body.message.trim();
+    req.log.addAction(`Comment trimmed: ${req.body.message}.`);
+
+    // Validate comment length
+    const messageLengthError = `message does not meet requirements: length ${messageMinLength}-${messageMaxLength}.`;
+    req.log.addAction("Validating message.");
+    if (
+      req.body.message.length < messageMinLength ||
+      req.body.message.length > messageMaxLength
+    )
+      throw new ResponseError(403, messageLengthError);
+    req.log.addAction("message is valid.");
 
     req.log.addAction("Checking user is creator of comment.");
     if (documents.comment.creator !== documents.user.id)
@@ -413,6 +454,10 @@ router.delete("/:id", async (req, res) => {
     });
     req.log.addAction("User and comment found.");
 
+    req.log.addAction("Finding options.");
+    const { createCommentEngagementWeight } = await getOptions("comment");
+    req.log.addAction("Options found.");
+
     req.log.addAction("Checking user is creator of comment.");
     if (documents.comment.creator !== documents.user.id)
       throw new ResponseError(
@@ -446,7 +491,7 @@ router.delete("/:id", async (req, res) => {
     await updateCommunityEngagement(
       documents.user.username,
       documents.comment.community,
-      -process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT || -1
+      -createCommentEngagementWeight || -1
     );
     req.log.addAction("Community engagement updated.");
 

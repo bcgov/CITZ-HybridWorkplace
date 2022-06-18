@@ -25,6 +25,8 @@ const checkPatchQuery = require("../../../functions/checkPatchQuery");
 const findSingleDocuments = require("../../../functions/findSingleDocuments");
 const checkUserIsMemberOfCommunity = require("../../../functions/checkUserIsMemberOfCommunity");
 const updateCommunityEngagement = require("../../../functions/updateCommunityEngagement");
+const getOptions = require("../../../functions/getOptions");
+const trimExtraSpaces = require("../../../functions/trimExtraSpaces");
 
 const router = express.Router();
 
@@ -81,6 +83,56 @@ router.post("/", async (req, res) => {
     });
     req.log.addAction("User and community found.");
 
+    req.log.addAction("Finding options.");
+    const {
+      titleMinLength,
+      titleMaxLength,
+      titleDisallowedCharacters,
+      titleDisallowedStrings,
+      messageMinLength,
+      messageMaxLength,
+      createCommunityEngagementWeight,
+    } = await getOptions("post");
+    req.log.addAction("Options found.");
+
+    // Trim extra spaces
+    req.log.addAction("Trimming extra spaces from inputs in request body.");
+    req.body.title = trimExtraSpaces(req.body.title);
+    req.log.addAction(`title trimmed: ${req.body.title}`);
+    req.body.message = req.body.message.trim();
+    req.log.addAction(`description trimmed: ${req.body.description}`);
+
+    // Validate title
+    const titleRegexStr = `(?!.*[${titleDisallowedCharacters}]).{${titleMinLength},${titleMaxLength}}`;
+    const titlePattern = new RegExp(titleRegexStr, "g");
+    const titleDisallowedCharactersReplace = titleDisallowedCharacters
+      .replace(/^\\/g, "x")
+      .replaceAll("\\", "")
+      .replace("x", "\\");
+    const titleError = `title does not meet requirements: length ${titleMinLength}-${titleMaxLength}, must not contain characters (${titleDisallowedCharactersReplace}).`;
+    req.log.addAction("Validating title.");
+    if (!titlePattern.test(req.body.title))
+      throw new ResponseError(403, titleError);
+
+    titleDisallowedStrings.some((str) => {
+      const pattern = new RegExp(str, "g");
+      if (pattern.test(req.body.title))
+        throw new ResponseError(403, `Invalid string in title: ${str}`);
+      return true;
+    });
+    req.log.addAction("title is valid.");
+
+    // Validate message
+    const messageLengthError = `message does not meet requirements: length ${messageMinLength}-${messageMaxLength}.`;
+    req.log.addAction("Validating message.");
+    if (
+      !req.body.message ||
+      req.body.message.length < messageMinLength ||
+      req.body.message.length > messageMaxLength
+    )
+      throw new ResponseError(403, messageLengthError);
+    req.log.addAction("message is valid.");
+
     req.log.addAction("Checking user is member of community.");
     await checkUserIsMemberOfCommunity(
       documents.user.username,
@@ -131,16 +183,20 @@ router.post("/", async (req, res) => {
     await updateCommunityEngagement(
       documents.user.username,
       documents.community.title,
-      process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_POST || 1
+      createCommunityEngagementWeight || 1
     );
     req.log.addAction("Community engagement updated.");
 
-    req.log.addAction(`Updating community (${req.body.community}) latest activity.`);
+    req.log.addAction(
+      `Updating community (${req.body.community}) latest activity.`
+    );
     await Community.updateOne(
       { title: post.community },
       { $set: { latestActivity: moment().format("MMMM Do YYYY, h:mm:ss a") } }
     );
-    req.log.addAction(`Community (${req.body.community}) latest activity updated.`);
+    req.log.addAction(
+      `Community (${req.body.community}) latest activity updated.`
+    );
 
     req.log.addAction("Updating user post count.");
     await User.updateOne(
@@ -416,6 +472,55 @@ router.patch("/:id", async (req, res) => {
     });
     req.log.addAction("User and post found.");
 
+    req.log.addAction("Finding options.");
+    const {
+      titleMinLength,
+      titleMaxLength,
+      titleDisallowedCharacters,
+      titleDisallowedStrings,
+      messageMinLength,
+      messageMaxLength,
+    } = await getOptions("post");
+    req.log.addAction("Options found.");
+
+    // Trim extra spaces
+    req.log.addAction("Trimming extra spaces from inputs in request body.");
+    req.body.title = trimExtraSpaces(req.body.title);
+    req.log.addAction(`title trimmed: ${req.body.title}`);
+    req.body.message = req.body.message.trim();
+    req.log.addAction(`description trimmed: ${req.body.description}`);
+
+    // Validate title
+    const titleRegexStr = `(?!.*[${titleDisallowedCharacters}]).{${titleMinLength},${titleMaxLength}}`;
+    const titlePattern = new RegExp(titleRegexStr, "g");
+    const titleDisallowedCharactersReplace = titleDisallowedCharacters
+      .replace(/^\\/g, "x")
+      .replaceAll("\\", "")
+      .replace("x", "\\");
+    const titleError = `title does not meet requirements: length ${titleMinLength}-${titleMaxLength}, must not contain characters (${titleDisallowedCharactersReplace}).`;
+    req.log.addAction("Validating title.");
+    if (!titlePattern.test(req.body.title))
+      throw new ResponseError(403, titleError);
+
+    titleDisallowedStrings.some((str) => {
+      const pattern = new RegExp(str, "g");
+      if (pattern.test(req.body.title))
+        throw new ResponseError(403, `Invalid string in title: ${str}`);
+      return true;
+    });
+    req.log.addAction("title is valid.");
+
+    // Validate message
+    const messageLengthError = `message does not meet requirements: length ${messageMinLength}-${messageMaxLength}.`;
+    req.log.addAction("Validating message.");
+    if (
+      !req.body.message ||
+      req.body.message.length < messageMinLength ||
+      req.body.message.length > messageMaxLength
+    )
+      throw new ResponseError(403, messageLengthError);
+    req.log.addAction("message is valid.");
+
     req.log.addAction("Checking user is creator of post.");
     if (documents.post.creator !== documents.user.id)
       throw new ResponseError(403, "Only creator of post can edit post.");
@@ -507,6 +612,10 @@ router.delete("/:id", async (req, res) => {
     });
     req.log.addAction("User and post found.");
 
+    req.log.addAction("Finding options.");
+    const { createCommunityEngagementWeight } = await getOptions("post");
+    req.log.addAction("Options found.");
+
     req.log.addAction("Checking user is creator of post.");
     if (documents.post.creator !== documents.user.id)
       throw new ResponseError(403, "Must be creator of post to delete post.");
@@ -528,7 +637,7 @@ router.delete("/:id", async (req, res) => {
     await updateCommunityEngagement(
       documents.user.username,
       documents.post.community,
-      -process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_POST || -1
+      -createCommunityEngagementWeight || -1
     );
     req.log.addAction("Community engagement updated.");
 

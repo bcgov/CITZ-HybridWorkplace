@@ -24,6 +24,7 @@ const ResponseError = require("../../../responseError");
 const findSingleDocuments = require("../../../functions/findSingleDocuments");
 const checkUserIsMemberOfCommunity = require("../../../functions/checkUserIsMemberOfCommunity");
 const updateCommunityEngagement = require("../../../functions/updateCommunityEngagement");
+const getOptions = require("../../../functions/getOptions");
 
 const router = express.Router();
 
@@ -143,6 +144,24 @@ router.post("/:id", async (req, res) => {
       comment: req.params.id,
     });
     req.log.addAction("User and comment found.");
+
+    req.log.addAction("Finding options.");
+    const { messageMinLength, messageMaxLength } = await getOptions("comment");
+    req.log.addAction("Options found.");
+
+    req.log.addAction("Trimming leading and trailing spaces.");
+    req.body.message = req.body.message.trim();
+    req.log.addAction(`Comment trimmed: ${req.body.message}.`);
+
+    // Validate comment length
+    const messageLengthError = `message does not meet requirements: length ${messageMinLength}-${messageMaxLength}.`;
+    req.log.addAction("Validating message.");
+    if (
+      req.body.message.length < messageMinLength ||
+      req.body.message.length > messageMaxLength
+    )
+      throw new ResponseError(403, messageLengthError);
+    req.log.addAction("message is valid.");
 
     req.log.addAction("Checking reply is not replying to a reply.");
     if (documents.comment.replyTo)
