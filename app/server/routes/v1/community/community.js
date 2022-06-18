@@ -28,6 +28,8 @@ const ResponseError = require("../../../responseError");
 const checkPatchQuery = require("../../../functions/checkPatchQuery");
 const findSingleDocuments = require("../../../functions/findSingleDocuments");
 const updateCommunityEngagement = require("../../../functions/updateCommunityEngagement");
+const getOptions = require("../../../functions/getOptions");
+const trimExtraSpaces = require("../../../functions/trimExtraSpaces");
 
 const router = express.Router();
 
@@ -83,12 +85,83 @@ router.post("/", async (req, res) => {
     });
     req.log.addAction("User found.");
 
+    req.log.addAction("Finding options.");
+    const {
+      titleMinLength,
+      titleMaxLength,
+      titleDisallowedCharacters,
+      titleDisallowedStrings,
+      descriptionMinLength,
+      descriptionMaxLength,
+      tagMinLength,
+      tagMaxLength,
+      createCommunityEngagementWeight,
+    } = await getOptions("community");
+    req.log.addAction("Options found.");
+
+    // Trim extra spaces
+    req.log.addAction("Trimming extra spaces from inputs in request body.");
+    req.body.title = trimExtraSpaces(req.body.title);
+    req.log.addAction(`title trimmed: ${req.body.title}`);
+    req.body.description = trimExtraSpaces(req.body.description);
+    req.log.addAction(`description trimmed: ${req.body.description}`);
+
+    // Validate title
+    const titleRegexStr = `(?!.*[${titleDisallowedCharacters}]).{${titleMinLength},${titleMaxLength}}`;
+    const titlePattern = new RegExp(titleRegexStr, "g");
+    const titleDisallowedCharactersReplace = titleDisallowedCharacters
+      .replace(/^\\/g, "x")
+      .replaceAll("\\", "")
+      .replace("x", "\\");
+    const titleError = `title does not meet requirements: length ${titleMinLength}-${titleMaxLength}, must not contain characters (${titleDisallowedCharactersReplace}).`;
+    req.log.addAction("Validating title.");
+    if (!titlePattern.test(req.body.title))
+      throw new ResponseError(403, titleError);
+
+    titleDisallowedStrings.some((str) => {
+      const pattern = new RegExp(str, "g");
+      if (pattern.test(req.body.title))
+        throw new ResponseError(403, `Invalid string in title: ${str}`);
+      return true;
+    });
+    req.log.addAction("title is valid.");
+
+    // Validate description
+    const descriptionError = `description does not meet requirements: length ${descriptionMinLength}-${descriptionMaxLength}.`;
+    req.log.addAction("Validating description.");
+    if (
+      !req.body.description ||
+      req.body.description.length < descriptionMinLength ||
+      req.body.description.length > descriptionMaxLength
+    )
+      throw new ResponseError(403, descriptionError);
+    req.log.addAction("description is valid.");
+
+    // TODO: Validate tag desc once implemented
+    // Validate and trim tags
+    if (req.body.tags && req.body.tags instanceof Object) {
+      Object.keys(req.body.tags).forEach((tagObject) => {
+        // Trim extra spaces
+        req.body.tags[tagObject].tag = trimExtraSpaces(
+          req.body.tags[tagObject].tag
+        );
+        // Validate length
+        if (
+          req.body.tags[tagObject].tag.length < tagMinLength ||
+          req.body.tags[tagObject].tag.length > tagMaxLength
+        )
+          throw new ResponseError(
+            403,
+            `Tags (${req.body.tags[tagObject].tag}) must have a length of ${tagMinLength}-${tagMaxLength}`
+          );
+      });
+    }
+
+    // TODO: Validate rules when rules have been reworked to use a list
+
     req.log.addAction("Checking community already exists.");
     if (await Community.exists({ title: req.body.title }))
       throw new ResponseError(403, "Community already exists.");
-
-    // TODO: Validate formatting for tags in request body
-    // TODO: Prevent spaces or special characters in community title
 
     req.log.addAction("Getting creator name.");
     const { firstName, lastName } = documents.user;
@@ -132,7 +205,7 @@ router.post("/", async (req, res) => {
     await updateCommunityEngagement(
       documents.user.username,
       community.title,
-      process.env.COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMUNITY || 0
+      createCommunityEngagementWeight || 0
     );
     req.log.addAction("Community engagement updated.");
 
@@ -374,6 +447,79 @@ router.patch("/:title", async (req, res) => {
     });
     req.log.addAction("User and community found.");
 
+    req.log.addAction("Finding options.");
+    const {
+      titleMinLength,
+      titleMaxLength,
+      titleDisallowedCharacters,
+      titleDisallowedStrings,
+      descriptionMinLength,
+      descriptionMaxLength,
+      tagMinLength,
+      tagMaxLength,
+    } = await getOptions("community");
+    req.log.addAction("Options found.");
+
+    // Trim extra spaces
+    req.log.addAction("Trimming extra spaces from inputs in request body.");
+    req.body.title = trimExtraSpaces(req.body.title);
+    req.log.addAction(`title trimmed: ${req.body.title}`);
+    req.body.description = trimExtraSpaces(req.body.description);
+    req.log.addAction(`description trimmed: ${req.body.description}`);
+
+    // Validate title
+    const titleRegexStr = `(?!.*[${titleDisallowedCharacters}]).{${titleMinLength},${titleMaxLength}}`;
+    const titlePattern = new RegExp(titleRegexStr, "g");
+    const titleDisallowedCharactersReplace = titleDisallowedCharacters
+      .replace(/^\\/g, "x")
+      .replaceAll("\\", "")
+      .replace("x", "\\");
+    const titleError = `title does not meet requirements: length ${titleMinLength}-${titleMaxLength}, must not contain characters (${titleDisallowedCharactersReplace}).`;
+    req.log.addAction("Validating title.");
+    if (!titlePattern.test(req.body.title))
+      throw new ResponseError(403, titleError);
+
+    titleDisallowedStrings.some((str) => {
+      const pattern = new RegExp(str, "g");
+      if (pattern.test(req.body.title))
+        throw new ResponseError(403, `Invalid string in title: ${str}`);
+      return true;
+    });
+    req.log.addAction("title is valid.");
+
+    // Validate description
+    const descriptionError = `description does not meet requirements: length ${descriptionMinLength}-${descriptionMaxLength}.`;
+    req.log.addAction("Validating description.");
+    if (
+      !req.body.description ||
+      req.body.description.length < descriptionMinLength ||
+      req.body.description.length > descriptionMaxLength
+    )
+      throw new ResponseError(403, descriptionError);
+    req.log.addAction("description is valid.");
+
+    // TODO: Validate tag desc once implemented
+    // Validate and trim tags
+    if (req.body.tags && req.body.tags instanceof Object) {
+      Object.keys(req.body.tags).forEach((tagObject) => {
+        // Trim extra spaces
+        req.body.tags[tagObject].tag = trimExtraSpaces(
+          req.body.tags[tagObject].tag
+        );
+        // Validate length
+        if (
+          req.body.tags[tagObject].tag.length < tagMinLength ||
+          req.body.tags[tagObject].tag.length > tagMaxLength
+        )
+          throw new ResponseError(
+            403,
+            `Tags (${req.body.tags[tagObject].tag}) must have a length of ${tagMinLength}-${tagMaxLength}`
+          );
+      });
+    }
+
+    // TODO: Validate rules when rules have been reworked to use a list
+
     req.log.addAction("Checking user is creator of community.");
     if (documents.user.id !== documents.community.creator)
       throw new ResponseError(
@@ -381,8 +527,6 @@ router.patch("/:title", async (req, res) => {
         "Only creator of community can edit community."
       );
     req.log.addAction("User is creator of community.");
-
-    // TODO: Prevent spaces or special characters in community title
 
     req.log.addAction("Checking if community title already exists.");
     if (req.body.title && (await Community.exists({ title: req.body.title })))
