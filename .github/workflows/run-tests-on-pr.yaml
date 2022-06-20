@@ -14,20 +14,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     # Set variables
-      - name: Get repository name and remove spaces
+      - name: Get repository name and remove owner
         id: repo-name
         run: |
           echo "::set-output name=repo-name::$(echo ${{ github.repository }} | sed 's/\(.*\)\/\(.*\)/\2/g')" 
 
-      - name: Get PR name and remove owner
+      - name: Get PR name and remove spaces
         id: pr-name
         run: |
           echo "::set-output name=pr-name::$(echo ${{ github.event.pull_request.title }} | sed 's/\s/-/g')"
 
+      - name: Get current datestamp
+        id: date
+        run: |
+          echo "::set-output name=date::$(date '+%Y%m%d%H%M%S')"
+
       - name: Build file path
         id: results
         run: |
-          echo "::set-output name=results::${{ steps.repo-name.outputs.repo-name }}_${{ github.job }}_${{ github.event.created_at }}_${{ steps.pr-name.outputs.pr-name }}.json"
+          echo "::set-output name=results::${{ steps.repo-name.outputs.repo-name }}_${{ github.job }}_${{ steps.date.outputs.date }}_${{ steps.pr-name.outputs.pr-name }}.json"
 
     # Prepare and build containers
       - uses: actions/checkout@v2
