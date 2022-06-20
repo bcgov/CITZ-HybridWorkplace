@@ -108,10 +108,19 @@ jobs:
         run: |
           sed -i -n 5p tempResults
 
-      - name: Pretty print json file using Python
+      - name: Add keys to json file and pretty print
         working-directory: ./app/server
         run: |
-          python3 -m json.tool tempResults > ${{ steps.results.outputs.results }}
+          import json
+          with open('tempResults') as json_file:
+            data = json.load(json_file)
+          data['repository'] = ${{ github.repository }}
+          data['branch'] = ${{ github.ref_name }}
+          data['pull-request'] = ${{ github.event.pull_request.title }}
+          data['creator'] = ${{ github.event.pull_request.user.login }}
+          with open('${{ steps.results.outputs.results }}', 'w') as json_file:
+            json.dump(data, json_file, indent=2)
+        shell: python3
 
       - name: Save file as artifact
         uses: actions/upload-artifact@v1
