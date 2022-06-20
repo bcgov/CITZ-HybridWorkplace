@@ -22,9 +22,19 @@
 
 import React, { useState, useEffect } from "react";
 
-import { Grid, Paper, Box, Button, Typography } from "@mui/material";
+import {
+  Grid,
+  Stack,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+  Typography,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SettingsTwoToneIcon from "@mui/icons-material/SettingsTwoTone";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { connect } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -103,31 +113,118 @@ const CommunityPage = (props) => {
               textAlign: "center",
             }}
           >
-            <Typography
-              variant="h6"
-              component="h5"
-              sx={{
-                fontWeight: 600,
-              }}
-            >
-              {title}
-            </Typography>
+            <Stack direction="row">
+              {props.community.creator === props.userId ? (
+                <>
+                  <Typography
+                    variant="h6"
+                    component="h5"
+                    sx={{
+                      flexGrow: 6,
+                      pl: 8,
+                      textAlign: "center",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {title}
+                  </Typography>
+                  <Button
+                    variant="text"
+                    color="inherit"
+                    alignItems="right"
+                    onClick={handleSettingsClick}
+                  >
+                    <SettingsTwoToneIcon sx={{ color: "white", pl: 3 }} />
+                  </Button>
+                </>
+              ) : (
+                <Typography
+                  variant="h6"
+                  component="h5"
+                  sx={{
+                    flexGrow: 6,
+                    textAlign: "center",
+                    fontWeight: 600,
+                  }}
+                >
+                  {title}
+                </Typography>
+              )}
+            </Stack>
           </Box>
-          <Box sx={{ borderRadius: "10px", px: 1, py: 0.5, mb: 1 }}>
-            <Typography sx={{ my: "10px" }}>
-              {props.community.description}
-            </Typography>
+          <Box sx={{ borderRadius: "10px" }}>
+            <Stack spacing={1}>
+              <Typography sx={{ mt: 1 }}>
+                {props.community.description}
+              </Typography>
+              <Typography
+                sx={{
+                  fontStyle: "italic",
+                  color: "#898989",
+                }}
+              >
+                Members of this community: {props.community.memberCount || 0}
+              </Typography>
+              {props.community.creatorName && (
+                <Typography
+                  sx={{
+                    fontWeight: "bold",
+                    color: "#0072A2",
+                    pb: 3,
+                  }}
+                >
+                  Created by: {props.community.creatorName}
+                </Typography>
+              )}
+              <Box
+                sx={{
+                  borderRadius: "10px",
+                  textAlign: "left",
+                }}
+              >
+                <Box
+                  sx={{
+                    backgroundColor: "primary.main",
+                    borderTopLeftRadius: "10px",
+                    borderTopRightRadius: "10px",
+                    pt: 1,
+                    pb: 1,
+                    color: "white",
+                    textAlign: "center",
+                  }}
+                >
+                  <Typography varient="h6">Community Rules</Typography>
+                  <Typography sx={{ fontWeight: "bold", fontStyle: "italic" }}>
+                    (coming soon)
+                  </Typography>
+                </Box>
+                <Accordion>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>1. Example rule</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Typography>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                      Suspendisse malesuada lacus ex, sit amet blandit leo
+                      lobortis eget.
+                    </Typography>
+                  </AccordionDetails>
+                </Accordion>
+                <Accordion>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>2. Example rule</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Typography>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                      Suspendisse malesuada lacus ex, sit amet blandit leo
+                      lobortis eget.
+                    </Typography>
+                  </AccordionDetails>
+                </Accordion>
+              </Box>
+            </Stack>
           </Box>
-          {props.community.creator === props.userId && (
-            <Button
-              variant="text"
-              color="inherit"
-              onClick={handleSettingsClick}
-            >
-              <SettingsTwoToneIcon />
-              Settings
-            </Button>
-          )}
         </Grid>
       </Grid>
       <EditCommunityModal />
