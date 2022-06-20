@@ -18,78 +18,142 @@
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
+import { Box, Divider, List, ListItem, Stack, Typography } from "@mui/material";
 import "./Styles/about.css";
+
 const AboutPage = () => {
   return (
-    <div>
-      <h1> Hybrid Workplace: The Neigbourhood</h1>
-      <p>
-        Is a collaboration tool for internal government communities as per our
-        problem statement
-      </p>
-      <p>VERSION.BUILD v.1.0.1</p>
-      <br />
-      <h2> Developed By:</h2>
-      <ul className="no-bullets">
-        <li> Abby: a.ulveland@gmail.com </li>
-        <li> Jayna: bettesworthjayna@gmail.com </li>
-      </ul>
-      <br />
-      <ul className="no-bullets">
-        <li> This project is open sourced for fair use, with attribution.</li>
-        <li> This work carried no warranty or implied guarantee. </li>
-        <li>
-          {" "}
+    <Box>
+      <Stack spacing={2}>
+        <Typography variant="h4">Hybrid Workplace: The Neigbourhood</Typography>
+        <Typography variant="body1">
+          Is a collaboration tool for internal government communities as per our
+          problem statement
+        </Typography>
+        <Typography variant="body1">VERSION.BUILD v.1.0.1</Typography>
+      </Stack>
+
+      <Stack spacing={1} sx={{ marginTop: 2 }}>
+        <Typography variant="h5"> Developed By:</Typography>
+        <Typography variant="h6">Phase 1</Typography>
+        <Typography variant="subtitle1">UVIC Co-op</Typography>
+        <Divider />
+        <List>
+          <ListItem>
+            <Typography variant="body2">Abby: a.ulveland@gmail.com</Typography>
+          </ListItem>
+          <ListItem>
+            <Typography variant="body2">
+              Jayna: bettesworthjayna@gmail.com
+            </Typography>
+          </ListItem>
+        </List>
+        <Stack>
+          <Typography variant="h6">Phase 2</Typography>
+          <Typography variant="subtitle1">Camosun Capstone</Typography>
+        </Stack>
+        <Divider />
+        <List>
+          <ListItem>
+            <Typography variant="body2">
+              Zach: zachbourque01@gmail.com
+            </Typography>
+          </ListItem>
+          <ListItem>
+            <Typography variant="body2">
+              Brady: braden.jr.mitch@gmail.com
+            </Typography>
+          </ListItem>
+          <ListItem>
+            <Typography variant="body2">
+              Brandon: brandonjbouchard@gmail.com
+            </Typography>
+          </ListItem>
+        </List>
+      </Stack>
+      <Divider />
+      <Stack sx={{ marginTop: 2 }}>
+        <Typography variant="body1">
+          This project is open sourced for fair use, with attribution.
+        </Typography>
+        <Typography variant="body1">
+          This work carried no warranty or implied guarantee.
+        </Typography>
+        <Typography variant="body1">
           All third party libraries are those of their rightful owners or
-          licensees.{" "}
-        </li>
-        <li> BC government theme © 2020 by the Government of BC </li>
-      </ul>
-      <br />
-      <h2>Platform:</h2>
-      <ul className="no-bullets">
-        <li>
-          Developed using React.js, Node.js, MongoDB and Express hosted on the{" "}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href={process.env.REACT_APP_BCDEV_EXCHANGE_URL}
-          >
-            {process.env.REACT_APP_BCDEV_EXCHANGE_URL}
-          </a>{" "}
-          DevOps Environment.
-        </li>
-        <li>
-          Addingtional info:{" "}
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href={process.env.REACT_APP_GITHUB_REPO_URL}
-          >
-            {process.env.REACT_APP_GITHUB_REPO_URL}
-          </a>
-        </li>
-      </ul>
-      <br />
-      <h2>Features Include:</h2>
-      <ul>
-        <li>User Account Managmanet</li>
+          licensees.
+        </Typography>
+        <Typography variant="body1">
+          BC government theme © 2020 by the Government of BC
+        </Typography>
+      </Stack>
+      <Stack spacing={1} sx={{ marginTop: 2 }}>
+        <Typography variant="h5">Platform:</Typography>
+
+        <Typography>
+          Developed using React.js, Node.js, MongoDB and Express hosted on
+          OpenShift.
+        </Typography>
+      </Stack>
+      <Stack sx={{ marginTop: 2 }}>
+        <Typography variant="h5">Features Include:</Typography>
         <ul>
-          <li>Registration</li>
-          <li>Login/Logout</li>
+          <li>
+            <Typography variant="body1">User Account Managmanet</Typography>
+          </li>
+          <ul>
+            <li>
+              <Typography variant="body1">Registration</Typography>
+            </li>
+            <li>
+              <Typography variant="body1">Login/Logout</Typography>
+            </li>
+          </ul>
+          <li>
+            <Typography variant="body1">Community Collaboration</Typography>
+          </li>
+          <ul>
+            <li>
+              <Typography variant="body1">Create a Community</Typography>
+            </li>
+            <li>
+              <Typography variant="body1">Delete your Community</Typography>
+            </li>
+            <li>
+              <Typography variant="body1">Join / Leave a Community</Typography>
+            </li>
+            <li>
+              <Typography variant="body1">List all Communities</Typography>
+            </li>
+          </ul>
+          <li>
+            <Typography variant="body1">Posts</Typography>
+          </li>
+          <ul>
+            <li>
+              <Typography variant="body1">
+                Create a Post in a Community
+              </Typography>
+            </li>
+            <li>
+              <Typography variant="body1">Delete Your Post</Typography>
+            </li>
+            <li>
+              <Typography variant="body1">Flag Post For Misconduct</Typography>
+            </li>
+            <li>
+              <Typography variant="body1">Tag Post</Typography>
+            </li>
+          </ul>
+          <li>
+            <Typography variant="body1">APIs</Typography>
+          </li>
+          <br />
+          <br />
         </ul>
-        <li>Community Collaberation</li>
-        <ul>
-          <li>Create a Community</li>
-          <li>Join / Leave a Community</li>
-          <li>List all Communities</li>
-          <li>Create a posting in a Community</li>
-        </ul>
-        <li>APIs</li>
-        <br />
-        <br />
-      </ul>
-    </div>
+      </Stack>
+    </Box>
   );
 };
+
 export default AboutPage;
