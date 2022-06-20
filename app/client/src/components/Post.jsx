@@ -37,7 +37,6 @@ import moment from "moment";
 const Post = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
-
   const [commNameHover, setCommNameHover] = useState(false);
   const onCommNameHoverEnter = () => {
     setCommNameHover(true);
@@ -81,7 +80,7 @@ const Post = (props) => {
 
   // Create preview if post message is longer than 250 characters
   let message = post.message;
-  if (message.length > 250) {
+  if (message.length > 250 && !props.isPostPage) {
     message = `${message.substr(0, 249)}...`;
   }
 
@@ -164,7 +163,7 @@ const Post = (props) => {
                 <Typography
                   variant="h5"
                   onClick={handlePostClick}
-                  sx={{ cursor: "pointer" }}
+                  sx={{ cursor: props.isPostPage || "pointer" }}
                 >
                   <b>{post.title}</b>
                 </Typography>
@@ -190,7 +189,10 @@ const Post = (props) => {
             </Typography>
           }
         />
-        <CardContent onClick={handlePostClick} sx={{ cursor: "pointer" }}>
+        <CardContent
+          onClick={handlePostClick}
+          sx={{ cursor: props.isPostPage || "pointer" }}
+        >
           <Typography variant="body1">{message}</Typography>
         </CardContent>
         <CardActions>

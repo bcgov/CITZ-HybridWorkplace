@@ -13,6 +13,8 @@ import {
   MenuItem,
   MenuList,
   Typography,
+  Button,
+  TextField,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import UpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -22,6 +24,8 @@ import React, { useState } from "react";
 import { openDeleteCommentModal } from "../redux/ducks/modalDuck";
 import { connect } from "react-redux";
 import moment from "moment";
+import CommentReply from "./CommentReply";
+import CommentRepliesList from "./CommentRepliesList";
 
 export const Comment = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -66,64 +70,91 @@ export const Comment = (props) => {
   if (splitCreatedOn[0] === yesterday)
     createdOn = `Yesterday${splitCreatedOn[1]}`;
 
+  const [replyOpen, setReplyOpen] = useState(false);
+  const openReply = () => {
+    setReplyOpen(true);
+  };
+  const closeReply = () => {
+    setReplyOpen(false);
+  };
+
   return (
-    <Card style={{ margin: 10 }}>
-      <CardHeader
-        title={
-          <Typography variant="h5">
-            {props.comment.creatorName || "Unknown Commenter"}
-          </Typography>
-        }
-        subheader={<Typography fontSize="small">{createdOn}</Typography>}
-        avatar={<Avatar fontSize="medium" />}
-        action={
-          props.userId === props.comment.creator && (
-            <>
-              <IconButton aria-label="settings" onClick={handleMenuOpen}>
-                <MoreVertIcon />
-              </IconButton>
-              <Menu
-                open={!!anchorEl}
-                onClose={handleMenuClose}
-                anchorEl={anchorEl}
-              >
-                <MenuList>
-                  <MenuItem onClick={handleDeleteCommentClick}>
-                    <ListItemIcon>
-                      <DeleteForeverTwoToneIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText>Delete</ListItemText>
-                  </MenuItem>
-                </MenuList>
-              </Menu>
-            </>
-          )
-        }
-      />
-      <CardContent sx={{ paddingTop: "0px" }}>
-        <Grid container spacing={2}>
-          <Grid item xs={11}>
-            {props.comment.edits.length > 0 && (
-              <Typography variant="caption" color="#898989">
-                Edited: {editDate}
+    <Grid container justifyContent="flex-end">
+      <Grid item xs={12}>
+        <Card style={{ margin: 10 }}>
+          <CardHeader
+            title={
+              <Typography variant="h5">
+                {props.comment.creatorName || "Unknown Commenter"}
               </Typography>
+            }
+            subheader={<Typography fontSize="small">{createdOn}</Typography>}
+            avatar={<Avatar fontSize="medium" />}
+            action={
+              props.userId === props.comment.creator && (
+                <>
+                  <IconButton aria-label="settings" onClick={handleMenuOpen}>
+                    <MoreVertIcon />
+                  </IconButton>
+                  <Menu
+                    open={!!anchorEl}
+                    onClose={handleMenuClose}
+                    anchorEl={anchorEl}
+                  >
+                    <MenuList>
+                      <MenuItem onClick={handleDeleteCommentClick}>
+                        <ListItemIcon>
+                          <DeleteForeverTwoToneIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Delete</ListItemText>
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
+                </>
+              )
+            }
+          />
+          <CardContent sx={{ paddingTop: "0px" }}>
+            <Grid container spacing={2}>
+              <Grid item xs={11}>
+                {props.comment.edits.length > 0 && (
+                  <Typography variant="caption" color="#898989">
+                    Edited: {editDate}
+                  </Typography>
+                )}
+                <Typography variant="body2">{props.comment.message}</Typography>
+              </Grid>
+              <Grid item xs={1}>
+                <Stack alignItems="flex-end">
+                  <IconButton aria-label="upvote" sx={{ padding: 0 }}>
+                    <UpIcon fontSize="small" />
+                  </IconButton>
+                  <Typography pr="5px">{props.comment.votes || 0}</Typography>
+                  <IconButton aria-label="downvote" sx={{ padding: 0 }}>
+                    <DownIcon fontSize="small" />
+                  </IconButton>
+                </Stack>
+              </Grid>
+            </Grid>
+          </CardContent>
+          <CardActions>
+            {!props.hideReply && (
+              <Button variant="text" onClick={openReply}>
+                Reply
+              </Button>
             )}
-            <Typography variant="body2">{props.comment.message}</Typography>
-          </Grid>
-          <Grid item xs={1}>
-            <Stack alignItems="flex-end">
-              <IconButton aria-label="upvote" sx={{ padding: 0 }}>
-                <UpIcon fontSize="small" />
-              </IconButton>
-              <Typography pr="5px">{props.comment.votes || 0}</Typography>
-              <IconButton aria-label="downvote" sx={{ padding: 0 }}>
-                <DownIcon fontSize="small" />
-              </IconButton>
-            </Stack>
-          </Grid>
-        </Grid>
-      </CardContent>
-    </Card>
+          </CardActions>
+        </Card>
+      </Grid>
+      <Grid item xs={12} sx={{ paddingLeft: 2, paddingRight: 2 }}>
+        {replyOpen && (
+          <CommentReply close={closeReply} commentId={props.comment._id} />
+        )}
+      </Grid>
+      <Grid item xs={12}>
+        {!props.isReply && <CommentRepliesList comment={props.comment} />}
+      </Grid>
+    </Grid>
   );
 };
 

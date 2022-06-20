@@ -42,6 +42,7 @@ import EditProfile from "./components/EditProfile";
 import NewCommunity from "./components/NewCommunity";
 import SingularPost from "./components/SingularPost";
 import LogoutPage from "./views/LogoutPage";
+import PostPage from "./views/PostPage";
 
 const App = () => {
   return (
@@ -85,9 +86,7 @@ const App = () => {
         />
         <Route
           path="/post/:id"
-          element={
-            <PrivateComponent component={<SingularPost showComments />} />
-          }
+          element={<PrivateComponent component={<PostPage />} />}
         />
         <Route path="/logout" element={<LogoutPage />} />
         <Route path="*" exact element={<Page404 />}></Route>
