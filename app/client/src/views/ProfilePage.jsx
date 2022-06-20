@@ -18,16 +18,18 @@
  * Application entry point
  * @author [Brandon Bouchard](brandonjbouchard@gmail.com)
  * @author [Zach Bourque](zachbourque01@gmail.com)
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
  */
 
-import React, { useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-
 import "./Styles/profile.css";
+import React, { useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { getProfile } from "../redux/ducks/profileDuck";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import moment from "moment";
+
 import {
   Grid,
   Box,
@@ -54,6 +56,31 @@ const ProfilePage = (props) => {
     props.getProfile(username);
   }, []);
 
+  const convertDate = (date) => {
+    const today = moment().format("MMMM Do YYYY");
+    const yesterday = moment().subtract(1, "days").format("MMMM Do YYYY");
+
+    // Convert to local time
+    let convertedDate =
+      moment(moment.utc(date, "MMMM Do YYYY, h:mm:ss a").toDate())
+        .local()
+        .format("MMMM Do YYYY, h:mm:ss a") || "";
+    // Remove milliseconds
+    convertedDate = `${convertedDate.substring(
+      0,
+      convertedDate.length - 6
+    )} ${convertedDate.substring(
+      convertedDate.length - 2,
+      convertedDate.length
+    )}`;
+    const splitDate = convertedDate.split(",");
+
+    if (splitDate[0] === today) convertedDate = `Today,${splitDate[1]}`;
+    if (splitDate[0] === yesterday) convertedDate = `Yesterday,${splitDate[1]}`;
+
+    return convertedDate;
+  };
+
   return (
     <Box
       sx={{
@@ -72,19 +99,23 @@ const ProfilePage = (props) => {
           <Grid
             container
             direction="column"
-            alignitems="flex-start"
+            alignItems="flex-start"
             justifyContent="space-evenly"
           >
             <Grid item xs={12}>
               <Avatar
-                sx={{ width: 150, height: 150 }}
+                sx={{ width: 150, height: 150, mb: 1 }}
                 src="https://source.unsplash.com/random/150×150/?profile%20picture"
               />
-              <br />
-              <Grid item xs={12}>
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  mb: 1,
+                }}
+              >
                 <ProfileInfo username={username} />
               </Grid>
-              <br />
               <Grid item xs={12}>
                 <Box
                   sx={{
@@ -93,7 +124,7 @@ const ProfilePage = (props) => {
                 >
                   <Typography
                     variant="h6"
-                    style={{ fontWeight: 600, color: "#313132" }}
+                    sx={{ fontWeight: 600, color: "primary.main" }}
                   >
                     Interests
                   </Typography>
@@ -118,10 +149,9 @@ const ProfilePage = (props) => {
         <Grid item xs={3}>
           <Grid container direction="row" justifyContent="space-evenly">
             <Grid item xs={12}>
-              <Typography variant="h4" style={{ fontWeight: 600 }}>
+              <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
                 Bio
               </Typography>
-              <br />
               <Typography variant="body1">
                 {props.profile.bio || "No bio to display"}
               </Typography>
@@ -132,10 +162,9 @@ const ProfilePage = (props) => {
         <Grid item xs={4}>
           <Grid container direction="row" justifyContent="space-evenly">
             <Grid item xs={12}>
-              <Typography variant="h4" style={{ fontWeight: 600 }}>
-                Pinned Communities
+              <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
+                Your Communities
               </Typography>
-              <br />
               <Grid container spacing={2}>
                 {props.communities.slice(0, 4).map((element) => (
                   <Grid item xs={6} key={element._id}>
@@ -144,63 +173,43 @@ const ProfilePage = (props) => {
                         backgroundColor: "#FFF",
                         boxShadow: 1,
                         borderRadius: "10px",
-                        color: "#313132",
-                        py: 1,
-                        px: 2,
+                        color: "primary.main",
+                        py: 2,
+                        px: 3,
                         textAlign: "start",
                         height: "auto",
                       }}
                     >
-                      <Typography variant="h6" style={{ fontWeight: 600 }}>
+                      <Typography variant="h6" sx={{ fontWeight: 600 }}>
                         {element.title}
                       </Typography>
                       <Stack direction="row" spacing={1}>
                         <GroupsIcon fontSize="small" />
                         <Typography
                           variant="p"
-                          style={{
+                          sx={{
                             color: "#999",
-                            paddingLeft: "0.5em",
+                            pl: "0.5em",
                           }}
                         >
-                          {element.members.length}
+                          {element.memberCount || 0}
                         </Typography>
                       </Stack>
-                      <br />
-                      <Stack direction="row" spacing={2}>
+                      <Stack sx={{ mt: "5px" }}>
                         <Typography
                           variant="p"
-                          style={{ fontWeight: 600, color: "#313132" }}
-                        >
-                          Joined:
-                        </Typography>
-                        <Typography
-                          variant="p"
-                          style={{
-                            fontWeight: 600,
-                            color: "#999",
-                          }}
-                        >
-                          2023/01/01
-                        </Typography>
-                      </Stack>
-                      <br />
-                      <Stack direction="row" spacing={2}>
-                        <Typography
-                          variant="p"
-                          style={{ fontWeight: 600, color: "#313132" }}
+                          sx={{ fontWeight: 600, color: "primary.main" }}
                         >
                           Latest Activity:
                         </Typography>
                         <Typography
                           variant="p"
-                          style={{
-                            fontWeight: 600,
-                            color: "#999",
+                          sx={{
+                            color: "neutral.main.dark",
                             textAlign: "left",
                           }}
                         >
-                          Today 10:36AM
+                          {convertDate(element.latestActivity)}
                         </Typography>
                       </Stack>
                     </Box>
@@ -211,13 +220,12 @@ const ProfilePage = (props) => {
           </Grid>
         </Grid>
         <Grid item xs={2}>
-          <Typography variant="h4" style={{ fontWeight: 600 }}>
+          <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
             Settings
           </Typography>
-          <br />
           <Box
             sx={{
-              color: "#313132",
+              color: "neutral.main",
               boxShadow: 2,
               py: 1,
               px: 2,
@@ -226,7 +234,7 @@ const ProfilePage = (props) => {
           >
             <FormControl>
               <FormLabel id="notification-frequency-radios-label">
-                <Typography variant="h6" style={{ fontWeight: 600 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   Notifications
                 </Typography>
               </FormLabel>
@@ -266,21 +274,28 @@ const ProfilePage = (props) => {
               </RadioGroup>
             </FormControl>
             <Divider />
-            <br />
-            <Stack direction="row" spacing={1}>
-              <Typography variant="p" style={{ fontWeight: 600 }}>
-                Dark Mode
-              </Typography>
-              <Switch />
-            </Stack>
+            <Box
+              sx={{
+                mt: 1,
+              }}
+            >
+              <Stack direction="row" spacing={1}>
+                <Typography
+                  variant="p"
+                  sx={{ fontWeight: 600, alignSelf: "center" }}
+                >
+                  Dark Mode
+                </Typography>
+                <Switch />
+              </Stack>
+            </Box>
           </Box>
         </Grid>
 
-        <Grid item xs={8}>
-          <Typography variant="h4" style={{ fontWeight: 600 }}>
+        <Grid item xs={8} sx={{}}>
+          <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
             Recent Posts
           </Typography>
-          <br />
           <Stack direction="row" spacing={2}>
             {props.communities.slice(0, 4).map((element) => (
               <Box
@@ -295,7 +310,7 @@ const ProfilePage = (props) => {
               >
                 <Box
                   sx={{
-                    backgroundColor: "#003366",
+                    backgroundColor: "primary.main",
                     width: "600px",
                     py: 1,
                     px: 2,
@@ -304,15 +319,15 @@ const ProfilePage = (props) => {
                 >
                   <Typography
                     variant="h5"
-                    style={{ fontWeight: 600, color: "#FFF" }}
+                    sx={{ fontWeight: 600, color: "#FFF" }}
                   >
                     {element.title}
                   </Typography>
                   <Typography
                     variant="caption"
-                    style={{ fontWeight: 600, color: "#FFF" }}
+                    sx={{ fontWeight: 600, color: "#FFF" }}
                   >
-                    by {element.creator}
+                    by {element.creatorName}
                   </Typography>
                 </Box>
               </Box>

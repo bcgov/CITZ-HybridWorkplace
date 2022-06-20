@@ -14,13 +14,13 @@
 // limitations under the License.
 //
 
-import Button from "@mui/material/Button";
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import { PropTypes } from "prop-types";
 import { joinCommunity, leaveCommunity } from "../redux/ducks/communityDuck";
+
+import { IconButton, Typography, Button } from "@mui/material";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import { IconButton } from "@mui/material";
 
 const JoinButton = (props) => {
   const { community, communities } = props;
@@ -60,15 +60,19 @@ const JoinButton = (props) => {
           <LogoutOutlinedIcon />
         </IconButton>
       )}
-      <Button
-        onClick={handleJoin}
-        variant="contained"
-        color={"success"}
-        size="small"
-        disabled={isInCommunity}
-      >
-        {"Join"}
-      </Button>
+      {!isInCommunity && (
+        <Button
+          onClick={handleJoin}
+          variant="contained"
+          size="small"
+          disabled={isInCommunity}
+          sx={{ backgroundColor: "#0072A2" }}
+        >
+          <Typography sx={{ fontSize: "12px", "text-transform": "none" }}>
+            <b>Join</b>
+          </Typography>
+        </Button>
+      )}
     </>
   );
 };

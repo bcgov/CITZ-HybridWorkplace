@@ -54,6 +54,10 @@ const tags = [
     description: "Upvote and downvote comments.",
   },
   {
+    name: "Comment Flags",
+    description: "View, set, and unset comment flags.",
+  },
+  {
     name: "User",
     description: "View and edit user settings.",
   },
@@ -71,7 +75,7 @@ const swaggerOptions = {
       \n\n- Now you will have limited access, as the token will expire. When token expires requests will return a **403: Invalid Token** response. 
       \n\n- When this happens, use the **/token** endpoint. Copy the access token in the response. Paste it into the field in the lock icon and click **'Authorize'**.`,
     },
-    tags: tags,
+    tags,
     components: {
       securitySchemes: {
         bearerAuth: {

@@ -22,12 +22,9 @@
 
 import React, { useState, useEffect } from "react";
 
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import { Grid, Paper, Box, Button, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import SettingsTwoToneIcon from "@mui/icons-material/SettingsTwoTone";
 
 import { connect } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -36,7 +33,6 @@ import PostsList from "../components/PostsList";
 import PostModal from "../components/modals/AddPostModal";
 import { openEditCommunityModal } from "../redux/ducks/modalDuck";
 import { getCommunityPosts, getCommunity } from "../redux/ducks/communityDuck";
-import SettingsTwoToneIcon from "@mui/icons-material/SettingsTwoTone";
 import EditCommunityModal from "../components/modals/EditCommunityModal";
 
 const CommunityPage = (props) => {
@@ -52,70 +48,77 @@ const CommunityPage = (props) => {
   const handleSettingsClick = () =>
     props.openEditCommunityModal(props.community);
   return (
-    <div>
+    <Box>
       <Grid container spacing={2}>
         <Grid item xs={8}>
-          <Paper>
-            <Box
-              mb="15px"
-              sx={{
-                backgroundColor: "#036",
-                color: "white",
-                px: 1,
-                py: 0.5,
-                textAlign: "center",
-                display: "flex",
-                borderRadius: "10px",
-              }}
-            >
-              <Grid container spacing={1}>
-                <Grid item xs={9}>
-                  <Typography variant="h5" component="h5" pl="175px">
-                    <b>Posts</b>
-                  </Typography>
-                </Grid>
-                <Grid item xs={3} align="right">
-                  <Button onClick={() => setShow(true)}>
-                    <Typography color="white">New</Typography>
-                    <AddIcon sx={{ color: "white" }} />
-                  </Button>
-                </Grid>
+          <Box
+            mb="15px"
+            sx={{
+              backgroundColor: "primary.main",
+              color: "white",
+              px: 1,
+              py: 0.5,
+              textAlign: "center",
+              display: "flex",
+              borderRadius: "10px",
+            }}
+          >
+            <Grid container spacing={1}>
+              <Grid item xs={9}>
+                <Typography
+                  variant="h5"
+                  component="h5"
+                  sx={{
+                    pl: "8em",
+                    fontWeight: 600,
+                  }}
+                >
+                  Posts
+                </Typography>
               </Grid>
+              <Grid item xs={3} align="right">
+                <Button onClick={() => setShow(true)}>
+                  <Typography color="white">New</Typography>
+                  <AddIcon sx={{ color: "white" }} />
+                </Button>
+              </Grid>
+            </Grid>
 
-              <PostModal
-                communityName={title}
-                onClose={() => setShow(false)}
-                show={show}
-              />
-            </Box>
-            <PostsList posts={props.community.posts} />
-          </Paper>
+            <PostModal
+              communityName={title}
+              onClose={() => setShow(false)}
+              show={show}
+            />
+          </Box>
+          <PostsList posts={props.community.posts} />
         </Grid>
-        <Grid item xs={4}>
-          <Paper>
-            <Box
+        <Grid item align="center" xs={4}>
+          <Box
+            sx={{
+              backgroundColor: "primary.main",
+              borderRadius: "10px",
+              color: "white",
+              px: 1,
+              py: 0.5,
+              textAlign: "center",
+            }}
+          >
+            <Typography
+              variant="h6"
+              component="h5"
               sx={{
-                backgroundColor: "#036",
-                borderTopLeftRadius: "10px",
-                borderTopRightRadius: "10px",
-                color: "white",
-                px: 1,
-                py: 0.5,
-                textAlign: "center",
+                fontWeight: 600,
               }}
             >
-              <Typography variant="h6" component="h5">
-                <b>{title}</b>
-              </Typography>
-            </Box>
-            <Box sx={{ borderRadius: "10px", px: 1, py: 0.5 }}>
-              <Typography sx={{ mt: "10px", mb: "15px" }}>
-                {props.community.description}
-              </Typography>
-            </Box>
-          </Paper>
-          <br />
-          {props.community.creator === props.username && (
+              {title}
+            </Typography>
+          </Box>
+          <Box sx={{ borderRadius: "10px", px: 1, py: 0.5, mb: 1 }}>
+            <Typography sx={{ my: "10px" }}>
+              {props.community.description}
+            </Typography>
+          </Box>
+          {props.community.creator === props.userId && (
             <Button
               variant="text"
               color="inherit"
@@ -128,7 +131,7 @@ const CommunityPage = (props) => {
         </Grid>
       </Grid>
       <EditCommunityModal />
-    </div>
+    </Box>
   );
 };
 
@@ -141,6 +144,7 @@ CommunityPage.propTypes = {
 const mapStateToProps = (state) => ({
   community: state.communities.item,
   username: state.auth.user.username,
+  userId: state.auth.user.id,
 });
 
 const mapDispatchToProps = {

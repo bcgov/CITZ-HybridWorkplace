@@ -129,7 +129,7 @@ router.post("/:title", async (req, res) => {
       throw new ResponseError(404, "Tag not found in query.");
 
     req.log.addAction("Checking user is creator of community.");
-    if (documents.user.username !== documents.community.creator)
+    if (documents.user.id !== documents.community.creator)
       throw new ResponseError(
         403,
         "Only creator of community can edit community."
@@ -233,7 +233,7 @@ router.delete("/:title", async (req, res) => {
       throw new ResponseError(404, "Tag not found in query.");
 
     req.log.addAction("Checking user is creator of community.");
-    if (documents.user.username !== documents.community.creator)
+    if (documents.user.id !== documents.community.creator)
       throw new ResponseError(
         403,
         "Only creator of community can edit community."

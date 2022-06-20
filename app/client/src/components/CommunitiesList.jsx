@@ -25,6 +25,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import DeleteCommunityModal from "./modals/DeleteCommunityModal";
 import Community from "./Community";
+import { Box } from "@mui/material";
 
 import { getCommunities } from "../redux/ducks/communityDuck";
 
@@ -34,12 +35,12 @@ const CommunitiesList = (props) => {
   }, []);
 
   return (
-    <div>
+    <Box>
       {props.communities.map((community) => (
         <Community community={community} key={community.title} />
       ))}
       <DeleteCommunityModal />
-    </div>
+    </Box>
   );
 };
 
