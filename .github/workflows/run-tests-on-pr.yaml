@@ -61,7 +61,7 @@ jobs:
 
       - name: Build API and Mongo in Docker
         run: |
-          docker-compose up -d --build
+          docker-compose up -d --build mongodb hwp-api
 
       - name: Wait for Mongo container
         uses: stringbean/docker-healthcheck-action@v1
