@@ -39,11 +39,11 @@ jobs:
           echo "FRONTEND_PORT=8080" >> .env
           echo "MONGO_REF=mongodb" >> .env
           echo "MONGO_PORT=27017" >> .env
-          echo "MONGO_ROOT_USERNAME=root" >> .env
-          echo "MONGO_ROOT_PASSWORD=root" >> .env
-          echo "MONGO_DB_USERNAME=db-root" >> .env
-          echo "MONGO_DB_PASSWORD=db-root" >> .env
-          echo "MONGO_DATABASE_NAME=TestDB" >> .env
+          echo "MONGO_ROOT_USERNAME=admin" >> .env
+          echo "MONGO_ROOT_PASSWORD=admin" >> .env
+          echo "MONGO_DB_USERNAME=db-admin" >> .env
+          echo "MONGO_DB_PASSWORD=db-admin" >> .env
+          echo "MONGO_DATABASE_NAME=TheNeighbourhood" >> .env
           echo "JWT_SECRET=asimplesecret" >> .env
           echo "JWT_REFRESH_SECRET=asimplerefresh" >> .env
           echo "JWT_TOKEN_EXPIRY=1h" >> .env
@@ -61,6 +61,22 @@ jobs:
       - name: Build API and Mongo in Docker
         run: |
           docker-compose up -d --build hwp-api mongodb
+
+      - name: Wait for Mongo container
+        uses: stringbean/docker-healthcheck-action@v1
+        with:
+          container: mongodb
+          wait-time: 60
+          require-status: running
+          require-healthy: true 
+      
+      - name: Wait for API container
+        uses: stringbean/docker-healthcheck-action@v1
+        with:
+          container: hwp-api
+          wait-time: 60
+          require-status: running
+          require-healthy: true 
 
       - name: Run test command
         working-directory: ./app/server
