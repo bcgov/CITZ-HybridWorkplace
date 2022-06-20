@@ -76,8 +76,7 @@ jobs:
         with:
           container: hwp-api
           wait-time: 60
-          require-status: running
-          require-healthy: true 
+          require-status: running 
 
       - name: Run test command
         working-directory: ./app/server
