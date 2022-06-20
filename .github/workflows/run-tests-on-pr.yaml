@@ -13,11 +13,23 @@ jobs:
   api-endpoint-tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Get current datestamp
-        id: date
+    # Set variables
+      - name: Get repository name
+        id: repo-name
         run: |
-          echo "::set-output name=date::$(date '+%Y%m%d%H%M%S')"
+          echo "::set-output name=repo-name::$(echo ${{ github.repository }} | sed 's/\(.*\)\/\(.*\)/\2/g')"
 
+      - name: Get PR name
+        id: pr-name
+        run: |
+          echo "::set-output name=pr-name::$(echo ${{ github.event.pull_request.title }} | sed 's/\s/-/g')"
+
+      - name: Build file path
+        id: results
+        run: |
+          echo "::set-output name=results::${{ steps.repo-name.outputs.repo-name }}_${{ github.job }}_${{ github.event.created_at }}_${{ steps.pr-name.outputs.pr-name }}.json"
+
+    # Prepare and build containers
       - uses: actions/checkout@v2
           
       - name: Install dependencies
@@ -78,17 +90,14 @@ jobs:
           wait-time: 60
           require-status: running 
 
+    # Run tests
       - name: Run test command
         working-directory: ./app/server
         continue-on-error: true
         run: |
           npm test -- --json > tempResults
 
-      - name: Build file path
-        id: results
-        run: |
-          echo "::set-output name=results::${{ github.event.pull_request.repo.name }}_${{ github.job }}_${{ steps.date.outputs.date }}_${{ github.event.pull_request.title }}.json"
-
+    # Refine results
       - name: Select only json line
         working-directory: ./app/server
         run: |
