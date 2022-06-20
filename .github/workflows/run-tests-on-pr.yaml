@@ -1,10 +1,10 @@
 name: Run HWP Tests
 
 on:
-  push:
   pull_request:
     types: 
       - opened
+      - synchronize
     branches: 
       - main
   workflow_dispatch:
@@ -87,7 +87,7 @@ jobs:
       - name: Build file path
         id: results
         run: |
-          echo "::set-output name=results::apiTestResults_${{ steps.date.outputs.date }}_${{ github.event.pull_request.head.ref }}.json"
+          echo "::set-output name=results::${{ github.event.pull_request.repo.name }}_${{ github.job }}_${{ steps.date.outputs.date }}_${{ github.event.pull_request.title }}.json"
 
       - name: Select only json line
         working-directory: ./app/server
