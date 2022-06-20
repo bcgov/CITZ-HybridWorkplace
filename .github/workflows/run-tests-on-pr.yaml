@@ -13,17 +13,17 @@ jobs:
   api-endpoint-tests:
     runs-on: ubuntu-latest
     steps:
+      - name: Get current datestamp
+        id: date
+        run: |
+          echo "::set-output name=date::$(date '+%Y%m%d%H%M%S')"
+
       - uses: actions/checkout@v2
           
       - name: Install dependencies
         working-directory: ./app/server
         run: |
           npm install
-
-      - name: Get current datestamp
-        id: date
-        run: |
-          echo "::set-output name=date::$(date '+%Y%m%d%H%M%S')"
 
       - name: Relax Express request limiter
         working-directory: ./app/server
