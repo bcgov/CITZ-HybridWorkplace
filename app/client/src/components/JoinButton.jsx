@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { PropTypes } from "prop-types";
 import { joinCommunity, leaveCommunity } from "../redux/ducks/communityDuck";
@@ -24,6 +24,10 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 
 const JoinButton = (props) => {
   const { community, communities } = props;
+
+  useEffect(() => {
+    setIsInCommunity(isUserInCommunity(community.title));
+  }, [communities.usersCommunities]);
 
   const isUserInCommunity = (communityName) => {
     return (
