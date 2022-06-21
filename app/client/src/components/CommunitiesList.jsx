@@ -27,11 +27,15 @@ import DeleteCommunityModal from "./modals/DeleteCommunityModal";
 import Community from "./Community";
 import { Box } from "@mui/material";
 
-import { getCommunities } from "../redux/ducks/communityDuck";
+import {
+  getCommunities,
+  getUsersCommunities,
+} from "../redux/ducks/communityDuck";
 
 const CommunitiesList = (props) => {
   useEffect(() => {
     props.getCommunities();
+    props.getUsersCommunities();
   }, []);
 
   return (
@@ -53,4 +57,7 @@ const mapStateToProps = (state) => ({
   communities: state.communities.items,
 });
 
-export default connect(mapStateToProps, { getCommunities })(CommunitiesList);
+export default connect(mapStateToProps, {
+  getCommunities,
+  getUsersCommunities,
+})(CommunitiesList);

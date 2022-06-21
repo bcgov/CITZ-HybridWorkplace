@@ -68,7 +68,7 @@ const JoinButton = (props) => {
           disabled={isInCommunity}
           sx={{ backgroundColor: "#0072A2" }}
         >
-          <Typography sx={{ fontSize: "12px", "text-transform": "none" }}>
+          <Typography sx={{ fontSize: "12px", textTransform: "none" }}>
             <b>Join</b>
           </Typography>
         </Button>
