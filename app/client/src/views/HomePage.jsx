@@ -31,7 +31,6 @@ import PostsList from "../components/PostsList";
 import PostModal from "../components/modals/AddPostModal";
 import AddCommunityModal from "../components/modals/AddCommunityModal";
 import AddIcon from "@mui/icons-material/Add";
-import { LoadingButton } from "@mui/lab";
 
 const HomePage = (props) => {
   useEffect(() => {

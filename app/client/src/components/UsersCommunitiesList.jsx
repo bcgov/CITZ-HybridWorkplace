@@ -20,7 +20,7 @@
  * @module
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
@@ -38,17 +38,31 @@ const UsersCommunitiesList = (props) => {
     props.getUsersCommunities();
   }, []);
 
+  const [cardHover, setCardHover] = useState(false);
+  const onCardHoverEnter = () => {
+    setCardHover(true);
+  };
+  const onCardHoverLeave = () => {
+    setCardHover(false);
+  };
+
   const handleCommunityClick = (title) => navigate(`/community/${title}`);
 
   return (
-    <div>
+    <Box
+      sx={{
+        mt: 3,
+      }}
+    >
       {props.communities.map((community) => (
         <Box key={community._id} sx={{ mb: "15px" }}>
           <Paper
             sx={{
               px: 0.5,
               borderRadius: "10px",
-              margin: "auto",
+              m: "auto",
+              border: 0,
+              boxShadow: cardHover ? 3 : 1,
             }}
             variant="outlined"
             square
@@ -59,11 +73,20 @@ const UsersCommunitiesList = (props) => {
                 xs={9}
                 onClick={() => handleCommunityClick(community.title)}
                 sx={{ cursor: "pointer" }}
+                onMouseEnter={onCardHoverEnter}
+                onMouseLeave={onCardHoverLeave}
               >
                 <Grid container>
                   <Grid item xs={12}>
-                    <Typography p={1.5} variant="h7" component="p">
-                      <b>{community.title}</b>
+                    <Typography
+                      p={1.5}
+                      variant="h7"
+                      component="p"
+                      sx={{
+                        fontWeight: 500,
+                      }}
+                    >
+                      {community.title}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sx={{ pt: 0, pb: "10px" }}>
@@ -85,7 +108,7 @@ const UsersCommunitiesList = (props) => {
           </Paper>
         </Box>
       ))}
-    </div>
+    </Box>
   );
 };
 

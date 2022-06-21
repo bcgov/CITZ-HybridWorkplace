@@ -112,8 +112,8 @@ const Post = (props) => {
           py: 0,
           margin: "auto",
           borderRadius: "10px",
-          border: 1,
-          borderColor: cardHover ? "gray" : "darkgray",
+          border: 0,
+          boxShadow: cardHover ? 3 : 1,
         }}
         variant="outlined"
         square

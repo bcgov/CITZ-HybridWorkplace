@@ -39,6 +39,14 @@ const Community = (props) => {
   //   handleMenuClose();
   // };
 
+  const [cardHover, setCardHover] = useState(false);
+  const onCardHoverEnter = () => {
+    setCardHover(true);
+  };
+  const onCardHoverLeave = () => {
+    setCardHover(false);
+  };
+
   const handleDeleteCommunityClick = () => {
     props.openDeleteCommunityModal(community);
     handleMenuClose();
@@ -100,9 +108,13 @@ const Community = (props) => {
           py: 0,
           margin: "auto",
           borderRadius: "10px",
+          boxShadow: cardHover ? 3 : 1,
+          border: 0,
         }}
         variant="outlined"
         square
+        onMouseEnter={onCardHoverEnter}
+        onMouseLeave={onCardHoverLeave}
       >
         <CardHeader
           sx={{
