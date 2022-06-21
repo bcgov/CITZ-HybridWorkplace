@@ -106,7 +106,6 @@ const AddPostModal = (props) => {
               name="message"
               placeholder="Message"
               multiline
-              rows={6}
               maxRows={6}
               value={message}
               error={
@@ -123,12 +122,14 @@ const AddPostModal = (props) => {
               <>
                 <Typography>Choose a Community:</Typography>
                 <Select
-                  label="Community"
+                  value={""}
                   onChange={handleCommunityChange}
                   sx={{ m: 1, width: "15em" }}
                 >
                   {props.communities.map((comm) => (
-                    <MenuItem value={comm.title}>{comm.title}</MenuItem>
+                    <MenuItem key={comm.id} value={comm.title}>
+                      {comm.title}
+                    </MenuItem>
                   ))}
                 </Select>
               </>

@@ -40,7 +40,6 @@ import CommunityPage from "./views/CommunityPage";
 //Components
 import EditProfile from "./components/EditProfile";
 import NewCommunity from "./components/NewCommunity";
-import SingularPost from "./components/SingularPost";
 import LogoutPage from "./views/LogoutPage";
 import PostPage from "./views/PostPage";
 

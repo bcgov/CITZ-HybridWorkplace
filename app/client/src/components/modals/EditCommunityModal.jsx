@@ -98,7 +98,7 @@ const EditCommunityModal = (props) => {
   return (
     <Dialog onClose={props.closeEditCommunityModal} open={props.open} fullWidth>
       <DialogTitle>Edit Community: {props.community.title}</DialogTitle>
-      <DialogContent style={{ paddingTop: 5 }}>
+      <DialogContent sx={{ pt: 5 }}>
         <Stack spacing={3}>
           <TextField
             onChange={onTitleChange}
@@ -106,8 +106,15 @@ const EditCommunityModal = (props) => {
             value={title}
             label="Title"
             size="small"
+            error={
+              title &&
+              (title === "" || (title.length >= 3 && title.length <= 25))
+                ? false
+                : true
+            }
+            helperText="Title must be 3-25 characters in length."
+            required
           />
-          <br />
           <TextField
             onChange={onDescriptionChange}
             name="description"
@@ -117,6 +124,14 @@ const EditCommunityModal = (props) => {
             label="Description"
             size="small"
             minRows={4}
+            error={
+              description &&
+              description.length >= 0 &&
+              description.length <= 300
+                ? false
+                : true
+            }
+            helperText="Description must be between 1-300 characters in length."
           />
           <TextField
             onChange={onRulesChange}
@@ -127,10 +142,25 @@ const EditCommunityModal = (props) => {
             label="Rules"
             size="small"
             minRows={4}
+            error={false}
+            helperText="Rules is required."
+            required
           />
-          <Button id="submit" onClick={onSubmit}>
-            Edit Community
-          </Button>
+          {title &&
+          description &&
+          rules &&
+          (title.length < 3 ||
+            title.length > 25 ||
+            description.length > 300 ||
+            rules.length === 0) ? (
+            <Button disabled id="submit" onClick={onSubmit}>
+              Edit Community
+            </Button>
+          ) : (
+            <Button id="submit" onClick={onSubmit}>
+              Edit Community
+            </Button>
+          )}
         </Stack>
       </DialogContent>
     </Dialog>
