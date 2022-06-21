@@ -1,6 +1,7 @@
 import {
   Card,
   Grid,
+  Box,
   CardActions,
   CardContent,
   CardHeader,
@@ -32,7 +33,8 @@ import CommentIcon from "@mui/icons-material/Comment";
 import moment from "moment";
 
 const Post = (props) => {
-  const maxTitleLength = 40;
+  const maxTitleLength = 45;
+  const maxCommunityTitleLength = 16;
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -80,7 +82,7 @@ const Post = (props) => {
   // Create preview if post message is longer than 250 characters
   let message = post.message;
   if (message.length > 250 && !props.isPostPage) {
-    message = `${message.substr(0, 249)}...`;
+    message = `${message.substring(0, 249)}...`;
   }
 
   // Convert to local time
@@ -89,10 +91,10 @@ const Post = (props) => {
       .local()
       .format("MMMM Do YYYY, h:mm:ss a") || "";
   // Remove milliseconds
-  createdOn = `${createdOn.substr(0, createdOn.length - 6)} ${createdOn.substr(
-    createdOn.length - 2,
-    createdOn.length
-  )}`;
+  createdOn = `${createdOn.substring(
+    0,
+    createdOn.length - 6
+  )} ${createdOn.substring(createdOn.length - 2, createdOn.length)}`;
   const splitCreatedOn = createdOn.split(",");
 
   const today = moment().format("MMMM Do YYYY");
@@ -103,10 +105,7 @@ const Post = (props) => {
     createdOn = `Yesterday${splitCreatedOn[1]}`;
 
   return (
-    <div
-      key={post._id}
-      style={{ marginBottom: "15px", backgroundColor: "transparent" }}
-    >
+    <Box key={post._id} sx={{ mb: "15px", backgroundColor: "transparent" }}>
       <Card
         sx={{
           px: 0,
@@ -158,9 +157,9 @@ const Post = (props) => {
           }
           title={
             <Grid container spacing={2}>
-              <Grid item xs={10}>
+              <Grid item xs={9}>
                 <Typography
-                  variant="h5"
+                  variant="h6"
                   onClick={handlePostClick}
                   sx={{
                     cursor: props.isPostPage || "pointer",
@@ -173,25 +172,27 @@ const Post = (props) => {
                   </b>
                 </Typography>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={3}>
                 <Typography
                   onClick={() => handleCommunityClick(post.community)}
                   sx={{
                     cursor: "pointer",
                     textDecoration: commNameHover ? "underline" : "",
+                    textAlign: "right",
                   }}
                   onMouseEnter={onCommNameHoverEnter}
                   onMouseLeave={onCommNameHoverLeave}
                 >
-                  {post.community}
+                  {post.community.length > maxCommunityTitleLength
+                    ? post.community.substring(0, maxCommunityTitleLength) +
+                      "..."
+                    : post.community}
                 </Typography>
               </Grid>
             </Grid>
           }
           subheader={
-            <Typography size="medium" color="white">
-              by {props.post.creatorName}
-            </Typography>
+            <Typography color="white">by {props.post.creatorName}</Typography>
           }
         />
         <CardContent
@@ -227,7 +228,7 @@ const Post = (props) => {
           )}
         </CardActions>
       </Card>
-    </div>
+    </Box>
   );
 };
 
