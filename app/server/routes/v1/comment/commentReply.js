@@ -186,11 +186,22 @@ router.post("/:id", async (req, res) => {
     ).exec();
     req.log.addAction("hasReplies updated.");
 
+    req.log.addAction("Getting creator name.");
+    const { firstName, lastName } = documents.user;
+    let creatorName;
+
+    if (firstName && firstName !== "") {
+      // If lastName, set full name, else just firstName
+      creatorName =
+        lastName && lastName !== "" ? `${firstName} ${lastName}` : firstName;
+    }
+
     // Create reply
     req.log.addAction("Creating reply.");
     const reply = await Comment.create({
       message: req.body.message,
       creator: documents.user.id,
+      creatorName: creatorName || documents.user.username,
       post: documents.comment.post,
       community: documents.comment.community,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
