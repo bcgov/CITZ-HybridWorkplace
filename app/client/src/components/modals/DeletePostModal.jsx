@@ -39,6 +39,7 @@ const DeletePostModal = (props) => {
     const successful = await props.deletePost(props.post._id);
     if (successful === true) {
       props.closeDeletePostModal();
+      props.sideEffect?.();
     }
   };
 

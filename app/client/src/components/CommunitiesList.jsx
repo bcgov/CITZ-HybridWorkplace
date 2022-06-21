@@ -34,8 +34,10 @@ import {
 
 const CommunitiesList = (props) => {
   useEffect(() => {
-    props.getCommunities();
-    props.getUsersCommunities();
+    (async () => {
+      await props.getUsersCommunities();
+      await props.getCommunities();
+    })();
   }, []);
 
   return (
