@@ -27,7 +27,7 @@ import { TextField } from "@mui/material";
 import "./addPost.css";
 
 import Paper from "@mui/material/Paper";
-import { Button } from "@mui/material";
+import { Button, Box } from "@mui/material";
 
 import { getCommunities } from "../../redux/ducks/communityDuck";
 import { createPost } from "../../redux/ducks/postDuck";
@@ -74,11 +74,12 @@ const AddPostModal = (props) => {
   };
 
   return (
-    <div
+    <Box
       className={`modal ${props.show ? "show" : ""}`}
       onClick={props.onClose}
+      sx={{ zIndex: 500 }}
     >
-      <div className="modalWrap" onClick={(e) => e.stopPropagation()}>
+      <Box className="modalWrap" onClick={(e) => e.stopPropagation()}>
         <Paper>
           <br />
           <h1>Add Post</h1>
@@ -102,7 +103,7 @@ const AddPostModal = (props) => {
               <>
                 <p>Choose a Community:</p>
                 {props.communities.map((comm) => (
-                  <div key={comm._id}>
+                  <Box key={comm._id}>
                     {/* TODO: change button input for choosing community to radio  */}
                     <Button
                       onClick={() => onCommunityClick(comm.title)}
@@ -112,7 +113,7 @@ const AddPostModal = (props) => {
                     >
                       {comm.title}{" "}
                     </Button>
-                  </div>
+                  </Box>
                 ))}
               </>
             )}
@@ -122,8 +123,8 @@ const AddPostModal = (props) => {
         </Paper>
         <br />
         <br />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

@@ -43,7 +43,12 @@ const DeleteCommentModal = (props) => {
   };
 
   return (
-    <Dialog onClose={props.closeDeleteCommentModal} open={props.open} fullWidth>
+    <Dialog
+      onClose={props.closeDeleteCommentModal}
+      open={props.open}
+      fullWidth
+      sx={{ zIndex: 500 }}
+    >
       <DialogTitle>Delete Comment</DialogTitle>
       <DialogContent>
         <Grid

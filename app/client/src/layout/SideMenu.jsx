@@ -48,7 +48,7 @@ const SideMenu = (props) => {
   }
 
   return (
-    <div id="content">
+    <div id="content" style={{ zIndex: 500 }}>
       <span className="slide">
         <a href="#" onClick={openSlideMenu}>
           <img src={Menu} id="Menu" alt="Profile" />

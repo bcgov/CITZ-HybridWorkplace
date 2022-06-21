@@ -60,7 +60,12 @@ const FlagPostModal = (props) => {
   };
 
   return (
-    <Dialog onClose={props.closeFlagPostModal} open={props.open} fullWidth>
+    <Dialog
+      onClose={props.closeFlagPostModal}
+      open={props.open}
+      fullWidth
+      sx={{ zIndex: 500 }}
+    >
       <DialogTitle>Flag Post</DialogTitle>
       <DialogContent>
         <Grid
