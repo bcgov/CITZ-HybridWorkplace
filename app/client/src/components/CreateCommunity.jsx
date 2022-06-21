@@ -25,7 +25,7 @@ import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { createCommunity } from "../redux/ducks/communityDuck";
-import { Autocomplete, Button, Chip, TextField } from "@mui/material";
+import { Autocomplete, Chip, TextField, FormLabel } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
 const CreateCommunity = (props) => {
@@ -59,24 +59,43 @@ const CreateCommunity = (props) => {
   return (
     <div>
       <form onSubmit={registerCommunity}>
-        <input
+        <TextField
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           type="text"
           placeholder="Title"
+          error={
+            title === "" || (title.length >= 3 && title.length <= 25)
+              ? false
+              : true
+          }
+          helperText="Title must be 3-25 characters in length."
+          required
         />
         <br />
-        <textarea
+        <TextField
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          multiline
+          maxRows={3}
           type="text"
           placeholder="Description"
+          error={
+            description.length >= 0 && description.length <= 300 ? false : true
+          }
+          helperText="Description must be between 1-300 characters in length."
         />
-        <input
+        <br />
+        <TextField
           value={rules}
           onChange={(e) => setRules(e.target.value)}
           type="text"
+          multiline
+          maxRows={3}
           placeholder="Rules"
+          error={false}
+          helperText="Rules is required."
+          required
         />
         <Autocomplete
           multiple
@@ -105,15 +124,35 @@ const CreateCommunity = (props) => {
             />
           )}
         />
+        <FormLabel>
+          Press <b>ENTER</b> to submit a tag. Tag length must be between 3-16
+          characters.
+        </FormLabel>
         <br />
-        <LoadingButton
-          variant="contained"
-          loading={createCommunityLoading}
-          id="submit"
-          onClick={registerCommunity}
-        >
-          Submit
-        </LoadingButton>
+        <br />
+        {title.length < 3 ||
+        title.length > 25 ||
+        description.length > 300 ||
+        rules.length === 0 ? (
+          <LoadingButton
+            variant="contained"
+            loading={createCommunityLoading}
+            id="submit"
+            disabled
+            onClick={registerCommunity}
+          >
+            Submit
+          </LoadingButton>
+        ) : (
+          <LoadingButton
+            variant="contained"
+            loading={createCommunityLoading}
+            id="submit"
+            onClick={registerCommunity}
+          >
+            Submit
+          </LoadingButton>
+        )}
       </form>
     </div>
   );

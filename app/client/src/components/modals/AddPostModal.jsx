@@ -16,18 +16,23 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
  */
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { TextField } from "@mui/material";
 import "./addPost.css";
 
-import Paper from "@mui/material/Paper";
-import { Button } from "@mui/material";
+import {
+  TextField,
+  MenuItem,
+  Paper,
+  Select,
+  Typography,
+  Button,
+} from "@mui/material";
 
 import { getCommunities } from "../../redux/ducks/communityDuck";
 import { createPost } from "../../redux/ducks/postDuck";
@@ -69,8 +74,8 @@ const AddPostModal = (props) => {
     setMessage(event.target.value);
   };
 
-  const onCommunityClick = (commTitle) => {
-    setCommunity(commTitle);
+  const handleCommunityChange = (event) => {
+    setCommunity(event.target.value);
   };
 
   return (
@@ -88,35 +93,65 @@ const AddPostModal = (props) => {
               name="title"
               placeholder="Title"
               value={title}
+              error={
+                title === "" || (title.length >= 3 && title.length <= 50)
+                  ? false
+                  : true
+              }
+              helperText="Title must be 3-50 characters in length."
+              required
             />
-            <br />
             <TextField
               onChange={onMessageChange}
               name="message"
               placeholder="Message"
               multiline
+              rows={6}
+              maxRows={6}
               value={message}
+              error={
+                message === "" ||
+                (message.length >= 3 && message.length <= 40000)
+                  ? false
+                  : true
+              }
+              helperText="Message must be 3-40,000 characters in length."
+              required
+              sx={{ m: 1, width: 0.8 }}
             />
-            <br />
             {!props.communityName && (
               <>
-                <p>Choose a Community:</p>
-                {props.communities.map((comm) => (
-                  <div key={comm._id}>
-                    {/* TODO: change button input for choosing community to radio  */}
-                    <Button
-                      onClick={() => onCommunityClick(comm.title)}
-                      variant={`${
-                        comm.title === community ? "contained" : "outlined"
-                      }`}
-                    >
-                      {comm.title}{" "}
-                    </Button>
-                  </div>
-                ))}
+                <Typography>Choose a Community:</Typography>
+                <Select
+                  label="Community"
+                  onChange={handleCommunityChange}
+                  sx={{ m: 1, width: "15em" }}
+                >
+                  {props.communities.map((comm) => (
+                    <MenuItem value={comm.title}>{comm.title}</MenuItem>
+                  ))}
+                </Select>
               </>
             )}
-            <input type="submit" value="Submit" id="submit" />
+            <br />
+            {title.length < 3 ||
+            title.length > 50 ||
+            message.length < 3 ||
+            message.length > 40000 ||
+            !community ? (
+              <Button
+                variant="contained"
+                id="submit"
+                disabled
+                onClick={registerPost}
+              >
+                Submit
+              </Button>
+            ) : (
+              <Button variant="contained" id="submit" onClick={registerPost}>
+                Submit
+              </Button>
+            )}
           </form>
           <br />
         </Paper>
