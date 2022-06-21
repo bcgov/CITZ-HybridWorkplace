@@ -73,7 +73,7 @@ const CommunityPage = (props) => {
                     fontWeight: 600,
                   }}
                 >
-                  Posts
+                  Community Posts
                 </Typography>
               </Grid>
               <Grid item xs={3} align="right">
