@@ -170,7 +170,6 @@ const CommunityPage = (props) => {
                   sx={{
                     fontWeight: "bold",
                     color: "#0072A2",
-                    pb: 3,
                   }}
                 >
                   Created by: {props.community.creatorName}
@@ -189,6 +188,7 @@ const CommunityPage = (props) => {
                     borderTopRightRadius: "10px",
                     pt: 1,
                     pb: 1,
+                    mt: 3,
                     color: "white",
                     textAlign: "center",
                   }}

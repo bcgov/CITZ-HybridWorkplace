@@ -25,7 +25,6 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Grid,
   Stack,
   TextField,
 } from "@mui/material";
@@ -96,7 +95,12 @@ const EditCommunityModal = (props) => {
   };
 
   return (
-    <Dialog onClose={props.closeEditCommunityModal} open={props.open} fullWidth>
+    <Dialog
+      onClose={props.closeEditCommunityModal}
+      open={props.open}
+      fullWidth
+      sx={{ zIndex: 500 }}
+    >
       <DialogTitle>Edit Community: {props.community.title}</DialogTitle>
       <DialogContent style={{ paddingTop: 5 }}>
         <Stack spacing={3}>

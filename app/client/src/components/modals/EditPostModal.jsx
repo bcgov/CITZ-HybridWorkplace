@@ -22,7 +22,6 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import PropTypes from "prop-types";
 import {
   Button,
   Card,
@@ -34,7 +33,6 @@ import {
 } from "@mui/material";
 import "./addPost.css";
 
-import Paper from "@mui/material/Paper";
 import { editPost } from "../../redux/ducks/postDuck";
 import { closeEditPostModal } from "../../redux/ducks/modalDuck";
 
@@ -69,7 +67,12 @@ const EditPostModal = (props) => {
     setMessage(event.target.value);
   };
   return (
-    <Dialog onClose={props.closeEditPostModal} open={props.open} fullWidth>
+    <Dialog
+      onClose={props.closeEditPostModal}
+      open={props.open}
+      fullWidth
+      sx={{ zIndex: 500 }}
+    >
       <Card>
         <CardHeader title="Edit Post" />
         <CardContent>
