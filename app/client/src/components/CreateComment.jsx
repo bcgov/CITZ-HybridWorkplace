@@ -40,6 +40,14 @@ export const CreateComment = (props) => {
                 label="Add a comment"
                 multiline
                 fullWidth
+                error={
+                  !commentText ||
+                  (commentText.length >= 3 && commentText.length <= 1000)
+                    ? false
+                    : true
+                }
+                helperText="Comment must be 3-1000 characters in length."
+                required
               />
             </Grid>
             <Grid item>

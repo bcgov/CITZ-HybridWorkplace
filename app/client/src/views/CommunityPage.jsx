@@ -131,7 +131,6 @@ const CommunityPage = (props) => {
                   <Button
                     variant="text"
                     color="inherit"
-                    alignItems="right"
                     onClick={handleSettingsClick}
                   >
                     <SettingsTwoToneIcon sx={{ color: "white", pl: 3 }} />

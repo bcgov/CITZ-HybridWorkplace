@@ -22,7 +22,6 @@
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import PropTypes from "prop-types";
 import {
   Button,
   Card,
@@ -34,7 +33,6 @@ import {
 } from "@mui/material";
 import "./addPost.css";
 
-import Paper from "@mui/material/Paper";
 import { editPost } from "../../redux/ducks/postDuck";
 import { closeEditPostModal } from "../../redux/ducks/modalDuck";
 
@@ -80,6 +78,14 @@ const EditPostModal = (props) => {
               value={title}
               label="Title"
               size="small"
+              error={
+                title &&
+                (title === "" || (title.length >= 3 && title.length <= 50))
+                  ? false
+                  : true
+              }
+              helperText="Title must be 3-50 characters in length."
+              required
             />
             <br />
             <TextField
@@ -91,10 +97,30 @@ const EditPostModal = (props) => {
               label="Message"
               size="small"
               minRows={4}
+              error={
+                message &&
+                (message === "" ||
+                  (message.length >= 3 && message.length <= 40000))
+                  ? false
+                  : true
+              }
+              helperText="Message must be 3-40,000 characters in length."
+              required
             />
-            <Button id="submit" onClick={registerPost}>
-              Edit Post
-            </Button>
+            {title &&
+            message &&
+            (title.length < 3 ||
+              title.length > 50 ||
+              message.length < 3 ||
+              message.length > 40000) ? (
+              <Button disabled id="submit" onClick={registerPost}>
+                Edit Post
+              </Button>
+            ) : (
+              <Button id="submit" onClick={registerPost}>
+                Edit Post
+              </Button>
+            )}
           </Stack>
         </CardContent>
 
