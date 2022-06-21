@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   Grid,
   CardActions,
@@ -11,7 +10,6 @@ import {
   Menu,
   MenuItem,
   MenuList,
-  TextField,
   Typography,
 } from "@mui/material";
 import FlagTwoToneIcon from "@mui/icons-material/FlagTwoTone";
@@ -27,14 +25,15 @@ import { useState } from "react";
 import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import TagsList from "./TagsList";
-import { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getPost } from "../redux/ducks/postDuck";
 import { useNavigate } from "react-router-dom";
 import CommentIcon from "@mui/icons-material/Comment";
 import moment from "moment";
 
 const Post = (props) => {
+  const maxTitleLength = 40;
+
   const [anchorEl, setAnchorEl] = useState(null);
 
   const [commNameHover, setCommNameHover] = useState(false);
@@ -123,7 +122,7 @@ const Post = (props) => {
         onMouseLeave={onCardHoverLeave}
       >
         <CardHeader
-          sx={{ backgroundColor: "#0072A2", color: "white" }}
+          sx={{ backgroundColor: "#0072A2", color: "white", py: 1 }}
           action={
             <>
               <IconButton aria-label="settings" onClick={handleMenuOpen}>
@@ -163,9 +162,15 @@ const Post = (props) => {
                 <Typography
                   variant="h5"
                   onClick={handlePostClick}
-                  sx={{ cursor: props.isPostPage || "pointer" }}
+                  sx={{
+                    cursor: props.isPostPage || "pointer",
+                  }}
                 >
-                  <b>{post.title}</b>
+                  <b>
+                    {post.title.length >= maxTitleLength
+                      ? post.title.substring(0, maxTitleLength) + "..."
+                      : post.title}
+                  </b>
                 </Typography>
               </Grid>
               <Grid item xs={2}>

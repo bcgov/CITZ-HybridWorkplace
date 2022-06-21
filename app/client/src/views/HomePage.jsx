@@ -129,7 +129,7 @@ const HomePage = (props) => {
                   fontWeight: 600,
                 }}
               >
-                Create Community
+                New +
               </Typography>
               <AddIcon sx={{ color: "white" }} />
             </Button>
