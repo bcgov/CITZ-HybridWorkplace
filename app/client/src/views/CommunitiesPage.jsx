@@ -40,7 +40,7 @@ const CommunitiesPage = () => {
   };
 
   return (
-    <Box>
+    <Box sx={{ pb: 20 }}>
       <Grid container spacing={2}>
         <Grid item xs={8}>
           <Box
@@ -59,12 +59,10 @@ const CommunitiesPage = () => {
               <Grid item xs={9}>
                 <Typography
                   variant="h5"
-                  component="h5"
                   sx={{
-                    alignItems: "center",
                     textAlign: "center",
                     fontWeight: 600,
-                    pl: "8em",
+                    pl: "9em",
                   }}
                 >
                   Top Communities
@@ -107,12 +105,11 @@ const CommunitiesPage = () => {
           >
             <Typography
               variant="h6"
-              component="h5"
               sx={{
                 fontWeight: 600,
               }}
             >
-              Your Communities
+              My Communities
             </Typography>
           </Box>
           <UsersCommunitiesList />

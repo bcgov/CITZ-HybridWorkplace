@@ -58,7 +58,7 @@ const CommunityPage = (props) => {
   const handleSettingsClick = () =>
     props.openEditCommunityModal(props.community);
   return (
-    <Box>
+    <Box sx={{ pb: 20 }}>
       <Grid container spacing={2}>
         <Grid item xs={8}>
           <Box

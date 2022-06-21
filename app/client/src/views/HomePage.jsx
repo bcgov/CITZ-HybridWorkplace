@@ -49,7 +49,7 @@ const HomePage = (props) => {
   };
 
   return (
-    <Box>
+    <Box sx={{ pb: 20 }}>
       <Grid container spacing={2}>
         <Grid item xs={8}>
           <Box
@@ -71,7 +71,7 @@ const HomePage = (props) => {
                   component="h5"
                   sx={{
                     fontWeight: 600,
-                    pl: "8em",
+                    pl: "9em",
                   }}
                 >
                   Top Posts
@@ -101,43 +101,31 @@ const HomePage = (props) => {
               textAlign: "center",
             }}
           >
-            <Typography
-              variant="h6"
-              component="h5"
-              sx={{
-                fontWeight: 600,
-              }}
-            >
-              Your Communities
-            </Typography>
+            <Grid container spacing={1}>
+              <Grid item xs={9}>
+                <Typography
+                  variant="h6"
+                  component="h5"
+                  sx={{
+                    fontWeight: 600,
+                    pl: "5.25em",
+                  }}
+                >
+                  My Communities
+                </Typography>
+              </Grid>
+              <Grid item xs={3} align="right">
+                <Button variant="text" onClick={openDialog}>
+                  <AddIcon sx={{ color: "white", pl: 2 }} />
+                </Button>
+                <AddCommunityModal
+                  onClose={closeDialog}
+                  open={createCommunityOpen}
+                />
+              </Grid>
+            </Grid>
           </Box>
           <UsersCommunitiesList />
-          <Box
-            sx={{
-              backgroundColor: "primary.main",
-              borderRadius: "10px",
-              color: "white",
-              px: 1,
-              py: 0.5,
-              textAlign: "center",
-            }}
-          >
-            <Button variant="text" onClick={openDialog}>
-              <Typography
-                color="white"
-                sx={{
-                  fontWeight: 600,
-                }}
-              >
-                New +
-              </Typography>
-              <AddIcon sx={{ color: "white" }} />
-            </Button>
-            <AddCommunityModal
-              onClose={closeDialog}
-              open={createCommunityOpen}
-            />
-          </Box>
         </Grid>
       </Grid>
     </Box>

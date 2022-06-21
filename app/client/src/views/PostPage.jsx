@@ -8,7 +8,7 @@ import CommentsList from "../components/CommentsList";
 import CreateComment from "../components/CreateComment";
 import Post from "../components/Post";
 import LoadingPage from "./LoadingPage";
-import { Divider, Typography } from "@mui/material";
+import { Divider, Typography, Box } from "@mui/material";
 
 const SingularPost = (props) => {
   let { id } = useParams();
@@ -26,7 +26,7 @@ const SingularPost = (props) => {
       {loading ? (
         <LoadingPage />
       ) : (
-        <div key={props.post._id}>
+        <Box key={props.post._id} sx={{ pb: 20 }}>
           <Post post={props?.post} isPostPage />
           <Typography variant="h6" sx={{ marginTop: 3 }}>
             Comments
@@ -34,7 +34,7 @@ const SingularPost = (props) => {
           <Divider sx={{ marginBottom: 3 }} />
           <CreateComment post={props.post} />
           <CommentsList comments={props.post.comments} />
-        </div>
+        </Box>
       )}
     </>
   );

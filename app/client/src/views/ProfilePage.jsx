@@ -51,6 +51,7 @@ import ProfileInfo from "../components/ProfileInfo";
 
 const ProfilePage = (props) => {
   let { username } = useParams();
+  const maxCommunityTitleLength = 12;
 
   useEffect(() => {
     props.getProfile(username);
@@ -86,6 +87,7 @@ const ProfilePage = (props) => {
       sx={{
         alignItems: "stretch",
         overflow: "hidden",
+        pb: 20,
       }}
     >
       <Grid
@@ -181,7 +183,12 @@ const ProfilePage = (props) => {
                       }}
                     >
                       <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                        {element.title}
+                        {element.title.length > maxCommunityTitleLength
+                          ? element.title.substring(
+                              0,
+                              maxCommunityTitleLength
+                            ) + "..."
+                          : element.title}
                       </Typography>
                       <Stack direction="row" spacing={1}>
                         <GroupsIcon fontSize="small" />
