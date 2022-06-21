@@ -23,7 +23,13 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { TextField } from "@mui/material";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Typography,
+} from "@mui/material";
 import "./addPost.css";
 
 import Paper from "@mui/material/Paper";
@@ -31,6 +37,7 @@ import { Button, Box } from "@mui/material";
 
 import { getCommunities } from "../../redux/ducks/communityDuck";
 import { createPost } from "../../redux/ducks/postDuck";
+import { closeAddPostModal } from "../../redux/ducks/modalDuck";
 
 const AddPostModal = (props) => {
   const [title, setTitle] = useState("");
@@ -57,7 +64,7 @@ const AddPostModal = (props) => {
       setTitle("");
       setMessage("");
       setCommunity("");
-      props.onClose();
+      props.closeAddPostModal();
     }
   };
 
@@ -74,57 +81,57 @@ const AddPostModal = (props) => {
   };
 
   return (
-    <Box
-      className={`modal ${props.show ? "show" : ""}`}
-      onClick={props.onClose}
+    <Dialog
+      open={props.open}
+      onClose={props.closeAddPostModal}
       sx={{ zIndex: 500 }}
+      fullWidth
     >
-      <Box className="modalWrap" onClick={(e) => e.stopPropagation()}>
-        <Paper>
-          <br />
-          <h1>Add Post</h1>
-          <form onSubmit={registerPost}>
-            <TextField
-              onChange={onTitleChange}
-              name="title"
-              placeholder="Title"
-              value={title}
-            />
-            <br />
-            <TextField
-              onChange={onMessageChange}
-              name="message"
-              placeholder="Message"
-              multiline
-              value={message}
-            />
-            <br />
-            {!props.communityName && (
-              <>
-                <p>Choose a Community:</p>
-                {props.communities.map((comm) => (
-                  <Box key={comm._id}>
-                    {/* TODO: change button input for choosing community to radio  */}
-                    <Button
-                      onClick={() => onCommunityClick(comm.title)}
-                      variant={`${
-                        comm.title === community ? "contained" : "outlined"
-                      }`}
-                    >
-                      {comm.title}{" "}
-                    </Button>
-                  </Box>
-                ))}
-              </>
-            )}
-            <input type="submit" value="Submit" id="submit" />
-          </form>
-          <br />
-        </Paper>
+      <DialogTitle>
+        <Typography variant="h5">Add Post</Typography>
+      </DialogTitle>
+      <DialogContent>
+        <TextField
+          onChange={onTitleChange}
+          name="title"
+          placeholder="Title"
+          value={title}
+        />
         <br />
+        <TextField
+          onChange={onMessageChange}
+          name="message"
+          placeholder="Message"
+          multiline
+          value={message}
+        />
         <br />
-      </Box>
-    </Box>
+        {!props.communityName && (
+          <>
+            <p>Choose a Community:</p>
+            {props.communities.map((comm) => (
+              <Box key={comm._id}>
+                {/* TODO: change button input for choosing community to radio  */}
+                <Button
+                  onClick={() => onCommunityClick(comm.title)}
+                  variant={`${
+                    comm.title === community ? "contained" : "outlined"
+                  }`}
+                >
+                  {comm.title}{" "}
+                </Button>
+              </Box>
+            ))}
+          </>
+        )}
+        <input
+          type="submit"
+          value="Submit"
+          id="submit"
+          onClick={registerPost}
+        />
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -136,8 +143,11 @@ AddPostModal.propTypes = {
 const mapStateToProps = (state) => ({
   communities: state.communities.usersCommunities,
   auth: state.auth,
+  open: state.modal.addPost.open,
 });
 
-export default connect(mapStateToProps, { getCommunities, createPost })(
-  AddPostModal
-);
+export default connect(mapStateToProps, {
+  getCommunities,
+  createPost,
+  closeAddPostModal,
+})(AddPostModal);

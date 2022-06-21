@@ -31,6 +31,7 @@ import PostsList from "../components/PostsList";
 import PostModal from "../components/modals/AddPostModal";
 import AddCommunityModal from "../components/modals/AddCommunityModal";
 import AddIcon from "@mui/icons-material/Add";
+import { openAddPostModal } from "../redux/ducks/modalDuck";
 
 const HomePage = (props) => {
   useEffect(() => {
@@ -78,14 +79,13 @@ const HomePage = (props) => {
                 </Typography>
               </Grid>
               <Grid item xs={3} align="right">
-                <Button onClick={() => setShow(true)}>
-                  <Typography color="white">New</Typography>
+                <Button onClick={() => props.openAddPostModal()}>
                   <AddIcon sx={{ color: "white" }} />
                 </Button>
               </Grid>
             </Grid>
 
-            <PostModal onClose={() => setShow(false)} show={show} />
+            <PostModal />
           </Box>
           <PostsList posts={props.posts} />
         </Grid>
@@ -138,4 +138,6 @@ const mapStateToProps = (state) => ({
   posts: state.posts.items,
 });
 
-export default connect(mapStateToProps, { getPosts })(HomePage);
+export default connect(mapStateToProps, { getPosts, openAddPostModal })(
+  HomePage
+);

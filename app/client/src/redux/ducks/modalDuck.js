@@ -53,6 +53,11 @@ const OPEN_EDIT_COMMUNITY_MODAL =
 const CLOSE_EDIT_COMMUNITY_MODAL =
   "CITZ-HYBRIDWORKPLACE/FLAG/CLOSE_EDIT_COMMUNITY_MODAL";
 
+/*************************ADD TYPES*************************/
+
+const OPEN_ADD_POST_MODAL = "CITZ-HYBRIDWORKPLACE/ADD/OPEN_ADD_POST_MODAL";
+const CLOSE_ADD_POST_MODAL = "CITZ-HYBRIDWORKPLACE/ADD/CLOSE_ADD_POST_MODAL";
+
 /*********************** DELETE ACTIONS***********************/
 export const openDeletePostModal = (post) => (dispatch) => {
   closeDeleteCommunityModal()(dispatch);
@@ -116,6 +121,16 @@ export const openEditCommunityModal = (community) => (dispatch) => {
 export const closeEditCommunityModal = () => (dispatch) =>
   dispatch({ type: CLOSE_EDIT_COMMUNITY_MODAL });
 
+/*********************** ADD MODAL ACTIONS***********************/
+
+export const openAddPostModal = () => (dispatch) => {
+  dispatch({ type: OPEN_ADD_POST_MODAL });
+};
+
+export const closeAddPostModal = () => (dispatch) => {
+  dispatch({ type: CLOSE_ADD_POST_MODAL });
+};
+
 /************************MODAL REDUCER************************/
 const initialState = {
   deletePost: { open: false, post: {} },
@@ -125,10 +140,21 @@ const initialState = {
   flagCommunity: { open: false, community: {} },
   editPost: { open: false, post: {} },
   editCommunity: { open: false, community: {} },
+  addPost: { open: false },
 };
 
 export function modalReducer(state = initialState, action) {
   switch (action.type) {
+    case OPEN_ADD_POST_MODAL:
+      return {
+        ...state,
+        addPost: { open: true },
+      };
+    case CLOSE_ADD_POST_MODAL:
+      return {
+        ...state,
+        addPost: { open: false },
+      };
     case OPEN_DELETE_POST_MODAL:
       return {
         ...state,
