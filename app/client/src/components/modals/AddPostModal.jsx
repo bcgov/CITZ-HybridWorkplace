@@ -89,10 +89,11 @@ const AddPostModal = (props) => {
       fullWidth
     >
       <DialogTitle>
-        <Typography variant="h5">Add Post</Typography>
+        <Typography sx={{ fontWeight: "bold" }}>Add Post</Typography>
       </DialogTitle>
       <DialogContent>
         <TextField
+          sx={{ ml: 1 }}
           onChange={onTitleChange}
           name="title"
           placeholder="Title"
@@ -111,7 +112,6 @@ const AddPostModal = (props) => {
           placeholder="Message"
           multiline
           rows={6}
-          maxRows={6}
           value={message}
           error={
             message === "" || (message.length >= 3 && message.length <= 40000)
@@ -124,11 +124,11 @@ const AddPostModal = (props) => {
         />
         {!props.communityName && (
           <>
-            <Typography>Choose a Community:</Typography>
+            <Typography sx={{ ml: 1 }}>Choose a Community:</Typography>
             <Select
-              label="Community"
+              value={community}
               onChange={handleCommunityChange}
-              sx={{ m: 1, width: "15em" }}
+              sx={{ m: 1, minWidth: "15em" }}
             >
               {props.communities.map((comm) => (
                 <MenuItem value={comm.title}>{comm.title}</MenuItem>
@@ -137,24 +137,20 @@ const AddPostModal = (props) => {
           </>
         )}
         <br />
-        {title.length < 3 ||
-        title.length > 50 ||
-        message.length < 3 ||
-        message.length > 40000 ||
-        !community ? (
-          <Button
-            variant="contained"
-            id="submit"
-            disabled
-            onClick={registerPost}
-          >
-            Submit
-          </Button>
-        ) : (
-          <Button variant="contained" id="submit" onClick={registerPost}>
-            Submit
-          </Button>
-        )}
+        <Button
+          sx={{ ml: 1 }}
+          variant="contained"
+          disabled={
+            title.length < 3 ||
+            title.length > 50 ||
+            message.length < 3 ||
+            message.length > 40000 ||
+            !community
+          }
+          onClick={registerPost}
+        >
+          Submit
+        </Button>
       </DialogContent>
     </Dialog>
   );

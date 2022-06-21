@@ -130,29 +130,20 @@ const CreateCommunity = (props) => {
         </FormLabel>
         <br />
         <br />
-        {title.length < 3 ||
-        title.length > 25 ||
-        description.length > 300 ||
-        rules.length === 0 ? (
-          <LoadingButton
-            variant="contained"
-            loading={createCommunityLoading}
-            id="submit"
-            disabled
-            onClick={registerCommunity}
-          >
-            Submit
-          </LoadingButton>
-        ) : (
-          <LoadingButton
-            variant="contained"
-            loading={createCommunityLoading}
-            id="submit"
-            onClick={registerCommunity}
-          >
-            Submit
-          </LoadingButton>
-        )}
+
+        <LoadingButton
+          variant="contained"
+          loading={createCommunityLoading}
+          disabled={
+            title.length < 3 ||
+            title.length > 25 ||
+            description.length > 300 ||
+            rules.length === 0
+          }
+          onClick={registerCommunity}
+        >
+          Submit
+        </LoadingButton>
       </form>
     </div>
   );
