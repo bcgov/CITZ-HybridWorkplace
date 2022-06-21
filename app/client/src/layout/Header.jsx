@@ -200,11 +200,6 @@ const Header = (props) => {
       itemLink: `/profile/${props.auth.user.username}`,
     },
     {
-      itemText: "Posts",
-      itemIcon: <ForumIcon />,
-      itemLink: "/posts",
-    },
-    {
       itemText: "Communities",
       itemIcon: <PeopleIcon />,
       itemLink: "/communities",

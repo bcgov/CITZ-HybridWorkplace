@@ -163,7 +163,7 @@ const ProfilePage = (props) => {
           <Grid container direction="row" justifyContent="space-evenly">
             <Grid item xs={12}>
               <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
-                Your Communities
+                My Communities
               </Typography>
               <Grid container spacing={2}>
                 {props.communities.slice(0, 4).map((element) => (
