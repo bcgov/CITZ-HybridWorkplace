@@ -100,7 +100,7 @@ const CommunityPage = (props) => {
               show={show}
             />
           </Box>
-          <PostsList posts={props.community.posts} />
+          <PostsList posts={props.posts} />
         </Grid>
         <Grid item align="center" xs={4}>
           <Box
@@ -239,6 +239,7 @@ CommunityPage.propTypes = {
 
 const mapStateToProps = (state) => ({
   community: state.communities.item,
+  posts: state.posts.items,
   username: state.auth.user.username,
   userId: state.auth.user.id,
 });

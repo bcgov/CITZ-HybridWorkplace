@@ -25,6 +25,7 @@ import React, { Component } from "react";
 import { Routes, Route } from "react-router-dom";
 
 import PrivateComponent from "./components/PrivateComponent";
+import GuestOnlyComponent from "./components/GuestOnlyComponent";
 
 // Views
 import LoginPage from "./views/LoginPage";
@@ -47,10 +48,18 @@ const App = () => {
   return (
     <div className="Routes">
       <Routes>
-        <Route path="/" exact element={<Register />} />
-        <Route path="/login" exact element={<LoginPage />} />
         <Route
-          path="/home"
+          path="/register"
+          exact
+          element={<GuestOnlyComponent component={<Register />} />}
+        />
+        <Route
+          path="/login"
+          exact
+          element={<GuestOnlyComponent component={<LoginPage />} />}
+        />
+        <Route
+          path="/"
           exact
           element={<PrivateComponent component={<HomePage />} />}
         />

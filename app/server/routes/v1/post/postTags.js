@@ -180,9 +180,9 @@ router.post("/:id", async (req, res) => {
       await Post.updateOne(
         {
           _id: documents.post.id,
-          flags: { $elemMatch: { tag: req.query.tag } },
+          tags: { $elemMatch: { tag: req.query.tag } },
         },
-        { $addToSet: { "tags.$.taggedBy": [documents.user.id] } }
+        { $addToSet: { "tags.$.taggedBy": documents.user.id } }
       );
       req.log.addAction("User added to taggedBy.");
     }

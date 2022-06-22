@@ -2,15 +2,20 @@ import { connect } from "react-redux";
 import { openFlagPostModal } from "../redux/ducks/modalDuck";
 import { openDeletePostModal } from "../redux/ducks/modalDuck";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getPost } from "../redux/ducks/postDuck";
 import CommentsList from "../components/CommentsList";
 import CreateComment from "../components/CreateComment";
 import Post from "../components/Post";
 import LoadingPage from "./LoadingPage";
 import { Divider, Typography, Box } from "@mui/material";
+import EditCommunityModal from "../components/modals/EditCommunityModal";
+import EditPostModal from "../components/modals/EditPostModal";
+import DeletePostModal from "../components/modals/DeletePostModal";
+import FlagPostModal from "../components/modals/FlagPostModal";
 
 const SingularPost = (props) => {
+  const navigate = useNavigate();
   let { id } = useParams();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -20,6 +25,10 @@ const SingularPost = (props) => {
       }
     })();
   }, []);
+
+  const deletePostSideEffect = () => {
+    navigate("/home");
+  };
 
   return (
     <>
@@ -36,6 +45,9 @@ const SingularPost = (props) => {
           <CommentsList comments={props.post.comments} />
         </Box>
       )}
+      <EditPostModal />
+      <DeletePostModal sideEffect={deletePostSideEffect} />
+      <FlagPostModal />
     </>
   );
 };

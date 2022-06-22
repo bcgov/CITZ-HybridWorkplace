@@ -41,14 +41,20 @@ const UsersCommunitiesList = (props) => {
   const handleCommunityClick = (title) => navigate(`/community/${title}`);
 
   return (
-    <div>
+    <Box
+      sx={{
+        mt: 3,
+      }}
+    >
       {props.communities.map((community) => (
         <Box key={community._id} sx={{ mb: "15px" }}>
           <Paper
             sx={{
               px: 0.5,
               borderRadius: "10px",
-              margin: "auto",
+              m: "auto",
+              border: 0,
+              boxShadow: 1,
             }}
             variant="outlined"
             square
@@ -85,7 +91,7 @@ const UsersCommunitiesList = (props) => {
           </Paper>
         </Box>
       ))}
-    </div>
+    </Box>
   );
 };
 

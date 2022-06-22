@@ -61,7 +61,7 @@ const SideMenu = (props) => {
         </a>
         <ul>
           <li>
-            <Link to="/home">
+            <Link to="/">
               <House /> Home
             </Link>
           </li>
