@@ -95,16 +95,17 @@ const CommunitiesPage = () => {
           <Box
             mb="15px"
             sx={{
-              backgroundColor: "#036",
+              backgroundColor: "primary.main",
               borderRadius: "10px",
               color: "white",
               px: 1,
-              py: 0.5,
+              py: 0.8,
               textAlign: "center",
             }}
           >
             <Typography
               variant="h6"
+              component="h5"
               sx={{
                 fontWeight: 600,
               }}

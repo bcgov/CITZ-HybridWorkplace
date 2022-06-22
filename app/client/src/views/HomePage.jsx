@@ -109,6 +109,7 @@ const HomePage = (props) => {
                   sx={{
                     fontWeight: 600,
                     pl: "5.25em",
+                    pt: 0.3,
                   }}
                 >
                   My Communities
