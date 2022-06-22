@@ -4,14 +4,13 @@ import { tagPost, unTagPost } from "../redux/ducks/postDuck";
 import Tag from "./Tag";
 
 export const TagsList = (props) => {
-
   const getNumTags = (post, tag) => {
     try {
-      return post.tags.filter(obj => obj.tag === tag)?.length
+      return post.tags.find((obj) => obj.tag === tag)?.taggedBy?.length || 0;
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
-  }
+  };
   return props.post.availableTags ? (
     props.post.availableTags?.map((tag, index) => (
       <Tag
