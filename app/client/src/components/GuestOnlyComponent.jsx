@@ -19,8 +19,6 @@ const GuestOnlyComponent = (props) => {
         setLoggedIn(successful);
         setLoading(false);
       }
-      console.log("loggedIn", loggedIn);
-      console.log("loading", loading);
     })();
   }, []);
 
