@@ -254,6 +254,7 @@ const Header = (props) => {
         >
           <IconButton>
             <Icon
+              onClick={() => navigate(`/`)}
               sx={{
                 width: "7em",
                 height: "auto",
