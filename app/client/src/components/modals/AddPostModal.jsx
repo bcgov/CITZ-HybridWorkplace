@@ -16,21 +16,29 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
  * @module
  */
 
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { TextField } from "@mui/material";
 import "./addPost.css";
 
-import Paper from "@mui/material/Paper";
-import { Button, Box } from "@mui/material";
+import {
+  TextField,
+  MenuItem,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Select,
+  Typography,
+  Button,
+} from "@mui/material";
 
 import { getCommunities } from "../../redux/ducks/communityDuck";
 import { createPost } from "../../redux/ducks/postDuck";
+import { closeAddPostModal } from "../../redux/ducks/modalDuck";
 
 const AddPostModal = (props) => {
   const [title, setTitle] = useState("");
@@ -57,7 +65,7 @@ const AddPostModal = (props) => {
       setTitle("");
       setMessage("");
       setCommunity("");
-      props.onClose();
+      props.closeAddPostModal();
     }
   };
 
@@ -69,62 +77,82 @@ const AddPostModal = (props) => {
     setMessage(event.target.value);
   };
 
-  const onCommunityClick = (commTitle) => {
-    setCommunity(commTitle);
+  const handleCommunityChange = (event) => {
+    setCommunity(event.target.value);
   };
 
   return (
-    <Box
-      className={`modal ${props.show ? "show" : ""}`}
-      onClick={props.onClose}
+    <Dialog
+      open={props.open}
+      onClose={props.closeAddPostModal}
       sx={{ zIndex: 500 }}
+      fullWidth
     >
-      <Box className="modalWrap" onClick={(e) => e.stopPropagation()}>
-        <Paper>
-          <br />
-          <h1>Add Post</h1>
-          <form onSubmit={registerPost}>
-            <TextField
-              onChange={onTitleChange}
-              name="title"
-              placeholder="Title"
-              value={title}
-            />
-            <br />
-            <TextField
-              onChange={onMessageChange}
-              name="message"
-              placeholder="Message"
-              multiline
-              value={message}
-            />
-            <br />
-            {!props.communityName && (
-              <>
-                <p>Choose a Community:</p>
-                {props.communities.map((comm) => (
-                  <Box key={comm._id}>
-                    {/* TODO: change button input for choosing community to radio  */}
-                    <Button
-                      onClick={() => onCommunityClick(comm.title)}
-                      variant={`${
-                        comm.title === community ? "contained" : "outlined"
-                      }`}
-                    >
-                      {comm.title}{" "}
-                    </Button>
-                  </Box>
-                ))}
-              </>
-            )}
-            <input type="submit" value="Submit" id="submit" />
-          </form>
-          <br />
-        </Paper>
+      <DialogTitle>
+        <Typography sx={{ fontWeight: "bold" }}>Add Post</Typography>
+      </DialogTitle>
+      <DialogContent>
+        <TextField
+          sx={{ ml: 1 }}
+          onChange={onTitleChange}
+          name="title"
+          placeholder="Title"
+          value={title}
+          error={
+            title === "" || (title.length >= 3 && title.length <= 50)
+              ? false
+              : true
+          }
+          helperText="Title must be 3-50 characters in length."
+          required
+        />
+        <TextField
+          onChange={onMessageChange}
+          name="message"
+          placeholder="Message"
+          multiline
+          rows={6}
+          value={message}
+          error={
+            message === "" || (message.length >= 3 && message.length <= 40000)
+              ? false
+              : true
+          }
+          helperText="Message must be 3-40,000 characters in length."
+          required
+          sx={{ m: 1, width: 0.8 }}
+        />
+        {!props.communityName && (
+          <>
+            <Typography sx={{ ml: 1 }}>Choose a Community:</Typography>
+            <Select
+              value={community}
+              onChange={handleCommunityChange}
+              sx={{ m: 1, minWidth: "15em" }}
+            >
+              {props.communities.map((comm) => (
+                <MenuItem value={comm.title}>{comm.title}</MenuItem>
+              ))}
+            </Select>
+          </>
+        )}
         <br />
-        <br />
-      </Box>
-    </Box>
+        <Button
+          sx={{ ml: 1 }}
+          variant="contained"
+          disabled={
+            title.length < 3 ||
+            title.length > 50 ||
+            message.length < 3 ||
+            message.length > 40000 ||
+            !community
+          }
+          onClick={registerPost}
+        >
+          Submit
+        </Button>
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -136,8 +164,11 @@ AddPostModal.propTypes = {
 const mapStateToProps = (state) => ({
   communities: state.communities.usersCommunities,
   auth: state.auth,
+  open: state.modal.addPost.open,
 });
 
-export default connect(mapStateToProps, { getCommunities, createPost })(
-  AddPostModal
-);
+export default connect(mapStateToProps, {
+  getCommunities,
+  createPost,
+  closeAddPostModal,
+})(AddPostModal);

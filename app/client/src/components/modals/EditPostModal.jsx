@@ -83,6 +83,14 @@ const EditPostModal = (props) => {
               value={title}
               label="Title"
               size="small"
+              error={
+                title &&
+                (title === "" || (title.length >= 3 && title.length <= 50))
+                  ? false
+                  : true
+              }
+              helperText="Title must be 3-50 characters in length."
+              required
             />
             <br />
             <TextField
@@ -94,8 +102,28 @@ const EditPostModal = (props) => {
               label="Message"
               size="small"
               minRows={4}
+              error={
+                message &&
+                (message === "" ||
+                  (message.length >= 3 && message.length <= 40000))
+                  ? false
+                  : true
+              }
+              helperText="Message must be 3-40,000 characters in length."
+              required
             />
-            <Button id="submit" onClick={registerPost}>
+            <Button
+              variant="contained"
+              disabled={
+                title &&
+                message &&
+                (title.length < 3 ||
+                  title.length > 50 ||
+                  message.length < 3 ||
+                  message.length > 40000)
+              }
+              onClick={registerPost}
+            >
               Edit Post
             </Button>
           </Stack>

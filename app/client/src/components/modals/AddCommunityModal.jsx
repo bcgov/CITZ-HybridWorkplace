@@ -31,7 +31,7 @@ const AddCommunityModal = (props) => {
       fullWidth
       sx={{ zIndex: 500 }}
     >
-      <DialogTitle>Create a Community</DialogTitle>
+      <DialogTitle sx={{ fontWeight: "bold" }}>Create a Community</DialogTitle>
       <DialogContent>
         <Grid container justifyContent="center" alignItems="center">
           <Grid item>

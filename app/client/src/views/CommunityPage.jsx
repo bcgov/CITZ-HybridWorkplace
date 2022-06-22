@@ -44,6 +44,7 @@ import PostModal from "../components/modals/AddPostModal";
 import { openEditCommunityModal } from "../redux/ducks/modalDuck";
 import { getCommunityPosts, getCommunity } from "../redux/ducks/communityDuck";
 import EditCommunityModal from "../components/modals/EditCommunityModal";
+import { openAddPostModal } from "../redux/ducks/modalDuck";
 
 const CommunityPage = (props) => {
   const [show, setShow] = useState(false);
@@ -87,8 +88,7 @@ const CommunityPage = (props) => {
                 </Typography>
               </Grid>
               <Grid item xs={3} align="right">
-                <Button onClick={() => setShow(true)}>
-                  <Typography color="white">New</Typography>
+                <Button onClick={() => props.openAddPostModal()}>
                   <AddIcon sx={{ color: "white" }} />
                 </Button>
               </Grid>
@@ -131,7 +131,6 @@ const CommunityPage = (props) => {
                   <Button
                     variant="text"
                     color="inherit"
-                    alignItems="right"
                     onClick={handleSettingsClick}
                   >
                     <SettingsTwoToneIcon sx={{ color: "white", pl: 3 }} />
@@ -249,6 +248,7 @@ const mapDispatchToProps = {
   getCommunityPosts,
   getCommunity,
   openEditCommunityModal,
+  openAddPostModal,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CommunityPage);
