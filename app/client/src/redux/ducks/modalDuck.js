@@ -45,6 +45,11 @@ const OPEN_FLAG_COMMUNITY_MODAL =
 const CLOSE_FLAG_COMMUNITY_MODAL =
   "CITZ-HYBRIDWORKPLACE/FLAG/CLOSE_FLAG_COMMUNITY_MODAL";
 
+const OPEN_FLAG_COMMENT_MODAL =
+  "CITZ-HYBRIDWORKPLACE/FLAG/OPEN_FLAG_COMMENT_MODAL";
+const CLOSE_FLAG_COMMENT_MODAL =
+  "CITZ-HYBRIDWORKPLACE/FLAG/CLOSE_FLAG_COMMENT_MODAL";
+
 /************************EDIT TYPES************************/
 const OPEN_EDIT_POST_MODAL = "CITZ-HYBRIDWORKPLACE/FLAG/OPEN_EDIT_POST_MODAL";
 const CLOSE_EDIT_POST_MODAL = "CITZ-HYBRIDWORKPLACE/FLAG/CLOSE_EDIT_POST_MODAL";
@@ -55,7 +60,6 @@ const CLOSE_EDIT_COMMUNITY_MODAL =
 
 /*********************** DELETE ACTIONS***********************/
 export const openDeletePostModal = (post) => (dispatch) => {
-  closeDeleteCommunityModal()(dispatch);
   dispatch({ type: OPEN_DELETE_POST_MODAL, payload: post });
 };
 
@@ -64,7 +68,6 @@ export const closeDeletePostModal = () => (dispatch) => {
 };
 
 export const openDeleteCommunityModal = (community) => (dispatch) => {
-  closeDeletePostModal()(dispatch);
   dispatch({ type: OPEN_DELETE_COMMUNITY_MODAL, payload: community });
 };
 
@@ -73,7 +76,6 @@ export const closeDeleteCommunityModal = () => (dispatch) => {
 };
 
 export const openDeleteCommentModal = (post) => (dispatch) => {
-  closeDeleteCommunityModal()(dispatch);
   dispatch({ type: OPEN_DELETE_COMMENT_MODAL, payload: post });
 };
 
@@ -83,7 +85,6 @@ export const closeDeleteCommentModal = () => (dispatch) => {
 
 /*********************** FLAG MODAL ACTIONS***********************/
 export const openFlagPostModal = (post) => (dispatch) => {
-  closeFlagCommunityModal()(dispatch);
   dispatch({ type: OPEN_FLAG_POST_MODAL, payload: post });
 };
 
@@ -91,17 +92,22 @@ export const closeFlagPostModal = () => (dispatch) =>
   dispatch({ type: CLOSE_FLAG_POST_MODAL });
 
 export const openFlagCommunityModal = (community) => (dispatch) => {
-  closeFlagPostModal()(dispatch);
   dispatch({ type: OPEN_FLAG_COMMUNITY_MODAL, payload: community });
 };
 
 export const closeFlagCommunityModal = () => (dispatch) => {
-  dispatch({ type: OPEN_FLAG_COMMUNITY_MODAL });
+  dispatch({ type: CLOSE_FLAG_COMMUNITY_MODAL });
 };
 
+export const openFlagCommentModal = (comment) => (dispatch) => {
+  dispatch({ type: OPEN_FLAG_COMMENT_MODAL, payload: comment });
+};
+
+export const closeFlagCommentModal = () => (dispatch) => {
+  dispatch({ type: CLOSE_FLAG_COMMENT_MODAL });
+};
 /*********************** EDIT MODAL ACTIONS***********************/
 export const openEditPostModal = (post) => (dispatch) => {
-  //closeFlagCommunityModal()(dispatch);
   dispatch({ type: OPEN_EDIT_POST_MODAL, payload: post });
 };
 
@@ -109,7 +115,6 @@ export const closeEditPostModal = () => (dispatch) =>
   dispatch({ type: CLOSE_EDIT_POST_MODAL });
 
 export const openEditCommunityModal = (community) => (dispatch) => {
-  //closeFlagCommunityModal()(dispatch);
   dispatch({ type: OPEN_EDIT_COMMUNITY_MODAL, payload: community });
 };
 
@@ -118,66 +123,96 @@ export const closeEditCommunityModal = () => (dispatch) =>
 
 /************************MODAL REDUCER************************/
 const initialState = {
+  //Delete State
   deletePost: { open: false, post: {} },
   deleteCommunity: { open: false, community: {} },
   deleteComment: { open: false, comment: {} },
+  //Flag State
   flagPost: { open: false, post: {} },
   flagCommunity: { open: false, community: {} },
+  flagComment: { open: false, comment: {} },
+  //Edit State
   editPost: { open: false, post: {} },
   editCommunity: { open: false, community: {} },
 };
 
 export function modalReducer(state = initialState, action) {
   switch (action.type) {
+    //Deletes
     case OPEN_DELETE_POST_MODAL:
       return {
         ...state,
         deletePost: { open: true, post: action.payload },
       };
+
     case CLOSE_DELETE_POST_MODAL:
       return initialState;
+
     case OPEN_DELETE_COMMUNITY_MODAL:
       return {
         ...state,
         deleteCommunity: { open: true, community: action.payload },
       };
+
     case CLOSE_DELETE_COMMUNITY_MODAL:
       return initialState;
+
     case OPEN_DELETE_COMMENT_MODAL:
       return {
         ...state,
         deleteComment: { open: true, comment: action.payload },
       };
+
     case CLOSE_DELETE_COMMENT_MODAL:
       return initialState;
+
+    //Flags
     case OPEN_FLAG_POST_MODAL:
       return {
         ...state,
         flagPost: { open: true, post: action.payload },
       };
+
     case CLOSE_FLAG_POST_MODAL:
       return initialState;
+
     case OPEN_FLAG_COMMUNITY_MODAL:
       return {
         ...state,
         flagCommunity: { open: true, community: action.payload },
       };
+
     case CLOSE_FLAG_COMMUNITY_MODAL:
       return initialState;
+
+    case OPEN_FLAG_COMMENT_MODAL:
+      return {
+        ...state,
+        flagComment: { open: true, comment: action.payload },
+      };
+
+    case CLOSE_FLAG_COMMENT_MODAL:
+      return initialState;
+
+    //Edits
     case OPEN_EDIT_POST_MODAL:
       return {
         ...state,
         editPost: { open: true, post: action.payload },
       };
+
     case CLOSE_EDIT_POST_MODAL:
       return initialState;
+
     case OPEN_EDIT_COMMUNITY_MODAL:
       return {
         ...state,
         editCommunity: { open: true, community: action.payload },
       };
+
     case CLOSE_EDIT_COMMUNITY_MODAL:
       return initialState;
+
     default:
       return state;
   }

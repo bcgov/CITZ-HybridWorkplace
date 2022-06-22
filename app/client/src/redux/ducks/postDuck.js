@@ -429,7 +429,6 @@ export const replyToComment =
   (commentId, reply) => async (dispatch, getState) => {
     let successful = true;
     try {
-      //TODO: Throw error if given delete is not in list of available deletes
       if (commentId === "") throw new Error("Error: Invalid Input");
       const authState = getState().auth;
       const token = authState.accessToken;
@@ -466,7 +465,6 @@ export const replyToComment =
 export const getCommentReplies = (commentId) => async (dispatch, getState) => {
   let successful = true;
   try {
-    //TODO: Throw error if given delete is not in list of available deletes
     if (commentId === "") throw new Error("Error: Invalid Input");
     const authState = getState().auth;
     const token = authState.accessToken;
@@ -486,6 +484,36 @@ export const getCommentReplies = (commentId) => async (dispatch, getState) => {
       type: SET_COMMENT_REPLIES,
       payload: { commentId, comments: response.data },
     });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
+export const flagComment = (commentId, flag) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    //TODO: Check for flag in list of available flags
+    const authState = getState().auth;
+    const token = authState.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await hwp_axios.post(
+      `/api/comment/flags/${commentId}?flag=${flag}`,
+      {},
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        params: {
+          dispatch,
+        },
+      }
+    );
+    createSuccess(`Successfully flagged post for reason: ${flag}`)(dispatch);
   } catch (err) {
     console.error(err);
     successful = false;

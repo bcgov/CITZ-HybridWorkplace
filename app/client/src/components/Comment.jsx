@@ -21,7 +21,12 @@ import UpIcon from "@mui/icons-material/KeyboardArrowUp";
 import DownIcon from "@mui/icons-material/KeyboardArrowDown";
 import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
 import React, { useState } from "react";
-import { openDeleteCommentModal } from "../redux/ducks/modalDuck";
+import {
+  openDeleteCommentModal,
+  openFlagCommentModal,
+} from "../redux/ducks/modalDuck";
+import FlagTwoToneIcon from "@mui/icons-material/FlagTwoTone";
+
 import { connect } from "react-redux";
 import moment from "moment";
 import CommentReply from "./CommentReply";
@@ -29,8 +34,14 @@ import CommentRepliesList from "./CommentRepliesList";
 
 export const Comment = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
+
   const handleDeleteCommentClick = () => {
     props.openDeleteCommentModal(props.comment);
+    handleMenuClose();
+  };
+
+  const handleFlagCommentClick = () => {
+    props.openFlagCommentModal(props.comment);
     handleMenuClose();
   };
 
@@ -108,6 +119,12 @@ export const Comment = (props) => {
                         </ListItemIcon>
                         <ListItemText>Delete</ListItemText>
                       </MenuItem>
+                      <MenuItem onClick={handleFlagCommentClick}>
+                        <ListItemIcon>
+                          <FlagTwoToneIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Flag</ListItemText>
+                      </MenuItem>
                     </MenuList>
                   </Menu>
                 </>
@@ -162,6 +179,6 @@ const mapStateToProps = (state) => ({
   userId: state.auth.user.id,
 });
 
-const mapDispatchToProps = { openDeleteCommentModal };
+const mapDispatchToProps = { openDeleteCommentModal, openFlagCommentModal };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Comment);
