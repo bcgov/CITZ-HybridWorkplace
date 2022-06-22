@@ -91,23 +91,23 @@ router.post("/", async (req, res) => {
     const passwordRegexStr = `(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\\s).{${passwordMinLength},${passwordMaxLength}}`;
     const usernameRegexStr = `(?!.*\\s).{${usernameMinLength},${usernameMaxLength}}`;
 
-    const emailPattern = /^\w+([\\.-]?\w+)*@\w+([\\.-]?\w+)*(\.\w{2,3})+$/;
+    const emailPattern = /^\w+([\\.-]\w+)*@\w+([\\.-]?\w+)*(\.\w{2,3})+$/;
     const passwordPattern = new RegExp(passwordRegexStr, "g");
     const usernamePattern = new RegExp(usernameRegexStr, "g");
 
     const passwordError = `Password does not meet requirements: length ${passwordMinLength}-${passwordMaxLength}, must not contain whitespace, must contain at least one (lowercase letter, uppercase letter, number)`;
     const usernameError = `Username does not meet requirements: length ${usernameMinLength}-${usernameMaxLength}, must not contain whitespace.`;
-
+    
     req.log.addAction("Validating password.");
     if (!passwordPattern.test(req.body.password))
       throw new ResponseError(403, passwordError);
     req.log.addAction("Password is valid.");
-
+    
     req.log.addAction("Validating email.");
     if (!emailPattern.test(req.body.email))
       throw new ResponseError(403, "Invalid email.");
     req.log.addAction("Email is valid.");
-
+    
     req.log.addAction("Validating username.");
     if (!usernamePattern.test(req.body.username))
       throw new ResponseError(403, usernameError);

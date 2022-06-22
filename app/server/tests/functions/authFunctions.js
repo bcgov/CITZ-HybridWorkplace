@@ -17,14 +17,17 @@ class AuthFunctions{
                                         "email": email,
                                         "password": password
                                     });
-        this.registerList.push({ 
-                            user:   {
-                                        name: name,
-                                        email: email,
-                                        password: password
-                                    },
-                            response: registerResponse
-                        });
+        if (registerResponse.status == 201){
+            this.registerList.push({ 
+                user:   {
+                            name: name,
+                            email: email,
+                            password: password
+                        },
+                response: registerResponse
+            });
+        }
+        
         return registerResponse;
     }
 
@@ -33,6 +36,7 @@ class AuthFunctions{
         for (let i = 0; i < this.registerList.length; i++){
             await this.delete(this.registerList[i].user.name, this.registerList[i].user.password);
         }
+        this.registerList = [];
     }
 
     // Logs an existing user in

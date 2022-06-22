@@ -135,7 +135,6 @@ describe('Testing /register endpoint', () => {
     });
 
     describe('Testing limitations on email field', () => {  
-
         describe('Sending numbers as email', () => {
             afterAll(async () => {
                 await users.deleteUsers();
@@ -221,7 +220,6 @@ describe('Testing /register endpoint', () => {
     });
 
     describe('Testing limitations on username field', () => {  
-
         describe('Sending numbers as username', () => {
             afterAll(async () => {
                 await users.deleteUsers();
