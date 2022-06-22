@@ -100,6 +100,8 @@ const Community = (props) => {
           py: 0,
           margin: "auto",
           borderRadius: "10px",
+          boxShadow: 1,
+          border: 0,
         }}
         variant="outlined"
         square
