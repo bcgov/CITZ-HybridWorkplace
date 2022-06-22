@@ -139,18 +139,22 @@ const Post = (props) => {
                     </ListItemIcon>
                     <ListItemText>Flag</ListItemText>
                   </MenuItem>
-                  <MenuItem onClick={handleDeletePostClick}>
-                    <ListItemIcon>
-                      <DeleteForeverTwoToneIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText>Delete</ListItemText>
-                  </MenuItem>
-                  <MenuItem onClick={handleEditPostClick}>
-                    <ListItemIcon>
-                      <EditTwoToneIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText>Edit</ListItemText>
-                  </MenuItem>
+                  {props.userId === post.creator && (
+                    <>
+                      <MenuItem onClick={handleDeletePostClick}>
+                        <ListItemIcon>
+                          <DeleteForeverTwoToneIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Delete</ListItemText>
+                      </MenuItem>
+                      <MenuItem onClick={handleEditPostClick}>
+                        <ListItemIcon>
+                          <EditTwoToneIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Edit</ListItemText>
+                      </MenuItem>
+                    </>
+                  )}
                 </MenuList>
               </Menu>
             </>
@@ -239,7 +243,9 @@ Post.propTypes = {
   getPost: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = (state) => ({
+  userId: state.auth.user.id,
+});
 
 const mapActionsToProps = {
   openFlagPostModal,

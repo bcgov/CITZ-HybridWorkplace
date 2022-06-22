@@ -23,7 +23,7 @@
 import { createSuccess, createError } from "./alertDuck";
 import hwp_axios from "../../axiosInstance";
 
-const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_POSTS";
+export const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_POSTS";
 const GET_POST = "CITZ-HYBRIDWORKPLACE/POST/GET_POST";
 const ADD_POST = "CITZ-HYBRIDWORKPLACE/POST/ADD_POST";
 const REMOVE_POST = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_POST";
