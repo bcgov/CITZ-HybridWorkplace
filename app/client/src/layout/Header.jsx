@@ -192,7 +192,7 @@ const Header = (props) => {
     {
       itemText: "Home",
       itemIcon: <HomeIcon />,
-      itemLink: "/home",
+      itemLink: "/",
     },
     {
       itemText: "Profile",

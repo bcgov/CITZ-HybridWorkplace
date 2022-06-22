@@ -34,7 +34,7 @@ function LoginPage(props) {
   async function loginUser(event) {
     event.preventDefault();
     const successful = await props.login(username, password);
-    if (successful === true) navigate("/home");
+    if (successful === true) navigate("/");
   }
 
   return (
@@ -70,13 +70,13 @@ function LoginPage(props) {
         <br />
         <input type="submit" value="Submit" id="submit" />
       </form>
-      <Link to="/" id="link">
+      <Link to="/register" id="link">
         Forgot Password?
       </Link>
       <br />
       <br />
       <br />
-      <Link to="/" id="link">
+      <Link to="/register" id="link">
         Sign Up
       </Link>
     </div>

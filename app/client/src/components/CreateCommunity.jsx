@@ -48,7 +48,7 @@ const CreateCommunity = (props) => {
     setCreateCommunityLoading(false);
     if (successful === true) {
       props.onClose();
-      navigate("/home");
+      navigate("/");
     }
   }
 
