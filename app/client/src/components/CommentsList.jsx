@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import Comment from "./Comment";
 import { getComments } from "../redux/ducks/postDuck";
 import DeleteCommentModal from "./modals/DeleteCommentModal";
-
+import FlagCommentModal from "./modals/FlagCommentModal";
 export const CommentsList = (props) => {
   useEffect(() => {
     props.comments || props.getComments(props.postId);
@@ -14,6 +14,7 @@ export const CommentsList = (props) => {
         <Comment comment={comment} key={comment._id} />
       ))}
       <DeleteCommentModal />
+      <FlagCommentModal />
     </>
   );
 };
