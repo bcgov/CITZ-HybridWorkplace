@@ -91,7 +91,7 @@ router.post("/", async (req, res) => {
     const passwordRegexStr = `(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\\s).{${passwordMinLength},${passwordMaxLength}}`;
     const usernameRegexStr = `(?!.*\\s).{${usernameMinLength},${usernameMaxLength}}`;
 
-    const emailPattern = /^\w+([\\.-]\w+)*@\w+([\\.-]?\w+)*(\.\w{2,3})+$/;
+    const emailPattern = /^\w+([\\.-]\w+)*@\w+([\\.-]\w+)*(\.\w{2,3})+$/;
     const passwordPattern = new RegExp(passwordRegexStr, "g");
     const usernamePattern = new RegExp(usernameRegexStr, "g");
 
