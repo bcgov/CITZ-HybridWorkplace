@@ -31,7 +31,7 @@ describe('Get Community Members - With Login, testing with "Welcome" community',
     let response = '';
 
     beforeAll(async() => {
-        response = await community.getCommunityMembers(welComTitle, 'false', token);
+        response = await community.getCommunityMembers(welComTitle, false, token);
     }); 
 
     test('API returns a successful response - code 200', () => {
@@ -56,7 +56,7 @@ describe('Get Community Member count - With Login, testing with new Community', 
     let response = '';
 
     beforeAll(async() => {
-        response = await community.getCommunityMembers(newComTitle, 'true', token);
+        response = await community.getCommunityMembers(newComTitle, true, token);
     });
 
     test('API returns a successful response - code 200', () => {
@@ -87,7 +87,7 @@ describe('Get Community Members - With Login, but community does not exist', () 
     let response = '';
 
     beforeAll(async() => {
-        response = await community.getCommunityMembers(newComTitle, 'false', token);
+        response = await community.getCommunityMembers(newComTitle, false, token);
     });
 
     test('API returns a unsuccessful response - code 404', () => {

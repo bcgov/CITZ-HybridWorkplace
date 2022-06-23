@@ -2,6 +2,10 @@ const endpoint = process.env.API_REF;
 const supertest = require('supertest');
 const request = supertest(endpoint);
 
+/**
+ * @description Class that contains functions for authorization actions
+ */
+
 class AuthFunctions{
     registerList; // Tracks registered users for later clean up.
 
@@ -9,7 +13,13 @@ class AuthFunctions{
         this.registerList = [];
     }
 
-    // Registers a user. Adds this new user to registerList for later clean up.
+    /**
+     * @description             Registers a user. Adds this new user to registerList for later clean up.
+     * @param {String} name     Username. Will represent IDIR when implemented fully.
+     * @param {String} email    Standard email address.
+     * @param {String} password User's chosen password.
+     * @returns                 Response from API.
+     */
     async register(name, email, password) {
         let registerResponse = await request.post('/register')
                                     .send({
@@ -28,14 +38,21 @@ class AuthFunctions{
         return registerResponse;
     }
 
-    // Deletes any users registered in this instance of UserFunctions
+    /**
+     * @description Deletes any users registered in this instance of AuthFunctions.
+     */
     async deleteUsers() {
         for (let i = 0; i < this.registerList.length; i++){
             await this.delete(this.registerList[i].user.name, this.registerList[i].user.password);
         }
     }
 
-    // Logs an existing user in
+    /**
+     * @description             Logs an existing user in.
+     * @param {String} name     User's name (IDIR).
+     * @param {String} password User's password.
+     * @returns                 Response from API with following body: {"token": "string"}
+     */
     async login(name, password){
         let loginResponse = await request.post('/login')
             .set('accept', 'application/json')
@@ -47,21 +64,12 @@ class AuthFunctions{
         return loginResponse;
     }
 
-    // Tries to log in user with less secure configs
-    async loginInsecure(name, password){
-        let loginResponse = await request.post('/login')
-            .set('accept', 'application/json')
-            .set('Content-Type', 'application/json')
-            .set('Credentials', 'Include')
-            .set('Cookie', 'samesite=lax; path=./')
-            .send({
-                "username": name,
-                "password": password
-            });
-        return loginResponse;
-    }
-
-    // Deletes an existing user
+    /**
+     * @description             Logs in user to get their token, then uses token to delete user.
+     * @param {String} name     User's name (IDIR).
+     * @param {String} password User's password.
+     * @returns                 Response from API.
+     */
     async delete(name, password){
         let loginResponse = await this.login(name, password);
 
