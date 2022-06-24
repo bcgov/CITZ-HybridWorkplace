@@ -12,6 +12,8 @@ import {
   MenuItem,
   MenuList,
   Typography,
+  Stack,
+  Button,
 } from "@mui/material";
 import FlagTwoToneIcon from "@mui/icons-material/FlagTwoTone";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -31,10 +33,12 @@ import { getPost } from "../redux/ducks/postDuck";
 import { useNavigate } from "react-router-dom";
 import CommentIcon from "@mui/icons-material/Comment";
 import moment from "moment";
+import MDEditor from "@uiw/react-md-editor";
 
 const Post = (props) => {
   const maxTitleLength = 45;
   const maxCommunityTitleLength = 16;
+  const maxMessageLines = 5;
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -76,13 +80,19 @@ const Post = (props) => {
 
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
-  const handlePostClick = () => navigate(`/post/${post._id}`);
+  const handlePostClick = () =>
+    !props.isPostPage && navigate(`/post/${post._id}`);
   const handleCommunityClick = (title) => navigate(`/community/${title}`);
 
-  // Create preview if post message is longer than 250 characters
+  // Create preview if post message has more than maxMessageLines lines
   let message = post.message;
-  if (message.length > 250 && !props.isPostPage) {
-    message = `${message.substring(0, 249)}...`;
+  if (!props.isPostPage && message.split("\n").length > maxMessageLines) {
+    const initialValue = "";
+    message =
+      message
+        .split("\n")
+        .slice(0, maxMessageLines)
+        .reduce((prev, curr) => prev + curr + "\n", initialValue) + "...";
   }
 
   // Convert to local time
@@ -203,7 +213,9 @@ const Post = (props) => {
           onClick={handlePostClick}
           sx={{ cursor: props.isPostPage || "pointer" }}
         >
-          <Typography variant="body1">{message}</Typography>
+          <Box name="postMessage" data-color-mode="light">
+            <MDEditor.Markdown source={message}></MDEditor.Markdown>
+          </Box>
         </CardContent>
         <CardActions>
           <IconButton onClick={handlePostClick}>
