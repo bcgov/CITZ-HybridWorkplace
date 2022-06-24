@@ -106,7 +106,7 @@ const AddPostModal = (props) => {
     <Dialog
       open={props.open}
       onClose={props.closeAddPostModal}
-      sx={{ zIndex: 500 }}
+      sx={{ zIndex: 500, mb: 5 }}
       fullWidth
     >
       <DialogTitle>
