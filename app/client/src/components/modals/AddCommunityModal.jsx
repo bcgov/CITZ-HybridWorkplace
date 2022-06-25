@@ -50,7 +50,8 @@ const AddCommunityModal = (props) => {
   const [createCommunityLoading, setCreateCommunityLoading] = useState(false);
   const [tags, setTags] = useState([]);
 
-  async function registerCommunity() {
+  const registerCommunity = async (event) => {
+    event.preventDefault();
     setCreateCommunityLoading(true);
 
     const formattedTags = tags.map((tag) => ({ tag: tag, count: 0 }));
@@ -66,10 +67,10 @@ const AddCommunityModal = (props) => {
 
     setCreateCommunityLoading(false);
     if (successful === true) {
-      props.onClose();
+      props.closeAddCommunityModal();
       navigate("/");
     }
-  }
+  };
 
   const handleTags = (tags) => {
     setTags(tags);
