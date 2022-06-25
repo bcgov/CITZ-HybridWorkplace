@@ -18,7 +18,7 @@ mongoose.connect(dbURI, {
 // print error message to console
 // if there is a problem connecting
 mongoose.connection.on("error", (err) => {
-  console.log(`Mongoose connection error: ${err}`);
+  console.error(`Mongoose connection error: ${err}`);
 });
 
 const db = mongoose.connection;
@@ -45,6 +45,19 @@ mongoose.connection.once("open", () => {
         // Options collection is empty
         await Options.insertMany(optionsCollection);
         console.log(color.yellow("Options collection initialized."));
+      }
+      if (
+        !(await Options.exists({
+          component: "notifications",
+        }))
+      ) {
+        // Add notification options
+        await Options.create({
+          component: "notifications",
+          options: {
+            frequencies: ["none", "immediate", "daily", "weekly", "monthly"],
+          },
+        });
       }
       // Create Welcome community if it doesn't already exist
       const timeStamp = moment().format("MMMM Do YYYY, h:mm:ss a");

@@ -91,6 +91,7 @@ router.get("/", async (req, res) => {
       title: documents.user.title,
       registeredOn: documents.user.registeredOn,
       postCount: documents.user.postCount,
+      notificationFrequency: documents.user.notificationFrequency,
     });
   } catch (err) {
     // Explicitly thrown error
@@ -152,7 +153,7 @@ router.patch("/", async (req, res) => {
     });
     req.log.addAction("User found.");
 
-    req.log.addAction("Finding options.");
+    req.log.addAction("Finding user options.");
     const {
       firstNameMinLength,
       firstNameMaxLength,
@@ -167,7 +168,11 @@ router.patch("/", async (req, res) => {
       interestMinLength,
       interestMaxLength,
     } = await getOptions("user");
-    req.log.addAction("Options found.");
+    req.log.addAction("User options found.");
+
+    req.log.addAction("Finding notification options.");
+    const { frequencies } = await getOptions("notifications");
+    req.log.addAction("Notification options found.");
 
     // Trim extra spaces
     req.log.addAction("Trimming extra spaces from inputs in request body.");
@@ -256,6 +261,18 @@ router.patch("/", async (req, res) => {
       });
     }
 
+    // Validate notificationFrequency
+    if (
+      req.body.notificationFrequency &&
+      !frequencies.includes(req.body.notificationFrequency.toLowerCase())
+    )
+      throw new ResponseError(
+        403,
+        `notificationFrequency must be one of ${JSON.stringify(frequencies)}`
+      );
+    req.body.notificationFrequency =
+      req.body.notificationFrequency.toLowerCase();
+
     // Check patch query for disallowed fields
     req.log.addAction("Checking edit query.");
     const query = checkPatchQuery(req.body, documents.user, [
@@ -265,6 +282,7 @@ router.patch("/", async (req, res) => {
       "registeredOn",
       "communities",
       "postCount",
+      "isInMailingList",
     ]);
     req.log.addAction("Edit query has been cleaned.");
 

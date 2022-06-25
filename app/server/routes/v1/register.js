@@ -129,6 +129,7 @@ router.post("/", async (req, res) => {
       password: hashedPassword,
       registeredOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
       postCount: 0,
+      notificationFrequency: "none",
     });
     req.log.addAction("User created.");
 
@@ -171,6 +172,14 @@ router.post("/", async (req, res) => {
             template_id: process.env.GC_NOTIFY_REGISTRATION_TEMPLATE,
           },
         });
+        if (process.env.ENABLE_GC_NOTIFY_TRIAL_MODE) {
+          // Trial mode requires users be in a mailing list before they can receive emails
+          req.log.addAction("Setting isInMailingList for user to true.");
+          await User.updateOne(
+            { username: req.body.username },
+            { $set: { isInMailingList: true } }
+          );
+        }
         req.log.addAction("gcNotify request sent.");
       } catch (err) {
         req.log.addAction(

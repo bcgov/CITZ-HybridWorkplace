@@ -30,6 +30,7 @@ const findSingleDocuments = require("../../../functions/findSingleDocuments");
 const updateCommunityEngagement = require("../../../functions/updateCommunityEngagement");
 const getOptions = require("../../../functions/getOptions");
 const trimExtraSpaces = require("../../../functions/trimExtraSpaces");
+const notifyNewCommunityImmediate = require("../../../functions/notifyNewCommunityImmediate");
 
 const router = express.Router();
 
@@ -209,6 +210,44 @@ router.post("/", async (req, res) => {
     );
     req.log.addAction("Community engagement updated.");
 
+    // gcNotify immediate
+    if (process.env.ENABLE_GC_NOTIFY) {
+      const notifyMatchQuery = process.env.ENABLE_GC_NOTIFY_TRIAL_MODE
+        ? {
+            notificationFrequency: "immediate",
+            isInMailingList: true,
+          }
+        : {
+            notificationFrequency: "immediate",
+          };
+      req.log.addAction("Notifying users with gcNotify (immediate).");
+      let notifyUsers = await User.aggregate([
+        { $match: notifyMatchQuery },
+        {
+          $addFields: {
+            name: {
+              $ifNull: ["$firstName", "$username"],
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            row: ["$email", "$name", community.title, community.description],
+          },
+        },
+      ]);
+      notifyUsers = notifyUsers.map(({ row }) => row);
+      notifyUsers.unshift([
+        "email address",
+        "name",
+        "community",
+        "communityDescription",
+      ]);
+      notifyNewCommunityImmediate(notifyUsers, community.title);
+      req.log.addAction("Users have been notified with gcNotify (immediate).");
+    }
+
     req.log.setResponse(201, "Success", null);
     return res.status(201).json(community);
   } catch (err) {
@@ -320,9 +359,9 @@ router.get("/", async (req, res) => {
         { $sort: { engagement: -1, _id: -1 } },
       ]).exec();
     } else {
-      // Ordered by first created
-      req.log.addAction("Ordering by first created. Finding communities.");
-      communities = await Community.find({}, "", { sort: { _id: 1 } }).exec();
+      // Ordered by last created
+      req.log.addAction("Ordering by last created. Finding communities.");
+      communities = await Community.find({}, "", { sort: { _id: -1 } }).exec();
     }
 
     if (!communities) throw new ResponseError(404, "Communities not found.");
