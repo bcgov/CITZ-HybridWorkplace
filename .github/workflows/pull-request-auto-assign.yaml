@@ -13,5 +13,5 @@ jobs:
       - name: Auto Assign Teams
         uses: delivery-much/actions-assigner@v1
         with:
-          token: ${{ secrets.GH_TOKEN }}
-          reviewers: Bottle7, BradyMitch, CITZ-rwk, dbarkowsky, mattsiel, ZachBourque
+          token: ${{ secrets.GITHUB_TOKEN }}
+          reviewers: akroon3r,Bottle7,BradyMitch,CITZ-rwk,dbarkowsky,mattsiel,ZachBourque
