@@ -30,7 +30,7 @@ const findSingleDocuments = require("../../../functions/findSingleDocuments");
 const updateCommunityEngagement = require("../../../functions/updateCommunityEngagement");
 const getOptions = require("../../../functions/getOptions");
 const trimExtraSpaces = require("../../../functions/trimExtraSpaces");
-const notifyNewCommunityImmediate = require("../../../functions/notifyNewCommunityImmediate");
+const bulkNotify = require("../../../functions/bulkNotify");
 
 const router = express.Router();
 
@@ -244,7 +244,10 @@ router.post("/", async (req, res) => {
         "community",
         "communityDescription",
       ]);
-      notifyNewCommunityImmediate(notifyUsers, community.title);
+      bulkNotify(
+        notifyUsers,
+        process.env.GC_NOTIFY_NEW_COMMUNITY_INSTANT_TEMPLATE
+      );
       req.log.addAction("Users have been notified with gcNotify (immediate).");
     }
 
@@ -361,7 +364,9 @@ router.get("/", async (req, res) => {
     } else {
       // Ordered by last created
       req.log.addAction("Ordering by last created. Finding communities.");
-      communities = await Community.find({}, "", { sort: { _id: -1 } }).exec();
+      communities = await Community.find({}, "", {
+        sort: { _id: -1 },
+      }).exec();
     }
 
     if (!communities) throw new ResponseError(404, "Communities not found.");
