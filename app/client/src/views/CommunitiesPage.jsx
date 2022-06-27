@@ -20,87 +20,96 @@
  * @module
  */
 
-import { useState } from "react";
+import { connect } from "react-redux";
 import Communities from "../components/CommunitiesList";
 import UsersCommunitiesList from "../components/UsersCommunitiesList";
 import AddCommunityModal from "../components/modals/AddCommunityModal";
+import { openAddCommunityModal } from "../redux/ducks/modalDuck";
 
-import { Button, Grid, Typography, Paper, Box } from "@mui/material";
+import { Button, Grid, Typography, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-const CommunitiesPage = () => {
-  const [createCommunityOpen, setCreateCommunityOpen] = useState(false);
-
-  const openDialog = () => {
-    setCreateCommunityOpen(true);
-  };
-
-  const closeDialog = (value) => {
-    setCreateCommunityOpen(false);
-  };
-
+const CommunitiesPage = (props) => {
   return (
-    <Box>
+    <Box sx={{ pb: 20 }}>
       <Grid container spacing={2}>
         <Grid item xs={8}>
-          <Paper>
-            <Box
-              mb="15px"
-              sx={{
-                backgroundColor: "#036",
-                borderRadius: "10px",
-                color: "white",
-                px: 1,
-                py: 0.5,
-                textAlign: "center",
-                display: "flex",
-              }}
-            >
-              <Grid container spacing={1}>
-                <Grid item xs={9}>
-                  <Typography variant="h5" component="h5" pl="175px">
-                    <b>Top Communities</b>
-                  </Typography>
-                </Grid>
-                <Grid item xs={3} align="right">
-                  <Button onClick={openDialog}>
-                    <Typography color="white">New</Typography>
-                    <AddIcon sx={{ color: "white" }} />
-                  </Button>
-                </Grid>
+          <Box
+            mb="15px"
+            sx={{
+              backgroundColor: "#036",
+              borderRadius: "10px",
+              color: "white",
+              px: 1,
+              py: 0.5,
+              textAlign: "center",
+              display: "flex",
+            }}
+          >
+            <Grid container spacing={1}>
+              <Grid item xs={9}>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    textAlign: "center",
+                    fontWeight: 600,
+                    pl: "9em",
+                  }}
+                >
+                  Top Communities
+                </Typography>
               </Grid>
+              <Grid
+                item
+                xs={3}
+                align="right"
+                sx={{
+                  p: 0,
+                  m: 0,
+                }}
+              >
+                <Button onClick={() => props.openAddCommunityModal()}>
+                  <Typography color="white">New</Typography>
+                  <AddIcon sx={{ color: "white" }} />
+                </Button>
+              </Grid>
+            </Grid>
 
-              <AddCommunityModal
-                onClose={closeDialog}
-                open={createCommunityOpen}
-              />
-            </Box>
-            <Communities />
-          </Paper>
+            <AddCommunityModal />
+          </Box>
+          <Communities />
         </Grid>
         <Grid item xs={4}>
-          <Paper>
-            <Box
-              mb="15px"
+          <Box
+            mb="15px"
+            sx={{
+              backgroundColor: "primary.main",
+              borderRadius: "10px",
+              color: "white",
+              px: 1,
+              py: 0.8,
+              textAlign: "center",
+            }}
+          >
+            <Typography
+              variant="h6"
+              component="h5"
               sx={{
-                backgroundColor: "#036",
-                borderRadius: "10px",
-                color: "white",
-                px: 1,
-                py: 0.5,
-                textAlign: "center",
+                fontWeight: 600,
               }}
             >
-              <Typography variant="h6" component="h5">
-                <b>Your Communities</b>
-              </Typography>
-            </Box>
-            <UsersCommunitiesList />
-          </Paper>
+              My Communities
+            </Typography>
+          </Box>
+          <UsersCommunitiesList />
         </Grid>
       </Grid>
     </Box>
   );
 };
 
-export default CommunitiesPage;
+const mapStateToProps = (state) => ({});
+
+export default connect(mapStateToProps, {
+  openAddCommunityModal,
+})(CommunitiesPage);

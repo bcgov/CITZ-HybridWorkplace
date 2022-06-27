@@ -12,3 +12,4 @@ db.createCollection("user", { capped: false });
 db.createCollection("community", { capped: false });
 db.createCollection("post", { capped: false });
 db.createCollection("comment", { capped: false });
+db.createCollection("options", { capped: false });

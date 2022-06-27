@@ -24,48 +24,48 @@ const getOptions = require("../../../functions/getOptions");
 
 const router = express.Router();
 
-const Post = require("../../../models/post.model");
+const Comment = require("../../../models/comment.model");
 
 /**
  * @swagger
  * paths:
- *  /api/post/flags/{id}:
+ *  /api/comment/flags/{id}:
  *    get:
  *      security:
  *        - bearerAuth: []
  *      tags:
- *        - Post Flags
- *      summary: Get post flags by post id.
+ *        - Comment Flags
+ *      summary: Get comment flags by comment id.
  *      parameters:
  *        - in: path
  *          required: true
  *          name: id
  *          schema:
- *            $ref: "#/components/schemas/Post/properties/id"
+ *            $ref: "#/components/schemas/Comment/properties/id"
  *      responses:
  *        '404':
- *          description: Post not found.
+ *          description: Comment not found.
  *        '200':
- *          description: Post successfully found.
+ *          description: Comment successfully found.
  *          content:
  *            application/json:
  *              schema:
- *                $ref: '#/components/schemas/Post/properties/flags'
+ *                $ref: '#/components/schemas/Comment/properties/flags'
  *        '400':
  *          description: Bad Request.
  */
 
-// Get post flags by post id
+// Get comment flags by comment id
 router.get("/:id", async (req, res) => {
   try {
-    req.log.addAction("Finding post.");
+    req.log.addAction("Finding comment.");
     const documents = await findSingleDocuments({
-      post: req.params.id,
+      comment: req.params.id,
     });
-    req.log.addAction("Post found.");
+    req.log.addAction("Comment found.");
 
     req.log.setResponse(200, "Success", null);
-    return res.status(200).json(documents.post.flags);
+    return res.status(200).json(documents.comment.flags);
   } catch (err) {
     // Explicitly thrown error
     if (err instanceof ResponseError) {
@@ -83,27 +83,27 @@ router.get("/:id", async (req, res) => {
 /**
  * @swagger
  * paths:
- *  /api/post/flags/{id}:
+ *  /api/comment/flags/{id}:
  *    post:
  *      security:
  *        - bearerAuth: []
  *      tags:
- *        - Post Flags
- *      summary: Flag post by post id.
+ *        - Comment Flags
+ *      summary: Flag comment by comment id.
  *      parameters:
  *        - in: path
  *          required: true
  *          name: id
  *          schema:
- *            $ref: '#/components/schemas/Post/properties/id'
+ *            $ref: '#/components/schemas/Comment/properties/id'
  *        - in: query
  *          required: true
  *          name: flag
  *          schema:
- *            $ref: '#/components/schemas/Post/properties/flags/items/properties/flag'
+ *            $ref: '#/components/schemas/Comment/properties/flags/items/properties/flag'
  *      responses:
  *        '404':
- *          description: User not found. **||** <br>Post not found.
+ *          description: User not found. **||** <br>Comment not found.
  *        '403':
  *          description: Invalid flag. Use one of <br>[Inappropriate, Hate, Harassment or Bullying, Spam, Misinformation, Against Community Rules]
  *        '204':
@@ -112,15 +112,16 @@ router.get("/:id", async (req, res) => {
  *          description: Bad Request.
  */
 
-// Flag post by post id
+// Flag comment by comment id
 router.post("/:id", async (req, res) => {
   try {
-    req.log.addAction("Finding user and post.");
+    req.log.addAction("Finding user and comment.");
+    // TODO: Can documents be done with destructuring?
     const documents = await findSingleDocuments({
       user: req.user.username,
-      post: req.params.id,
+      comment: req.params.id,
     });
-    req.log.addAction("User and post found.");
+    req.log.addAction("User and comment found.");
 
     req.log.addAction("Finding flags in options.");
     const { flags } = await getOptions("flags");
@@ -134,17 +135,17 @@ router.post("/:id", async (req, res) => {
       );
 
     // If flag isn't set on post
-    req.log.addAction("Checking if flag is set on post.");
+    req.log.addAction("Checking if flag is set on comment.");
     if (
-      !(await Post.exists({
-        _id: documents.post.id,
+      !(await Comment.exists({
+        _id: documents.comment.id,
         "flags.flag": req.query.flag,
       }))
     ) {
       // Create flag
-      req.log.addAction("Creating flag on post.");
-      await Post.updateOne(
-        { _id: documents.post.id },
+      req.log.addAction("Creating flag on comment.");
+      await Comment.updateOne(
+        { _id: documents.comment.id },
         {
           $push: {
             flags: { flag: req.query.flag, flaggedBy: [documents.user.id] },
@@ -154,9 +155,9 @@ router.post("/:id", async (req, res) => {
     } else {
       // Add user to flaggedBy
       req.log.addAction("Adding user to flaggedBy.");
-      await Post.updateOne(
+      await Comment.updateOne(
         {
-          _id: documents.post.id,
+          _id: documents.comment.id,
           flags: { $elemMatch: { flag: req.query.flag } },
         },
         { $addToSet: { "flags.$.flaggedBy": [documents.user.id] } }
@@ -182,69 +183,69 @@ router.post("/:id", async (req, res) => {
 /**
  * @swagger
  * paths:
- *  /api/post/flags/{id}:
+ *  /api/comment/flags/{id}:
  *    delete:
  *      security:
  *        - bearerAuth: []
  *      tags:
- *        - Post Flags
- *      summary: Unset flag on post by post id.
+ *        - Comment Flags
+ *      summary: Unset flag on comment by comment id.
  *      parameters:
  *        - in: path
  *          required: true
  *          name: id
  *          schema:
- *            $ref: '#/components/schemas/Post/properties/id'
+ *            $ref: '#/components/schemas/Comment/properties/id'
  *        - in: query
  *          required: true
  *          name: flag
  *          schema:
- *            $ref: '#/components/schemas/Post/properties/flags/items/properties/flag'
+ *            $ref: '#/components/schemas/Comment/properties/flags/items/properties/flag'
  *      responses:
  *        '404':
- *          description: User not found. **||** <br>Post not found. **||** <br>Flag not found in query.
+ *          description: User not found. **||** <br>Comment not found. **||** <br>Flag not found in query.
  *        '403':
- *          description: User has not flagged post with specified flag.
+ *          description: User has not flagged comment with specified flag.
  *        '204':
  *          description: Success. No content to return.
  *        '400':
  *          description: Bad Request.
  */
 
-// Unset flag on post by post id
+// Unset flag on comment by comment id
 router.delete("/:id", async (req, res) => {
   try {
-    req.log.addAction("Finding user and post.");
+    req.log.addAction("Finding user and comment.");
     const documents = await findSingleDocuments({
       user: req.user.username,
-      post: req.params.id,
+      comment: req.params.id,
     });
-    req.log.addAction("User and post found.");
+    req.log.addAction("User and comment found.");
 
     req.log.addAction("Checking flag query.");
     if (!req.query.flag || req.query.flag === "")
       throw new ResponseError(404, "Flag not found in query.");
 
-    // Check user has flagged post
-    req.log.addAction("Checking user has flagged post with flag.");
+    // Check user has flagged comment
+    req.log.addAction("Checking user has flagged comment with flag.");
     if (
-      !(await Post.exists({
-        _id: documents.post.id,
+      !(await Comment.exists({
+        _id: documents.comment.id,
         "flags.flag": req.query.flag,
         "flags.flaggedBy": documents.user.id,
       }))
     )
       throw new ResponseError(
         403,
-        `User has not flagged post with ${req.query.flag}.`
+        `User has not flagged comment with ${req.query.flag}.`
       );
-    req.log.addAction("User has flagged post with flag.");
+    req.log.addAction("User has flagged comment with flag.");
 
     // Remove user from flaggedBy
     req.log.addAction("Removing user from flaggedBy.");
-    await Post.updateOne(
+    await Comment.updateOne(
       {
-        _id: documents.post.id,
+        _id: documents.comment.id,
         flags: { $elemMatch: { flag: req.query.flag } },
       },
       { $pull: { "flags.$.flaggedBy": documents.user.id } }

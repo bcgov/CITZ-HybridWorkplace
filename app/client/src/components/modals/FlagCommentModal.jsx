@@ -16,7 +16,7 @@
 
 /**
  * Application entry point
- * @author [Zach Bourque](bettesworthjayna@gmail.com)
+ * @author [Zach Bourque](zachbourque01@gmail.com)
  * @module
  */
 
@@ -26,19 +26,20 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Stack,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
+  Stack,
   Typography,
 } from "@mui/material";
 import { connect } from "react-redux";
-import { closeFlagPostModal } from "../../redux/ducks/modalDuck";
-import { flagPost } from "../../redux/ducks/postDuck";
+import { closeFlagCommentModal } from "../../redux/ducks/modalDuck";
+import { flagComment } from "../../redux/ducks/postDuck";
 import PropTypes from "prop-types";
 import { useState } from "react";
 
-const FlagPostModal = (props) => {
+const FlagCommentModal = (props) => {
   //TODO: Get list of flags from API
   const flags = [
     "Inappropriate",
@@ -52,35 +53,32 @@ const FlagPostModal = (props) => {
 
   const handleFlagChange = (event) => setFlag(event.target.value);
 
-  const handleFlagPost = async () => {
-    const successful = await props.flagPost(props.post._id, flag);
+  const handleFlagComment = async () => {
+    const successful = await props.flagComment(props.comment._id, flag);
     if (successful === true) {
-      props.closeFlagPostModal();
+      props.closeFlagCommentModal();
     }
   };
 
   return (
     <Dialog
-      onClose={props.closeFlagPostModal}
+      onClose={props.closeFlagCommentModal}
       open={props.open}
-      sx={{ zIndex: 500 }}
       fullWidth
+      sx={{ zIndex: 500 }}
     >
       <DialogTitle>
-        <Typography
-          variant="h5"
-          sx={{
-            fontWeight: 600,
-          }}
-        >
-          Flag Post
+        <Typography variant="h5" fontWeight={600}>
+          Flag Comment
         </Typography>
       </DialogTitle>
       <DialogContent>
         <Stack spacing={1}>
+          <Typography variant="h6">{props.comment.message}</Typography>
           <Stack spacing={0.5}>
             <InputLabel id="demo-simple-select-standard-label">Flag</InputLabel>
             <Select
+              labelId="demo-simple-select-standard-label"
               id="demo-simple-select-standard"
               value={flag}
               onChange={handleFlagChange}
@@ -92,20 +90,17 @@ const FlagPostModal = (props) => {
               ))}
             </Select>
           </Stack>
-          <DialogActions>
+
+          <DialogActions sx={{ m: 0, pb: 0 }}>
             <Stack spacing={1} direction="row-reverse" justifyContent="end">
               <Button
-                onClick={handleFlagPost}
+                onClick={handleFlagComment}
                 variant="contained"
                 color="error"
               >
-                Flag Post
+                Flag Comment
               </Button>
-              <Button
-                sx={{ ml: 1 }}
-                variant="contained"
-                onClick={props.closeFlagPostModal}
-              >
+              <Button onClick={props.closeFlagCommentModal} variant="contained">
                 Cancel
               </Button>
             </Stack>
@@ -116,19 +111,19 @@ const FlagPostModal = (props) => {
   );
 };
 
-FlagPostModal.propTypes = {
+FlagCommentModal.propTypes = {
   open: PropTypes.bool,
-  closeFlagPostModal: PropTypes.func,
+  closeFlagCommentModal: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
-  open: state.modal.flagPost.open,
-  post: state.modal.flagPost.post,
+  open: state.modal.flagComment.open,
+  comment: state.modal.flagComment.comment,
 });
 
 const mapActionsToProps = {
-  closeFlagPostModal,
-  flagPost,
+  closeFlagCommentModal,
+  flagComment,
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(FlagPostModal);
+export default connect(mapStateToProps, mapActionsToProps)(FlagCommentModal);

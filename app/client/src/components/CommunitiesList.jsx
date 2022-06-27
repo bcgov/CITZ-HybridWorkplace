@@ -25,21 +25,28 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import DeleteCommunityModal from "./modals/DeleteCommunityModal";
 import Community from "./Community";
+import { Box } from "@mui/material";
 
-import { getCommunities } from "../redux/ducks/communityDuck";
+import {
+  getCommunities,
+  getUsersCommunities,
+} from "../redux/ducks/communityDuck";
 
 const CommunitiesList = (props) => {
   useEffect(() => {
-    props.getCommunities();
+    (async () => {
+      await props.getUsersCommunities();
+      await props.getCommunities();
+    })();
   }, []);
 
   return (
-    <div>
+    <Box>
       {props.communities.map((community) => (
         <Community community={community} key={community.title} />
       ))}
       <DeleteCommunityModal />
-    </div>
+    </Box>
   );
 };
 
@@ -52,4 +59,7 @@ const mapStateToProps = (state) => ({
   communities: state.communities.items,
 });
 
-export default connect(mapStateToProps, { getCommunities })(CommunitiesList);
+export default connect(mapStateToProps, {
+  getCommunities,
+  getUsersCommunities,
+})(CommunitiesList);

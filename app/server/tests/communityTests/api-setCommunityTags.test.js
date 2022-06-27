@@ -55,10 +55,6 @@ describe('Creating new Community', () => {
   });
 });
 
-<<<<<<< HEAD:app/server/tests/communityTests/api-setCommunityTags.test.js
-
-=======
->>>>>>> dc6a72a97db9365e2c65ae637a303c2a44c31c08:app/server/tests/api-setCommunityTags.test.js
 describe('Set Communities tags - After Login on new community', () => {
     let response = '';
 
@@ -82,10 +78,6 @@ describe('Get Communities Tags - After Login with new community (2)', () => {
   });
 });
 
-<<<<<<< HEAD:app/server/tests/communityTests/api-setCommunityTags.test.js
-
-=======
->>>>>>> dc6a72a97db9365e2c65ae637a303c2a44c31c08:app/server/tests/api-setCommunityTags.test.js
 describe('Set Communities tags - on new community, with link tag', () => {
   let response = '';
 

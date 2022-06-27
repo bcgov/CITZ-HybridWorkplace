@@ -22,6 +22,8 @@
 
 import hwp_axios from "../../axiosInstance";
 
+import { GET_POSTS } from "./postDuck";
+
 const SET_COMMUNITIES = "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_COMMUNITIES";
 const GET_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/GET_COMMUNITY";
 const EDIT_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/GET_COMMUNITY";
@@ -150,7 +152,7 @@ export const getCommunityPosts = (title) => async (dispatch, getState) => {
     }));
 
     dispatch({
-      type: GET_COMMUNITY_POSTS,
+      type: GET_POSTS,
       payload: posts,
     });
   } catch (err) {
@@ -378,7 +380,15 @@ export function communityReducer(state = initialState, action) {
       if (!comm) return state;
       return {
         ...state,
-        usersCommunities: [comm, ...state.usersCommunities],
+        usersCommunities: [
+          { ...comm, memberCount: comm.memberCount + 1 },
+          ...state.usersCommunities,
+        ],
+        items: state.items.map((e) => {
+          return e._id === comm._id
+            ? { ...e, memberCount: e.memberCount + 1 }
+            : e;
+        }),
       };
     case LEAVE_COMMUNITY:
       return {
@@ -386,6 +396,11 @@ export function communityReducer(state = initialState, action) {
         usersCommunities: state.usersCommunities?.filter(
           (item, index) => item.title !== action.payload
         ),
+        items: state.items.map((e) => {
+          return e.title === action.payload
+            ? { ...e, memberCount: e.memberCount - 1 }
+            : e;
+        }),
       };
     case DELETE_COMMUNITY:
       return {

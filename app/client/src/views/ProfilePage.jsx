@@ -51,6 +51,7 @@ import ProfileInfo from "../components/ProfileInfo";
 
 const ProfilePage = (props) => {
   let { username } = useParams();
+  const maxCommunityTitleLength = 12;
 
   useEffect(() => {
     props.getProfile(username);
@@ -86,6 +87,7 @@ const ProfilePage = (props) => {
       sx={{
         alignItems: "stretch",
         overflow: "hidden",
+        pb: 20,
       }}
     >
       <Grid
@@ -99,19 +101,23 @@ const ProfilePage = (props) => {
           <Grid
             container
             direction="column"
-            alignitems="flex-start"
+            alignItems="flex-start"
             justifyContent="space-evenly"
           >
             <Grid item xs={12}>
               <Avatar
-                sx={{ width: 150, height: 150 }}
+                sx={{ width: 150, height: 150, mb: 1 }}
                 src="https://source.unsplash.com/random/150×150/?profile%20picture"
               />
-              <br />
-              <Grid item xs={12}>
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  mb: 1,
+                }}
+              >
                 <ProfileInfo username={username} />
               </Grid>
-              <br />
               <Grid item xs={12}>
                 <Box
                   sx={{
@@ -120,7 +126,7 @@ const ProfilePage = (props) => {
                 >
                   <Typography
                     variant="h6"
-                    style={{ fontWeight: 600, color: "#313132" }}
+                    sx={{ fontWeight: 600, color: "primary.main" }}
                   >
                     Interests
                   </Typography>
@@ -145,10 +151,9 @@ const ProfilePage = (props) => {
         <Grid item xs={3}>
           <Grid container direction="row" justifyContent="space-evenly">
             <Grid item xs={12}>
-              <Typography variant="h4" style={{ fontWeight: 600 }}>
+              <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
                 Bio
               </Typography>
-              <br />
               <Typography variant="body1">
                 {props.profile.bio || "No bio to display"}
               </Typography>
@@ -159,10 +164,9 @@ const ProfilePage = (props) => {
         <Grid item xs={4}>
           <Grid container direction="row" justifyContent="space-evenly">
             <Grid item xs={12}>
-              <Typography variant="h4" style={{ fontWeight: 600 }}>
-                Your Communities
+              <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
+                My Communities
               </Typography>
-              <br />
               <Grid container spacing={2}>
                 {props.communities.slice(0, 4).map((element) => (
                   <Grid item xs={6} key={element._id}>
@@ -171,23 +175,28 @@ const ProfilePage = (props) => {
                         backgroundColor: "#FFF",
                         boxShadow: 1,
                         borderRadius: "10px",
-                        color: "#313132",
-                        py: 1,
-                        px: 2,
+                        color: "primary.main",
+                        py: 2,
+                        px: 3,
                         textAlign: "start",
                         height: "auto",
                       }}
                     >
-                      <Typography variant="h6" style={{ fontWeight: 600 }}>
-                        {element.title}
+                      <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                        {element.title.length > maxCommunityTitleLength
+                          ? element.title.substring(
+                              0,
+                              maxCommunityTitleLength
+                            ) + "..."
+                          : element.title}
                       </Typography>
                       <Stack direction="row" spacing={1}>
                         <GroupsIcon fontSize="small" />
                         <Typography
                           variant="p"
-                          style={{
+                          sx={{
                             color: "#999",
-                            paddingLeft: "0.5em",
+                            pl: "0.5em",
                           }}
                         >
                           {element.memberCount || 0}
@@ -196,14 +205,14 @@ const ProfilePage = (props) => {
                       <Stack sx={{ mt: "5px" }}>
                         <Typography
                           variant="p"
-                          style={{ fontWeight: 600, color: "#313132" }}
+                          sx={{ fontWeight: 600, color: "primary.main" }}
                         >
                           Latest Activity:
                         </Typography>
                         <Typography
                           variant="p"
-                          style={{
-                            color: "#999",
+                          sx={{
+                            color: "neutral.main.dark",
                             textAlign: "left",
                           }}
                         >
@@ -218,13 +227,12 @@ const ProfilePage = (props) => {
           </Grid>
         </Grid>
         <Grid item xs={2}>
-          <Typography variant="h4" style={{ fontWeight: 600 }}>
+          <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
             Settings
           </Typography>
-          <br />
           <Box
             sx={{
-              color: "#313132",
+              color: "neutral.main",
               boxShadow: 2,
               py: 1,
               px: 2,
@@ -233,7 +241,7 @@ const ProfilePage = (props) => {
           >
             <FormControl>
               <FormLabel id="notification-frequency-radios-label">
-                <Typography variant="h6" style={{ fontWeight: 600 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   Notifications
                 </Typography>
               </FormLabel>
@@ -273,21 +281,28 @@ const ProfilePage = (props) => {
               </RadioGroup>
             </FormControl>
             <Divider />
-            <br />
-            <Stack direction="row" spacing={1}>
-              <Typography variant="p" style={{ fontWeight: 600 }}>
-                Dark Mode
-              </Typography>
-              <Switch />
-            </Stack>
+            <Box
+              sx={{
+                mt: 1,
+              }}
+            >
+              <Stack direction="row" spacing={1}>
+                <Typography
+                  variant="p"
+                  sx={{ fontWeight: 600, alignSelf: "center" }}
+                >
+                  Dark Mode
+                </Typography>
+                <Switch />
+              </Stack>
+            </Box>
           </Box>
         </Grid>
 
-        <Grid item xs={8}>
-          <Typography variant="h4" style={{ fontWeight: 600 }}>
+        <Grid item xs={8} sx={{}}>
+          <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
             Recent Posts
           </Typography>
-          <br />
           <Stack direction="row" spacing={2}>
             {props.communities.slice(0, 4).map((element) => (
               <Box
@@ -302,7 +317,7 @@ const ProfilePage = (props) => {
               >
                 <Box
                   sx={{
-                    backgroundColor: "#003366",
+                    backgroundColor: "primary.main",
                     width: "600px",
                     py: 1,
                     px: 2,
@@ -311,13 +326,13 @@ const ProfilePage = (props) => {
                 >
                   <Typography
                     variant="h5"
-                    style={{ fontWeight: 600, color: "#FFF" }}
+                    sx={{ fontWeight: 600, color: "#FFF" }}
                   >
                     {element.title}
                   </Typography>
                   <Typography
                     variant="caption"
-                    style={{ fontWeight: 600, color: "#FFF" }}
+                    sx={{ fontWeight: 600, color: "#FFF" }}
                   >
                     by {element.creatorName}
                   </Typography>

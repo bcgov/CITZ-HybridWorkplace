@@ -16,7 +16,7 @@
 
 /**
  * Application entry point
- * @author [Zach Bourque](bettesworthjayna@gmail.com)
+ * @author [Zach Bourque](zachbourque01@gmail.com)
  * @module
  */
 
@@ -26,7 +26,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Grid,
+  Stack,
   Typography,
 } from "@mui/material";
 import { connect } from "react-redux";
@@ -43,30 +43,45 @@ const DeleteCommentModal = (props) => {
   };
 
   return (
-    <Dialog onClose={props.closeDeleteCommentModal} open={props.open} fullWidth>
-      <DialogTitle>Delete Comment</DialogTitle>
-      <DialogContent>
-        <Grid
-          container
-          justifyContent="center"
-          alignItems="center"
-          direction="column"
-        >
-          <Grid item xs={12}>
-            <Typography variant="h5">
-              Are you sure you want to delete comment:
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="h4">{props.comment.message}</Typography>
-          </Grid>
-        </Grid>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleDeleteComment} variant="contained" color="error">
+    <Dialog
+      onClose={props.closeDeleteCommentModal}
+      open={props.open}
+      fullWidth
+      sx={{ zIndex: 500 }}
+    >
+      <DialogTitle>
+        <Typography variant="h5" fontWeight={600}>
           Delete Comment
-        </Button>
-      </DialogActions>
+        </Typography>
+      </DialogTitle>
+      <DialogContent>
+        <Stack spacing={1}>
+          <Stack spacing={0.5} textAlign="center">
+            <Typography variant="subtitle2">
+              Are you sure you want to delete?
+            </Typography>
+            <Typography variant="h6">{props.comment.message}</Typography>
+          </Stack>
+
+          <DialogActions sx={{ m: 0, pb: 0 }}>
+            <Stack spacing={1} direction="row-reverse" justifyContent="end">
+              <Button
+                onClick={handleDeleteComment}
+                variant="contained"
+                color="error"
+              >
+                Delete Comment
+              </Button>
+              <Button
+                variant="contained"
+                onClick={props.closeDeleteCommentModal}
+              >
+                Cancel
+              </Button>
+            </Stack>
+          </DialogActions>
+        </Stack>
+      </DialogContent>
     </Dialog>
   );
 };

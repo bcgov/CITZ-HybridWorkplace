@@ -1,7 +1,7 @@
 import {
-  Button,
   Card,
   Grid,
+  Box,
   CardActions,
   CardContent,
   CardHeader,
@@ -11,8 +11,9 @@ import {
   Menu,
   MenuItem,
   MenuList,
-  TextField,
   Typography,
+  Stack,
+  Button,
 } from "@mui/material";
 import FlagTwoToneIcon from "@mui/icons-material/FlagTwoTone";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -27,16 +28,19 @@ import { useState } from "react";
 import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import TagsList from "./TagsList";
-import { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getPost } from "../redux/ducks/postDuck";
 import { useNavigate } from "react-router-dom";
 import CommentIcon from "@mui/icons-material/Comment";
 import moment from "moment";
+import MDEditor from "@uiw/react-md-editor";
 
 const Post = (props) => {
-  const [anchorEl, setAnchorEl] = useState(null);
+  const maxTitleLength = 45;
+  const maxCommunityTitleLength = 16;
+  const maxMessageLines = 5;
 
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const [commNameHover, setCommNameHover] = useState(false);
   const onCommNameHoverEnter = () => {
@@ -76,13 +80,19 @@ const Post = (props) => {
 
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
-  const handlePostClick = () => navigate(`/post/${post._id}`);
+  const handlePostClick = () =>
+    !props.isPostPage && navigate(`/post/${post._id}`);
   const handleCommunityClick = (title) => navigate(`/community/${title}`);
 
-  // Create preview if post message is longer than 250 characters
+  // Create preview if post message has more than maxMessageLines lines
   let message = post.message;
-  if (message.length > 250) {
-    message = `${message.substr(0, 249)}...`;
+  if (!props.isPostPage && message.split("\n").length > maxMessageLines) {
+    const initialValue = "";
+    message =
+      message
+        .split("\n")
+        .slice(0, maxMessageLines)
+        .reduce((prev, curr) => prev + curr + "\n", initialValue) + "...";
   }
 
   // Convert to local time
@@ -91,10 +101,10 @@ const Post = (props) => {
       .local()
       .format("MMMM Do YYYY, h:mm:ss a") || "";
   // Remove milliseconds
-  createdOn = `${createdOn.substr(0, createdOn.length - 6)} ${createdOn.substr(
-    createdOn.length - 2,
-    createdOn.length
-  )}`;
+  createdOn = `${createdOn.substring(
+    0,
+    createdOn.length - 6
+  )} ${createdOn.substring(createdOn.length - 2, createdOn.length)}`;
   const splitCreatedOn = createdOn.split(",");
 
   const today = moment().format("MMMM Do YYYY");
@@ -105,18 +115,15 @@ const Post = (props) => {
     createdOn = `Yesterday${splitCreatedOn[1]}`;
 
   return (
-    <div
-      key={post._id}
-      style={{ marginBottom: "15px", backgroundColor: "transparent" }}
-    >
+    <Box key={post._id} sx={{ mb: "15px", backgroundColor: "transparent" }}>
       <Card
         sx={{
           px: 0,
           py: 0,
           margin: "auto",
           borderRadius: "10px",
-          border: 1,
-          borderColor: cardHover ? "gray" : "darkgray",
+          border: 0,
+          boxShadow: 1,
         }}
         variant="outlined"
         square
@@ -124,7 +131,7 @@ const Post = (props) => {
         onMouseLeave={onCardHoverLeave}
       >
         <CardHeader
-          sx={{ backgroundColor: "#0072A2", color: "white" }}
+          sx={{ backgroundColor: "#0072A2", color: "white", py: 1 }}
           action={
             <>
               <IconButton aria-label="settings" onClick={handleMenuOpen}>
@@ -142,56 +149,73 @@ const Post = (props) => {
                     </ListItemIcon>
                     <ListItemText>Flag</ListItemText>
                   </MenuItem>
-                  <MenuItem onClick={handleDeletePostClick}>
-                    <ListItemIcon>
-                      <DeleteForeverTwoToneIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText>Delete</ListItemText>
-                  </MenuItem>
-                  <MenuItem onClick={handleEditPostClick}>
-                    <ListItemIcon>
-                      <EditTwoToneIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText>Edit</ListItemText>
-                  </MenuItem>
+                  {props.userId === post.creator && (
+                    <>
+                      <MenuItem onClick={handleDeletePostClick}>
+                        <ListItemIcon>
+                          <DeleteForeverTwoToneIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Delete</ListItemText>
+                      </MenuItem>
+                      <MenuItem onClick={handleEditPostClick}>
+                        <ListItemIcon>
+                          <EditTwoToneIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Edit</ListItemText>
+                      </MenuItem>
+                    </>
+                  )}
                 </MenuList>
               </Menu>
             </>
           }
           title={
             <Grid container spacing={2}>
-              <Grid item xs={10}>
+              <Grid item xs={9}>
                 <Typography
-                  variant="h5"
+                  variant="h6"
                   onClick={handlePostClick}
-                  sx={{ cursor: "pointer" }}
+                  sx={{
+                    cursor: props.isPostPage || "pointer",
+                  }}
                 >
-                  <b>{post.title}</b>
+                  <b>
+                    {post.title.length >= maxTitleLength
+                      ? post.title.substring(0, maxTitleLength) + "..."
+                      : post.title}
+                  </b>
                 </Typography>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={3}>
                 <Typography
                   onClick={() => handleCommunityClick(post.community)}
                   sx={{
                     cursor: "pointer",
                     textDecoration: commNameHover ? "underline" : "",
+                    textAlign: "right",
                   }}
                   onMouseEnter={onCommNameHoverEnter}
                   onMouseLeave={onCommNameHoverLeave}
                 >
-                  {post.community}
+                  {post.community.length > maxCommunityTitleLength
+                    ? post.community.substring(0, maxCommunityTitleLength) +
+                      "..."
+                    : post.community}
                 </Typography>
               </Grid>
             </Grid>
           }
           subheader={
-            <Typography size="medium" color="white">
-              by {props.post.creatorName}
-            </Typography>
+            <Typography color="white">by {props.post.creatorName}</Typography>
           }
         />
-        <CardContent onClick={handlePostClick} sx={{ cursor: "pointer" }}>
-          <Typography variant="body1">{message}</Typography>
+        <CardContent
+          onClick={handlePostClick}
+          sx={{ cursor: props.isPostPage || "pointer" }}
+        >
+          <Box name="postMessage" data-color-mode="light">
+            <MDEditor.Markdown source={message}></MDEditor.Markdown>
+          </Box>
         </CardContent>
         <CardActions>
           <IconButton onClick={handlePostClick}>
@@ -220,7 +244,7 @@ const Post = (props) => {
           )}
         </CardActions>
       </Card>
-    </div>
+    </Box>
   );
 };
 
@@ -231,7 +255,9 @@ Post.propTypes = {
   getPost: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = (state) => ({
+  userId: state.auth.user.id,
+});
 
 const mapActionsToProps = {
   openFlagPostModal,

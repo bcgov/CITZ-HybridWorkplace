@@ -20,13 +20,9 @@
  * @module
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import { Grid, Box, Button, Typography } from "@mui/material";
 import { getPosts } from "../redux/ducks/postDuck";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -35,31 +31,24 @@ import PostsList from "../components/PostsList";
 import PostModal from "../components/modals/AddPostModal";
 import AddCommunityModal from "../components/modals/AddCommunityModal";
 import AddIcon from "@mui/icons-material/Add";
+import {
+  openAddPostModal,
+  openAddCommunityModal,
+} from "../redux/ducks/modalDuck";
 
 const HomePage = (props) => {
   useEffect(() => {
     props.getPosts();
   }, []);
-  const [show, setShow] = useState(false);
-
-  const [createCommunityOpen, setCreateCommunityOpen] = useState(false);
-
-  const openDialog = () => {
-    setCreateCommunityOpen(true);
-  };
-
-  const closeDialog = (value) => {
-    setCreateCommunityOpen(false);
-  };
 
   return (
-    <div>
+    <Box sx={{ pb: 20 }}>
       <Grid container spacing={2}>
         <Grid item xs={8}>
           <Box
             mb="15px"
             sx={{
-              backgroundColor: "#036",
+              backgroundColor: "primary.main",
               borderRadius: "10px",
               color: "white",
               px: 1,
@@ -70,65 +59,69 @@ const HomePage = (props) => {
           >
             <Grid container spacing={1}>
               <Grid item xs={9}>
-                <Typography variant="h5" component="h5" pl="175px">
-                  <b>Top Posts</b>
+                <Typography
+                  variant="h5"
+                  component="h5"
+                  sx={{
+                    fontWeight: 600,
+                    pl: "9em",
+                  }}
+                >
+                  Top Posts
                 </Typography>
               </Grid>
               <Grid item xs={3} align="right">
-                <Button onClick={() => setShow(true)}>
-                  <Typography color="white">New</Typography>
+                <Button onClick={() => props.openAddPostModal()}>
                   <AddIcon sx={{ color: "white" }} />
                 </Button>
               </Grid>
             </Grid>
 
-            <PostModal onClose={() => setShow(false)} show={show} />
+            <PostModal />
           </Box>
           <PostsList posts={props.posts} />
         </Grid>
         <Grid item xs={4}>
-          <Paper>
-            <Box
-              mb="15px"
-              sx={{
-                backgroundColor: "#036",
-                borderRadius: "10px",
-                color: "white",
-                px: 1,
-                py: 0.5,
-                textAlign: "center",
-              }}
-            >
-              <Typography variant="h6" component="h5">
-                <b>Your Communities</b>
-              </Typography>
-            </Box>
-            <UsersCommunitiesList />
-            <Box
-              sx={{
-                backgroundColor: "#036",
-                borderRadius: "10px",
-                color: "white",
-                px: 1,
-                py: 0.5,
-                textAlign: "center",
-              }}
-            >
-              <Button variant="text" onClick={openDialog}>
-                <Typography color="white">
-                  <b>Create Community</b>
+          <Box
+            mb="15px"
+            sx={{
+              backgroundColor: "primary.main",
+              borderRadius: "10px",
+              color: "white",
+              px: 1,
+              py: 0.5,
+              textAlign: "center",
+            }}
+          >
+            <Grid container spacing={1}>
+              <Grid item xs={9}>
+                <Typography
+                  variant="h6"
+                  component="h5"
+                  sx={{
+                    fontWeight: 600,
+                    pl: "5.25em",
+                    pt: 0.3,
+                  }}
+                >
+                  My Communities
                 </Typography>
-                <AddIcon sx={{ color: "white" }} />
-              </Button>
-              <AddCommunityModal
-                onClose={closeDialog}
-                open={createCommunityOpen}
-              />
-            </Box>
-          </Paper>
+              </Grid>
+              <Grid item xs={3} align="right">
+                <Button
+                  variant="text"
+                  onClick={() => props.openAddCommunityModal()}
+                >
+                  <AddIcon sx={{ color: "white", pl: 2 }} />
+                </Button>
+                <AddCommunityModal />
+              </Grid>
+            </Grid>
+          </Box>
+          <UsersCommunitiesList />
         </Grid>
       </Grid>
-    </div>
+    </Box>
   );
 };
 
@@ -138,4 +131,8 @@ const mapStateToProps = (state) => ({
   posts: state.posts.items,
 });
 
-export default connect(mapStateToProps, { getPosts })(HomePage);
+export default connect(mapStateToProps, {
+  getPosts,
+  openAddPostModal,
+  openAddCommunityModal,
+})(HomePage);

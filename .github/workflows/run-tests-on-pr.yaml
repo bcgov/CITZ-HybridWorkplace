@@ -1,0 +1,130 @@
+name: Run HWP Tests
+
+on:
+  pull_request:
+    types: 
+      - opened
+      - synchronize
+    branches: 
+      - main
+  workflow_dispatch:
+
+jobs: 
+  api-endpoint-tests:
+    runs-on: ubuntu-latest
+    steps:
+    # Set variables
+      - name: Get repository name and remove owner
+        id: repo-name
+        run: |
+          echo "::set-output name=repo-name::$(echo ${{ github.repository }} | sed 's/\(.*\)\/\(.*\)/\2/g')" 
+
+      - name: Get PR name and remove spaces
+        id: pr-name
+        run: |
+          echo "::set-output name=pr-name::$(echo ${{ github.event.pull_request.title }} | sed 's/\s/-/g')"
+
+      - name: Get current datestamp
+        id: date
+        run: |
+          echo "::set-output name=date::$(date '+%Y%m%d%H%M%S')"
+
+      - name: Build file path
+        id: results
+        run: |
+          echo "::set-output name=results::${{ steps.repo-name.outputs.repo-name }}_${{ github.job }}_${{ steps.date.outputs.date }}_${{ steps.pr-name.outputs.pr-name }}.json"
+
+    # Prepare and build containers
+      - uses: actions/checkout@v2
+          
+      - name: Install dependencies
+        working-directory: ./app/server
+        run: |
+          npm install
+
+      - name: Relax Express request limiter
+        working-directory: ./app/server
+        run: |
+          sed -i 's/max: [0-9]\+,/max: 99999,/g' express.js
+
+      - name: Create ENV file
+        run: |
+          touch .env
+          echo "REACT_APP_API_PORT=5000" >> .env
+          echo "REACT_APP_LOCAL_DEV=true" >> .env
+          echo "API_VERSION=1" >> .env
+          echo "ENABLE_API_REQUEST_LOGS=true" >> .env
+          echo "FRONTEND_PORT=8080" >> .env
+          echo "MONGO_REF=mongodb" >> .env
+          echo "MONGO_PORT=27017" >> .env
+          echo "MONGO_ROOT_USERNAME=admin" >> .env
+          echo "MONGO_ROOT_PASSWORD=admin" >> .env
+          echo "MONGO_DB_USERNAME=db-admin" >> .env
+          echo "MONGO_DB_PASSWORD=db-admin" >> .env
+          echo "MONGO_DATABASE_NAME=TheNeighbourhood" >> .env
+          echo "JWT_SECRET=asimplesecret" >> .env
+          echo "JWT_REFRESH_SECRET=asimplerefresh" >> .env
+          echo "JWT_TOKEN_EXPIRY=1h" >> .env
+          echo "COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMUNITY=0" >> .env
+          echo "COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_POST=5" >> .env
+          echo "COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT=1" >> .env
+          echo "ENV_FILE=.env" >> .env
+
+      - name: Create ENV file for testing suite
+        working-directory: ./app/server
+        run: |
+          touch .env
+          echo "API_REF=localhost:5000/api" >> .env
+
+      - name: Build API and Mongo in Docker
+        run: |
+          docker-compose up -d --build mongodb hwp-api
+
+      - name: Wait for Mongo container
+        uses: stringbean/docker-healthcheck-action@v1
+        with:
+          container: mongodb
+          wait-time: 60
+          require-status: running
+          require-healthy: true 
+      
+      - name: Wait for API container
+        uses: stringbean/docker-healthcheck-action@v1
+        with:
+          container: hwp-api
+          wait-time: 60
+          require-status: running 
+
+    # Run tests
+      - name: Run test command
+        working-directory: ./app/server
+        continue-on-error: true
+        run: |
+          npm test -- --json > tempResults
+
+    # Refine results
+      - name: Select only json line
+        working-directory: ./app/server
+        run: |
+          sed -i -n 5p tempResults
+
+      - name: Add keys to json file and pretty print
+        working-directory: ./app/server
+        shell: python
+        run: |
+          import json
+          with open('tempResults') as json_file:
+            data = json.load(json_file)
+          data['repository'] = '${{ github.repository }}'
+          data['branch'] = '${{ github.ref_name }}'
+          data['pull-request'] = '${{ github.event.pull_request.title }}'
+          data['creator'] = '${{ github.event.pull_request.user.login }}'
+          with open('${{ steps.results.outputs.results }}', 'w') as json_file:
+            json.dump(data, json_file, indent=2)
+        
+
+      - name: Save file as artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: api-test-results
+          path: ./app/server/${{ steps.results.outputs.results }}

@@ -44,7 +44,7 @@ const StyledExLink = styled(ExternalLink)`
 class Footer extends Component {
   render() {
     return (
-      <div className="footer">
+      <div className="footer" style={{ zIndex: 1000 }}>
         <StyledLink to="/">Home</StyledLink>
         <Divider />
         <StyledExLink

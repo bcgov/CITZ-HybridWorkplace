@@ -25,6 +25,7 @@ import React, { Component } from "react";
 import { Routes, Route } from "react-router-dom";
 
 import PrivateComponent from "./components/PrivateComponent";
+import GuestOnlyComponent from "./components/GuestOnlyComponent";
 
 // Views
 import LoginPage from "./views/LoginPage";
@@ -40,17 +41,25 @@ import CommunityPage from "./views/CommunityPage";
 //Components
 import EditProfile from "./components/EditProfile";
 import NewCommunity from "./components/NewCommunity";
-import SingularPost from "./components/SingularPost";
 import LogoutPage from "./views/LogoutPage";
+import PostPage from "./views/PostPage";
 
 const App = () => {
   return (
     <div className="Routes">
       <Routes>
-        <Route path="/" exact element={<Register />} />
-        <Route path="/login" exact element={<LoginPage />} />
         <Route
-          path="/home"
+          path="/register"
+          exact
+          element={<GuestOnlyComponent component={<Register />} />}
+        />
+        <Route
+          path="/login"
+          exact
+          element={<GuestOnlyComponent component={<LoginPage />} />}
+        />
+        <Route
+          path="/"
           exact
           element={<PrivateComponent component={<HomePage />} />}
         />
@@ -85,9 +94,7 @@ const App = () => {
         />
         <Route
           path="/post/:id"
-          element={
-            <PrivateComponent component={<SingularPost showComments />} />
-          }
+          element={<PrivateComponent component={<PostPage />} />}
         />
         <Route path="/logout" element={<LogoutPage />} />
         <Route path="*" exact element={<Page404 />}></Route>

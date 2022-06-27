@@ -24,6 +24,7 @@ const ResponseError = require("../../../responseError");
 const findSingleDocuments = require("../../../functions/findSingleDocuments");
 const checkUserIsMemberOfCommunity = require("../../../functions/checkUserIsMemberOfCommunity");
 const updateCommunityEngagement = require("../../../functions/updateCommunityEngagement");
+const getOptions = require("../../../functions/getOptions");
 
 const router = express.Router();
 
@@ -144,6 +145,24 @@ router.post("/:id", async (req, res) => {
     });
     req.log.addAction("User and comment found.");
 
+    req.log.addAction("Finding options.");
+    const { messageMinLength, messageMaxLength } = await getOptions("comment");
+    req.log.addAction("Options found.");
+
+    req.log.addAction("Trimming leading and trailing spaces.");
+    req.body.message = req.body.message.trim();
+    req.log.addAction(`Comment trimmed: ${req.body.message}.`);
+
+    // Validate comment length
+    const messageLengthError = `message does not meet requirements: length ${messageMinLength}-${messageMaxLength}.`;
+    req.log.addAction("Validating message.");
+    if (
+      req.body.message.length < messageMinLength ||
+      req.body.message.length > messageMaxLength
+    )
+      throw new ResponseError(403, messageLengthError);
+    req.log.addAction("message is valid.");
+
     req.log.addAction("Checking reply is not replying to a reply.");
     if (documents.comment.replyTo)
       throw new ResponseError(403, "Not allowed to reply to a reply.");
@@ -167,11 +186,22 @@ router.post("/:id", async (req, res) => {
     ).exec();
     req.log.addAction("hasReplies updated.");
 
+    req.log.addAction("Getting creator name.");
+    const { firstName, lastName } = documents.user;
+    let creatorName;
+
+    if (firstName && firstName !== "") {
+      // If lastName, set full name, else just firstName
+      creatorName =
+        lastName && lastName !== "" ? `${firstName} ${lastName}` : firstName;
+    }
+
     // Create reply
     req.log.addAction("Creating reply.");
     const reply = await Comment.create({
       message: req.body.message,
       creator: documents.user.id,
+      creatorName: creatorName || documents.user.username,
       post: documents.comment.post,
       community: documents.comment.community,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
