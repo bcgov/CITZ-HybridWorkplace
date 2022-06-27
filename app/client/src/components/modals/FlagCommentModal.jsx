@@ -16,7 +16,7 @@
 
 /**
  * Application entry point
- * @author [Zach Bourque](bettesworthjayna@gmail.com)
+ * @author [Zach Bourque](zachbourque01@gmail.com)
  * @module
  */
 
@@ -30,6 +30,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Stack,
   Typography,
 } from "@mui/material";
 import { connect } from "react-redux";
@@ -66,27 +67,21 @@ const FlagCommentModal = (props) => {
       fullWidth
       sx={{ zIndex: 500 }}
     >
-      <DialogTitle>Flag Comment</DialogTitle>
+      <DialogTitle>
+        <Typography variant="h5" fontWeight={600}>
+          Flag Comment
+        </Typography>
+      </DialogTitle>
       <DialogContent>
-        <Grid
-          container
-          justifyContent="center"
-          alignItems="center"
-          direction="column"
-        >
-          <Grid item xs={12}>
-            <Typography variant="h4">
-              Flagging Comment: {props.comment.message}
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
+        <Stack spacing={1}>
+          <Typography variant="h6">{props.comment.message}</Typography>
+          <Stack spacing={0.5}>
             <InputLabel id="demo-simple-select-standard-label">Flag</InputLabel>
             <Select
               labelId="demo-simple-select-standard-label"
               id="demo-simple-select-standard"
               value={flag}
               onChange={handleFlagChange}
-              label="Flag"
             >
               {flags.map((element) => (
                 <MenuItem value={element} key={element}>
@@ -94,14 +89,24 @@ const FlagCommentModal = (props) => {
                 </MenuItem>
               ))}
             </Select>
-          </Grid>
-        </Grid>
+          </Stack>
+
+          <DialogActions sx={{ m: 0, pb: 0 }}>
+            <Stack spacing={1} direction="row-reverse" justifyContent="end">
+              <Button
+                onClick={handleFlagComment}
+                variant="contained"
+                color="error"
+              >
+                Flag Comment
+              </Button>
+              <Button onClick={props.closeFlagCommentModal} variant="contained">
+                Cancel
+              </Button>
+            </Stack>
+          </DialogActions>
+        </Stack>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleFlagComment} variant="contained" color="error">
-          Flag Comment
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 };

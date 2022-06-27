@@ -66,10 +66,6 @@ describe('Get Communities tags', () => {
   });
 });
 
-<<<<<<< HEAD:app/server/tests/communityTests/api-deleteCommunityTags.test.js
-
-=======
->>>>>>> dc6a72a97db9365e2c65ae637a303c2a44c31c08:app/server/tests/api-deleteCommunityTags.test.js
 describe('Delete Communities tags - After Login on new community', () => {
     let response = '';
 
@@ -93,10 +89,6 @@ describe('Get Communities Tags after tag deletion', () => {
   });
 });
 
-<<<<<<< HEAD:app/server/tests/communityTests/api-deleteCommunityTags.test.js
-
-=======
->>>>>>> dc6a72a97db9365e2c65ae637a303c2a44c31c08:app/server/tests/api-deleteCommunityTags.test.js
 describe('Delete Communities tags - After Login on new community, tag does not exist', () => {
   let response = '';
 

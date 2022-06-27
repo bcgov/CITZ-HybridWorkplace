@@ -23,7 +23,6 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import "./addPost.css";
 
 import {
   TextField,
@@ -34,15 +33,37 @@ import {
   Select,
   Typography,
   Button,
+  Stack,
+  Box,
+  InputLabel,
+  DialogActions,
 } from "@mui/material";
 
 import { getCommunities } from "../../redux/ducks/communityDuck";
 import { createPost } from "../../redux/ducks/postDuck";
 import { closeAddPostModal } from "../../redux/ducks/modalDuck";
+import MDEditor from "@uiw/react-md-editor";
 
 const AddPostModal = (props) => {
+  // TODO: Grab length options from API
+  const minTitleLength = 3;
+  const maxTitleLength = 50;
+  const minMessageLength = 3;
+  const maxMessageLength = 40000;
+
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
+
+  const [titleError, setTitleError] = useState(false);
+  const [messageError, setMessageError] = useState(false);
+
+  const setMessageAndSetErrors = (newMessage) => {
+    setMessage(newMessage);
+    setMessageError(
+      newMessage.length < minMessageLength ||
+        newMessage.length > maxMessageLength
+    );
+  };
 
   const [creator, setCreator] = useState(props.auth.user.username);
   const [community, setCommunity] = useState(props.communityName || "");
@@ -71,10 +92,10 @@ const AddPostModal = (props) => {
 
   const onTitleChange = (event) => {
     setTitle(event.target.value);
-  };
-
-  const onMessageChange = (event) => {
-    setMessage(event.target.value);
+    setTitleError(
+      event.target.value.length < minTitleLength ||
+        event.target.value.length > maxTitleLength
+    );
   };
 
   const handleCommunityChange = (event) => {
@@ -85,72 +106,99 @@ const AddPostModal = (props) => {
     <Dialog
       open={props.open}
       onClose={props.closeAddPostModal}
-      sx={{ zIndex: 500 }}
+      sx={{ zIndex: 500, mb: 5 }}
       fullWidth
     >
       <DialogTitle>
-        <Typography sx={{ fontWeight: "bold" }}>Add Post</Typography>
+        <Typography variant="h5" sx={{ fontWeight: 600 }}>
+          Add Post
+        </Typography>
       </DialogTitle>
-      <DialogContent>
-        <TextField
-          sx={{ ml: 1 }}
-          onChange={onTitleChange}
-          name="title"
-          placeholder="Title"
-          value={title}
-          error={
-            title === "" || (title.length >= 3 && title.length <= 50)
-              ? false
-              : true
-          }
-          helperText="Title must be 3-50 characters in length."
-          required
-        />
-        <TextField
-          onChange={onMessageChange}
-          name="message"
-          placeholder="Message"
-          multiline
-          rows={6}
-          value={message}
-          error={
-            message === "" || (message.length >= 3 && message.length <= 40000)
-              ? false
-              : true
-          }
-          helperText="Message must be 3-40,000 characters in length."
-          required
-          sx={{ m: 1, width: 0.8 }}
-        />
-        {!props.communityName && (
-          <>
-            <Typography sx={{ ml: 1 }}>Choose a Community:</Typography>
-            <Select
-              value={community}
-              onChange={handleCommunityChange}
-              sx={{ m: 1, minWidth: "15em" }}
+      <DialogContent data-color-mode="light">
+        <Stack spacing={1}>
+          <Stack container spacing={0.5}>
+            <InputLabel htmlFor="add-post-title">Title</InputLabel>
+            <TextField
+              id="add-post-title"
+              onChange={onTitleChange}
+              name="title"
+              placeholder="Title"
+              value={title}
+              error={
+                title === "" || (title.length >= 3 && title.length <= 50)
+                  ? false
+                  : true
+              }
+              helperText="Title must be 3-50 characters in length."
+              required
+              fullWidth
+            />
+          </Stack>
+          <Box>
+            <Stack
+              spacing={0.5}
+              sx={{
+                border: 3,
+                borderColor: messageError ? "red" : "transparent",
+                color: messageError ? "red" : "-moz-initial",
+              }}
             >
-              {props.communities.map((comm) => (
-                <MenuItem value={comm.title}>{comm.title}</MenuItem>
-              ))}
-            </Select>
-          </>
-        )}
-        <br />
-        <Button
-          sx={{ ml: 1 }}
-          variant="contained"
-          disabled={
-            title.length < 3 ||
-            title.length > 50 ||
-            message.length < 3 ||
-            message.length > 40000 ||
-            !community
-          }
-          onClick={registerPost}
-        >
-          Submit
-        </Button>
+              <InputLabel
+                htmlFor="message-input"
+                sx={{
+                  color: messageError ? "red" : "-moz-initial",
+                }}
+              >
+                Message
+              </InputLabel>
+              <MDEditor
+                id="message-input"
+                value={message}
+                onChange={setMessageAndSetErrors}
+                preview="edit"
+              />
+            </Stack>
+          </Box>
+          {!props.communityName && (
+            <Box>
+              <Typography>Choose a Community:</Typography>
+              <Select
+                value={community}
+                onChange={handleCommunityChange}
+                sx={{ mb: 1.5, minWidth: "15em", width: "98%" }}
+              >
+                {props.communities.map((comm) => (
+                  <MenuItem value={comm.title}>{comm.title}</MenuItem>
+                ))}
+              </Select>
+            </Box>
+          )}
+          <DialogActions
+            sx={{
+              m: 0,
+              pb: 0,
+            }}
+          >
+            <Stack spacing={1} direction="row-reverse" justifyContent="end">
+              <Button
+                variant="contained"
+                disabled={
+                  title.length < 3 ||
+                  title.length > 50 ||
+                  message.length < 3 ||
+                  message.length > 40000 ||
+                  !community
+                }
+                onClick={registerPost}
+              >
+                Submit
+              </Button>
+              <Button variant="contained" onClick={props.closeAddPostModal}>
+                Cancel
+              </Button>
+            </Stack>
+          </DialogActions>
+        </Stack>
       </DialogContent>
     </Dialog>
   );

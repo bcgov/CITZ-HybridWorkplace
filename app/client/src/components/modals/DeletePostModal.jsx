@@ -27,6 +27,7 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
+  Stack,
   Typography,
 } from "@mui/material";
 import { connect } from "react-redux";
@@ -47,29 +48,36 @@ const DeletePostModal = (props) => {
     <Dialog
       onClose={props.closeDeletePostModal}
       open={props.open}
-      fullWidth
       sx={{ zIndex: 500 }}
+      fullWidth
     >
-      <DialogTitle>Delete Post</DialogTitle>
-      <DialogContent>
-        <Grid
-          container
-          justifyContent="center"
-          alignItems="center"
-          direction="column"
-        >
-          <Grid item xs={12}>
-            <Typography variant="h4">
-              Deleting Post: {props.post.title}
-            </Typography>
-          </Grid>
-        </Grid>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleDeletePost} variant="contained" color="error">
+      <DialogTitle>
+        <Typography variant="h5" fontWeight={600}>
           Delete Post
-        </Button>
-      </DialogActions>
+        </Typography>
+      </DialogTitle>
+      <DialogContent>
+        <Stack spacing={1}>
+          <Stack spacing={0.5} textAlign="center" alignContent="center">
+            <Typography variant="subtitle2">
+              Are you sure you want to delete?
+            </Typography>
+            <Typography variant="h5" fontWeight={600}>
+              {props.post.title}
+            </Typography>
+          </Stack>
+
+          <DialogActions>
+            <Button
+              onClick={handleDeletePost}
+              variant="contained"
+              color="error"
+            >
+              Delete Post
+            </Button>
+          </DialogActions>
+        </Stack>
+      </DialogContent>
     </Dialog>
   );
 };
