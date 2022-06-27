@@ -1,4 +1,4 @@
-name: Pull Request - Auto Assign BC Gov Internal Developers and Government Contractors
+name: Pull Request - Auto Assign Development Team
 
 on:
   pull_request:
@@ -14,4 +14,4 @@ jobs:
         uses: delivery-much/actions-assigner@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          reviewers: akroon3r,Bottle7,BradyMitch,CITZ-rwk,dbarkowsky,mattsiel,ZachBourque
+          reviewers: akroon3r,Bottle7,BradyMitch,dbarkowsky,mattsiel,ZachBourque
