@@ -14,6 +14,9 @@ COPY app/server/package*.json ./
 
 RUN npm ci --only=production
 
+# Add curl for health check
+RUN apk --update --no-cache add curl
+
 COPY app/server/. ./
 
 CMD ["node", "index.js"]

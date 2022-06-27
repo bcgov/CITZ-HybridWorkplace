@@ -64,6 +64,12 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
+    healthcheck:
+      test: curl localhost:${REACT_APP_API_PORT:-5000} | grep 'Node.js Server is live!'
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 20s
 
 networks:
   hwp-network:
