@@ -20,25 +20,16 @@
  * @module
  */
 
-import { useState } from "react";
+import { connect } from "react-redux";
 import Communities from "../components/CommunitiesList";
 import UsersCommunitiesList from "../components/UsersCommunitiesList";
 import AddCommunityModal from "../components/modals/AddCommunityModal";
+import { openAddCommunityModal } from "../redux/ducks/modalDuck";
 
-import { Button, Grid, Typography, Paper, Box } from "@mui/material";
+import { Button, Grid, Typography, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-const CommunitiesPage = () => {
-  const [createCommunityOpen, setCreateCommunityOpen] = useState(false);
-
-  const openDialog = () => {
-    setCreateCommunityOpen(true);
-  };
-
-  const closeDialog = (value) => {
-    setCreateCommunityOpen(false);
-  };
-
+const CommunitiesPage = (props) => {
   return (
     <Box sx={{ pb: 20 }}>
       <Grid container spacing={2}>
@@ -77,17 +68,14 @@ const CommunitiesPage = () => {
                   m: 0,
                 }}
               >
-                <Button onClick={openDialog}>
+                <Button onClick={() => props.openAddCommunityModal()}>
                   <Typography color="white">New</Typography>
                   <AddIcon sx={{ color: "white" }} />
                 </Button>
               </Grid>
             </Grid>
 
-            <AddCommunityModal
-              onClose={closeDialog}
-              open={createCommunityOpen}
-            />
+            <AddCommunityModal />
           </Box>
           <Communities />
         </Grid>
@@ -120,4 +108,8 @@ const CommunitiesPage = () => {
   );
 };
 
-export default CommunitiesPage;
+const mapStateToProps = (state) => ({});
+
+export default connect(mapStateToProps, {
+  openAddCommunityModal,
+})(CommunitiesPage);

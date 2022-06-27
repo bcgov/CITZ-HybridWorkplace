@@ -26,7 +26,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Grid,
+  Stack,
   InputLabel,
   MenuItem,
   Select,
@@ -63,30 +63,27 @@ const FlagPostModal = (props) => {
     <Dialog
       onClose={props.closeFlagPostModal}
       open={props.open}
-      fullWidth
       sx={{ zIndex: 500 }}
+      fullWidth
     >
-      <DialogTitle>Flag Post</DialogTitle>
-      <DialogContent>
-        <Grid
-          container
-          justifyContent="center"
-          alignItems="center"
-          direction="column"
+      <DialogTitle>
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: 600,
+          }}
         >
-          <Grid item xs={12}>
-            <Typography variant="h4">
-              Flagging Post: {props.post.title}
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
+          Flag Post
+        </Typography>
+      </DialogTitle>
+      <DialogContent>
+        <Stack spacing={1}>
+          <Stack spacing={0.5}>
             <InputLabel id="demo-simple-select-standard-label">Flag</InputLabel>
             <Select
-              labelId="demo-simple-select-standard-label"
               id="demo-simple-select-standard"
               value={flag}
               onChange={handleFlagChange}
-              label="Flag"
             >
               {flags.map((element) => (
                 <MenuItem value={element} key={element}>
@@ -94,14 +91,27 @@ const FlagPostModal = (props) => {
                 </MenuItem>
               ))}
             </Select>
-          </Grid>
-        </Grid>
+          </Stack>
+          <DialogActions>
+            <Stack spacing={1} direction="row-reverse" justifyContent="end">
+              <Button
+                onClick={handleFlagPost}
+                variant="contained"
+                color="error"
+              >
+                Flag Post
+              </Button>
+              <Button
+                sx={{ ml: 1 }}
+                variant="contained"
+                onClick={props.closeFlagPostModal}
+              >
+                Cancel
+              </Button>
+            </Stack>
+          </DialogActions>
+        </Stack>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleFlagPost} variant="contained" color="error">
-          Flag Post
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 };

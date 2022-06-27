@@ -25,15 +25,17 @@ import { connect } from "react-redux";
 import {
   Box,
   Button,
-  Card,
-  CardContent,
-  CardHeader,
+  Typography,
+  Select,
+  MenuItem,
   Dialog,
+  DialogTitle,
+  DialogContent,
   InputLabel,
   Stack,
   TextField,
+  DialogActions,
 } from "@mui/material";
-import "./addPost.css";
 
 import { editPost } from "../../redux/ducks/postDuck";
 import { closeEditPostModal } from "../../redux/ducks/modalDuck";
@@ -45,7 +47,7 @@ const EditPostModal = (props) => {
   const minMessageLength = 3;
   const maxMessageLength = 40000;
 
-  const [title, setTitle] = useState(props.post.title);
+  const [title, setTitle] = useState(props.post.title || "");
   const [message, setMessage] = useState(props.post.message);
 
   const [titleError, setTitleError] = useState(false);
@@ -90,67 +92,78 @@ const EditPostModal = (props) => {
 
   return (
     <Dialog
-      onClose={props.closeEditPostModal}
       open={props.open}
+      onClose={props.closeEditPostModal}
+      sx={{ zIndex: 500, mb: 5 }}
       fullWidth
-      sx={{ zIndex: 500 }}
     >
-      <Card>
-        <CardHeader title="Edit Post" />
-        <CardContent>
-          <Stack spacing={2} data-color-mode="light">
+      <DialogTitle>
+        <Typography variant="h5" sx={{ fontWeight: 600 }}>
+          Edit Post
+        </Typography>
+      </DialogTitle>
+      <DialogContent data-color-mode="light">
+        <Stack spacing={1}>
+          <Stack container spacing={0.5}>
+            <InputLabel htmlFor="edit-post-title">Title</InputLabel>
             <TextField
-              id="title-input"
+              id="edit-post-title"
               onChange={onTitleChange}
-              placeholder="Title"
               value={title}
-              size="small"
               error={titleError}
-              label="Title"
+              name="title"
+              placeholder="Title"
               helperText="Title must be 3-50 characters in length."
               required
+              fullWidth
             />
-            <br />
-
-            <Box>
-              <Stack
-                spacing={1.5}
+          </Stack>
+          <Box>
+            <Stack
+              spacing={0.5}
+              sx={{
+                border: 3,
+                borderColor: messageError ? "red" : "transparent",
+                color: messageError ? "red" : "-moz-initial",
+              }}
+            >
+              <InputLabel
+                htmlFor="message-input"
                 sx={{
-                  border: 3,
-                  borderColor: messageError ? "red" : "transparent",
-                  padding: 1,
                   color: messageError ? "red" : "-moz-initial",
                 }}
               >
-                <InputLabel
-                  htmlFor="message-input"
-                  sx={{
-                    color: messageError ? "red" : "-moz-initial",
-                  }}
-                >
-                  Message
-                </InputLabel>
-                <MDEditor
-                  id="message-input"
-                  data-color-mode="light"
-                  value={message}
-                  onChange={setMessageAndSetErrors}
-                />
-              </Stack>
-            </Box>
-
-            <Button
-              variant="contained"
-              disabled={messageError || titleError}
-              onClick={registerPost}
-            >
-              Edit Post
-            </Button>
-          </Stack>
-        </CardContent>
-
-        <br />
-      </Card>
+                Message
+              </InputLabel>
+              <MDEditor
+                id="message-input"
+                value={message}
+                onChange={setMessageAndSetErrors}
+                preview="edit"
+              />
+            </Stack>
+          </Box>
+          <DialogActions
+            sx={{
+              m: 0,
+              pb: 0,
+            }}
+          >
+            <Stack spacing={1} direction="row-reverse" justifyContent="end">
+              <Button
+                variant="contained"
+                onClick={registerPost}
+                disabled={messageError || titleError}
+              >
+                Submit
+              </Button>
+              <Button variant="contained" onClick={props.closeEditPostModal}>
+                Cancel
+              </Button>
+            </Stack>
+          </DialogActions>
+        </Stack>
+      </DialogContent>
     </Dialog>
   );
 };

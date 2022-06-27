@@ -23,7 +23,6 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import "./addPost.css";
 
 import {
   TextField,
@@ -35,9 +34,9 @@ import {
   Typography,
   Button,
   Stack,
-  Avatar,
   Box,
   InputLabel,
+  DialogActions,
 } from "@mui/material";
 
 import { getCommunities } from "../../redux/ducks/communityDuck";
@@ -46,6 +45,7 @@ import { closeAddPostModal } from "../../redux/ducks/modalDuck";
 import MDEditor from "@uiw/react-md-editor";
 
 const AddPostModal = (props) => {
+  // TODO: Grab length options from API
   const minTitleLength = 3;
   const maxTitleLength = 50;
   const minMessageLength = 3;
@@ -110,14 +110,16 @@ const AddPostModal = (props) => {
       fullWidth
     >
       <DialogTitle>
-        <Typography sx={{ fontWeight: "bold" }}>Add Post</Typography>
+        <Typography variant="h5" sx={{ fontWeight: 600 }}>
+          Add Post
+        </Typography>
       </DialogTitle>
       <DialogContent data-color-mode="light">
-        <Stack>
-          <Stack container spacing={1.5} direction="row">
-            <Avatar src="https://source.unsplash.com/random/150×150/?profile%20picture" />
+        <Stack spacing={1}>
+          <Stack container spacing={0.5}>
+            <InputLabel htmlFor="add-post-title">Title</InputLabel>
             <TextField
-              sx={{ ml: 1 }}
+              id="add-post-title"
               onChange={onTitleChange}
               name="title"
               placeholder="Title"
@@ -134,11 +136,10 @@ const AddPostModal = (props) => {
           </Stack>
           <Box>
             <Stack
-              spacing={1.5}
+              spacing={0.5}
               sx={{
                 border: 3,
                 borderColor: messageError ? "red" : "transparent",
-                padding: 1,
                 color: messageError ? "red" : "-moz-initial",
               }}
             >
@@ -154,38 +155,49 @@ const AddPostModal = (props) => {
                 id="message-input"
                 value={message}
                 onChange={setMessageAndSetErrors}
+                preview="edit"
               />
             </Stack>
           </Box>
           {!props.communityName && (
-            <>
-              <Typography sx={{ ml: 1 }}>Choose a Community:</Typography>
+            <Box>
+              <Typography>Choose a Community:</Typography>
               <Select
                 value={community}
                 onChange={handleCommunityChange}
-                sx={{ m: 1, minWidth: "15em" }}
+                sx={{ mb: 1.5, minWidth: "15em", width: "98%" }}
               >
                 {props.communities.map((comm) => (
                   <MenuItem value={comm.title}>{comm.title}</MenuItem>
                 ))}
               </Select>
-            </>
+            </Box>
           )}
-          <br />
-          <Button
-            sx={{ ml: 1 }}
-            variant="contained"
-            disabled={
-              title.length < 3 ||
-              title.length > 50 ||
-              message.length < 3 ||
-              message.length > 40000 ||
-              !community
-            }
-            onClick={registerPost}
+          <DialogActions
+            sx={{
+              m: 0,
+              pb: 0,
+            }}
           >
-            Submit
-          </Button>
+            <Stack spacing={1} direction="row-reverse" justifyContent="end">
+              <Button
+                variant="contained"
+                disabled={
+                  title.length < 3 ||
+                  title.length > 50 ||
+                  message.length < 3 ||
+                  message.length > 40000 ||
+                  !community
+                }
+                onClick={registerPost}
+              >
+                Submit
+              </Button>
+              <Button variant="contained" onClick={props.closeAddPostModal}>
+                Cancel
+              </Button>
+            </Stack>
+          </DialogActions>
         </Stack>
       </DialogContent>
     </Dialog>
