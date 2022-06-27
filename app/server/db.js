@@ -1,4 +1,5 @@
 require("dotenv").config();
+const Agenda = require("agenda");
 const mongoose = require("mongoose");
 const moment = require("moment");
 const color = require("ansi-colors");
@@ -7,6 +8,7 @@ const Community = require("./models/community.model");
 const Options = require("./models/options.model");
 
 const optionsCollection = require("./dbInit/optionsCollection");
+const newCommunitiesDigestDaily = require("./jobs/newCommunitiesDigestDaily");
 
 const dbURI = `${process.env.MONGO_REF}://${process.env.MONGO_DB_USERNAME}:${process.env.MONGO_DB_PASSWORD}@${process.env.MONGO_REF}:${process.env.MONGO_PORT}/${process.env.MONGO_DATABASE_NAME}`;
 
@@ -22,6 +24,8 @@ mongoose.connection.on("error", (err) => {
 });
 
 const db = mongoose.connection;
+
+const agenda = new Agenda({ db: { address: dbURI } });
 
 mongoose.connection.once("open", () => {
   console.log(
@@ -108,3 +112,18 @@ mongoose.connection.once("open", () => {
 mongoose.connection.on("disconnected", () => {
   console.log("Mongoose disconnected");
 });
+
+newCommunitiesDigestDaily(agenda);
+
+// Agenda | Job scheduling
+(async function () {
+  await agenda.start();
+  agenda.now("newCommunities");
+})();
+
+async function graceful() {
+  await agenda.stop();
+}
+
+process.on("SIGTERM", graceful);
+process.on("SIGINT", graceful);

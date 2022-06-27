@@ -24,7 +24,7 @@ const axios = require("axios").default;
 const moment = require("moment");
 const ResponseError = require("../responseError");
 
-const notifyNewCommunityImmediate = async (users) => {
+const bulkNotify = async (users, templateId) => {
   if (!users)
     throw new ResponseError(
       404,
@@ -43,7 +43,7 @@ const notifyNewCommunityImmediate = async (users) => {
           name: `The Neighbourhood | ${moment().format(
             "MMMM Do YYYY, h:mm a"
           )}`,
-          template_id: process.env.GC_NOTIFY_NEW_COMMUNITY_INSTANT_TEMPLATE,
+          template_id: templateId,
           rows: users,
         },
       });
@@ -53,4 +53,4 @@ const notifyNewCommunityImmediate = async (users) => {
   }
 };
 
-module.exports = notifyNewCommunityImmediate;
+module.exports = bulkNotify;
