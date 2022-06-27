@@ -31,6 +31,7 @@ import PostsList from "../components/PostsList";
 import PostModal from "../components/modals/AddPostModal";
 import AddCommunityModal from "../components/modals/AddCommunityModal";
 import AddIcon from "@mui/icons-material/Add";
+import { openAddPostModal } from "../redux/ducks/modalDuck";
 
 const HomePage = (props) => {
   useEffect(() => {
@@ -49,7 +50,7 @@ const HomePage = (props) => {
   };
 
   return (
-    <Box>
+    <Box sx={{ pb: 20 }}>
       <Grid container spacing={2}>
         <Grid item xs={8}>
           <Box
@@ -71,21 +72,20 @@ const HomePage = (props) => {
                   component="h5"
                   sx={{
                     fontWeight: 600,
-                    pl: "8em",
+                    pl: "9em",
                   }}
                 >
                   Top Posts
                 </Typography>
               </Grid>
               <Grid item xs={3} align="right">
-                <Button onClick={() => setShow(true)}>
-                  <Typography color="white">New</Typography>
+                <Button onClick={() => props.openAddPostModal()}>
                   <AddIcon sx={{ color: "white" }} />
                 </Button>
               </Grid>
             </Grid>
 
-            <PostModal onClose={() => setShow(false)} show={show} />
+            <PostModal />
           </Box>
           <PostsList posts={props.posts} />
         </Grid>
@@ -101,43 +101,32 @@ const HomePage = (props) => {
               textAlign: "center",
             }}
           >
-            <Typography
-              variant="h6"
-              component="h5"
-              sx={{
-                fontWeight: 600,
-              }}
-            >
-              Your Communities
-            </Typography>
+            <Grid container spacing={1}>
+              <Grid item xs={9}>
+                <Typography
+                  variant="h6"
+                  component="h5"
+                  sx={{
+                    fontWeight: 600,
+                    pl: "5.25em",
+                    pt: 0.3,
+                  }}
+                >
+                  My Communities
+                </Typography>
+              </Grid>
+              <Grid item xs={3} align="right">
+                <Button variant="text" onClick={openDialog}>
+                  <AddIcon sx={{ color: "white", pl: 2 }} />
+                </Button>
+                <AddCommunityModal
+                  onClose={closeDialog}
+                  open={createCommunityOpen}
+                />
+              </Grid>
+            </Grid>
           </Box>
           <UsersCommunitiesList />
-          <Box
-            sx={{
-              backgroundColor: "primary.main",
-              borderRadius: "10px",
-              color: "white",
-              px: 1,
-              py: 0.5,
-              textAlign: "center",
-            }}
-          >
-            <Button variant="text" onClick={openDialog}>
-              <Typography
-                color="white"
-                sx={{
-                  fontWeight: 600,
-                }}
-              >
-                Create Community
-              </Typography>
-              <AddIcon sx={{ color: "white" }} />
-            </Button>
-            <AddCommunityModal
-              onClose={closeDialog}
-              open={createCommunityOpen}
-            />
-          </Box>
         </Grid>
       </Grid>
     </Box>
@@ -150,4 +139,6 @@ const mapStateToProps = (state) => ({
   posts: state.posts.items,
 });
 
-export default connect(mapStateToProps, { getPosts })(HomePage);
+export default connect(mapStateToProps, { getPosts, openAddPostModal })(
+  HomePage
+);

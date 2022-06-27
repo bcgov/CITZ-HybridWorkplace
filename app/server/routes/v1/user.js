@@ -25,6 +25,8 @@ const ResponseError = require("../../responseError");
 
 const checkPatchQuery = require("../../functions/checkPatchQuery");
 const findSingleDocuments = require("../../functions/findSingleDocuments");
+const getOptions = require("../../functions/getOptions");
+const trimExtraSpaces = require("../../functions/trimExtraSpaces");
 
 const router = express.Router();
 
@@ -150,6 +152,111 @@ router.patch("/", async (req, res) => {
     });
     req.log.addAction("User found.");
 
+    req.log.addAction("Finding options.");
+    const {
+      firstNameMinLength,
+      firstNameMaxLength,
+      lastNameMinLength,
+      lastNameMaxLength,
+      bioMinLength,
+      bioMaxLength,
+      titleMinLength,
+      titleMaxLength,
+      organizationMinLength,
+      organizationMaxLength,
+      interestMinLength,
+      interestMaxLength,
+    } = await getOptions("user");
+    req.log.addAction("Options found.");
+
+    // Trim extra spaces
+    req.log.addAction("Trimming extra spaces from inputs in request body.");
+    req.body.bio = trimExtraSpaces(req.body.bio);
+    req.log.addAction(`bio trimmed: ${req.body.bio}`);
+    req.body.title = trimExtraSpaces(req.body.title);
+    req.log.addAction(`title trimmed: ${req.body.title}`);
+    req.body.organization = trimExtraSpaces(req.body.organization);
+    req.log.addAction(`organization trimmed: ${req.body.organization}`);
+
+    // Validate email
+    if (req.body.email) {
+      req.log.addAction("Validating email.");
+      const emailPattern = /^\w+([\\.-]?\w+)*@\w+([\\.-]?\w+)*(\.\w{2,3})+$/;
+      if (!emailPattern.test(req.body.email))
+        throw new ResponseError(403, "Invalid email.");
+      req.log.addAction("Email is valid.");
+    }
+
+    // Validate firstName
+    const firstNameRegexStr = `(?!.*\\s).{${firstNameMinLength},${firstNameMaxLength}}`;
+    const firstNamePattern = new RegExp(firstNameRegexStr, "g");
+    const firstNameError = `firstName does not meet requirements: length ${firstNameMinLength}-${firstNameMaxLength}, must not contain whitespace.`;
+    req.log.addAction("Validating firstName.");
+    if (req.body.firstName && !firstNamePattern.test(req.body.firstName))
+      throw new ResponseError(403, firstNameError);
+    req.log.addAction("firstName is valid.");
+
+    // Validate lastName
+    const lastNameRegexStr = `(?!.*\\s).{${lastNameMinLength},${lastNameMaxLength}}`;
+    const lastNamePattern = new RegExp(lastNameRegexStr, "g");
+    const lastNameError = `lastName does not meet requirements: length ${lastNameMinLength}-${lastNameMaxLength}, must not contain whitespace.`;
+    req.log.addAction("Validating lastName.");
+    if (req.body.lastName && !lastNamePattern.test(req.body.lastName))
+      throw new ResponseError(403, lastNameError);
+    req.log.addAction("lastName is valid.");
+
+    // Validate bio
+    const bioError = `bio does not meet requirements: length ${bioMinLength}-${bioMaxLength}.`;
+    req.log.addAction("Validating bio.");
+    if (
+      req.body.bio &&
+      (req.body.bio.length < bioMinLength || req.body.bio.length > bioMaxLength)
+    )
+      throw new ResponseError(403, bioError);
+    req.log.addAction("bio is valid.");
+
+    // Validate title
+    const titleError = `title does not meet requirements: length ${titleMinLength}-${titleMaxLength}.`;
+    req.log.addAction("Validating title.");
+    if (
+      req.body.title &&
+      (req.body.title.length < titleMinLength ||
+        req.body.title.length > titleMaxLength)
+    )
+      throw new ResponseError(403, titleError);
+    req.log.addAction("title is valid.");
+
+    // Validate organization
+    const organizationError = `organization does not meet requirements: length ${organizationMinLength}-${organizationMaxLength}.`;
+    req.log.addAction("Validating organization.");
+    if (
+      req.body.organization &&
+      (req.body.organization.length < organizationMinLength ||
+        req.body.organization.length > organizationMaxLength)
+    )
+      throw new ResponseError(403, organizationError);
+    req.log.addAction("organization is valid.");
+
+    // Validate and trim interests
+    if (req.body.interests && req.body.interests instanceof Object) {
+      Object.keys(req.body.interests).forEach((interest) => {
+        // Trim extra spaces
+        req.body.interests[interest] = trimExtraSpaces(
+          req.body.interests[interest]
+        );
+        // Validate length
+        if (
+          req.body.interests[interest].length < interestMinLength ||
+          req.body.interests[interest].length > interestMaxLength
+        )
+          throw new ResponseError(
+            403,
+            `Interests (${req.body.interests[interest]}) must have a length of ${interestMinLength}-${interestMaxLength}`
+          );
+      });
+    }
+
+    // Check patch query for disallowed fields
     req.log.addAction("Checking edit query.");
     const query = checkPatchQuery(req.body, documents.user, [
       "username",
@@ -161,6 +268,7 @@ router.patch("/", async (req, res) => {
     ]);
     req.log.addAction("Edit query has been cleaned.");
 
+    // Set creatorName
     const firstName = req.body.firstName || documents.user.firstName;
     const lastName = req.body.lastName || documents.user.lastName;
 

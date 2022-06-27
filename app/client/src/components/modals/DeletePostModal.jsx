@@ -39,11 +39,17 @@ const DeletePostModal = (props) => {
     const successful = await props.deletePost(props.post._id);
     if (successful === true) {
       props.closeDeletePostModal();
+      props.sideEffect?.();
     }
   };
 
   return (
-    <Dialog onClose={props.closeDeletePostModal} open={props.open} fullWidth>
+    <Dialog
+      onClose={props.closeDeletePostModal}
+      open={props.open}
+      fullWidth
+      sx={{ zIndex: 500 }}
+    >
       <DialogTitle>Delete Post</DialogTitle>
       <DialogContent>
         <Grid

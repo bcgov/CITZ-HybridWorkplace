@@ -23,6 +23,7 @@
 const express = require("express");
 const ResponseError = require("../../../responseError");
 const findSingleDocuments = require("../../../functions/findSingleDocuments");
+const getOptions = require("../../../functions/getOptions");
 
 const router = express.Router();
 
@@ -123,15 +124,9 @@ router.post("/:title", async (req, res) => {
     });
     req.log.addAction("User and community found.");
 
-    // TODO: Set flags in an options collection, that can be edited by admins
-    const flags = [
-      "Inappropriate",
-      "Hate",
-      "Harassment or Bullying",
-      "Spam",
-      "Misinformation",
-      "Against Community Rules",
-    ];
+    req.log.addAction("Finding flags in options.");
+    const { flags } = await getOptions("flags");
+    req.log.addAction("Flags in options found.");
 
     req.log.addAction("Checking flag is valid.");
     if (!flags.includes(req.query.flag))

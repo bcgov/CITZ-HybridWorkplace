@@ -33,12 +33,12 @@ import {
   Typography,
 } from "@mui/material";
 import { connect } from "react-redux";
-import { closeFlagPostModal } from "../../redux/ducks/modalDuck";
-import { flagPost } from "../../redux/ducks/postDuck";
+import { closeFlagCommentModal } from "../../redux/ducks/modalDuck";
+import { flagComment } from "../../redux/ducks/postDuck";
 import PropTypes from "prop-types";
 import { useState } from "react";
 
-const FlagPostModal = (props) => {
+const FlagCommentModal = (props) => {
   //TODO: Get list of flags from API
   const flags = [
     "Inappropriate",
@@ -52,21 +52,21 @@ const FlagPostModal = (props) => {
 
   const handleFlagChange = (event) => setFlag(event.target.value);
 
-  const handleFlagPost = async () => {
-    const successful = await props.flagPost(props.post._id, flag);
+  const handleFlagComment = async () => {
+    const successful = await props.flagComment(props.comment._id, flag);
     if (successful === true) {
-      props.closeFlagPostModal();
+      props.closeFlagCommentModal();
     }
   };
 
   return (
     <Dialog
-      onClose={props.closeFlagPostModal}
+      onClose={props.closeFlagCommentModal}
       open={props.open}
       fullWidth
       sx={{ zIndex: 500 }}
     >
-      <DialogTitle>Flag Post</DialogTitle>
+      <DialogTitle>Flag Comment</DialogTitle>
       <DialogContent>
         <Grid
           container
@@ -76,7 +76,7 @@ const FlagPostModal = (props) => {
         >
           <Grid item xs={12}>
             <Typography variant="h4">
-              Flagging Post: {props.post.title}
+              Flagging Comment: {props.comment.message}
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -98,27 +98,27 @@ const FlagPostModal = (props) => {
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleFlagPost} variant="contained" color="error">
-          Flag Post
+        <Button onClick={handleFlagComment} variant="contained" color="error">
+          Flag Comment
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-FlagPostModal.propTypes = {
+FlagCommentModal.propTypes = {
   open: PropTypes.bool,
-  closeFlagPostModal: PropTypes.func,
+  closeFlagCommentModal: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
-  open: state.modal.flagPost.open,
-  post: state.modal.flagPost.post,
+  open: state.modal.flagComment.open,
+  comment: state.modal.flagComment.comment,
 });
 
 const mapActionsToProps = {
-  closeFlagPostModal,
-  flagPost,
+  closeFlagCommentModal,
+  flagComment,
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(FlagPostModal);
+export default connect(mapStateToProps, mapActionsToProps)(FlagCommentModal);

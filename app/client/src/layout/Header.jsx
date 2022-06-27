@@ -192,17 +192,12 @@ const Header = (props) => {
     {
       itemText: "Home",
       itemIcon: <HomeIcon />,
-      itemLink: "/home",
+      itemLink: "/",
     },
     {
       itemText: "Profile",
       itemIcon: <PersonIcon />,
       itemLink: `/profile/${props.auth.user.username}`,
-    },
-    {
-      itemText: "Posts",
-      itemIcon: <ForumIcon />,
-      itemLink: "/posts",
     },
     {
       itemText: "Communities",
@@ -224,6 +219,7 @@ const Header = (props) => {
     <Box
       sx={{
         display: { xs: "none", md: "flex" },
+        zIndex: 1000,
       }}
     >
       <List onClick={toggleDrawer("right", false)}>
@@ -258,6 +254,7 @@ const Header = (props) => {
         >
           <IconButton>
             <Icon
+              onClick={() => navigate(`/`)}
               sx={{
                 width: "7em",
                 height: "auto",
