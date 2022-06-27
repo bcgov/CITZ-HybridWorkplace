@@ -110,17 +110,18 @@ jobs:
 
       - name: Add keys to json file and pretty print
         working-directory: ./app/server
+        shell: python
         run: |
           import json
           with open('tempResults') as json_file:
             data = json.load(json_file)
-          data['repository'] = ${{ github.repository }}
-          data['branch'] = ${{ github.ref_name }}
-          data['pull-request'] = ${{ github.event.pull_request.title }}
-          data['creator'] = ${{ github.event.pull_request.user.login }}
+          data['repository'] = '${{ github.repository }}'
+          data['branch'] = '${{ github.ref_name }}'
+          data['pull-request'] = '${{ github.event.pull_request.title }}'
+          data['creator'] = '${{ github.event.pull_request.user.login }}'
           with open('${{ steps.results.outputs.results }}', 'w') as json_file:
             json.dump(data, json_file, indent=2)
-        shell: python3
+        
 
       - name: Save file as artifact
         uses: actions/upload-artifact@v1
