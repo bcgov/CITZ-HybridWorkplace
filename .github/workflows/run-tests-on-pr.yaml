@@ -17,12 +17,12 @@ jobs:
       - name: Get repository name and remove owner
         id: repo-name
         run: |
-          echo "::set-output name=repo-name::$(echo ${{ github.repository }} | sed 's/\(.*\)\/\(.*\)/\2/g')" 
+          echo "::set-output name=repo-name::$(echo ${{ github.repository }} | sed 's/\(.*\)\/\(.*\)/\2/g; s/[<>:\"\/\\\|\?\*]//g')" 
 
       - name: Get PR name and remove spaces
         id: pr-name
         run: |
-          echo "::set-output name=pr-name::$(echo ${{ github.event.pull_request.title }} | sed 's/\s/-/g')"
+          echo "::set-output name=pr-name::$(echo ${{ github.event.pull_request.title }} | sed 's/[<>:\"\/\\\|\?\*]//g; s/[\s\.]/-/g')"
 
       - name: Get current datestamp
         id: date
