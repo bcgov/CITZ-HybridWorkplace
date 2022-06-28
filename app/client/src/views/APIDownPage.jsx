@@ -13,7 +13,7 @@ function APIDownPage() {
     >
       <Stack alignItems="center" spacing={2}>
         <Typography variant="h4">Sorry, HWP is down for maintenance</Typography>
-        <Typography variant="h6">Please check back soon</Typography>
+        <Typography variant="h6">Please check back soon.</Typography>
       </Stack>
       <Tooltip
         title={`Image taken from https://www.freepik.com/free-vector/construction-team-working-site_7416538.htm#query=construction%20illustration&position=1&from_view=search`}
