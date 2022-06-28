@@ -10,7 +10,7 @@ on:
     paths:
       - "app/client/**"
       - "app/server/**"
-      - ".github/workflows/**"
+      - ".github/workflows/run-tests-on-pr.yaml"
   workflow_dispatch:
 
 jobs: 
