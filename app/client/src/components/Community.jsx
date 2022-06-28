@@ -12,15 +12,17 @@ import {
   MenuItem,
   MenuList,
   Typography,
+  Chip,
+  Tooltip,
 } from "@mui/material";
 // import FlagTwoToneIcon from "@mui/icons-material/FlagTwoTone";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
 import GroupsIcon from "@mui/icons-material/Groups";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { connect } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import { openFlagCommunityModal } from "../redux/ducks/modalDuck";
 import { openDeleteCommunityModal } from "../redux/ducks/modalDuck";
@@ -33,6 +35,22 @@ const Community = (props) => {
   const navigate = useNavigate();
 
   const { community } = props;
+
+  function useQuery() {
+    const { search } = useLocation();
+    return useMemo(() => new URLSearchParams(search), [search]);
+  }
+
+  // Show "NEW" badge on communities created after sinceDateUTC
+  const date = useQuery().get("sinceDateUTC");
+
+  const dateQueryFormatted = moment(moment(date, "MMMM Do YYYY").toDate());
+  const communityCreatedFormatted = moment(
+    moment(community.createdOn.split(",")[0], "MMMM Do YYYY").toDate()
+  );
+  const isNewCommunity =
+    date &&
+    dateQueryFormatted.diff(communityCreatedFormatted, "days", true) < 0;
 
   // const handleFlagCommunityClick = () => {
   //   props.openFlagCommunityModal(community);
@@ -162,16 +180,38 @@ const Community = (props) => {
           <Typography variant="body1">{community.description}</Typography>
         </CardContent>
         <CardActions>
-          <Stack direction="row" spacing={1} sx={{ ml: "15px", pr: "10px" }}>
-            <GroupsIcon sx={{ color: "#898989" }} />
+          <Stack direction="row" spacing={1} width="0.95" alignItems="center">
+            <Stack direction="row" spacing={1} sx={{ ml: "5px" }}>
+              <GroupsIcon sx={{ color: "#898989" }} />
+              <Typography color="#898989">
+                {community.memberCount || 0}
+              </Typography>
+            </Stack>
+            <JoinButton community={community} />
             <Typography color="#898989">
-              {community.memberCount || 0}
+              Latest Activity: {latestActivity}
             </Typography>
           </Stack>
-          <JoinButton community={community} />
-          <Typography color="#898989" sx={{ pl: "10px" }}>
-            Latest Activity: {latestActivity}
-          </Typography>
+          {isNewCommunity && (
+            <Tooltip
+              title={<Typography>New Since: {date} (UTC)</Typography>}
+              arrow
+            >
+              <Chip
+                variant="outlined"
+                label="NEW"
+                sx={{
+                  backgroundColor: "#EEBE0B",
+                  color: "white",
+                  fontWeight: "600",
+                  fontSize: "0.9em",
+                  boxShadow: 1,
+                  border: 0,
+                  cursor: "pointer",
+                }}
+              />
+            </Tooltip>
+          )}
         </CardActions>
       </Card>
     </Box>

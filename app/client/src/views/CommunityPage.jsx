@@ -20,7 +20,7 @@
  * @module
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 import {
   Grid,
@@ -37,16 +37,23 @@ import SettingsTwoToneIcon from "@mui/icons-material/SettingsTwoTone";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { connect } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import PostsList from "../components/PostsList";
 import PostModal from "../components/modals/AddPostModal";
+import JoinButton from "../components/JoinButton";
 import { openEditCommunityModal } from "../redux/ducks/modalDuck";
-import { getCommunityPosts, getCommunity } from "../redux/ducks/communityDuck";
 import EditCommunityModal from "../components/modals/EditCommunityModal";
 import { openAddPostModal } from "../redux/ducks/modalDuck";
+import {
+  getCommunityPosts,
+  getCommunity,
+  joinCommunity,
+  getUsersCommunities,
+} from "../redux/ducks/communityDuck";
 
 const CommunityPage = (props) => {
+  const { communities } = props;
   const [show, setShow] = useState(false);
 
   const { title } = useParams();
@@ -54,7 +61,34 @@ const CommunityPage = (props) => {
   useEffect(() => {
     props.getCommunityPosts(title);
     props.getCommunity(title);
+    props.getUsersCommunities();
   }, []);
+
+  function useQuery() {
+    const { search } = useLocation();
+    return useMemo(() => new URLSearchParams(search), [search]);
+  }
+
+  const isUserInCommunity = (communityName) => {
+    return (
+      communities.find((element) => element.title === communityName) !==
+      undefined
+    );
+  };
+
+  const [isInCommunity, setIsInCommunity] = useState(isUserInCommunity(title));
+
+  const handleJoin = async () => {
+    setIsInCommunity(true);
+    const successful = await props.joinCommunity(title);
+    if (successful === false) {
+      setIsInCommunity(false);
+    }
+  };
+
+  // Join community if query join=true
+  const join = useQuery().get("join") === "true";
+  if (!isInCommunity && join) handleJoin();
 
   const handleSettingsClick = () =>
     props.openEditCommunityModal(props.community);
@@ -89,8 +123,7 @@ const CommunityPage = (props) => {
               </Grid>
               <Grid item xs={3} align="right">
                 <Button onClick={() => props.openAddPostModal()}>
-                  <Typography color="white">New</Typography>
-                  <AddIcon sx={{ color: "white" }} />
+                  <AddIcon sx={{ color: "white", pl: 4 }} />
                 </Button>
               </Grid>
             </Grid>
@@ -101,13 +134,33 @@ const CommunityPage = (props) => {
               show={show}
             />
           </Box>
-          <PostsList posts={props.posts} />
+          {props.posts.length > 0 ? (
+            <PostsList posts={props.posts} />
+          ) : (
+            <Box sx={{ mt: 5 }}>
+              <Typography
+                variant="h5"
+                textAlign="center"
+                sx={{ fontWeight: 600 }}
+              >
+                This community doesn't have any posts yet.
+              </Typography>
+              <Typography
+                variant="h6"
+                textAlign="center"
+                sx={{ fontWeight: 600 }}
+              >
+                Press the "+" icon to create a post.
+              </Typography>
+            </Box>
+          )}
         </Grid>
         <Grid item align="center" xs={4}>
           <Box
             sx={{
               backgroundColor: "primary.main",
-              borderRadius: "10px",
+              borderTopLeftRadius: "10px",
+              borderTopRightRadius: "10px",
               color: "white",
               px: 1,
               py: 0.5,
@@ -152,8 +205,15 @@ const CommunityPage = (props) => {
               )}
             </Stack>
           </Box>
-          <Box sx={{ borderRadius: "10px" }}>
-            <Stack spacing={1}>
+          <Box
+            sx={{
+              borderBottomLeftRadius: "10px",
+              borderBottomRightRadius: "10px",
+              boxShadow: 1,
+              border: 0,
+            }}
+          >
+            <Stack spacing={1} sx={{ pb: 3 }}>
               <Typography sx={{ mt: 1 }}>
                 {props.community.description}
               </Typography>
@@ -175,55 +235,58 @@ const CommunityPage = (props) => {
                   Created by: {props.community.creatorName}
                 </Typography>
               )}
-              <Box
-                sx={{
-                  borderRadius: "10px",
-                  textAlign: "left",
-                }}
-              >
-                <Box
-                  sx={{
-                    backgroundColor: "primary.main",
-                    borderTopLeftRadius: "10px",
-                    borderTopRightRadius: "10px",
-                    pt: 1,
-                    pb: 1,
-                    mt: 3,
-                    color: "white",
-                    textAlign: "center",
-                  }}
-                >
-                  <Typography varient="h6">Community Rules</Typography>
-                  <Typography sx={{ fontWeight: "bold", fontStyle: "italic" }}>
-                    (coming soon)
-                  </Typography>
-                </Box>
-                <Accordion>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>1. Example rule</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Typography>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      Suspendisse malesuada lacus ex, sit amet blandit leo
-                      lobortis eget.
-                    </Typography>
-                  </AccordionDetails>
-                </Accordion>
-                <Accordion>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>2. Example rule</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Typography>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      Suspendisse malesuada lacus ex, sit amet blandit leo
-                      lobortis eget.
-                    </Typography>
-                  </AccordionDetails>
-                </Accordion>
+              <Box>
+                <JoinButton community={props.community} />
               </Box>
             </Stack>
+          </Box>
+          <Box
+            sx={{
+              borderRadius: "10px",
+              textAlign: "left",
+            }}
+          >
+            <Box
+              sx={{
+                backgroundColor: "primary.main",
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
+                pt: 1,
+                pb: 1,
+                mt: 3,
+                color: "white",
+                textAlign: "center",
+              }}
+            >
+              <Typography varient="h6">Community Rules</Typography>
+              <Typography sx={{ fontWeight: "bold", fontStyle: "italic" }}>
+                (coming soon)
+              </Typography>
+            </Box>
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography>1. Example rule</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
+                  eget.
+                </Typography>
+              </AccordionDetails>
+            </Accordion>
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography>2. Example rule</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
+                  eget.
+                </Typography>
+              </AccordionDetails>
+            </Accordion>
           </Box>
         </Grid>
       </Grid>
@@ -236,10 +299,12 @@ CommunityPage.propTypes = {
   getCommunityPosts: PropTypes.func.isRequired,
   getCommunity: PropTypes.func.isRequired,
   community: PropTypes.object.isRequired,
+  getUsersCommunities: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   community: state.communities.item,
+  communities: state.communities.usersCommunities,
   posts: state.posts.items,
   username: state.auth.user.username,
   userId: state.auth.user.id,
@@ -247,9 +312,11 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   getCommunityPosts,
+  getUsersCommunities,
   getCommunity,
   openEditCommunityModal,
   openAddPostModal,
+  joinCommunity,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CommunityPage);
