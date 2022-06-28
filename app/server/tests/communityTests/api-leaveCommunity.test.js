@@ -93,7 +93,7 @@ describe('Get Community Members - With Login, testing with "new" community', () 
   let response = '';
 
   beforeAll(async() => {
-      response = await community.getCommunityMembers(newComTitle, 'true', token);
+      response = await community.getCommunityMembers(newComTitle, true, token);
   }); 
 
   test('API returns a successful response - code 200', () => {
