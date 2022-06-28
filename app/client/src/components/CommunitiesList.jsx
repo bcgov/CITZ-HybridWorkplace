@@ -20,8 +20,9 @@
  * @module
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { connect } from "react-redux";
+import { useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import DeleteCommunityModal from "./modals/DeleteCommunityModal";
 import Community from "./Community";
@@ -33,16 +34,27 @@ import {
 } from "../redux/ducks/communityDuck";
 
 const CommunitiesList = (props) => {
+  function useQuery() {
+    const { search } = useLocation();
+    return useMemo(() => new URLSearchParams(search), [search]);
+  }
+
+  const hideJoined = useQuery().get("hideJoined") === "true";
+
   useEffect(() => {
-    (async () => {
-      await props.getUsersCommunities();
-      await props.getCommunities();
-    })();
-  }, []);
+    props.getUsersCommunities();
+    props.getCommunities();
+  }, [props.communities, hideJoined]);
+
+  const communities = hideJoined
+    ? props.communities.filter(
+        (community) => !community.members.includes(props.userId)
+      )
+    : props.communities;
 
   return (
     <Box>
-      {props.communities.map((community) => (
+      {communities.map((community) => (
         <Community community={community} key={community.title} />
       ))}
       <DeleteCommunityModal />
@@ -51,12 +63,14 @@ const CommunitiesList = (props) => {
 };
 
 CommunitiesList.propTypes = {
+  userId: PropTypes.string.isRequired,
   getCommunities: PropTypes.func.isRequired,
   communities: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   communities: state.communities.items,
+  userId: state.auth.user.id,
 });
 
 export default connect(mapStateToProps, {

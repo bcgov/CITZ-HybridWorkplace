@@ -69,8 +69,7 @@ const CommunitiesPage = (props) => {
                 }}
               >
                 <Button onClick={() => props.openAddCommunityModal()}>
-                  <Typography color="white">New</Typography>
-                  <AddIcon sx={{ color: "white" }} />
+                  <AddIcon sx={{ color: "white", pl: 4 }} />
                 </Button>
               </Grid>
             </Grid>
