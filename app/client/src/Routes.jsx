@@ -21,8 +21,9 @@
  */
 
 import "./App.css";
-import React, { Component } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
+import { isAPIHealthy } from "./helperFunctions/isAPIHealthy";
 
 import PrivateComponent from "./components/PrivateComponent";
 import GuestOnlyComponent from "./components/GuestOnlyComponent";
@@ -43,9 +44,28 @@ import EditProfile from "./components/EditProfile";
 import NewCommunity from "./components/NewCommunity";
 import LogoutPage from "./views/LogoutPage";
 import PostPage from "./views/PostPage";
+import { useTransition } from "react";
+import LoadingPage from "./views/LoadingPage";
+import APIDownPage from "./views/APIDownPage";
 
-const App = () => {
-  return (
+const App = (props) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [apiIsHealthy, setApiIsHealthy] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      setApiIsHealthy(await isAPIHealthy());
+      setIsLoading(false);
+    })();
+  }, []);
+
+  //If loading from the apiHealth Call, display the loading page
+  return isLoading ? (
+    <LoadingPage />
+  ) : //else, if not loading, conditionally show the API Down page or actually navigate to the website
+  !apiIsHealthy ? (
+    <APIDownPage />
+  ) : (
     <div className="Routes">
       <Routes>
         <Route
