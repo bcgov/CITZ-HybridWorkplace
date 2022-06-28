@@ -63,6 +63,8 @@ objects:
               envFrom:
                 - secretRef:
                     name: mongo-connection-string
+                - secretRef:
+                    name: gc-notify
               env:
                 - name: MONGO_URI
                   valueFrom:
@@ -119,6 +121,10 @@ objects:
                 - name: COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT
                   value: '1'
                 - name: ENABLE_API_REQUEST_LOGS
+                  value: 'true'
+                - name: ENABLE_GC_NOTIFY_TRIAL_MODE
+                  value: 'true'
+                - name: ENABLE_GC_NOTIFY
                   value: 'true'
               resources: {}
               terminationMessagePath: /dev/termination-log
