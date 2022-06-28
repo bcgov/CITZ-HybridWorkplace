@@ -216,11 +216,11 @@ router.post("/", async (req, res) => {
         ? {
             notificationFrequency: "immediate",
             isInMailingList: true,
-            _id: { $ne: community.creator },
+            _id: { $ne: new ObjectId(community.creator) },
           }
         : {
             notificationFrequency: "immediate",
-            _id: { $ne: community.creator },
+            _id: { $ne: new ObjectId(community.creator) },
           };
       req.log.addAction("Notifying users with gcNotify (immediate).");
       let notifyUsers = await User.aggregate([
