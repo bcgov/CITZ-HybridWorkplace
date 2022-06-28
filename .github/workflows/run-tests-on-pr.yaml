@@ -7,6 +7,9 @@ on:
       - synchronize
     branches: 
       - main
+    paths:
+      - "app/client/**"
+      - "app/server/**"
   workflow_dispatch:
 
 jobs: 
@@ -97,6 +100,7 @@ jobs:
           container: hwp-api
           wait-time: 60
           require-status: running 
+          require-healthy: true
 
     # Run tests
       - name: Run test command

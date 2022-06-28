@@ -20,7 +20,7 @@
  * @module
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { Grid, Box, Button, Typography } from "@mui/material";
 import { getPosts } from "../redux/ducks/postDuck";
@@ -31,23 +31,15 @@ import PostsList from "../components/PostsList";
 import PostModal from "../components/modals/AddPostModal";
 import AddCommunityModal from "../components/modals/AddCommunityModal";
 import AddIcon from "@mui/icons-material/Add";
-import { openAddPostModal } from "../redux/ducks/modalDuck";
+import {
+  openAddPostModal,
+  openAddCommunityModal,
+} from "../redux/ducks/modalDuck";
 
 const HomePage = (props) => {
   useEffect(() => {
     props.getPosts();
   }, []);
-  const [show, setShow] = useState(false);
-
-  const [createCommunityOpen, setCreateCommunityOpen] = useState(false);
-
-  const openDialog = () => {
-    setCreateCommunityOpen(true);
-  };
-
-  const closeDialog = (value) => {
-    setCreateCommunityOpen(false);
-  };
 
   return (
     <Box sx={{ pb: 20 }}>
@@ -116,13 +108,13 @@ const HomePage = (props) => {
                 </Typography>
               </Grid>
               <Grid item xs={3} align="right">
-                <Button variant="text" onClick={openDialog}>
+                <Button
+                  variant="text"
+                  onClick={() => props.openAddCommunityModal()}
+                >
                   <AddIcon sx={{ color: "white", pl: 2 }} />
                 </Button>
-                <AddCommunityModal
-                  onClose={closeDialog}
-                  open={createCommunityOpen}
-                />
+                <AddCommunityModal />
               </Grid>
             </Grid>
           </Box>
@@ -139,6 +131,8 @@ const mapStateToProps = (state) => ({
   posts: state.posts.items,
 });
 
-export default connect(mapStateToProps, { getPosts, openAddPostModal })(
-  HomePage
-);
+export default connect(mapStateToProps, {
+  getPosts,
+  openAddPostModal,
+  openAddCommunityModal,
+})(HomePage);

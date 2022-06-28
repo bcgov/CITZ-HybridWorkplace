@@ -89,6 +89,7 @@ const CommunityPage = (props) => {
               </Grid>
               <Grid item xs={3} align="right">
                 <Button onClick={() => props.openAddPostModal()}>
+                  <Typography color="white">New</Typography>
                   <AddIcon sx={{ color: "white" }} />
                 </Button>
               </Grid>
