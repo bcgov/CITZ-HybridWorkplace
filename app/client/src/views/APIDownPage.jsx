@@ -12,7 +12,7 @@ function APIDownPage() {
       spacing={2}
     >
       <Stack alignItems="center" spacing={2}>
-        <Typography variant="h4">Sorry, HWP is down for maintenance</Typography>
+        <Typography variant="h4">Sorry, HWP is down for maintenance.</Typography>
         <Typography variant="h6">Please check back soon.</Typography>
       </Stack>
       <Tooltip
