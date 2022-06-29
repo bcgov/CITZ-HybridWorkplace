@@ -23,6 +23,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs"); // hashing passwords
 const moment = require("moment");
+const axios = require("axios").default;
 const ResponseError = require("../../responseError");
 
 const router = express.Router();
@@ -128,6 +129,7 @@ router.post("/", async (req, res) => {
       password: hashedPassword,
       registeredOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
       postCount: 0,
+      notificationFrequency: "none",
     });
     req.log.addAction("User created.");
 
@@ -153,6 +155,38 @@ router.post("/", async (req, res) => {
       }
     );
     req.log.addAction("User's community list updated.");
+
+    // GC Notify
+    if (process.env.ENABLE_GC_NOTIFY === "true") {
+      req.log.addAction("Sending gcNotify request.");
+      try {
+        await axios({
+          method: "post",
+          url: "https://api.notification.canada.ca/v2/notifications/email",
+          headers: {
+            Authorization: `ApiKey-v1 ${process.env.GC_NOTIFY_API_KEY_SECRET}`,
+            "Content-Type": "application/json",
+          },
+          data: {
+            email_address: req.body.email,
+            template_id: process.env.GC_NOTIFY_REGISTRATION_TEMPLATE,
+          },
+        });
+        if (process.env.ENABLE_GC_NOTIFY_TRIAL_MODE) {
+          // Trial mode requires users be in a mailing list before they can receive emails
+          req.log.addAction("Setting isInMailingList for user to true.");
+          await User.updateOne(
+            { username: req.body.username },
+            { $set: { isInMailingList: true } }
+          );
+        }
+        req.log.addAction("gcNotify request sent.");
+      } catch (err) {
+        req.log.addAction(
+          "gcNotify could not complete. Email is most likely not included in the email list on gcNotify."
+        );
+      }
+    }
 
     req.log.setResponse(201, "Success", null);
     return res.status(201).send("Registered.");

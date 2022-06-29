@@ -67,6 +67,12 @@
  *          example: Hi I'm new! Just moved from the Ottawa
  *        registeredOn:
  *          type: string
+ *        notificationFrequency:
+ *          type: string
+ *          description: none, immediate, daily, weekly, or monthly.
+ *        isInMailingList:
+ *          type: boolean
+ *          description: Is in the gcNotify mailing list. ONLY REQUIRED When in TRIAL MODE.
  *        interests:
  *          type: array
  *          description: Topics the user is interested in.
@@ -106,6 +112,8 @@ const User = new mongoose.Schema(
     bio: { type: String },
     registeredOn: { type: String, required: true },
     communities: [{ community: String, engagement: Number }],
+    notificationFrequency: { type: String },
+    isInMailingList: { type: Boolean },
     interests: [String],
   },
   { collection: "user" }

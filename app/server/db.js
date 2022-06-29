@@ -1,4 +1,5 @@
 require("dotenv").config();
+const Agenda = require("agenda");
 const mongoose = require("mongoose");
 const moment = require("moment");
 const color = require("ansi-colors");
@@ -7,6 +8,7 @@ const Community = require("./models/community.model");
 const Options = require("./models/options.model");
 
 const optionsCollection = require("./dbInit/optionsCollection");
+const newCommunitiesDigestDaily = require("./jobs/newCommunitiesDigestDaily");
 
 const dbURI = `${process.env.MONGO_REF}://${process.env.MONGO_DB_USERNAME}:${process.env.MONGO_DB_PASSWORD}@${process.env.MONGO_REF}:${process.env.MONGO_PORT}/${process.env.MONGO_DATABASE_NAME}`;
 
@@ -18,10 +20,12 @@ mongoose.connect(dbURI, {
 // print error message to console
 // if there is a problem connecting
 mongoose.connection.on("error", (err) => {
-  console.log(`Mongoose connection error: ${err}`);
+  console.error(`Mongoose connection error: ${err}`);
 });
 
 const db = mongoose.connection;
+
+const agenda = new Agenda({ db: { address: dbURI } });
 
 mongoose.connection.once("open", () => {
   console.log(
@@ -45,6 +49,19 @@ mongoose.connection.once("open", () => {
         // Options collection is empty
         await Options.insertMany(optionsCollection);
         console.log(color.yellow("Options collection initialized."));
+      }
+      if (
+        !(await Options.exists({
+          component: "notifications",
+        }))
+      ) {
+        // Add notification options
+        await Options.create({
+          component: "notifications",
+          options: {
+            frequencies: ["none", "immediate", "daily", "weekly", "monthly"],
+          },
+        });
       }
       // Create Welcome community if it doesn't already exist
       const timeStamp = moment().format("MMMM Do YYYY, h:mm:ss a");
@@ -95,3 +112,18 @@ mongoose.connection.once("open", () => {
 mongoose.connection.on("disconnected", () => {
   console.log("Mongoose disconnected");
 });
+
+newCommunitiesDigestDaily(agenda);
+
+// Agenda | Job scheduling
+(async function () {
+  await agenda.start();
+  agenda.now("newCommunities");
+})();
+
+async function graceful() {
+  await agenda.stop();
+}
+
+process.on("SIGTERM", graceful);
+process.on("SIGINT", graceful);

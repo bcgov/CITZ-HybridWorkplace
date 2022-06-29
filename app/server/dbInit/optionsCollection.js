@@ -110,6 +110,12 @@ const options = [
       ],
     },
   },
+  {
+    component: "notifications",
+    options: {
+      frequencies: ["none", "immediate", "daily", "weekly", "monthly"],
+    },
+  },
 ];
 
 module.exports = options;

@@ -114,6 +114,8 @@ router.get("/:title", async (req, res) => {
  *      responses:
  *        '404':
  *          description: User not found. **||** <br>Community not found.
+ *        '403':
+ *          description: User is already a member of community.
  *        '204':
  *          description: Success. No content to return.
  *        '400':
@@ -129,6 +131,16 @@ router.patch("/join/:title", async (req, res) => {
       community: req.params.title,
     });
     req.log.addAction("User and community found.");
+
+    req.log.addAction("Checking if user is member of community.");
+    if (
+      await Community.exists({
+        title: documents.community.title,
+        members: documents.user.id,
+      })
+    )
+      throw new ResponseError(403, "User is already a member of community.");
+    req.log.addAction("User is not a member of community.");
 
     req.log.addAction("Updating community members.");
     await Community.updateOne(
