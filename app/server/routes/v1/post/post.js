@@ -231,6 +231,13 @@ router.post("/", async (req, res) => {
  *      tags:
  *        - Post
  *      summary: Get all posts from communities user is apart of.
+ *      description: Use optional query 'username' To show only posts by that user.
+ *      parameters:
+ *        - in: query
+ *          required: false
+ *          name: username
+ *          schema:
+ *            $ref: '#/components/schemas/User/properties/username'
  *      responses:
  *        '404':
  *          description: User not found. **||** <br>Posts not found.
@@ -255,13 +262,23 @@ router.get("/", async (req, res) => {
     });
     req.log.addAction("User found.");
 
+    const queryUser = req.query.username
+      ? await User.findOne({ username: req.query.username })
+      : null;
+
     // If post belongs to community listed in user.communities
     req.log.addAction("Finding communities user is member of.");
     const communities = documents.user.communities.map(
       (community) => community.community
     );
+
+    // If query param username is set, return only posts username has created
+    const matchQuery = queryUser
+      ? { community: { $in: communities }, creator: queryUser.id }
+      : { community: { $in: communities } };
+
     req.log.addAction("Communities found. Finding posts from communities.");
-    const posts = await Post.find({ community: { $in: communities } }, "", {
+    const posts = await Post.find(matchQuery, "", {
       sort: { pinned: -1, _id: -1 },
     }).exec();
 
