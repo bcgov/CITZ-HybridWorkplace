@@ -72,7 +72,7 @@ const HomePage = (props) => {
               </Grid>
               <Grid item xs={3} align="right">
                 <Button onClick={() => props.openAddPostModal()}>
-                  <AddIcon sx={{ color: "white" }} />
+                  <AddIcon sx={{ color: "white", pl: 4 }} />
                 </Button>
               </Grid>
             </Grid>
@@ -112,7 +112,7 @@ const HomePage = (props) => {
                   variant="text"
                   onClick={() => props.openAddCommunityModal()}
                 >
-                  <AddIcon sx={{ color: "white", pl: 2 }} />
+                  <AddIcon sx={{ color: "white", pl: 4 }} />
                 </Button>
                 <AddCommunityModal />
               </Grid>
