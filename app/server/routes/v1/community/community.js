@@ -279,7 +279,7 @@ router.post("/", async (req, res) => {
  *      tags:
  *        - Community
  *      summary: Get all communities or only communities user is a part of.
- *      description: Use optional query 'orderBy' with<br>'lastJoined' - Communities user has joined, in the order of last joined first.<br>'engagement' - Communities user has joined, in the order of most engagement.
+ *      description: Use optional query 'orderBy' with<br>'lastJoined' - Communities user has joined, in the order of last joined first.<br>'engagement' - Communities user has joined, in the order of most engagement.<br>'latestActivity' - Communities user has joined, in the order of latestActivity.
  *      parameters:
  *        - in: query
  *          required: false
@@ -363,6 +363,12 @@ router.get("/", async (req, res) => {
         },
         { $sort: { engagement: -1, _id: -1 } },
       ]).exec();
+    } else if (req.query.orderBy === "latestActivity") {
+      // Order by latestActivity, only communities user is a member of.
+      req.log.addAction("Ordering by latestActivity. Finding communities.");
+      communities = await Community.find({ members: documents.user.id }, "", {
+        sort: { latestActivity: -1 },
+      }).exec();
     } else {
       // Ordered by last created
       req.log.addAction("Ordering by last created. Finding communities.");
