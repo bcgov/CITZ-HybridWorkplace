@@ -28,20 +28,20 @@ services:
   #############################################################################################
   ###                                     React Frontend                                    ###
   #############################################################################################
-  # hwp-frontend:
-  #   container_name: hwp-frontend
-  #   build:
-  #     context: .
-  #     dockerfile: ./app/client/Dockerfile
-  #     args:
-  #       env: ${ENV_FILE:-.env-template}
-  #   networks:
-  #     - hwp-network
-  #   ports:
-  #     - ${FRONTEND_PORT:-8080}:${FRONTEND_PORT:-8080}
-  #   volumes:
-  #     - .:/usr/src/app/
-  #     - /usr/src/app/node_modules
+  hwp-frontend:
+    container_name: hwp-frontend
+    build:
+      context: .
+      dockerfile: ./app/client/Dockerfile
+      args:
+        env: ${ENV_FILE:-.env-template}
+    networks:
+      - hwp-network
+    ports:
+      - ${FRONTEND_PORT:-8080}:${FRONTEND_PORT:-8080}
+    volumes:
+      - .:/usr/src/app/
+      - /usr/src/app/node_modules
 
   #############################################################################################
   ###                                     Express API                                       ###
