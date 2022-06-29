@@ -16,12 +16,12 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Brandon Bouchard](brandonjbouchard@gmail.com)
  * @module
  */
 
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { styled, alpha } from "@mui/material/styles";
 import {
   Box,
@@ -43,7 +43,6 @@ import {
 import HomeIcon from "@mui/icons-material/Home";
 import PersonIcon from "@mui/icons-material/Person";
 import PeopleIcon from "@mui/icons-material/People";
-import ForumIcon from "@mui/icons-material/Forum";
 import SearchIcon from "@mui/icons-material/Search";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -252,9 +251,8 @@ const Header = (props) => {
             ml: 3,
           }}
         >
-          <IconButton>
+          <IconButton onClick={() => navigate(`/`)}>
             <Icon
-              onClick={() => navigate(`/`)}
               sx={{
                 width: "7em",
                 height: "auto",
@@ -265,9 +263,8 @@ const Header = (props) => {
           </IconButton>
         </Box>
         <Typography
-          variant="h6"
+          variant="h4"
           noWrap
-          component="div"
           sx={{
             display: { xs: "none", sm: "block" },
             fontWeight: 600,

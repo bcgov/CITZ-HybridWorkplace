@@ -23,10 +23,12 @@
 import {
   Button,
   Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
   Stack,
   TextField,
+<<<<<<< HEAD
   List,
   ListItem,
   ListItemText,
@@ -36,6 +38,9 @@ import {
   AccordionDetails,
   Typography,
   InputLabel,
+=======
+  Typography,
+>>>>>>> 29ce40e (HWP-421: Overhaul Profile Page & Associated Components)
 } from "@mui/material";
 import { closeEditCommunityModal } from "../../redux/ducks/modalDuck";
 import { createError } from "../../redux/ducks/alertDuck";
@@ -119,7 +124,11 @@ const EditCommunityModal = (props) => {
       fullWidth
       sx={{ zIndex: 500 }}
     >
-      <DialogTitle>Edit Community: {props.community.title}</DialogTitle>
+      <DialogTitle>
+        <Typography variant="h5" fontWeight={600}>
+          Edit Community
+        </Typography>
+      </DialogTitle>
       <DialogContent sx={{ pt: 5 }}>
         <Stack spacing={3}>
           <TextField
@@ -156,6 +165,7 @@ const EditCommunityModal = (props) => {
             }
             helperText="Description must be between 1-300 characters in length."
           />
+<<<<<<< HEAD
           <Stack sx={{ mb: 2 }}>
             <InputLabel htmlFor="create-community-rules">
               Community Rules
@@ -256,6 +266,46 @@ const EditCommunityModal = (props) => {
           >
             Edit Community
           </Button>
+=======
+          <TextField
+            onChange={onRulesChange}
+            name="rules"
+            placeholder="Rules"
+            multiline
+            value={rules}
+            label="Rules"
+            size="small"
+            minRows={4}
+            error={false}
+            helperText="Rules is required."
+            required
+          />
+          <DialogActions sx={{ m: 0, pb: 0 }}>
+            <Stack spacing={1} direction="row-reverse" justifyContent="end">
+              <Button
+                variant="contained"
+                disabled={
+                  (title &&
+                    description &&
+                    rules &&
+                    (title.length < 3 ||
+                      title.length > 25 ||
+                      description.length > 300)) ||
+                  !rules
+                }
+                onClick={onSubmit}
+              >
+                Edit Community
+              </Button>
+              <Button
+                variant="contained"
+                onClick={props.closeEditCommunityModal}
+              >
+                Cancel
+              </Button>
+            </Stack>
+          </DialogActions>
+>>>>>>> 29ce40e (HWP-421: Overhaul Profile Page & Associated Components)
         </Stack>
       </DialogContent>
     </Dialog>

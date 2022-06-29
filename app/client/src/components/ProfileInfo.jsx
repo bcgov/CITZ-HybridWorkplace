@@ -24,7 +24,10 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { getProfile } from "../redux/ducks/profileDuck";
 import PropTypes from "prop-types";
-import { Typography } from "@mui/material";
+import { Typography, Box, Stack, IconButton } from "@mui/material";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import { openEditUserInfoModal } from "../redux/ducks/modalDuck";
+import EditUserInfoModal from "./modals/EditUserInfoModal";
 
 const ProfileInfo = (props) => {
   useEffect(() => {
@@ -32,37 +35,67 @@ const ProfileInfo = (props) => {
   }, []);
 
   const registeredOn = props.profile.registeredOn || "";
-  const registartionDate = registeredOn.split(",")[0];
+  const registrationDate = registeredOn.split(",")[0];
 
   let name = props.profile.firstName || props.username;
   if (props.profile.firstName && props.profile.lastName)
     name += ` ${props.profile.lastName}`;
 
+  const handleEditUserInfoClick = (userInfo) =>
+    props.openEditUserInfoModal(userInfo);
+
   return (
-    <div>
-      <Typography variant="h4" style={{ fontWeight: 600, color: "#313132" }}>
-        {props.profile.username}
-      </Typography>
-      <Typography variant="h5">{name || "No name to display"}</Typography>
-      <Typography variant="body2"> {props.profile.email} </Typography>
-      <Typography variant="body2">
-        {props.profile.title || "No title to display"}
-      </Typography>
-      <br />
-      <Typography variant="h6" style={{ fontWeight: 600, color: "#313132" }}>
-        Joined
-      </Typography>
-      <Typography variant="p" style={{ fontWeight: 600, color: "#999" }}>
-        {registartionDate || "No join date to display"}
-      </Typography>
-      <br />
-      <Typography variant="h6" style={{ fontWeight: 600, color: "#313132" }}>
-        Posts
-      </Typography>
-      <Typography variant="p" style={{ fontWeight: 600, color: "#999" }}>
-        {props.profile.postCount || 0}
-      </Typography>
-    </div>
+    <Box width="max-content">
+      <Stack spacing={0.5} minWidth="10rem">
+        <Stack direction="row" spacing={0.5} alignItems="center">
+          <Typography
+            variant="h5"
+            style={{ fontWeight: 600, color: "#313132" }}
+          >
+            {name || "No name to display."}
+          </Typography>
+          <IconButton onClick={() => handleEditUserInfoClick(props.profile)}>
+            <EditRoundedIcon fontSize="small" />
+          </IconButton>
+          <EditUserInfoModal />
+        </Stack>
+
+        <Typography variant="body2">
+          {props.profile.title || "No title to display"}
+        </Typography>
+        <Typography variant="body2">
+          {props.profile.ministry || "No ministry to display"}
+        </Typography>
+        <Stack spacing={0.5}>
+          <Typography
+            variant="h6"
+            style={{ fontWeight: 600, color: "#313132" }}
+          >
+            Joined
+          </Typography>
+          <Typography
+            variant="body2"
+            style={{ fontWeight: 600, color: "#999" }}
+          >
+            {registrationDate || "No join date to display"}
+          </Typography>
+        </Stack>
+        <Stack spacing={0.5}>
+          <Typography
+            variant="h6"
+            style={{ fontWeight: 600, color: "#313132" }}
+          >
+            Posts
+          </Typography>
+          <Typography
+            variant="body2"
+            style={{ fontWeight: 600, color: "#999" }}
+          >
+            {props.profile.postCount || 0}
+          </Typography>
+        </Stack>
+      </Stack>
+    </Box>
   );
 };
 
@@ -75,6 +108,6 @@ const mapStateToProps = (state) => ({
   profile: state.profile.user,
 });
 
-const mapActionsToProps = { getProfile };
+const mapActionsToProps = { getProfile, openEditUserInfoModal };
 
 export default connect(mapStateToProps, mapActionsToProps)(ProfileInfo);

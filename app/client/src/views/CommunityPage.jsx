@@ -276,7 +276,14 @@ const CommunityPage = (props) => {
                 textAlign: "center",
               }}
             >
+<<<<<<< HEAD
               <Typography varient="h6">Community Rules</Typography>
+=======
+              <Typography variant="h6">Community Rules</Typography>
+              <Typography sx={{ fontWeight: "bold", fontStyle: "italic" }}>
+                (coming soon)
+              </Typography>
+>>>>>>> 29ce40e (HWP-421: Overhaul Profile Page & Associated Components)
             </Box>
             {props.community.rules &&
               props.community.rules.map((obj) => (

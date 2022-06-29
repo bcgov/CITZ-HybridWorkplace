@@ -115,7 +115,7 @@ const Post = (props) => {
         square
       >
         <CardHeader
-          sx={{ backgroundColor: "#0072A2", color: "white", py: 1 }}
+          sx={{ backgroundColor: "banner.main", color: "white", py: 1 }}
           action={
             <>
               <IconButton aria-label="settings" onClick={handleMenuOpen}>
@@ -209,7 +209,9 @@ const Post = (props) => {
         />
         <CardContent
           onClick={handlePostClick}
-          sx={{ cursor: props.isPostPage || "pointer" }}
+          sx={{
+            cursor: props.isPostPage || "pointer",
+          }}
         >
           <Box name="postMessage" data-color-mode="light">
             <MDEditor.Markdown source={message}></MDEditor.Markdown>
