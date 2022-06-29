@@ -20,10 +20,10 @@ services:
       - hwp-network
     healthcheck:
       test: echo 'db.runCommand({serverStatus:1}).ok' | mongo admin -u ${MONGO_ROOT_USERNAME} -p ${MONGO_ROOT_PASSWORD} --quiet | grep 1
-      interval: 10s
-      timeout: 10s
+      interval: 20s
+      timeout: 30s
       retries: 5
-      start_period: 40s
+      start_period: 120s
 
   #############################################################################################
   ###                                     React Frontend                                    ###
