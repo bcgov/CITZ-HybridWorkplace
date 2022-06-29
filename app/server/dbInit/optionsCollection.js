@@ -25,7 +25,7 @@ const options = [
     options: {
       titleMinLength: 3,
       titleMaxLength: 50,
-      titleDisallowedCharacters: "\\\\/@\\*\\^_\\+-=`~\\]\\[{}:;<>",
+      titleDisallowedCharacters: "\\\\/@\\*\\^_\\+\\-=`~\\]\\[{}:;<>",
       titleDisallowedStrings: [
         "www.",
         ".com",
@@ -47,7 +47,7 @@ const options = [
     options: {
       titleMinLength: 3,
       titleMaxLength: 25,
-      titleDisallowedCharacters: "\\\\/@\\*\\^_\\+-=`~\\]\\[{}:;<>",
+      titleDisallowedCharacters: "\\\\/@\\*\\^_\\+\\-=`~\\]\\[{}:;<>",
       titleDisallowedStrings: [
         "www.",
         ".com",

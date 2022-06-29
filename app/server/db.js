@@ -44,24 +44,18 @@ mongoose.connection.once("open", () => {
         // Creating options collection
         db.createCollection("options");
         console.log(color.yellow("Options collection created."));
+      } else {
+        // Remove and re-create collection so changes can be made
+        db.dropCollection("options");
+        db.createCollection("options");
+        console.log(
+          color.yellow("Options collection removed and then re-created.")
+        );
       }
       if ((await Options.count()) === 0) {
         // Options collection is empty
         await Options.insertMany(optionsCollection);
         console.log(color.yellow("Options collection initialized."));
-      }
-      if (
-        !(await Options.exists({
-          component: "notifications",
-        }))
-      ) {
-        // Add notification options
-        await Options.create({
-          component: "notifications",
-          options: {
-            frequencies: ["none", "immediate", "daily", "weekly", "monthly"],
-          },
-        });
       }
       // Create Welcome community if it doesn't already exist
       const timeStamp = moment().format("MMMM Do YYYY, h:mm:ss a");
