@@ -10,6 +10,7 @@ on:
     paths:
       - "app/client/**"
       - "app/server/**"
+      - ".github/workflows/run-tests-on-pr.yaml"
   workflow_dispatch:
 
 jobs: 
@@ -20,12 +21,12 @@ jobs:
       - name: Get repository name and remove owner
         id: repo-name
         run: |
-          echo "::set-output name=repo-name::$(echo ${{ github.repository }} | sed 's/\(.*\)\/\(.*\)/\2/g')" 
+          echo "::set-output name=repo-name::$(echo "${{ github.repository }}" | sed 's/\(.*\)\/\(.*\)/\2/g; s/[<>:\"\/\\\|\?\*]//g')" 
 
       - name: Get PR name and remove spaces
         id: pr-name
         run: |
-          echo "::set-output name=pr-name::$(echo ${{ github.event.pull_request.title }} | sed 's/\s/-/g')"
+          echo "::set-output name=pr-name::$(echo "${{ github.event.pull_request.title }}" | sed 's/[<>:\"\/\\\|\?\*]//g; s/[ \.]/-/g')"
 
       - name: Get current datestamp
         id: date
@@ -68,9 +69,12 @@ jobs:
           echo "JWT_SECRET=asimplesecret" >> .env
           echo "JWT_REFRESH_SECRET=asimplerefresh" >> .env
           echo "JWT_TOKEN_EXPIRY=1h" >> .env
-          echo "COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMUNITY=0" >> .env
-          echo "COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_POST=5" >> .env
-          echo "COMMUNITY_ENGAGEMENT_WEIGHT_CREATE_COMMENT=1" >> .env
+          echo "GC_NOTIFY_REGISTRATION_TEMPLATE=" >> .env
+          echo "GC_NOTIFY_NEW_COMMUNITY_INSTANT_TEMPLATE=" >> .env
+          echo "GC_NOTIFY_NEW_COMMUNITIES_DAILY_TEMPLATE=" >> .env
+          echo "GC_NOTIFY_API_KEY_SECRET=" >> .env
+          echo "ENABLE_GC_NOTIFY_TRIAL_MODE=false" >> .env
+          echo "ENABLE_GC_NOTIFY=false" >> .env
           echo "ENV_FILE=.env" >> .env
 
       - name: Create ENV file for testing suite
