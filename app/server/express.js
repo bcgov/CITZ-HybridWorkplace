@@ -4,6 +4,7 @@ require("./db");
 const express = require("express");
 const Keycloak = require("keycloak-connect");
 const session = require("express-session");
+
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const routesVersioning = require("express-routes-versioning")();
