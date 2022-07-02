@@ -32,6 +32,7 @@ router.get("/", async (req, res, next) => {
         email: decoded.email,
         registeredOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
         postCount: 0,
+        notificationFrequency: "none",
       });
       req.log.addAction("Adding user to Welcome community.");
       await Community.updateOne(
