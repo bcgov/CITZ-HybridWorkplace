@@ -2,6 +2,8 @@
 require("./db");
 
 const express = require("express");
+const Keycloak = require("keycloak-connect");
+const session = require("express-session");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const routesVersioning = require("express-routes-versioning")();
@@ -38,6 +40,8 @@ const logoutRouterV1 = require("./routes/v1/logout");
 const healthCheckRouterV1 = require("./routes/v1/healthCheck");
 const tokenRouterV1 = require("./routes/v1/token");
 
+const keycloakRoutervV1 = require("./routes/v1/keycloakLogin");
+
 const app = express();
 
 app.use(
@@ -70,6 +74,41 @@ app.use(
   })
 );
 app.use(sanitizeInputs);
+
+// FEATURE_TOGGLE=KEYCLOAK_AUTH_FEATURE
+if (process.env.TOGGLE_KEYCLOAK_AUTH === "true") {
+  const memoryStore = new session.MemoryStore();
+  app.use(
+    session({
+      secret: "some secret",
+      resave: false,
+      saveUninitialized: true,
+      store: memoryStore,
+    })
+  );
+  const keycloak = new Keycloak(
+    { store: memoryStore, idpHint: "idir" },
+    {
+      "confidential-port": process.env.CONFIDENTIAL_PORT,
+      "auth-server-url": process.env.AUTH_SERVER_URL,
+      realm: process.env.REALM,
+      "ssl-required": process.env.SSL_REQUIRED,
+      resource: process.env.RESOURCE,
+      credentials: {
+        secret: process.env.KEYCLOAK_CLIENT_SECRET,
+      },
+    }
+  );
+  app.use(keycloak.middleware());
+  app.use(
+    "/api/keycloakLogin",
+    initLogger,
+    keycloak.protect(),
+    keycloakRoutervV1
+  );
+
+  exports.memoryStore = memoryStore;
+}
 
 // Routing
 app.get("/", (req, res) => res.send("Node.js Server is live!"));
