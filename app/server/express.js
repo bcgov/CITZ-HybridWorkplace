@@ -53,7 +53,6 @@ const corsOrigin = !process.env.REACT_APP_LOCAL_DEV
 
 // Express middleware
 app.use(express.json());
-// TODO: Remove hard-coding, set env variable for openshift
 app.use(
   cors({
     origin: corsOrigin,
