@@ -24,7 +24,7 @@
  * @returns The firstName of a user if only firstName is set,
  * or returns the firstname and lastName if both are set, or null.
  */
-const getCreatorName = async (user) => {
+const getCreatorName = (user) => {
   const { firstName, lastName } = user;
   let creatorName;
 

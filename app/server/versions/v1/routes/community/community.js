@@ -22,7 +22,6 @@
 
 const express = require("express");
 const moment = require("moment");
-const { ObjectId } = require("mongodb");
 const ResponseError = require("../../classes/responseError");
 
 const checkPatchQuery = require("../../functions/checkPatchQuery");
