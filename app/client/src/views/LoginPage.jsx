@@ -17,7 +17,7 @@
 import { Button, Grid, Stack, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { connect } from "react-redux";
-import BCLogo from "../layout/icons/bc-gov-logo-cmyk_pos.png";
+import BCLogo from "../layout/icons/BC-government-logo-NEW.jpg";
 import { useTheme } from "@emotion/react";
 import MarkEmailUnreadTwoToneIcon from "@mui/icons-material/MarkEmailUnreadTwoTone";
 import GroupsTwoToneIcon from "@mui/icons-material/GroupsTwoTone";
@@ -31,6 +31,7 @@ import { login } from "../redux/ducks/authDuck";
 
 function LoginPage(props) {
   const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
   const navigate = useNavigate();
   const onAboutClick = () => {
     navigate("/about");
@@ -39,7 +40,7 @@ function LoginPage(props) {
   const onLoginClick = () => {
     props.login();
   };
-
+  //"rgba(0, 51, 102, .8)"
   return (
     <Box
       sx={{
@@ -52,7 +53,9 @@ function LoginPage(props) {
       <Stack spacing={6}>
         <Box
           sx={{
-            backgroundColor: "#F0F0F0",
+            backgroundColor: isDarkMode
+              ? "rgba(0, 51, 102, .75)"
+              : "rgba(220, 220, 220, .5)",
             height: "45vh",
             borderBottomLeftRadius: "70% 10%",
             borderBottomRightRadius: "70% 10%",
@@ -61,18 +64,25 @@ function LoginPage(props) {
           <Stack
             alignItems="center"
             justifyContent="center"
-            spacing={6}
+            spacing={10}
             sx={{ paddingTop: 10 }}
           >
             <Stack>
-              <Typography variant="h3">Welcome to</Typography>
+              <Typography variant="h3" align="center">
+                Welcome to
+              </Typography>
               <Typography
                 variant="h3"
-                sx={{ color: theme.palette.primary.main }}
+                sx={{
+                  color: isDarkMode
+                    ? theme.palette.secondary.main
+                    : theme.palette.primary.main,
+                }}
+                align="center"
               >
                 The Neighbourhood
               </Typography>
-              <Typography variant="h6">
+              <Typography variant="h6" align="center">
                 BCGov's Hybrid Workplace Solution
               </Typography>
             </Stack>
@@ -82,11 +92,11 @@ function LoginPage(props) {
                 Have IDIR?
               </Typography>
               <Stack direction="row" spacing={3}>
-                <Button variant="outlined" onClick={onAboutClick}>
-                  About
-                </Button>
-
-                <Button variant="contained" onClick={onLoginClick}>
+                <Button
+                  variant="contained"
+                  onClick={onLoginClick}
+                  color={isDarkMode ? "secondary" : "primary"}
+                >
                   Login
                 </Button>
               </Stack>
@@ -112,7 +122,10 @@ function LoginPage(props) {
           </Grid>
           <Grid item xs={3}>
             <Stack alignItems="center" spacing={2}>
-              <img src={BCLogo} style={{ maxWidth: "50px" }} />
+              <img
+                src={BCLogo}
+                style={{ maxWidth: "50px", borderRadius: "50%" }}
+              />
               <Stack>
                 <Typography variant="h5" display="block" align="center">
                   {"Created specifically for"}
