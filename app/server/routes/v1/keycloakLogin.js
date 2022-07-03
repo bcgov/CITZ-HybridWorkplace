@@ -11,9 +11,10 @@ const memoryStore = require("../../express");
 
 const router = express.Router();
 
-const frontendURI = process.env.REACT_APP_LOCAL_DEV
-  ? `http://${process.env.FRONTEND_REF}:${process.env.FRONTEND_PORT}`
-  : process.env.FRONTEND_REF;
+const frontendURI =
+  process.env.REACT_APP_LOCAL_DEV === "true"
+    ? `http://${process.env.FRONTEND_REF}:${process.env.FRONTEND_PORT}`
+    : process.env.FRONTEND_REF;
 
 router.get("/", async (req, res, next) => {
   try {
@@ -27,12 +28,25 @@ router.get("/", async (req, res, next) => {
 
     if (!user) {
       req.log.addAction("No user object, creating user.");
+
+      // Parse ministry from display name
+      const nameLength =
+        decoded.given_name.length + decoded.family_name.length + 3;
+      let ministry = decoded.display_name.substring(
+        nameLength,
+        decoded.display_name.length
+      );
+      ministry = ministry.split(":");
+
       user = await User.create({
         username: decoded.idir_username,
         email: decoded.email,
         registeredOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
         postCount: 0,
         notificationFrequency: "none",
+        firstName: decoded.given_name,
+        lastName: decoded.family_name,
+        organization: ministry[0],
       });
       req.log.addAction("Adding user to Welcome community.");
       await Community.updateOne(
