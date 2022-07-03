@@ -83,11 +83,7 @@ const App = (props) => {
           exact
           element={<PrivateComponent component={<HomePage />} />}
         />
-        <Route
-          path="/about"
-          exact
-          element={<PrivateComponent component={<AboutPage />} />}
-        />
+        <Route path="/about" exact element={<AboutPage />} />
         <Route
           path="/profile/:username"
           element={<PrivateComponent component={<ProfilePage />} />}

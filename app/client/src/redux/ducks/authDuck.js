@@ -40,37 +40,7 @@ const apiURI = !window._env_.REACT_APP_LOCAL_DEV
   : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
 
 export const login = (username, password) => async (dispatch) => {
-  let successful = true;
-  try {
-    const res = await fetch(`${apiURI}/api/login`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username,
-        password,
-      }),
-    });
-
-    if (!res.ok) {
-      throw new Error(res.status + " " + res.statusText);
-    }
-
-    const data = await res.json();
-    const decodedToken = jwtDecode(data.token);
-    data.user = decodedToken;
-    dispatch({
-      type: LOGIN,
-      payload: data,
-    });
-  } catch (err) {
-    console.error(err);
-    successful = false;
-  } finally {
-    return successful;
-  }
+  window.location = `${apiURI}/api/keycloakLogin`;
 };
 
 export const register = (username, email, password) => async (dispatch) => {
