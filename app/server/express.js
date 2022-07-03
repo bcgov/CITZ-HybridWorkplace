@@ -1,42 +1,64 @@
+/* eslint-disable import/no-dynamic-require */
+/* 
+ Copyright © 2022 Province of British Columbia
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+/**
+ * Application entry point
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
+ * @module
+ */
+
 // mongodb connection via mongoose
 require("./db");
 
 const express = require("express");
+
+// Middleware imports
+const initLogger = require(`./versions/v${process.env.API_VERSION}/middleware/initLogger`);
+const authenticateToken = require(`./versions/v${process.env.API_VERSION}/middleware/authenticateToken`);
+const sanitizeInputs = require(`./versions/v${process.env.API_VERSION}/middleware/sanitizeInputs`);
+const requestFinally = require(`./versions/v${process.env.API_VERSION}/middleware/requestFinally`);
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const routesVersioning = require("express-routes-versioning")();
 const rateLimit = require("express-rate-limit");
 
+const swaggerConf = require(`./swagger/conf`);
 const swaggerUI = require("swagger-ui-express");
-const swaggerConf = require("./swagger-conf");
 
-const initLogger = require("./middleware/initLogger");
-const authenticateToken = require("./middleware/authenticateToken");
-const sanitizeInputs = require("./middleware/sanitizeInputs");
-
-// Version 1 route imports
-const communityRouterV1 = require("./routes/v1/community/community");
-const communityFlagsRouterV1 = require("./routes/v1/community/communityFlags");
-const communityTagsRouterV1 = require("./routes/v1/community/communityTags");
-const communityRulesRouterV1 = require("./routes/v1/community/communityRules");
-const communityMembersRouterV1 = require("./routes/v1/community/communityMembers");
-
-const postRouterV1 = require("./routes/v1/post/post");
-const postFlagsRouterV1 = require("./routes/v1/post/postFlags");
-const postTagsRouterV1 = require("./routes/v1/post/postTags");
-
-const commentRouterV1 = require("./routes/v1/comment/comment");
-const commentReplyRouterV1 = require("./routes/v1/comment/commentReply");
-const commentVoteRouterV1 = require("./routes/v1/comment/commentVoting");
-const commentFlagsRouterV1 = require("./routes/v1/comment/commentFlags");
-
-const userRouterV1 = require("./routes/v1/user");
-
-const registerRouterV1 = require("./routes/v1/register");
-const loginRouterV1 = require("./routes/v1/login");
-const logoutRouterV1 = require("./routes/v1/logout");
-const healthCheckRouterV1 = require("./routes/v1/healthCheck");
-const tokenRouterV1 = require("./routes/v1/token");
+// Route imports
+const {
+  communityRouter,
+  communityFlagsRouter,
+  communityTagsRouter,
+  communityRulesRouter,
+  communityMembersRouter,
+  postRouter,
+  postFlagsRouter,
+  postTagsRouter,
+  commentRouter,
+  commentReplyRouter,
+  commentVoteRouter,
+  commentFlagsRouter,
+  userRouter,
+  registerRouter,
+  loginRouter,
+  logoutRouter,
+  healthCheckRouter,
+  tokenRouter,
+} = require(`./versions/v${process.env.API_VERSION}/routes/routeImports`);
 
 const app = express();
 
@@ -53,7 +75,6 @@ const corsOrigin = !process.env.REACT_APP_LOCAL_DEV
 
 // Express middleware
 app.use(express.json());
-// TODO: Remove hard-coding, set env variable for openshift
 app.use(
   cors({
     origin: corsOrigin,
@@ -73,93 +94,95 @@ app.use(sanitizeInputs);
 
 // Routing
 app.get("/", (req, res) => res.send("Node.js Server is live!"));
+app.use("/api/health", healthCheckRouter);
 
-// Versioning
-app.use((req, res, next) => {
-  if (process.env.API_VERSION !== "") {
-    req.version = `${process.env.API_VERSION}.0.0`;
-  }
-  next();
-});
+app.use("/api/register", initLogger, registerRouter, requestFinally);
+app.use("/api/login", initLogger, loginRouter, requestFinally);
+app.use("/api/logout", initLogger, logoutRouter, requestFinally);
+app.use("/api/token", initLogger, tokenRouter, requestFinally);
 
-function NoMatchFoundCallback(req, res) {
-  res.status(404).send("Version not found.");
-}
-
-// Version 1 routes
-function useV1(req, res, next) {
-  // Routes
-  app.use("/api/register", initLogger, registerRouterV1);
-  app.use("/api/login", initLogger, loginRouterV1);
-  app.use("/api/logout", initLogger, logoutRouterV1);
-  app.use("/api/token", initLogger, tokenRouterV1);
-  app.use("/api/health", healthCheckRouterV1);
-
-  app.use("/api/community", initLogger, authenticateToken, communityRouterV1);
-  app.use(
-    "/api/community/flags",
-    initLogger,
-    authenticateToken,
-    communityFlagsRouterV1
-  );
-  app.use(
-    "/api/community/tags",
-    initLogger,
-    authenticateToken,
-    communityTagsRouterV1
-  );
-  app.use(
-    "/api/community/rules",
-    initLogger,
-    authenticateToken,
-    communityRulesRouterV1
-  );
-  app.use(
-    "/api/community/members",
-    initLogger,
-    authenticateToken,
-    communityMembersRouterV1
-  );
-
-  app.use("/api/post", initLogger, authenticateToken, postRouterV1);
-  app.use("/api/post/flags", initLogger, authenticateToken, postFlagsRouterV1);
-  app.use("/api/post/tags", initLogger, authenticateToken, postTagsRouterV1);
-
-  app.use("/api/comment", initLogger, authenticateToken, commentRouterV1);
-  app.use(
-    "/api/comment/reply",
-    initLogger,
-    authenticateToken,
-    commentReplyRouterV1
-  );
-  app.use(
-    "/api/comment/vote",
-    initLogger,
-    authenticateToken,
-    commentVoteRouterV1
-  );
-  app.use(
-    "/api/comment/flags",
-    initLogger,
-    authenticateToken,
-    commentFlagsRouterV1
-  );
-
-  app.use("/api/user", initLogger, authenticateToken, userRouterV1);
-
-  next();
-}
-
-// Route to version
 app.use(
-  "/api",
-  routesVersioning(
-    {
-      // prettier-ignore
-      "1.0.0": useV1,
-    },
-    NoMatchFoundCallback
-  )
+  "/api/community/flags",
+  initLogger,
+  authenticateToken,
+  communityFlagsRouter,
+  requestFinally
 );
+app.use(
+  "/api/community/tags",
+  initLogger,
+  authenticateToken,
+  communityTagsRouter,
+  requestFinally
+);
+app.use(
+  "/api/community/rules",
+  initLogger,
+  authenticateToken,
+  communityRulesRouter,
+  requestFinally
+);
+app.use(
+  "/api/community/members",
+  initLogger,
+  authenticateToken,
+  communityMembersRouter,
+  requestFinally
+);
+
+app.use(
+  "/api/community",
+  initLogger,
+  authenticateToken,
+  communityRouter,
+  requestFinally
+);
+
+app.use(
+  "/api/post/flags",
+  initLogger,
+  authenticateToken,
+  postFlagsRouter,
+  requestFinally
+);
+app.use(
+  "/api/post/tags",
+  initLogger,
+  authenticateToken,
+  postTagsRouter,
+  requestFinally
+);
+app.use("/api/post", initLogger, authenticateToken, postRouter, requestFinally);
+
+app.use(
+  "/api/comment/reply",
+  initLogger,
+  authenticateToken,
+  commentReplyRouter,
+  requestFinally
+);
+app.use(
+  "/api/comment/vote",
+  initLogger,
+  authenticateToken,
+  commentVoteRouter,
+  requestFinally
+);
+app.use(
+  "/api/comment/flags",
+  initLogger,
+  authenticateToken,
+  commentFlagsRouter,
+  requestFinally
+);
+app.use(
+  "/api/comment",
+  initLogger,
+  authenticateToken,
+  commentRouter,
+  requestFinally
+);
+
+app.use("/api/user", initLogger, authenticateToken, userRouter, requestFinally);
 
 module.exports = app;
