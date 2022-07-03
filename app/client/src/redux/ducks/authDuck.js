@@ -39,7 +39,7 @@ const apiURI = !window._env_.REACT_APP_LOCAL_DEV
   ? `${window._env_.REACT_APP_API_REF}`
   : `http://${window._env_.REACT_APP_API_REF}:${window._env_.REACT_APP_API_PORT}`;
 
-export const login = (username, password) => async (dispatch) => {
+export const login = () => async (dispatch) => {
   window.location = `${apiURI}/api/keycloakLogin`;
 };
 

@@ -21,7 +21,6 @@ import BCLogo from "../layout/icons/BC-government-logo-NEW.jpg";
 import { useTheme } from "@emotion/react";
 import MarkEmailUnreadTwoToneIcon from "@mui/icons-material/MarkEmailUnreadTwoTone";
 import GroupsTwoToneIcon from "@mui/icons-material/GroupsTwoTone";
-import { useNavigate } from "react-router-dom";
 import { login } from "../redux/ducks/authDuck";
 /**
  * Application entry point
@@ -32,15 +31,11 @@ import { login } from "../redux/ducks/authDuck";
 function LoginPage(props) {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
-  const navigate = useNavigate();
-  const onAboutClick = () => {
-    navigate("/about");
-  };
 
   const onLoginClick = () => {
     props.login();
   };
-  //"rgba(0, 51, 102, .8)"
+
   return (
     <Box
       sx={{
