@@ -65,6 +65,8 @@ objects:
                     name: mongo-connection-string
                 - secretRef:
                     name: gc-notify
+                - secretRef:
+                    name: keycloak-values
               env:
                 - name: MONGO_URI
                   valueFrom:
