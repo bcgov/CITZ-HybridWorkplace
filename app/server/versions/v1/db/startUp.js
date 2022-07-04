@@ -37,6 +37,11 @@ const mongoStartUp = async (db, collections) => {
     // Creating options collection
     db.createCollection("options");
     console.log(color.yellow("Options collection created."));
+  } else {
+    // Refresh options collection
+    db.dropCollection("options");
+    db.createCollection("options");
+    console.log(color.yellow("Options collection removed and then created."));
   }
   if ((await Options.count()) === 0) {
     // Options collection is empty
