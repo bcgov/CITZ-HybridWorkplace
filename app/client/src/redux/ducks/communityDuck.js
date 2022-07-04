@@ -194,11 +194,6 @@ export const createCommunity =
         type: ADD_COMMUNITY,
         payload: response.data,
       });
-
-      dispatch({
-        type: JOIN_COMMUNITY,
-        payload: response.data.title,
-      });
     } catch (err) {
       console.error(err);
       successful = false;
@@ -371,7 +366,8 @@ export function communityReducer(state = initialState, action) {
     case ADD_COMMUNITY:
       return {
         ...state,
-        items: [...state.items, action.payload],
+        items: [action.payload, ...state.items],
+        usersCommunities: [action.payload, ...state.usersCommunities],
       };
     case JOIN_COMMUNITY:
       const comm = state.items.find(
