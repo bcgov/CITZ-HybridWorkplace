@@ -2,7 +2,10 @@
     "openapi": "3.0.0",
     "info": {
       "title": "CITZ HybridWorkplace",
-      "version": "v1",
+      "version": "v1"
+    },
+    "servers":{
+      "url": "https://hwp-express-api-d63404-dev.apps.silver.devops.gov.bc.ca/" 
     },
     "paths": {
       "/api/health": {
