@@ -1,0 +1,134 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "CITZ HybridWorkplace",
+      "version": "v1",
+    },
+    "paths": {
+      "/api/health": {
+        "get": {
+          "tags": [
+            "API"
+          ],
+          "summary": "Returns \"API is running!\" if the endpoint is working.",
+          "responses": {
+            "200": {
+              "description": "API is running!"
+            }
+          }
+        }
+      },
+      "/api/register": {
+        "post": {
+          "tags": [
+            "Auth"
+          ],
+          "summary": "Register for an account.",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "$ref": "#/components/schemas/User/properties/username"
+                    },
+                    "email": {
+                      "$ref": "#/components/schemas/User/properties/email"
+                    },
+                    "password": {
+                      "$ref": "#/components/schemas/User/properties/password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Registered."
+            },
+            "400": {
+              "description": "Bad Request."
+            },
+            "403": {
+              "description": "IDIR or email already exists. || <br>Password does not meet requirements. || <br>Invalid email. || <br>Username does not meet requirements. || <br>Invalid string in username."
+            }
+          }
+        }
+      },
+      "/api/login": {
+          "post": {
+            "tags": [
+              "Auth"
+            ],
+            "summary": "Login into account.",
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "username": {
+                        "$ref": "#/components/schemas/User/properties/username"
+                      },
+                      "password": {
+                        "$ref": "#/components/schemas/User/properties/password"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "201": {
+                "description": "Successfully logged in.",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string",
+                          "description": "Access token."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "400": {
+                "description": "Bad Request."
+              },
+              "401": {
+                "description": "Invalid username or password."
+              }
+            }
+          }
+        },
+      "/api/logout": {
+        "get": {
+          "tags": [
+            "Auth"
+          ],
+          "summary": "Log out of account.",
+          "responses": {
+            "204": {
+              "description": "Success. No content to return."
+            },
+            "400": {
+              "description": "Bad Request."
+            },
+            "403": {
+              "description": "Invalid token."
+            },
+            "404": {
+              "description": "Cookie not found || <br>User not found."
+            }
+          }
+        }
+      }
+    }
+}
