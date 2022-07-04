@@ -1,8 +1,15 @@
 let { CommunityFunctions } = require('../functions/communityFunctions.js');
 let { AuthFunctions } = require('../functions/authFunctions.js');
-let user = new AuthFunctions();
-let community = new CommunityFunctions();
+const community = new CommunityFunctions ();
+const auth = new AuthFunctions();
+
+const user = require('../functions/userFunctions');
+const { name, email } = require('../functions/randomizer');
 let token = '';
+
+const userName = name.gen();
+const userPassword = 'Tester123!';
+const userEmail = email.gen();
 
 const newComTitle = "hello get members";
 const newComDescript = "world";
@@ -15,17 +22,23 @@ const newComTags = [{
 const welComTitle = "Welcome";
 const welComDescript = "Test";
 
-const testIDIR = 'test2';
-const testPassword = 'Tester123!';
-
-describe('Logging in the test user', () => {
-    test('API returns a successful response - code 201', async () => {
-            let response = await user.login(testIDIR, testPassword);
-            token = response.body.token;
-            expect(response.status).toBe(201);
-        });
+describe('Registering a test user', () => {
+  test('API returns a successful response - code 201', async () => {
+    let response = await auth.register(userName, userEmail, userPassword);
+    token = response.body.token;
+    expect(response.status).toBe(201);
+  });
 });
 
+
+describe('Logging in the test user', () => {
+  test('API returns a successful response - code 201', async () => {
+    let response = await auth.login(userName, userPassword);
+    token = response.body.token;
+    expect(response.status).toBe(201);
+    
+  });
+});
 
 describe('Get Community Members - With Login, testing with "Welcome" community', () => {
     let response = '';
@@ -96,6 +109,14 @@ describe('Get Community Members - With Login, but community does not exist', () 
 
     test('API returns description - "Community already exists."', () => {
         expect('' + response.text + '').toContain("Community not found.");
+    });
+});
+
+
+describe('Deleting a test user', () => {
+    test('API returns a successful response - code 204', async () => {
+        let response = await user.deleteUserByName(token, userName);
+        expect(response.status).toBe(204);
     });
 });
 

@@ -1,8 +1,17 @@
-let { CommunityFunctions } = require('../functions/communityFunctions.js');
-let { AuthFunctions } = require('../functions/authFunctions.js');
-let community = new CommunityFunctions ();
-let user = new AuthFunctions();
-let token = '';
+const { CommunityFunctions } = require("../functions/communityFunctions");
+const { AuthFunctions } = require("../functions/authFunctions");
+
+const community = new CommunityFunctions();
+const auth = new AuthFunctions();
+
+const user = require("../functions/userFunctions");
+const { name, email } = require("../functions/randomizer");
+
+let token = "";
+
+const userName = name.gen();
+const userPassword = "Tester123!";
+const userEmail = email.gen();
 
 const newComTitle = "hello";
 const newComDescript = "world";
@@ -12,9 +21,18 @@ const newComTags = [{
     "count": 1
 }];
 
+describe('Registering a test user', () => {
+  test('API returns a successful response - code 201', async () => {
+    let response = await auth.register(userName, userEmail, userPassword);
+    token = response.body.token;
+    expect(response.status).toBe(201);
+  });
+});
+
+
 describe('Logging in the test user', () => {
   test('API returns a successful response - code 201', async () => {
-    let response = await user.login('test2', 'Tester123!');
+    let response = await auth.login(userName, userPassword);
     token = response.body.token;
     expect(response.status).toBe(201);
   });
@@ -70,5 +88,13 @@ describe('Delete Communities - After Login, community does not exist', () => {
 
   test('API returns description - "Community not found."', () => {
     expect(response.text).toBe("Community not found.");
+  });
+});
+
+
+describe('Deleting a test user', () => {
+  test('API returns a successful response - code 204', async () => {
+      let response = await user.deleteUserByName(token, userName);
+      expect(response.status).toBe(204);
   });
 });

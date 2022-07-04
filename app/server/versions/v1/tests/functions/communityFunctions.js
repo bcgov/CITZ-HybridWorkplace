@@ -14,7 +14,9 @@ const request = supertest(endpoint);
  */
 class CommunityFunctions{
 
-    constructor() {
+   
+    constructor(){
+        this.communityList = [];
     }
 
     /************** Main Community Functions **************/
@@ -52,6 +54,14 @@ class CommunityFunctions{
      * @returns                     Response from API. Body contains object with community info.
      */
     createCommunity(title, description, rules, tags, token) {
+
+        this.communityList.push({ 
+            community:   {
+                        name: title,
+                        creator: token
+                    },
+        });
+
         return request
             .post('/community')
             .set({authorization: `Bearer ${token}`})
@@ -69,6 +79,18 @@ class CommunityFunctions{
             .delete(`/community/${title}`)
             .set({authorization: `Bearer ${token}`});
     } 
+
+    /**
+     * @description             Removes all Communities.
+     * @returns                 nothing.
+     */
+    deleteAllCommunities() {
+        for (let i = 0; i < this.communityList.length;i++){
+            this.deleteCommunity(this.communityList[i].community.name,this.communityList[i].community.creator);
+        }
+
+        return this.communityList;
+    }
 
     /**
      * @description                     Edits existing community.
