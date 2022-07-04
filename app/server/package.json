@@ -24,7 +24,6 @@
     "express": "^4.17.3",
     "express-async-handler": "^1.2.0",
     "express-rate-limit": "^6.4.0",
-    "express-routes-versioning": "^1.0.1",
     "express-session": "^1.17.3",
     "jsonwebtoken": "^8.5.1",
     "keycloak-connect": "^18.0.2",
