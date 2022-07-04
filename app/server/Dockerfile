@@ -6,10 +6,6 @@ RUN npm i -g nodemon
 # Create app directory
 WORKDIR /usr/src/app
 
-ARG env
-
-COPY $env .env
-
 COPY app/server/package*.json ./
 
 RUN npm ci --only=production
@@ -18,5 +14,9 @@ RUN npm ci --only=production
 RUN apk --update --no-cache add curl
 
 COPY app/server/. ./
+
+ARG env
+
+COPY $env .env
 
 CMD ["node", "index.js"]

@@ -75,6 +75,7 @@ jobs:
           echo "GC_NOTIFY_API_KEY_SECRET=" >> .env
           echo "ENABLE_GC_NOTIFY_TRIAL_MODE=false" >> .env
           echo "ENABLE_GC_NOTIFY=false" >> .env
+          echo "TOGGLE_KEYCLOAK_AUTH=false" >> .env
           echo "ENV_FILE=.env" >> .env
 
       - name: Create ENV file for testing suite
@@ -91,7 +92,7 @@ jobs:
         uses: stringbean/docker-healthcheck-action@v1
         with:
           container: mongodb
-          wait-time: 60
+          wait-time: 150
           require-status: running
           require-healthy: true 
       
@@ -99,7 +100,7 @@ jobs:
         uses: stringbean/docker-healthcheck-action@v1
         with:
           container: hwp-api
-          wait-time: 60
+          wait-time: 150
           require-status: running 
           require-healthy: true
 
