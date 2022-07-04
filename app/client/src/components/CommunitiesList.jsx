@@ -44,7 +44,7 @@ const CommunitiesList = (props) => {
   useEffect(() => {
     props.getUsersCommunities();
     props.getCommunities();
-  }, [props.communities, hideJoined]);
+  }, []);
 
   const communities = hideJoined
     ? props.communities.filter(
