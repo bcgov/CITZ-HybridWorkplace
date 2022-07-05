@@ -43,6 +43,7 @@ function LoginPage(props) {
         top: "71px",
         left: 0,
         position: "absolute",
+        marginBottom: 100,
       }}
     >
       <Stack spacing={6}>
@@ -51,49 +52,51 @@ function LoginPage(props) {
             backgroundColor: isDarkMode
               ? "rgba(0, 51, 102, .75)"
               : "rgba(220, 220, 220, .5)",
-            height: "45vh",
+            minHeight: "45vh",
             borderBottomLeftRadius: "70% 10%",
             borderBottomRightRadius: "70% 10%",
           }}
         >
-          <Stack
-            alignItems="center"
-            justifyContent="center"
-            spacing={10}
-            sx={{ paddingTop: 10 }}
-          >
-            <Stack>
-              <Typography variant="h3" align="center">
-                Welcome to
-              </Typography>
-              <Typography
-                variant="h3"
-                sx={{
-                  color: isDarkMode
-                    ? theme.palette.secondary.main
-                    : theme.palette.primary.main,
-                }}
-                align="center"
-              >
-                The Neighbourhood
-              </Typography>
-              <Typography variant="h6" align="center">
-                BCGov's Hybrid Workplace Solution
-              </Typography>
-            </Stack>
-
-            <Stack spacing={1}>
-              <Typography variant="body1" align="right">
-                Have IDIR?
-              </Typography>
-              <Stack direction="row" spacing={3}>
-                <Button
-                  variant="contained"
-                  onClick={onLoginClick}
-                  color={isDarkMode ? "secondary" : "primary"}
+          <Stack>
+            <Stack
+              alignItems="center"
+              justifyContent="center"
+              spacing={10}
+              sx={{ paddingTop: 10 }}
+            >
+              <Stack>
+                <Typography variant="h3" align="center">
+                  Welcome to
+                </Typography>
+                <Typography
+                  variant="h3"
+                  sx={{
+                    color: isDarkMode
+                      ? theme.palette.secondary.main
+                      : theme.palette.primary.main,
+                  }}
+                  align="center"
                 >
-                  Login
-                </Button>
+                  The Neighbourhood
+                </Typography>
+                <Typography variant="h6" align="center">
+                  BCGov's Hybrid Workplace Solution
+                </Typography>
+              </Stack>
+
+              <Stack spacing={1}>
+                <Typography variant="body1" align="right">
+                  Have IDIR?
+                </Typography>
+                <Stack direction="row" spacing={3}>
+                  <Button
+                    variant="contained"
+                    onClick={onLoginClick}
+                    color={isDarkMode ? "secondary" : "primary"}
+                  >
+                    Login
+                  </Button>
+                </Stack>
               </Stack>
             </Stack>
           </Stack>
