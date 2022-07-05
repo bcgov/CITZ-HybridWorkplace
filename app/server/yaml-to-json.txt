@@ -1,8 +1,0 @@
-/api/health:
-     get:
-       tags:
-         - API
-       summary: Returns "API is running!" if the endpoint is working.
-       responses:
-         '200':
-           description: API is running!
