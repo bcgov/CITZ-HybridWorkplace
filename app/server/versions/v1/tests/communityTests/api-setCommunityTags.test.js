@@ -97,10 +97,6 @@ describe("Set Communities tags - After Login on new community", () => {
   test("API returns a successful response - code 204", () => {
     expect(response.status).toBe(204);
   });
-
-  test("API returns the updated tag", () => {
-    expect(` ${response.text} `).toContain(updatedTags);
-  });
 });
 
 describe("Get Communities Tags - After Login with new community (2)", () => {

@@ -68,10 +68,6 @@ describe("Set Communities Flags  - After Login", () => {
   test("API returns a successful response - code 204", () => {
     expect(response.status).toBe(204);
   });
-
-  test('API returns a successful response message - "Success"', () => {
-    expect(` ${response.text} `).toContain("Success");
-  });
 });
 
 describe("Get Communities Flags  - After Login", () => {

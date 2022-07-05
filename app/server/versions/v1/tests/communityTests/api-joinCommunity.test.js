@@ -70,6 +70,13 @@ describe("Creating new Community", () => {
   });
 });
 
+describe("Leave Community by Title - For testing Join", () => {
+  test("API returns a unsuccessful response - code 404", async () => {
+    const response = await community.leaveCommunity(newComTitle, token);
+    expect(response.status).toBe(204);
+  });
+});
+
 describe("Join Community by Title - With Login, community exists", () => {
   let response = "";
 
@@ -79,10 +86,6 @@ describe("Join Community by Title - With Login, community exists", () => {
 
   test("API returns a successful response - code 204", () => {
     expect(response.status).toBe(204);
-  });
-
-  test('API returns description - "Successfully joined community."', () => {
-    expect(`${response.text}`).toBe("Successfully joined community.");
   });
 });
 
@@ -97,8 +100,10 @@ describe("Join Community by Title - With Login, but already a member", () => {
     expect(response.status).toBe(403);
   });
 
-  test('API returns description - "already joined Community."', () => {
-    expect(`${response.text}`).toContain("already joined Community.");
+  test('API returns description - "User is alreadnpm y a member of community."', () => {
+    expect(`${response.text}`).toContain(
+      "User is already a member of community."
+    );
   });
 });
 

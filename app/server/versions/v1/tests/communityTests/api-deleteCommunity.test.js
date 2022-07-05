@@ -54,8 +54,8 @@ describe("Delete Communities - After Login", () => {
     response = await community.deleteCommunity(newComTitle, token);
   });
 
-  test("API returns a successful response - code 200", () => {
-    expect(response.status).toBe(200);
+  test("API returns a successful response - code 204", () => {
+    expect(response.status).toBe(204);
   });
 
   test('API returns description - "Community removed."', () => {

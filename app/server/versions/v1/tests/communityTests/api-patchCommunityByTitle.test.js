@@ -154,8 +154,10 @@ describe("Edit Community - With login and token, change all fields to empty", ()
     expect(response.status).toBe(403);
   });
 
-  test('API returns description - ""', () => {
-    expect(response.text).toBe("");
+  test('API returns description - "description does not meet requirements: length 0-300."', () => {
+    expect(response.text).toBe(
+      "description does not meet requirements: length 0-300."
+    );
   });
 });
 

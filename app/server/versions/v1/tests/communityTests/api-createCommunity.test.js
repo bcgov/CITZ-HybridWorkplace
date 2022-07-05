@@ -341,12 +341,12 @@ describe("Create Communities by Title - After Login, with token, but getting htm
 describe("Deleting all createdCommunity", () => {
   test("API returns a successful response - code 200 (removes all Communities)", async () => {
     response = await community.deleteAllCommunities();
-    expect(response.text).toBe(200);
+    expect(response.status).toBe(200);
   });
 
   test("API returns a successful response - code 200 (removes newComTitle)", async () => {
     response = await community.deleteCommunity(newComTitle, token);
-    expect(response.text).toBe(200);
+    expect(response.status).toBe(200);
   });
 
   test("API returns a successful response - code 200 (removes linkCommunity)", async () => {

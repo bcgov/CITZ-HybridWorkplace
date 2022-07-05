@@ -105,7 +105,7 @@ describe("Get Community by Title - With Login, testing with new Community", () =
   });
 });
 
-describe("Deleting new Community", () => {
+describe("Deleting new Community - (1)", () => {
   test("API returns a successful response - code 200", async () => {
     const response = await community.deleteCommunity(newComTitle, token);
     expect(response.status).toBe(200);
@@ -133,7 +133,7 @@ describe("Get Community by Title - With Login, testing with new Community after 
 });
 
 describe('Creating new Community with " " as title', () => {
-  test("API returns a successful response - code 201", async () => {
+  test("API returns a unsuccessful response - code 403", async () => {
     const response = await community.createCommunity(
       " ",
       newComDescript,
@@ -141,7 +141,7 @@ describe('Creating new Community with " " as title', () => {
       newComTags,
       token
     );
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(403);
   });
 });
 
@@ -161,10 +161,10 @@ describe('Get Community by Title - With Login, testing with new " " Community', 
   });
 });
 
-describe("Deleting new Community", () => {
-  test("API returns a successful response - code 204", async () => {
+describe("Deleting new Community - (2)", () => {
+  test("API returns a unsuccessful response - code 404", async () => {
     const response = await community.deleteCommunity(" ", token);
-    expect(response.status).toBe(204);
+    expect(response.status).toBe(404);
   });
 });
 

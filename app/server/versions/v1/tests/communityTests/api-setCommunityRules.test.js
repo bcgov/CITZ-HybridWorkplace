@@ -70,10 +70,6 @@ describe("Set Community Rules - With Login, community exists", () => {
   test("API returns a successful response - code 204", () => {
     expect(response.status).toBe(204);
   });
-
-  test('API returns description - "Community rules updated."', () => {
-    expect(`${response.text}`).toBe("Community rules updated.");
-  });
 });
 
 describe("Leave new Community", () => {

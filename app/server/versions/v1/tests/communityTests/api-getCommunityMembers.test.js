@@ -54,7 +54,7 @@ describe('Get Community Members - With Login, testing with "Welcome" community',
   });
 
   test("API returns the members list of the community", () => {
-    expect(`${response.text}`).toContain(testIDIR);
+    expect(`${response.text}`).toContain(userName);
   });
 });
 
