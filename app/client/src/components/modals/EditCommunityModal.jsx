@@ -99,7 +99,7 @@ const EditCommunityModal = (props) => {
       onClose={props.closeEditCommunityModal}
       open={props.open}
       fullWidth
-      sx={{ zIndex: 500 }}
+      sx={{ zIndex: 500, mb: 5 }}
     >
       <DialogTitle>Edit Community: {props.community.title}</DialogTitle>
       <DialogContent sx={{ pt: 5 }}>

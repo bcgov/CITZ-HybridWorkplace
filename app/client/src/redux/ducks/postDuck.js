@@ -152,6 +152,7 @@ export const createPost = (postData) => async (dispatch, getState) => {
   } catch (err) {
     console.error(err);
     successful = false;
+    createError(err.response.data)(dispatch);
   } finally {
     return successful;
   }
@@ -221,7 +222,7 @@ export const editPost = (newPost) => async (dispatch, getState) => {
   } catch (err) {
     console.error(err);
     successful = false;
-    createError("Unexpected error occurred")(dispatch);
+    createError(err.response.data)(dispatch);
   } finally {
     return successful;
   }
@@ -254,7 +255,7 @@ export const flagPost = (postId, flag) => async (dispatch, getState) => {
   } catch (err) {
     console.error(err);
     successful = false;
-    createError("Unexpected error occurred")(dispatch);
+    createError(err.response.data)(dispatch);
   } finally {
     return successful;
   }
@@ -288,7 +289,7 @@ export const tagPost = (postId, tag) => async (dispatch, getState) => {
   } catch (err) {
     console.error(err);
     successful = false;
-    createError("Unexpected error occurred")(dispatch);
+    createError(err.response.data)(dispatch);
   } finally {
     return successful;
   }
@@ -323,7 +324,7 @@ export const unTagPost = (postId, tag) => async (dispatch, getState) => {
   } catch (err) {
     console.error(err);
     successful = false;
-    createError("Unexpected error occurred")(dispatch);
+    createError(err.response.data)(dispatch);
   } finally {
     return successful;
   }
@@ -389,6 +390,7 @@ export const createComment = (post, comment) => async (dispatch, getState) => {
   } catch (err) {
     console.error(err);
     successful = false;
+    createError(err.response.data)(dispatch);
   } finally {
     return successful;
   }
@@ -420,6 +422,7 @@ export const deleteComment = (commentId) => async (dispatch, getState) => {
   } catch (err) {
     console.error(err);
     successful = false;
+    createError(err.response.data)(dispatch);
   } finally {
     return successful;
   }
@@ -457,6 +460,7 @@ export const replyToComment =
     } catch (err) {
       console.error(err);
       successful = false;
+      createError(err.response.data)(dispatch);
     } finally {
       return successful;
     }

@@ -22,6 +22,7 @@
 
 import hwp_axios from "../../axiosInstance";
 
+import { createError } from "./alertDuck";
 import { GET_POSTS } from "./postDuck";
 
 const SET_COMMUNITIES = "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_COMMUNITIES";
@@ -202,6 +203,7 @@ export const createCommunity =
     } catch (err) {
       console.error(err);
       successful = false;
+      createError(err.response.data)(dispatch);
     } finally {
       return successful;
     }
@@ -298,6 +300,7 @@ export const deleteCommunity =
     } catch (err) {
       console.error(err);
       successful = false;
+      createError(err.response.data)(dispatch);
     } finally {
       return successful;
     }
@@ -330,6 +333,7 @@ export const editCommunity = (newCommunity) => async (dispatch, getState) => {
   } catch (err) {
     console.error(err);
     successful = false;
+    createError(err.response.data)(dispatch);
   } finally {
     return successful;
   }
