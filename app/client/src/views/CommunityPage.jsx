@@ -259,34 +259,20 @@ const CommunityPage = (props) => {
               }}
             >
               <Typography varient="h6">Community Rules</Typography>
-              <Typography sx={{ fontWeight: "bold", fontStyle: "italic" }}>
-                (coming soon)
-              </Typography>
             </Box>
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography>1. Example rule</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Typography>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                  eget.
-                </Typography>
-              </AccordionDetails>
-            </Accordion>
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography>2. Example rule</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Typography>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                  eget.
-                </Typography>
-              </AccordionDetails>
-            </Accordion>
+            {props.community.rules &&
+              props.community.rules.map((obj) => (
+                <Accordion key={props.community.rules.indexOf(obj)}>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>
+                      {props.community.rules.indexOf(obj) + 1}. {obj.rule}
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Typography>{obj.description}</Typography>
+                  </AccordionDetails>
+                </Accordion>
+              ))}
           </Box>
         </Grid>
       </Grid>

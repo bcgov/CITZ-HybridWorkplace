@@ -26,8 +26,6 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { createCommunity } from "../../redux/ducks/communityDuck";
 import {
-  Autocomplete,
-  Chip,
   TextField,
   Dialog,
   DialogTitle,
@@ -37,30 +35,43 @@ import {
   InputLabel,
   DialogActions,
   Button,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { closeAddCommunityModal } from "../../redux/ducks/modalDuck";
-import MDEditor from "@uiw/react-md-editor";
+import AddIcon from "@mui/icons-material/Add";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { createError } from "../../redux/ducks/alertDuck";
 
 const AddCommunityModal = (props) => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [rules, setRules] = useState("");
   const [createCommunityLoading, setCreateCommunityLoading] = useState(false);
+
+  const [rules, setRules] = useState([]);
+  const [rule, setRule] = useState("");
+  const [ruleDesc, setRuleDesc] = useState("");
+
   const [tags, setTags] = useState([]);
+  const [tag, setTag] = useState("");
+  const [tagDesc, setTagDesc] = useState("");
 
   const registerCommunity = async (event) => {
     event.preventDefault();
     setCreateCommunityLoading(true);
 
-    const formattedTags = tags.map((tag) => ({ tag: tag, count: 0 }));
-
     const community = {
       title: title,
       description: description,
       rules: rules,
-      tags: formattedTags,
+      tags: tags,
     };
 
     const successful = await props.createCommunity(community);
@@ -72,8 +83,24 @@ const AddCommunityModal = (props) => {
     }
   };
 
-  const handleTags = (tags) => {
-    setTags(tags);
+  const addRule = () => {
+    let updatedRules = rules;
+    updatedRules.push({ rule, description: ruleDesc });
+    setRules(updatedRules);
+    setRule("");
+    setRuleDesc("");
+  };
+
+  const addTag = () => {
+    if (tags.length < 7) {
+      let updatedTags = tags;
+      updatedTags.push({ tag, description: tagDesc, count: 0 });
+      setTags(updatedTags);
+      setTag("");
+      setTagDesc("");
+    } else {
+      props.createError("Community can't have more than 7 tags.");
+    }
   };
 
   return (
@@ -129,50 +156,172 @@ const AddCommunityModal = (props) => {
               required
             />
           </Stack>
-          <Stack>
-            <InputLabel htmlFor="create-community-rules">Rules</InputLabel>
-            <TextField
-              id="create-community-rules"
-              value={rules}
-              onChange={(e) => setRules(e.target.value)}
-              type="text"
-              multiline
-              maxRows={3}
-              placeholder="Rules"
-              error={false}
-              helperText="Rules is required."
-              required
-            />
+          <Stack sx={{ mb: 2 }}>
+            <InputLabel htmlFor="create-community-rules">
+              Community Rules
+            </InputLabel>
+
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                Set rules for community members to follow.
+              </AccordionSummary>
+              <AccordionDetails>
+                <List
+                  sx={{
+                    overflow: "auto",
+                    maxHeight: 300,
+                    border: "solid",
+                    borderRadius: "5px",
+                    borderColor: "#D0D0D0",
+                  }}
+                >
+                  {rules.map((obj) => (
+                    <ListItem key={rules.indexOf(obj)} sx={{ py: 0 }}>
+                      <ListItemText
+                        primary={
+                          <>
+                            <Typography>
+                              {rules.indexOf(obj) + 1}. {obj.rule}
+                            </Typography>
+                            <Typography sx={{ pl: 2, color: "#999999" }}>
+                              {obj.description}
+                            </Typography>
+                          </>
+                        }
+                      />
+                    </ListItem>
+                  ))}
+                  {rules.length > 0 && (
+                    <Divider variant="middle" sx={{ pt: 3 }} />
+                  )}
+                  <ListItem key={"input-rules"}>
+                    <Stack spacing={1} width="1">
+                      <Typography>Add a new rule:</Typography>
+                      <TextField
+                        id="create-community-rule"
+                        value={rule}
+                        onChange={(e) => setRule(e.target.value)}
+                        type="text"
+                        multiline
+                        maxRows={3}
+                        placeholder="New rule"
+                        error={
+                          rule === "" || (rule.length >= 3 && rule.length <= 50)
+                            ? false
+                            : true
+                        }
+                        helperText="Rule must be 3-50 characters in length."
+                        sx={{ width: 0.95 }}
+                      />
+                      <TextField
+                        id="create-community-rule-desc"
+                        value={ruleDesc}
+                        onChange={(e) => setRuleDesc(e.target.value)}
+                        type="text"
+                        multiline
+                        maxRows={3}
+                        placeholder="Add a description"
+                        error={
+                          ruleDesc === "" || ruleDesc.length <= 200
+                            ? false
+                            : true
+                        }
+                        helperText="Rule description must be less than 200 characters in length."
+                        sx={{ width: 0.95 }}
+                      />
+                      <Button onClick={addRule} sx={{ width: 0.1 }}>
+                        <Typography>Add</Typography>
+                        <AddIcon />
+                      </Button>
+                    </Stack>
+                  </ListItem>
+                </List>
+              </AccordionDetails>
+            </Accordion>
           </Stack>
 
-          <Autocomplete
-            multiple
-            id="tags-filled"
-            limitTags={7}
-            options={[]}
-            freeSolo
-            renderTags={(value, getTagProps) => {
-              handleTags(value);
-              return value.map((option, index) => {
-                return (
-                  <Chip
-                    variant="outlined"
-                    label={option}
-                    {...getTagProps({ index })}
-                  />
-                );
-              });
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant="filled"
-                label="Custom Tags"
-                placeholder="Tags"
-                helperText="Press ENTER to submit a tag. Tag length must be between 3-16 characters."
-              />
-            )}
-          />
+          <Stack sx={{ mb: 2 }}>
+            <InputLabel htmlFor="create-community-rules">
+              Community Tags
+            </InputLabel>
+
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                Add tags for community members to tag posts with.
+              </AccordionSummary>
+              <AccordionDetails>
+                <List
+                  sx={{
+                    overflow: "auto",
+                    maxHeight: 300,
+                    border: "solid",
+                    borderRadius: "5px",
+                    borderColor: "#D0D0D0",
+                  }}
+                >
+                  {tags.map((obj) => (
+                    <ListItem key={tags.indexOf(obj)} sx={{ py: 0 }}>
+                      <ListItemText
+                        primary={
+                          <>
+                            <Typography>
+                              {tags.indexOf(obj) + 1}. {obj.tag}
+                            </Typography>
+                            <Typography sx={{ pl: 2, color: "#999999" }}>
+                              {obj.description}
+                            </Typography>
+                          </>
+                        }
+                      />
+                    </ListItem>
+                  ))}
+                  {tags.length > 0 && (
+                    <Divider variant="middle" sx={{ pt: 3 }} />
+                  )}
+                  <ListItem key={"input-tag"}>
+                    <Stack spacing={1} width="1">
+                      <Typography>Add a new tag:</Typography>
+                      <TextField
+                        id="create-community-tag"
+                        value={tag}
+                        onChange={(e) => setTag(e.target.value)}
+                        type="text"
+                        multiline
+                        maxRows={3}
+                        placeholder="New tag"
+                        error={
+                          tag === "" || (tag.length >= 3 && tag.length <= 16)
+                            ? false
+                            : true
+                        }
+                        helperText="Tag must be 3-16 characters in length."
+                        sx={{ width: 0.95 }}
+                      />
+                      <TextField
+                        id="create-community-tag-desc"
+                        value={tagDesc}
+                        onChange={(e) => setTagDesc(e.target.value)}
+                        type="text"
+                        multiline
+                        maxRows={3}
+                        placeholder="Add a description"
+                        error={
+                          tagDesc === "" || tagDesc.length <= 200 ? false : true
+                        }
+                        helperText="Tag description must be less than 200 characters in length."
+                        sx={{ width: 0.95 }}
+                      />
+                      <Button onClick={addTag} sx={{ width: 0.1 }}>
+                        <Typography>Add</Typography>
+                        <AddIcon />
+                      </Button>
+                    </Stack>
+                  </ListItem>
+                </List>
+              </AccordionDetails>
+            </Accordion>
+          </Stack>
+
           <DialogActions>
             <Stack spacing={1} direction="row-reverse" justifyContent="end">
               <LoadingButton
@@ -214,4 +363,5 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, {
   createCommunity,
   closeAddCommunityModal,
+  createError,
 })(AddCommunityModal);
