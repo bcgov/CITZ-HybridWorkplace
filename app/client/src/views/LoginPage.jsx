@@ -37,13 +37,12 @@ function LoginPage(props) {
   };
 
   return (
-    <Box
-      sx={{
+    <div
+      style={{
         width: "100vw",
         top: "71px",
         left: 0,
         position: "absolute",
-        marginBottom: 100,
       }}
     >
       <Stack spacing={6}>
@@ -55,6 +54,7 @@ function LoginPage(props) {
             minHeight: "45vh",
             borderBottomLeftRadius: "70% 10%",
             borderBottomRightRadius: "70% 10%",
+            boxShadow: "none !important",
           }}
         >
           <Stack>
@@ -101,50 +101,55 @@ function LoginPage(props) {
             </Stack>
           </Stack>
         </Box>
-        <Grid container justifyContent="center" alignItems="center">
-          <Grid item xs={3}>
+        <Grid
+          container
+          justifyContent="space-around"
+          alignItems="space-around"
+          direction="row"
+        >
+          <Grid item xs={12} md={4}>
             <Stack alignItems="center" spacing={2}>
               <MarkEmailUnreadTwoToneIcon fontSize="large" />
               <Stack>
-                <Typography variant="h5" display="block" align="center">
+                <Typography variant="h5" align="center">
                   {"Receive custom email"}
                 </Typography>
-                <Typography variant="h5" display="block" align="center">
+                <Typography variant="h5" align="center">
                   {"digests at the timing"}
                 </Typography>
-                <Typography variant="h5" display="block" align="center">
+                <Typography variant="h5" align="center">
                   {"of your choice."}
                 </Typography>
               </Stack>
             </Stack>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={12} md={4}>
             <Stack alignItems="center" spacing={2}>
               <img
                 src={BCLogo}
                 style={{ maxWidth: "50px", borderRadius: "50%" }}
               />
               <Stack>
-                <Typography variant="h5" display="block" align="center">
+                <Typography variant="h5" align="center">
                   {"Created specifically for"}
                 </Typography>{" "}
-                <Typography variant="h5" display="block" align="center">
+                <Typography variant="h5" align="center">
                   {"BC Government employees."}
                 </Typography>{" "}
               </Stack>
             </Stack>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={12} md={4} sx={{ paddingBottom: "10%" }}>
             <Stack alignItems="center" spacing={2}>
               <GroupsTwoToneIcon fontSize="large" />
               <Stack>
-                <Typography variant="h5" display="block" align="center">
+                <Typography variant="h5" align="center">
                   {"Learn best practices and"}
                 </Typography>
-                <Typography variant="h5" display="block" align="center">
+                <Typography variant="h5" align="center">
                   {"interact with experts in"}
                 </Typography>
-                <Typography variant="h5" display="block" align="center">
+                <Typography variant="h5" align="center">
                   {"topic-specific communities."}
                 </Typography>
               </Stack>
@@ -152,7 +157,7 @@ function LoginPage(props) {
           </Grid>
         </Grid>
       </Stack>
-    </Box>
+    </div>
   );
 }
 
