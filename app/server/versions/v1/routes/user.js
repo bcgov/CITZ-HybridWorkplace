@@ -89,9 +89,12 @@ router.get("/", async (req, res, next) => {
       lastName: user.lastName,
       bio: user.bio,
       title: user.title,
+      ministry: user.ministry,
+      avatar: user.avatar,
       registeredOn: user.registeredOn,
       postCount: user.postCount,
       notificationFrequency: user.notificationFrequency,
+      interests: user.interests,
     });
   } catch (err) {
     res.locals.err = err;
@@ -126,6 +129,12 @@ router.get("/", async (req, res, next) => {
  *                  $ref: '#/components/schemas/User/properties/bio'
  *                title:
  *                  $ref: '#/components/schemas/User/properties/title'
+ *                ministry:
+ *                  $ref: '#/components/schemas/User/properties/ministry'
+ *                notificationFrequency:
+ *                  $ref: '#/components/schemas/User/properties/notificationFrequency'
+ *                avatar:
+ *                  $ref: '#/components/schemas/User/properties/avatar'
  *      responses:
  *        '404':
  *          description: User not found.
@@ -156,8 +165,8 @@ router.patch("/", async (req, res, next) => {
       bioMaxLength,
       titleMinLength,
       titleMaxLength,
-      organizationMinLength,
-      organizationMaxLength,
+      ministryMinLength,
+      ministryMaxLength,
       interestMinLength,
       interestMaxLength,
     } = await getOptions("user");
@@ -173,8 +182,8 @@ router.patch("/", async (req, res, next) => {
     req.log.addAction(`bio trimmed: ${req.body.bio}`);
     req.body.title = trimExtraSpaces(req.body.title);
     req.log.addAction(`title trimmed: ${req.body.title}`);
-    req.body.organization = trimExtraSpaces(req.body.organization);
-    req.log.addAction(`organization trimmed: ${req.body.organization}`);
+    req.body.ministry = trimExtraSpaces(req.body.ministry);
+    req.log.addAction(`ministry trimmed: ${req.body.ministry}`);
 
     // Validate email
     if (req.body.email) {
@@ -224,16 +233,16 @@ router.patch("/", async (req, res, next) => {
       throw new ResponseError(403, titleError);
     req.log.addAction("title is valid.");
 
-    // Validate organization
-    const organizationError = `organization does not meet requirements: length ${organizationMinLength}-${organizationMaxLength}.`;
-    req.log.addAction("Validating organization.");
+    // Validate ministry
+    const ministryError = `ministry does not meet requirements: length ${ministryMinLength}-${ministryMaxLength}.`;
+    req.log.addAction("Validating ministry.");
     if (
-      req.body.organization &&
-      (req.body.organization.length < organizationMinLength ||
-        req.body.organization.length > organizationMaxLength)
+      req.body.ministry &&
+      (req.body.ministry.length < ministryMinLength ||
+        req.body.ministry.length > ministryMaxLength)
     )
-      throw new ResponseError(403, organizationError);
-    req.log.addAction("organization is valid.");
+      throw new ResponseError(403, ministryError);
+    req.log.addAction("ministry is valid.");
 
     // Validate and trim interests
     if (req.body.interests && req.body.interests instanceof Object) {
@@ -254,17 +263,17 @@ router.patch("/", async (req, res, next) => {
       });
     }
 
-    // Validate notificationFrequency
-    if (
-      req.body.notificationFrequency &&
-      !frequencies.includes(req.body.notificationFrequency.toLowerCase())
-    )
-      throw new ResponseError(
-        403,
-        `notificationFrequency must be one of ${JSON.stringify(frequencies)}`
-      );
-    req.body.notificationFrequency =
-      req.body.notificationFrequency.toLowerCase();
+    if (req.body.notificationFrequency) {
+      if (!frequencies.includes(req.body.notificationFrequency.toLowerCase())) {
+        // Validate notificationFrequency
+        throw new ResponseError(
+          403,
+          `notificationFrequency must be one of ${JSON.stringify(frequencies)}`
+        );
+      }
+      req.body.notificationFrequency =
+        req.body.notificationFrequency.toLowerCase();
+    }
 
     // Check patch query for disallowed fields
     req.log.addAction("Checking edit query.");
@@ -302,7 +311,7 @@ router.patch("/", async (req, res, next) => {
     }
 
     req.log.addAction("Updating user.");
-    await User.updateOne({ username: req.user.username }, query).exec();
+    await User.updateOne({ _id: user.id }, query).exec();
     req.log.addAction("User updated.");
 
     req.log.setResponse(204, "Success", null);

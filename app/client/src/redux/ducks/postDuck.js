@@ -542,7 +542,7 @@ export function postReducer(state = initialState, action) {
     case ADD_POST:
       return {
         ...state,
-        items: [...state.items, action.payload],
+        items: [action.payload, ...state.items],
       };
     case REMOVE_POST:
       return {

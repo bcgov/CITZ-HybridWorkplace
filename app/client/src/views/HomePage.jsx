@@ -22,7 +22,7 @@
 
 import React, { useEffect } from "react";
 
-import { Grid, Box, Button, Typography } from "@mui/material";
+import { Grid, Box, Button, Typography, Link } from "@mui/material";
 import { getPosts } from "../redux/ducks/postDuck";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -79,7 +79,36 @@ const HomePage = (props) => {
 
             <PostModal />
           </Box>
-          <PostsList posts={props.posts} />
+          {props.posts.length > 0 ? (
+            <PostsList posts={props.posts} />
+          ) : (
+            <Box sx={{ mt: 5 }}>
+              <Typography
+                variant="h5"
+                textAlign="center"
+                sx={{ fontWeight: 600, pb: 3 }}
+              >
+                No posts to display.
+              </Typography>
+              <Typography
+                variant="h6"
+                textAlign="center"
+                sx={{ fontWeight: 600 }}
+              >
+                Press the "+" icon to create a post in a community you are a
+                member of.
+              </Typography>
+              <Typography
+                variant="h6"
+                textAlign="center"
+                sx={{ fontWeight: 600 }}
+              >
+                <Link href="/communities">
+                  Click here to see communities you can join.
+                </Link>
+              </Typography>
+            </Box>
+          )}
         </Grid>
         <Grid item xs={4}>
           <Box

@@ -58,9 +58,12 @@
  *          type: string
  *          description: User's title (set in profile).
  *          example: Jr. Software Engineer
- *        organization:
+ *        ministry:
  *          type: string
- *          description: The organization user is a part of.
+ *          description: The ministry user is a part of.
+ *        avatar:
+ *          type: string
+ *          description: Url to a profile avatar picture or an id of a default avatar.
  *        bio:
  *          type: string
  *          description: User's profile bio (set in profile).
@@ -108,7 +111,8 @@ const User = new mongoose.Schema(
     firstName: { type: String },
     lastName: { type: String },
     title: { type: String },
-    organization: { type: String },
+    ministry: { type: String },
+    avatar: { type: String },
     bio: { type: String },
     registeredOn: { type: String, required: true },
     communities: [{ community: String, engagement: Number }],
