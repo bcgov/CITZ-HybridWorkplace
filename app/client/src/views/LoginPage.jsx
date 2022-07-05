@@ -61,7 +61,7 @@ function LoginPage(props) {
             <Stack
               alignItems="center"
               justifyContent="center"
-              spacing={10}
+              spacing={8}
               sx={{ paddingTop: 10 }}
             >
               <Stack>
