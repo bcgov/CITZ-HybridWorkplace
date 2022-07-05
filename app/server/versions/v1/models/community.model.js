@@ -51,11 +51,20 @@
  *          description: Users that have joined the community.
  *          items:
  *            - $ref: '#/components/schemas/User'
- *        rules:
- *          type: string
- *          description: Community rules set by moderators
  *        createdOn:
  *          type: string
+ *        rules:
+ *          type: array
+ *          description: Community rules set by moderators.
+ *          items:
+ *            type: object
+ *            properties:
+ *              rule:
+ *                type: string
+ *                example: Keep posts on topic.
+ *              description:
+ *                type: string
+ *                example: Please keep posts on topic to "Agile".
  *        tags:
  *          type: array
  *          description: Tags set on posts in the community.
@@ -64,7 +73,10 @@
  *            properties:
  *              tag:
  *                type: string
- *                example: Informative
+ *                example: Quick Read
+ *              description:
+ *                type: string
+ *                example: Post can be read in a short amount of time.
  *              count:
  *                type: number
  *                example: 1
@@ -86,7 +98,6 @@
  *        - title
  *        - description
  *        - creator
- *        - rules
  *        - createdOn
  */
 
@@ -107,8 +118,8 @@ const Community = new mongoose.Schema(
         ref: "User",
       },
     ],
-    rules: { type: String, required: true },
-    tags: [{ tag: String, count: Number }],
+    rules: [{ rule: String, description: String }],
+    tags: [{ tag: String, description: String, count: Number }],
     flags: [
       {
         flag: String,

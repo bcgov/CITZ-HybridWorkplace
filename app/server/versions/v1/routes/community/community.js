@@ -103,6 +103,12 @@ router.post("/", async (req, res, next) => {
       descriptionMaxLength,
       tagMinLength,
       tagMaxLength,
+      tagDescriptionMinLength,
+      tagDescriptionMaxLength,
+      ruleMinLength,
+      ruleMaxLength,
+      ruleDescriptionMinLength,
+      ruleDescriptionMaxLength,
       createCommunityEngagementWeight,
     } = await getOptions("community");
     req.log.addAction("Options found.");
@@ -110,9 +116,10 @@ router.post("/", async (req, res, next) => {
     // Trim extra spaces
     req.log.addAction("Trimming extra spaces from inputs in request body.");
     req.body.title = trimExtraSpaces(req.body.title);
-    req.log.addAction(`title trimmed: ${req.body.title}`);
     req.body.description = trimExtraSpaces(req.body.description);
-    req.log.addAction(`description trimmed: ${req.body.description}`);
+    req.log.addAction(
+      `Extra spaces trimmed. title: ${req.body.title}, description: ${req.body.description}`
+    );
 
     req.log.addAction("Validating inputs.");
     validateCommunityInputs(req.body, {
@@ -124,6 +131,12 @@ router.post("/", async (req, res, next) => {
       descriptionMaxLength,
       tagMinLength,
       tagMaxLength,
+      tagDescriptionMinLength,
+      tagDescriptionMaxLength,
+      ruleMinLength,
+      ruleMaxLength,
+      ruleDescriptionMinLength,
+      ruleDescriptionMaxLength,
     });
     req.log.addAction("Inputs valid.");
 
@@ -213,7 +226,6 @@ router.post("/", async (req, res, next) => {
         "communityDescription",
         "url",
       ]);
-      console.log(notifyUsers);
       if (notifyUsers.length > 1) {
         bulkNotify(
           notifyUsers,
@@ -414,9 +426,10 @@ router.patch("/:title", async (req, res, next) => {
     // Trim extra spaces
     req.log.addAction("Trimming extra spaces from inputs in request body.");
     req.body.title = trimExtraSpaces(req.body.title);
-    req.log.addAction(`title trimmed: ${req.body.title}`);
     req.body.description = trimExtraSpaces(req.body.description);
-    req.log.addAction(`description trimmed: ${req.body.description}`);
+    req.log.addAction(
+      `Extra spaces trimmed. title: ${req.body.title}, description: ${req.body.description}`
+    );
 
     req.log.addAction("Validating inputs.");
     validateCommunityInputs(req.body, options);

@@ -23,6 +23,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs"); // hashing passwords
+const axios = require("axios").default;
 const moment = require("moment");
 
 const generateRefreshToken = require("../functions/auth/generateRefreshToken");
@@ -105,6 +106,38 @@ router.get("/", async (req, res, next) => {
       secure: true,
       sameSite: "None",
     });
+
+    // GC Notify
+    if (process.env.ENABLE_GC_NOTIFY === "true") {
+      req.log.addAction("Sending gcNotify request.");
+      try {
+        await axios({
+          method: "post",
+          url: "https://api.notification.canada.ca/v2/notifications/email",
+          headers: {
+            Authorization: `ApiKey-v1 ${process.env.GC_NOTIFY_API_KEY_SECRET}`,
+            "Content-Type": "application/json",
+          },
+          data: {
+            email_address: req.body.email,
+            template_id: process.env.GC_NOTIFY_REGISTRATION_TEMPLATE,
+          },
+        });
+        if (process.env.ENABLE_GC_NOTIFY_TRIAL_MODE) {
+          // Trial mode requires users be in a mailing list before they can receive emails
+          req.log.addAction("Setting isInMailingList for user to true.");
+          await User.updateOne(
+            { username: req.body.username },
+            { $set: { isInMailingList: true } }
+          );
+        }
+        req.log.addAction("gcNotify request sent.");
+      } catch (err) {
+        req.log.addAction(
+          "gcNotify could not complete. Email is most likely not included in the email list on gcNotify."
+        );
+      }
+    }
 
     return res.redirect(frontendURI);
   } catch (err) {

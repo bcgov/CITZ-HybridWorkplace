@@ -23,6 +23,8 @@
 const express = require("express");
 const ResponseError = require("../../classes/responseError");
 const findSingleDocuments = require("../../functions/findSingleDocuments");
+const trimExtraSpaces = require("../../functions/trimExtraSpaces");
+const getOptions = require("../../functions/getOptions");
 
 const router = express.Router();
 
@@ -74,6 +76,15 @@ router.put("/:title", async (req, res, next) => {
     });
     req.log.addAction("User and community found.");
 
+    req.log.addAction("Finding options.");
+    const {
+      ruleMinLength,
+      ruleMaxLength,
+      ruleDescriptionMinLength,
+      ruleDescriptionMaxLength,
+    } = await getOptions("community");
+    req.log.addAction("Options found.");
+
     req.log.addAction("Checking user is creator of community.");
     if (user.id !== community.creator)
       throw new ResponseError(
@@ -81,6 +92,44 @@ router.put("/:title", async (req, res, next) => {
         "Only creator of community can edit community."
       );
     req.log.addAction("User is creator of community.");
+
+    // Validate rules
+    req.log.addAction("Validating rules.");
+    if (req.body.rules && req.body.rules instanceof Object) {
+      Object.keys(req.body.rules).forEach((ruleObject) => {
+        // Trim extra spaces
+        req.body.rules[ruleObject].rule = trimExtraSpaces(
+          req.body.rules[ruleObject].rule
+        );
+        req.body.rules[ruleObject].description = trimExtraSpaces(
+          req.body.rules[ruleObject].description
+        );
+
+        // Validate rule length
+        if (
+          req.body.rules[ruleObject].rule.length < ruleMinLength ||
+          req.body.rules[ruleObject].rule.length > ruleMaxLength
+        )
+          throw new ResponseError(
+            403,
+            `Rules (${req.body.rules[ruleObject].rule}) must have a length of ${ruleMinLength}-${ruleMaxLength}`
+          );
+
+        // Validate rule description length
+        if (
+          req.body.rules[ruleObject].description &&
+          (req.body.rules[ruleObject].description.length <
+            ruleDescriptionMinLength ||
+            req.body.rules[ruleObject].description.length >
+              ruleDescriptionMaxLength)
+        )
+          throw new ResponseError(
+            403,
+            `Rules (${req.body.rules[ruleObject].rule}) description must have a length of ${ruleDescriptionMinLength}-${ruleDescriptionMaxLength}`
+          );
+      });
+    }
+    req.log.addAction("Rules are valid.");
 
     req.log.addAction("Updating community rules.");
     await Community.updateOne(
