@@ -14,5 +14,8 @@
   },
   "dependencies": {
     "dotenv": "^16.0.1"
+  },
+  "scripts": {
+    "dev": "docker-compose -f docker-compose-dev.yaml up -d --build"
   }
 }
