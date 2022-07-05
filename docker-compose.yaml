@@ -64,7 +64,7 @@ services:
       interval: 20s
       timeout: 30s
       retries: 10
-      start_period: 120s
+      start_period: 60s
 
 networks:
   hwp-network:
