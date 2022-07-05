@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* 
  Copyright © 2022 Province of British Columbia
 
@@ -37,6 +38,12 @@ const validateCommunityInputs = (reqBody, options) => {
     descriptionMaxLength,
     tagMinLength,
     tagMaxLength,
+    tagDescriptionMinLength,
+    tagDescriptionMaxLength,
+    ruleMinLength,
+    ruleMaxLength,
+    ruleDescriptionMinLength,
+    ruleDescriptionMaxLength,
   } = options;
 
   // Validate title
@@ -66,16 +73,22 @@ const validateCommunityInputs = (reqBody, options) => {
   )
     throw new ResponseError(403, descriptionError);
 
-  // TODO: Validate tag desc once implemented
   // Validate and trim tags
   if (reqBody.tags && reqBody.tags instanceof Object) {
     Object.keys(reqBody.tags).forEach((tagObject) => {
+      // Check for setting count
+      if (reqBody.tags[tagObject].count)
+        throw new ResponseError(403, `Not allowed to set count on tags.`);
+
       // Trim extra spaces
-      // eslint-disable-next-line no-param-reassign
       reqBody.tags[tagObject].tag = trimExtraSpaces(
         reqBody.tags[tagObject].tag
       );
-      // Validate length
+      reqBody.tags[tagObject].description = trimExtraSpaces(
+        reqBody.tags[tagObject].description
+      );
+
+      // Validate tag length
       if (
         reqBody.tags[tagObject].tag.length < tagMinLength ||
         reqBody.tags[tagObject].tag.length > tagMaxLength
@@ -84,10 +97,52 @@ const validateCommunityInputs = (reqBody, options) => {
           403,
           `Tags (${reqBody.tags[tagObject].tag}) must have a length of ${tagMinLength}-${tagMaxLength}`
         );
+
+      // Validate tag description length
+      if (
+        reqBody.tags[tagObject].description.length < tagDescriptionMinLength ||
+        reqBody.tags[tagObject].description.length > tagDescriptionMaxLength
+      )
+        throw new ResponseError(
+          403,
+          `Tags (${reqBody.tags[tagObject].tag}) description must have a length of ${tagDescriptionMinLength}-${tagDescriptionMaxLength}`
+        );
     });
   }
 
-  // TODO: Validate rules when rules have been reworked to use a list
+  // Validate rules
+  if (reqBody.rules && reqBody.rules instanceof Object) {
+    Object.keys(reqBody.rules).forEach((ruleObject) => {
+      // Trim extra spaces
+      reqBody.rules[ruleObject].rule = trimExtraSpaces(
+        reqBody.rules[ruleObject].rule
+      );
+      reqBody.rules[ruleObject].description = trimExtraSpaces(
+        reqBody.rules[ruleObject].description
+      );
+
+      // Validate rule length
+      if (
+        reqBody.rules[ruleObject].rule.length < ruleMinLength ||
+        reqBody.rules[ruleObject].rule.length > ruleMaxLength
+      )
+        throw new ResponseError(
+          403,
+          `Rules (${reqBody.rules[ruleObject].rule}) must have a length of ${ruleMinLength}-${ruleMaxLength}`
+        );
+
+      // Validate rule description length
+      if (
+        reqBody.rules[ruleObject].description.length <
+          ruleDescriptionMinLength ||
+        reqBody.rules[ruleObject].description.length > ruleDescriptionMaxLength
+      )
+        throw new ResponseError(
+          403,
+          `Rules (${reqBody.rules[ruleObject].rule}) description must have a length of ${ruleDescriptionMinLength}-${ruleDescriptionMaxLength}`
+        );
+    });
+  }
 };
 
 module.exports = validateCommunityInputs;

@@ -23,6 +23,8 @@
 const express = require("express");
 const ResponseError = require("../../classes/responseError");
 const findSingleDocuments = require("../../functions/findSingleDocuments");
+const trimExtraSpaces = require("../../functions/trimExtraSpaces");
+const getOptions = require("../../functions/getOptions");
 
 const router = express.Router();
 
@@ -91,14 +93,20 @@ router.get("/:title", async (req, res, next) => {
  *          name: title
  *          schema:
  *            $ref: '#/components/schemas/Community/properties/title'
- *        - in: query
- *          required: true
- *          name: tag
- *          schema:
- *            $ref: '#/components/schemas/Community/properties/tags/items/properties/tag'
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                tag:
+ *                  $ref: '#/components/schemas/Community/properties/tags/items/properties/tag'
+ *                description:
+ *                  $ref: '#/components/schemas/Community/properties/tags/items/properties/description'
  *      responses:
  *        '404':
- *          description: User not found. **||** <br>Community not found. **||** <br>Tag not found in query.
+ *          description: User not found. **||** <br>Community not found.
  *        '403':
  *          description: A community can't have more than 7 tags. **||** <br>No duplicate tags. **||** <br>Only creator of community can edit community.
  *        '204':
@@ -117,9 +125,44 @@ router.post("/:title", async (req, res, next) => {
     });
     req.log.addAction("User and community found.");
 
-    req.log.addAction("Checking tag query.");
-    if (!req.query.tag || req.query.tag === "")
-      throw new ResponseError(404, "Tag not found in query.");
+    req.log.addAction("Finding options.");
+    const {
+      tagMinLength,
+      tagMaxLength,
+      tagDescriptionMinLength,
+      tagDescriptionMaxLength,
+    } = await getOptions("community");
+    req.log.addAction("Options found.");
+
+    // Trim extra spaces
+    req.log.addAction("Trimming extra spaces.");
+    req.body.tag = trimExtraSpaces(req.body.tag);
+    req.body.description = trimExtraSpaces(req.body.description);
+    req.log.addAction(
+      `Extra spaces trimmed. tag: ${req.body.tag}, description: ${req.body.description}`
+    );
+
+    req.log.addAction("Validating tag and description.");
+    // Validate tag length
+    if (
+      req.body.tag.length < tagMinLength ||
+      req.body.tag.length > tagMaxLength
+    )
+      throw new ResponseError(
+        403,
+        `Tags (${req.body.tag}) must have a length of ${tagMinLength}-${tagMaxLength}`
+      );
+
+    // Validate tag description length
+    if (
+      req.body.description.length < tagDescriptionMinLength ||
+      req.body.description.length > tagDescriptionMaxLength
+    )
+      throw new ResponseError(
+        403,
+        `Tags (${req.body.tag}) description must have a length of ${tagDescriptionMinLength}-${tagDescriptionMaxLength}`
+      );
+    req.log.addAction("Tag and description are valid.");
 
     req.log.addAction("Checking user is creator of community.");
     if (user.id !== community.creator)
@@ -151,7 +194,15 @@ router.post("/:title", async (req, res, next) => {
     req.log.addAction("Updating community tags.");
     await Community.updateOne(
       { title: community.title },
-      { $push: { tags: { tag: req.query.tag, count: 0 } } }
+      {
+        $push: {
+          tags: {
+            tag: req.body.tag,
+            description: req.body.description,
+            count: 0,
+          },
+        },
+      }
     );
     req.log.addAction("Community tags updated.");
 
