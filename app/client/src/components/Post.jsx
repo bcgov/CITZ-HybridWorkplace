@@ -42,21 +42,6 @@ const Post = (props) => {
 
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const [commNameHover, setCommNameHover] = useState(false);
-  const onCommNameHoverEnter = () => {
-    setCommNameHover(true);
-  };
-  const onCommNameHoverLeave = () => {
-    setCommNameHover(false);
-  };
-
-  const [cardHover, setCardHover] = useState(false);
-  const onCardHoverEnter = () => {
-    setCardHover(true);
-  };
-  const onCardHoverLeave = () => {
-    setCardHover(false);
-  };
   let { id } = useParams();
 
   const navigate = useNavigate();
@@ -83,6 +68,7 @@ const Post = (props) => {
   const handlePostClick = () =>
     !props.isPostPage && navigate(`/post/${post._id}`);
   const handleCommunityClick = (title) => navigate(`/community/${title}`);
+  const handlePostCreatorClick = (creator) => navigate(`/profile/${creator}`);
 
   // Create preview if post message has more than maxMessageLines lines
   let message = post.message;
@@ -127,8 +113,6 @@ const Post = (props) => {
         }}
         variant="outlined"
         square
-        onMouseEnter={onCardHoverEnter}
-        onMouseLeave={onCardHoverLeave}
       >
         <CardHeader
           sx={{ backgroundColor: "#0072A2", color: "white", py: 1 }}
@@ -190,12 +174,12 @@ const Post = (props) => {
                 <Typography
                   onClick={() => handleCommunityClick(post.community)}
                   sx={{
-                    cursor: "pointer",
-                    textDecoration: commNameHover ? "underline" : "",
-                    textAlign: "right",
+                    ":hover": {
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                    },
                   }}
-                  onMouseEnter={onCommNameHoverEnter}
-                  onMouseLeave={onCommNameHoverLeave}
+                  align="right"
                 >
                   {post.community.length > maxCommunityTitleLength
                     ? post.community.substring(0, maxCommunityTitleLength) +
@@ -206,7 +190,21 @@ const Post = (props) => {
             </Grid>
           }
           subheader={
-            <Typography color="white">by {props.post.creatorName}</Typography>
+            <Typography color="white">
+              {"by "}
+              <Box
+                sx={{
+                  display: "inline-block",
+                  ":hover": {
+                    textDecoration: "underline",
+                    cursor: "pointer",
+                  },
+                }}
+                onClick={() => handlePostCreatorClick(props.post.creatorName)}
+              >
+                {props.post.creatorName}
+              </Box>
+            </Typography>
           }
         />
         <CardContent
