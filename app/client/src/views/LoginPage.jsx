@@ -84,19 +84,18 @@ function LoginPage(props) {
                 </Typography>
               </Stack>
 
-              <Stack spacing={1}>
+              <Stack spacing={1} sx={{ paddingBottom: 5 }}>
                 <Typography variant="body1" align="right">
                   Have IDIR?
                 </Typography>
-                <Stack direction="row" spacing={3}>
-                  <Button
-                    variant="contained"
-                    onClick={onLoginClick}
-                    color={isDarkMode ? "secondary" : "primary"}
-                  >
-                    Login
-                  </Button>
-                </Stack>
+
+                <Button
+                  variant="contained"
+                  onClick={onLoginClick}
+                  color={isDarkMode ? "secondary" : "primary"}
+                >
+                  Login
+                </Button>
               </Stack>
             </Stack>
           </Stack>
