@@ -66,7 +66,7 @@ router.get("/", async (req, res, next) => {
         notificationFrequency: "none",
         firstName: decoded.given_name,
         lastName: decoded.family_name,
-        organization: ministry[0],
+        ministry: ministry[0],
       });
       req.log.addAction("Adding user to Welcome community.");
       await Community.updateOne(
