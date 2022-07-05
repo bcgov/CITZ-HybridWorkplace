@@ -68,7 +68,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Paper style={{ minHeight: "100vh" }}>
+      <Paper style={{ minHeight: "100vh" }} sx={{ boxShadow: 0 }}>
         <Provider store={store}>
           <div>
             <Header />

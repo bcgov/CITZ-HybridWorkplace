@@ -14,71 +14,148 @@
 // limitations under the License.
 //
 
+import { Button, Grid, Stack, Typography } from "@mui/material";
+import { Box } from "@mui/system";
+import { connect } from "react-redux";
+import BCLogo from "../layout/icons/BC-government-logo-NEW.jpg";
+import { useTheme } from "@emotion/react";
+import MarkEmailUnreadTwoToneIcon from "@mui/icons-material/MarkEmailUnreadTwoTone";
+import GroupsTwoToneIcon from "@mui/icons-material/GroupsTwoTone";
+import { login } from "../redux/ducks/authDuck";
 /**
  * Application entry point
  * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
  * @module
  */
 
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { connect } from "react-redux";
-import { login } from "../redux/ducks/authDuck";
-import "../views/Styles/login.css";
-
 function LoginPage(props) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
 
-  async function loginUser(event) {
-    event.preventDefault();
-    const successful = await props.login(username, password);
-    if (successful === true) navigate("/");
-  }
+  const onLoginClick = () => {
+    props.login();
+  };
 
   return (
-    <div className="LogIn">
-      <h1>Login</h1>
-      <br />
-      <form onSubmit={loginUser}>
-        <div className="inputWrap">
-          <label>IDIR:</label>
-          <br />
-          <input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            type="name"
-            placeholder="ID"
-            className="divBox"
-          />
-        </div>
-        <br />
+    <div
+      style={{
+        width: "100vw",
+        top: "71px",
+        left: 0,
+        position: "absolute",
+      }}
+    >
+      <Stack spacing={6}>
+        <Box
+          sx={{
+            backgroundColor: isDarkMode
+              ? "rgba(0, 51, 102, .75)"
+              : "rgba(220, 220, 220, .5)",
+            minHeight: "45vh",
+            borderBottomLeftRadius: "70% 10%",
+            borderBottomRightRadius: "70% 10%",
+            boxShadow: "none !important",
+          }}
+        >
+          <Stack>
+            <Stack
+              alignItems="center"
+              justifyContent="center"
+              spacing={8}
+              sx={{ paddingTop: 10 }}
+            >
+              <Stack>
+                <Typography variant="h3" align="center">
+                  Welcome to
+                </Typography>
+                <Typography
+                  variant="h3"
+                  sx={{
+                    color: isDarkMode
+                      ? theme.palette.secondary.main
+                      : theme.palette.primary.main,
+                  }}
+                  align="center"
+                >
+                  The Neighbourhood
+                </Typography>
+                <Typography variant="h6" align="center">
+                  BCGov's Hybrid Workplace Solution
+                </Typography>
+              </Stack>
 
-        <div className="inputWrap">
-          <label>Password:</label>
-          <br />
-          <input
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
-            placeholder="Password"
-            className="divBox"
-          />
-        </div>
-        <br />
-        <br />
-        <input type="submit" value="Submit" id="submit" />
-      </form>
-      <Link to="/register" id="link">
-        Forgot Password?
-      </Link>
-      <br />
-      <br />
-      <br />
-      <Link to="/register" id="link">
-        Sign Up
-      </Link>
+              <Stack spacing={1} sx={{ paddingBottom: 5 }}>
+                <Typography variant="body1" align="right">
+                  Have IDIR?
+                </Typography>
+
+                <Button
+                  variant="contained"
+                  onClick={onLoginClick}
+                  color={isDarkMode ? "secondary" : "primary"}
+                >
+                  Login
+                </Button>
+              </Stack>
+            </Stack>
+          </Stack>
+        </Box>
+        <Grid
+          container
+          justifyContent="space-around"
+          alignItems="space-around"
+          direction="row"
+        >
+          <Grid item xs={12} md={4}>
+            <Stack alignItems="center" spacing={2}>
+              <MarkEmailUnreadTwoToneIcon fontSize="large" />
+              <Stack>
+                <Typography variant="h5" align="center">
+                  {"Receive custom email"}
+                </Typography>
+                <Typography variant="h5" align="center">
+                  {"digests at the timing"}
+                </Typography>
+                <Typography variant="h5" align="center">
+                  {"of your choice."}
+                </Typography>
+              </Stack>
+            </Stack>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Stack alignItems="center" spacing={2}>
+              <img
+                src={BCLogo}
+                style={{ maxWidth: "50px", borderRadius: "50%" }}
+              />
+              <Stack>
+                <Typography variant="h5" align="center">
+                  {"Created specifically for"}
+                </Typography>{" "}
+                <Typography variant="h5" align="center">
+                  {"BC Government employees."}
+                </Typography>{" "}
+              </Stack>
+            </Stack>
+          </Grid>
+          <Grid item xs={12} md={4} sx={{ paddingBottom: "10%" }}>
+            <Stack alignItems="center" spacing={2}>
+              <GroupsTwoToneIcon fontSize="large" />
+              <Stack>
+                <Typography variant="h5" align="center">
+                  {"Learn best practices and"}
+                </Typography>
+                <Typography variant="h5" align="center">
+                  {"interact with experts in"}
+                </Typography>
+                <Typography variant="h5" align="center">
+                  {"topic-specific communities."}
+                </Typography>
+              </Stack>
+            </Stack>
+          </Grid>
+        </Grid>
+      </Stack>
     </div>
   );
 }
