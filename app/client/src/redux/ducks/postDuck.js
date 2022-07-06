@@ -24,6 +24,7 @@ import { createSuccess, createError } from "./alertDuck";
 import hwp_axios from "../../axiosInstance";
 
 export const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_POSTS";
+const SET_USER_POSTS = "CITZ-HYBRIDWORKPLACE/POST/SET_USER_POSTS";
 const GET_POST = "CITZ-HYBRIDWORKPLACE/POST/GET_POST";
 const ADD_POST = "CITZ-HYBRIDWORKPLACE/POST/ADD_POST";
 const REMOVE_POST = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_POST";
@@ -77,6 +78,32 @@ export const getPosts = () => async (dispatch, getState) => {
     dispatch({
       type: GET_POSTS,
       payload: posts,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
+export const getUserPosts = (postCreator) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const token = getState().auth.accessToken;
+    if (!token) throw new Error(noTokenText);
+
+    const response = await hwp_axios.get(`/api/post?username=${postCreator}`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      params: {
+        dispatch,
+      },
+    });
+    dispatch({
+      type: SET_USER_POSTS,
+      payload: response.data,
     });
   } catch (err) {
     console.error(err);
@@ -636,6 +663,7 @@ export const removeCommentVote =
   };
 
 const initialState = {
+  userPosts: [], // user posts
   items: [], //posts
   item: {}, //single post
 };
@@ -646,6 +674,11 @@ export function postReducer(state = initialState, action) {
       return {
         ...state,
         items: action.payload,
+      };
+    case SET_USER_POSTS:
+      return {
+        ...state,
+        userPosts: action.payload,
       };
     case GET_POST:
       return {

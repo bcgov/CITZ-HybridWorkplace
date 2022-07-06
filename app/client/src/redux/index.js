@@ -16,7 +16,7 @@
 
 /**
  * Application entry point
- * @author [Zach Bouruqe](zachbourque01@gmail.com)
+ * @author [Zach Bourque](zachbourque01@gmail.com)
  * @module
  */
 

@@ -70,7 +70,7 @@ const JoinButton = (props) => {
           variant="contained"
           size="small"
           disabled={isInCommunity}
-          sx={{ backgroundColor: "#0072A2" }}
+          sx={{ backgroundColor: "success.main" }}
         >
           <Typography sx={{ fontSize: "12px", textTransform: "none" }}>
             <b>Join</b>

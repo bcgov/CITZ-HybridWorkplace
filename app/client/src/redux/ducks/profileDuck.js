@@ -20,9 +20,15 @@
  * @module
 
  */
+import { createSuccess, createError } from "./alertDuck";
 import hwp_axios from "../../axiosInstance";
 
-const SET_USER = "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_USER";
+const SET_USER = "CITZ-HYBRIDWORKPLACE/PROFILE/SET_USER";
+const EDIT_USER_INFO = "CITZ-HYBRIDWORKPLACE/PROFILE/EDIT_USER_INFO";
+const EDIT_USER_BIO = "CITZ-HYBRIDWORKPLACE/PROFILE/EDIT_USER_BIO";
+const EDIT_USER_INTERESTS = "CITZ-HYBRIDWORKPLACE/PROFILE/EDIT_USER_INTERESTS";
+const EDIT_USER_NOTIFICATIONS =
+  "CITZ-HYBRIDWORKPLACE/PROFILE/EDIT_USER_NOTIFICATIONS";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
@@ -53,6 +59,150 @@ export const getProfile = (username) => async (dispatch, getState) => {
   }
 };
 
+export const editUserInfo = (userChanges) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const authState = getState().auth;
+    const token = authState.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await hwp_axios.patch(
+      `/api/user`,
+      {
+        ...userChanges,
+      },
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        params: {
+          dispatch,
+        },
+      }
+    );
+    dispatch({
+      type: EDIT_USER_INFO,
+      payload: userChanges,
+    });
+    createSuccess(`Successfully Edited Post`)(dispatch);
+  } catch (err) {
+    console.error(err);
+    successful = false;
+    createError("Unexpected error occurred")(dispatch);
+  } finally {
+    return successful;
+  }
+};
+
+export const editUserBio = (userChanges) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const authState = getState().auth;
+    const token = authState.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await hwp_axios.patch(
+      `/api/user`,
+      { ...userChanges },
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        params: {
+          dispatch,
+        },
+      }
+    );
+    dispatch({
+      type: EDIT_USER_BIO,
+      payload: userChanges,
+    });
+    createSuccess(`Successfully Edited Post`)(dispatch);
+  } catch (err) {
+    console.error(err);
+    successful = false;
+    createError("Unexpected error occurred")(dispatch);
+  } finally {
+    return successful;
+  }
+};
+
+export const editUserInterests =
+  (userChanges) => async (dispatch, getState) => {
+    let successful = true;
+    try {
+      const authState = getState().auth;
+      const token = authState.accessToken;
+
+      if (!token) throw new Error(noTokenText);
+
+      const response = await hwp_axios.patch(
+        `/api/user`,
+        {
+          ...userChanges,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          params: {
+            dispatch,
+          },
+        }
+      );
+      dispatch({
+        type: EDIT_USER_INTERESTS,
+        payload: userChanges,
+      });
+      createSuccess(`Successfully Edited Post`)(dispatch);
+    } catch (err) {
+      console.error(err);
+      successful = false;
+      createError("Unexpected error occurred")(dispatch);
+    } finally {
+      return successful;
+    }
+  };
+
+export const editUserNotifications =
+  (userChanges) => async (dispatch, getState) => {
+    let successful = true;
+    try {
+      const authState = getState().auth;
+      const token = authState.accessToken;
+
+      if (!token) throw new Error(noTokenText);
+
+      const response = await hwp_axios.patch(
+        `/api/user`,
+        {
+          ...userChanges,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          params: {
+            dispatch,
+          },
+        }
+      );
+      dispatch({
+        type: EDIT_USER_NOTIFICATIONS,
+        payload: userChanges,
+      });
+      createSuccess(`Successfully Edited Post`)(dispatch);
+    } catch (err) {
+      console.error(err);
+      successful = false;
+      createError("Unexpected error occurred")(dispatch);
+    } finally {
+      return successful;
+    }
+  };
+
 const initialState = {
   user: {}, //single profile
 };
@@ -62,6 +212,37 @@ export function profileReducer(state = initialState, action) {
     case SET_USER:
       return {
         user: action.payload,
+      };
+    case EDIT_USER_INFO:
+      return {
+        user: {
+          ...state.user,
+          firstName: action.payload.firstName,
+          lastName: action.payload.lastName,
+          title: action.payload.title,
+          ministry: action.payload.ministry,
+        },
+      };
+    case EDIT_USER_BIO:
+      return {
+        user: {
+          ...state.user,
+          bio: action.payload.bio,
+        },
+      };
+    case EDIT_USER_INTERESTS:
+      return {
+        user: {
+          ...state.user,
+          interests: action.payload.interests,
+        },
+      };
+    case EDIT_USER_NOTIFICATIONS:
+      return {
+        user: {
+          ...state.user,
+          notificationFrequency: action.payload.notificationFrequency,
+        },
       };
     default:
       return state;
