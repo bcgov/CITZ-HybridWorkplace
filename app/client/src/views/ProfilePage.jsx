@@ -38,6 +38,8 @@ import SettingsModal from "../components/modals/SettingsModal";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import moment from "moment";
+import EditAvatarModal from "../components/modals/EditAvatarModal";
+import { openEditAvatarModal } from "../redux/ducks/modalDuck";
 
 import {
   Grid,
@@ -47,6 +49,9 @@ import {
   Chip,
   Stack,
   IconButton,
+  Divider,
+  Switch,
+  Button,
 } from "@mui/material";
 
 import { default as BackArrow } from "@mui/icons-material/ArrowBackIosNewRounded";
@@ -62,38 +67,12 @@ import EditUserInterestsModal from "../components/modals/EditUserInterestsModal"
 
 const ProfilePage = (props) => {
   let { username } = useParams();
-  const maxCommunityTitleLength = 12;
 
   useEffect(() => {
     props.getProfile(username);
     props.getUsersCommunities();
     props.getUserPosts(username);
   }, []);
-
-  const convertDate = (date) => {
-    const today = moment().format("MMMM Do YYYY");
-    const yesterday = moment().subtract(1, "days").format("MMMM Do YYYY");
-
-    // Convert to local time
-    let convertedDate =
-      moment(moment.utc(date, "MMMM Do YYYY, h:mm:ss a").toDate())
-        .local()
-        .format("MMMM Do YYYY, h:mm:ss a") || "";
-    // Remove milliseconds
-    convertedDate = `${convertedDate.substring(
-      0,
-      convertedDate.length - 6
-    )} ${convertedDate.substring(
-      convertedDate.length - 2,
-      convertedDate.length
-    )}`;
-    const splitDate = convertedDate.split(",");
-
-    if (splitDate[0] === today) convertedDate = `Today,${splitDate[1]}`;
-    if (splitDate[0] === yesterday) convertedDate = `Yesterday,${splitDate[1]}`;
-
-    return convertedDate;
-  };
 
   const handleEditBioClick = (userBio) => props.openEditUserBioModal(userBio);
 
@@ -120,14 +99,12 @@ const ProfilePage = (props) => {
         gap={1}
       >
         <Grid item xs={2} mr={5}>
+          <Button onClick={() => props.openEditAvatarModal()}>Me</Button>
           <Avatar
-            sx={{
-              width: 150,
-              height: 150,
-              mb: 1,
-            }}
+            sx={{ width: 150, height: 150, mb: 1 }}
             src="https://source.unsplash.com/random/150×150/?profile%20picture"
           />
+          <EditAvatarModal avatar={"a"} />
           <ProfileInfo username={username} />
           <Stack direction="column" spacing={1} width="20vw">
             <Stack direction="row" spacing={0.5} alignItems="center">
@@ -238,6 +215,7 @@ const mapActionsToProps = {
   openSettingsModal,
   openEditUserBioModal,
   openEditUserInterestsModal,
+  openEditAvatarModal,
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(ProfilePage);
