@@ -99,6 +99,7 @@ jobs:
       - name: Wait for API container
         uses: stringbean/docker-healthcheck-action@v1
         continue-on-error: true
+        id: api-healthcheck
         with:
           container: hwp-api
           wait-time: 60
@@ -109,10 +110,16 @@ jobs:
         run: |
           docker logs hwp-api
 
+      - name: Stop if API failed
+        if: steps.api-healthcheck.outcome == 'failure'
+        run: |
+          exit 1
+
     # Run tests
       - name: Run test command
         working-directory: ./app/server
         continue-on-error: true
+        needs: 
         run: |
           npm test -- --json > tempResults
 
