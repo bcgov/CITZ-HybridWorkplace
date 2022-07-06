@@ -48,6 +48,8 @@ const EditUserBioModal = (props) => {
   const saveEdits = async () => {
     const userChanges = {
       bio,
+      title: props.profile.title,
+      ministry: props.profile.ministry,
     };
 
     const successful = await props.editUserBio(userChanges);
@@ -104,6 +106,7 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
   open: state.modal.editUserBio.open,
   userBio: state.modal.editUserBio.userBio,
+  profile: state.profile.user,
 });
 
 const mapActionsToProps = {

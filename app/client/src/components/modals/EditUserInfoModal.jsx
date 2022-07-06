@@ -58,6 +58,7 @@ const EditUserInfoModal = (props) => {
       lastName,
       title,
       ministry,
+      bio: user.bio,
     };
     console.log(userChanges);
 

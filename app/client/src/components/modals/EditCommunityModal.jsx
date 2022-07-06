@@ -28,19 +28,7 @@ import {
   DialogTitle,
   Stack,
   TextField,
-<<<<<<< HEAD
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   Typography,
-  InputLabel,
-=======
-  Typography,
->>>>>>> 29ce40e (HWP-421: Overhaul Profile Page & Associated Components)
 } from "@mui/material";
 import { closeEditCommunityModal } from "../../redux/ducks/modalDuck";
 import { createError } from "../../redux/ducks/alertDuck";
@@ -48,17 +36,12 @@ import { editCommunity } from "../../redux/ducks/communityDuck";
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AddIcon from "@mui/icons-material/Add";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const EditCommunityModal = (props) => {
   const navigate = useNavigate();
   const [title, setTitle] = useState(props.community.title);
   const [description, setDescription] = useState(props.community.description);
-
   const [rules, setRules] = useState(props.community.rules);
-  const [rule, setRule] = useState("");
-  const [ruleDesc, setRuleDesc] = useState("");
 
   useEffect(() => {
     setTitle(props.community.title);
@@ -78,6 +61,10 @@ const EditCommunityModal = (props) => {
 
   const onDescriptionChange = (e) => {
     setDescription(e.target.value);
+  };
+
+  const onRulesChange = (e) => {
+    setRules(e.target.value);
   };
 
   const makeChangesObject = (commTitle, commDescription, commRules) => {
@@ -107,14 +94,6 @@ const EditCommunityModal = (props) => {
       navigate(`/community/${changes.title || changes.oldTitle}`);
       document.location.reload();
     }
-  };
-
-  const addRule = () => {
-    let updatedRules = rules;
-    updatedRules.push({ rule, description: ruleDesc });
-    setRules(updatedRules);
-    setRule("");
-    setRuleDesc("");
   };
 
   return (
@@ -165,108 +144,6 @@ const EditCommunityModal = (props) => {
             }
             helperText="Description must be between 1-300 characters in length."
           />
-<<<<<<< HEAD
-          <Stack sx={{ mb: 2 }}>
-            <InputLabel htmlFor="create-community-rules">
-              Community Rules
-            </InputLabel>
-
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                Set rules for community members to follow.
-              </AccordionSummary>
-              <AccordionDetails>
-                <List
-                  sx={{
-                    overflow: "auto",
-                    maxHeight: 300,
-                    border: "solid",
-                    borderRadius: "5px",
-                    borderColor: "#D0D0D0",
-                  }}
-                >
-                  {rules &&
-                    rules.map((obj) => (
-                      <ListItem key={rules.indexOf(obj)} sx={{ py: 0 }}>
-                        <ListItemText
-                          primary={
-                            <>
-                              <Typography>
-                                {rules.indexOf(obj) + 1}. {obj.rule}
-                              </Typography>
-                              <Typography sx={{ pl: 2, color: "#999999" }}>
-                                {obj.description}
-                              </Typography>
-                            </>
-                          }
-                        />
-                      </ListItem>
-                    ))}
-                  {rules && rules.length > 0 && (
-                    <Divider variant="middle" sx={{ pt: 3 }} />
-                  )}
-                  <ListItem key={"input-rules"}>
-                    <Stack spacing={1} width="1">
-                      <Typography>Add a new rule:</Typography>
-                      <TextField
-                        id="create-community-rule"
-                        value={rule}
-                        onChange={(e) => setRule(e.target.value)}
-                        type="text"
-                        multiline
-                        maxRows={3}
-                        placeholder="New rule"
-                        error={
-                          rule === "" || (rule.length >= 3 && rule.length <= 50)
-                            ? false
-                            : true
-                        }
-                        helperText="Rule must be 3-50 characters in length."
-                        sx={{ width: 0.95 }}
-                      />
-                      <TextField
-                        id="create-community-rule-desc"
-                        value={ruleDesc}
-                        onChange={(e) => setRuleDesc(e.target.value)}
-                        type="text"
-                        multiline
-                        maxRows={3}
-                        placeholder="Add a description"
-                        error={
-                          ruleDesc === "" || ruleDesc.length <= 200
-                            ? false
-                            : true
-                        }
-                        helperText="Rule description must be less than 200 characters in length."
-                        sx={{ width: 0.95 }}
-                      />
-                      <Button onClick={addRule} sx={{ width: 0.1 }}>
-                        <Typography>Add</Typography>
-                        <AddIcon />
-                      </Button>
-                    </Stack>
-                  </ListItem>
-                </List>
-              </AccordionDetails>
-            </Accordion>
-          </Stack>
-
-          <Button
-            variant="contained"
-            disabled={
-              (title &&
-                description &&
-                rules &&
-                (title.length < 3 ||
-                  title.length > 25 ||
-                  description.length > 300)) ||
-              !rules
-            }
-            onClick={onSubmit}
-          >
-            Edit Community
-          </Button>
-=======
           <TextField
             onChange={onRulesChange}
             name="rules"
@@ -305,7 +182,6 @@ const EditCommunityModal = (props) => {
               </Button>
             </Stack>
           </DialogActions>
->>>>>>> 29ce40e (HWP-421: Overhaul Profile Page & Associated Components)
         </Stack>
       </DialogContent>
     </Dialog>
