@@ -31,8 +31,11 @@ import { connect } from "react-redux";
 import moment from "moment";
 import CommentReply from "./CommentReply";
 import CommentRepliesList from "./CommentRepliesList";
+import { useNavigate } from "react-router-dom";
 
 export const Comment = (props) => {
+  const navigate = useNavigate();
+
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleDeleteCommentClick = () => {
@@ -88,6 +91,8 @@ export const Comment = (props) => {
   const closeReply = () => {
     setReplyOpen(false);
   };
+  const handleCommentCreatorClick = (creator) =>
+    navigate(`/profile/${creator}`);
 
   return (
     <Grid container justifyContent="flex-end">
@@ -95,12 +100,36 @@ export const Comment = (props) => {
         <Card style={{ margin: 10 }}>
           <CardHeader
             title={
-              <Typography variant="h5">
+              <Typography
+                variant="h5"
+                sx={{
+                  display: "inline-block",
+                  ":hover": {
+                    textDecoration: "underline",
+                    cursor: "pointer",
+                  },
+                }}
+                onClick={() =>
+                  handleCommentCreatorClick(props.comment.creatorName)
+                }
+              >
                 {props.comment.creatorName || "Unknown Commenter"}
               </Typography>
             }
             subheader={<Typography fontSize="small">{createdOn}</Typography>}
-            avatar={<Avatar fontSize="medium" />}
+            avatar={
+              <Avatar
+                fontSize="medium"
+                sx={{
+                  ":hover": {
+                    cursor: "pointer",
+                  },
+                }}
+                onClick={() =>
+                  handleCommentCreatorClick(props.comment.creatorName)
+                }
+              />
+            }
             action={
               props.userId === props.comment.creator && (
                 <>

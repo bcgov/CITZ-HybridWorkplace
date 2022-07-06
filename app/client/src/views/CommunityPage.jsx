@@ -37,7 +37,7 @@ import SettingsTwoToneIcon from "@mui/icons-material/SettingsTwoTone";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { connect } from "react-redux";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import PostsList from "../components/PostsList";
 import PostModal from "../components/modals/AddPostModal";
@@ -54,6 +54,7 @@ import {
 
 const CommunityPage = (props) => {
   const { communities } = props;
+  const navigate = useNavigate();
   const [show, setShow] = useState(false);
 
   const { title } = useParams();
@@ -92,6 +93,9 @@ const CommunityPage = (props) => {
 
   const handleSettingsClick = () =>
     props.openEditCommunityModal(props.community);
+  const handleCommunityCreatorClick = (creator) =>
+    navigate(`/profile/${creator}`);
+
   return (
     <Box sx={{ pb: 20 }}>
       <Grid container spacing={2}>
@@ -232,7 +236,21 @@ const CommunityPage = (props) => {
                     color: "#0072A2",
                   }}
                 >
-                  Created by: {props.community.creatorName}
+                  {"Created by: "}
+                  <Box
+                    sx={{
+                      display: "inline-block",
+                      ":hover": {
+                        textDecoration: "underline",
+                        cursor: "pointer",
+                      },
+                    }}
+                    onClick={() =>
+                      handleCommunityCreatorClick(props.community.creatorName)
+                    }
+                  >
+                    {props.community.creatorName}
+                  </Box>
                 </Typography>
               )}
               <Box>
