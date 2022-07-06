@@ -1,6 +1,5 @@
-import { Chip } from "@mui/material";
 import React, { useState } from "react";
-import { Badge } from "@mui/material";
+import { Badge, Chip } from "@mui/material";
 import { connect } from "react-redux";
 
 export const Tag = (props) => {
