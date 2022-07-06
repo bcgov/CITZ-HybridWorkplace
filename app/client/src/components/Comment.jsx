@@ -36,6 +36,7 @@ import {
   downvoteComment,
   removeCommentVote,
 } from "../redux/ducks/postDuck";
+import { useNavigate } from "react-router-dom";
 
 export const Comment = (props) => {
   const getUserVote = () => {
@@ -45,6 +46,9 @@ export const Comment = (props) => {
       undefined
     );
   };
+
+  const navigate = useNavigate();
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [userVote, setUserVote] = useState(getUserVote());
 
@@ -101,6 +105,8 @@ export const Comment = (props) => {
   const closeReply = () => {
     setReplyOpen(false);
   };
+  const handleCommentCreatorClick = (creator) =>
+    navigate(`/profile/${creator}`);
 
   const handleUpVote = async () => {
     const commentId = props.comment._id;
@@ -144,12 +150,36 @@ export const Comment = (props) => {
         <Card style={{ margin: 10 }}>
           <CardHeader
             title={
-              <Typography variant="h5">
+              <Typography
+                variant="h5"
+                sx={{
+                  display: "inline-block",
+                  ":hover": {
+                    textDecoration: "underline",
+                    cursor: "pointer",
+                  },
+                }}
+                onClick={() =>
+                  handleCommentCreatorClick(props.comment.creatorName)
+                }
+              >
                 {props.comment.creatorName || "Unknown Commenter"}
               </Typography>
             }
             subheader={<Typography fontSize="small">{createdOn}</Typography>}
-            avatar={<Avatar fontSize="medium" />}
+            avatar={
+              <Avatar
+                fontSize="medium"
+                sx={{
+                  ":hover": {
+                    cursor: "pointer",
+                  },
+                }}
+                onClick={() =>
+                  handleCommentCreatorClick(props.comment.creatorName)
+                }
+              />
+            }
             action={
               props.userId === props.comment.creator && (
                 <>
