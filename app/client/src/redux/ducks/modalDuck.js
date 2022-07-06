@@ -71,6 +71,10 @@ const CLOSE_EDIT_COMMUNITY_MODAL =
   "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_EDIT_COMMUNITY_MODAL";
 const OPEN_SETTINGS_MODAL = "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_SETTINGS_MODAL";
 const CLOSE_SETTINGS_MODAL = "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_SETTINGS_MODAL";
+const OPEN_EDIT_AVATAR_MODAL =
+  "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_EDIT_AVATAR_MODAL";
+const CLOSE_EDIT_AVATAR_MODAL =
+  "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_EDIT_AVATAR_MODAL";
 
 /*************************ADD TYPES*************************/
 const OPEN_ADD_POST_MODAL = "CITZ-HYBRIDWORKPLACE/ADD/OPEN_ADD_POST_MODAL";
@@ -170,6 +174,13 @@ export const openSettingsModal = () => (dispatch) =>
 
 export const closeSettingsModal = () => (dispatch) =>
   dispatch({ type: CLOSE_SETTINGS_MODAL });
+
+export const openEditAvatarModal = (avatar) => (dispatch) => {
+  dispatch({ type: OPEN_EDIT_AVATAR_MODAL, payload: avatar });
+};
+
+export const closeEditAvatarModal = () => (dispatch) =>
+  dispatch({ type: CLOSE_EDIT_AVATAR_MODAL });
 
 /*********************** ADD MODAL ACTIONS***********************/
 
@@ -329,6 +340,15 @@ export function modalReducer(state = initialState, action) {
 
     case CLOSE_SETTINGS_MODAL:
       return initialState;
+
+    case CLOSE_EDIT_AVATAR_MODAL:
+      return initialState;
+
+    case OPEN_EDIT_AVATAR_MODAL:
+      return {
+        ...state,
+        editAvatar: { open: true, avatar: action.payload },
+      };
 
     case OPEN_ADD_COMMUNITY_MODAL:
       return {
