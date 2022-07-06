@@ -64,7 +64,38 @@ services:
       interval: 20s
       timeout: 30s
       retries: 10
-      start_period: 60s
+      start_period: 120s
+
+  #############################################################################################
+  ###                                     Express API                                       ###
+  #############################################################################################
+  hwp-api-dev:
+    container_name: hwp-api-dev
+    tty: true
+    build:
+      context: .
+      dockerfile: ./app/server/docker/dev/Dockerfile
+      args:
+        env: ${ENV_FILE:-.env-template}
+    networks:
+      - hwp-network
+    ports:
+      - ${REACT_APP_API_PORT:-5000}:${REACT_APP_API_PORT:-5000}
+    volumes:
+      - .:/usr/src/
+    command: >
+      sh -c "cp /usr/src/.env /usr/src/app/server/.env &&
+      npm --prefix /usr/src/app/server ci --only-production &&
+      nodemon -L /usr/src/app/server/index.js"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: curl localhost:${REACT_APP_API_PORT:-5000} | grep 'Node.js Server is live!'
+      interval: 20s
+      timeout: 30s
+      retries: 10
+      start_period: 120s
 
 networks:
   hwp-network:

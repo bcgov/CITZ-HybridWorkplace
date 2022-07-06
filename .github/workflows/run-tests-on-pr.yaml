@@ -44,7 +44,7 @@ jobs:
       - name: Install dependencies
         working-directory: ./app/server
         run: |
-          npm install
+          npm ci
 
       - name: Relax Express request limiter
         working-directory: ./app/server
@@ -103,6 +103,10 @@ jobs:
           wait-time: 150
           require-status: running 
           require-healthy: true
+      
+      - name: Print docker API logs
+        run: |
+          docker logs hwp-api
 
     # Run tests
       - name: Run test command
