@@ -10,9 +10,8 @@ export const Tag = (props) => {
   const handleRemoveTag = async () => {
     setLoading(true);
     const successful = await props.unTagPost(props.postId, props.name);
-
     if (successful === true) {
-      setTagCount(tagCount - 1);
+      setTagCount((prev) => prev - 1);
       setClicked(false);
     }
     setLoading(false);
@@ -23,7 +22,7 @@ export const Tag = (props) => {
     const successful = await props.tagPost(props.postId, props.name);
 
     if (successful === true) {
-      setTagCount(tagCount + 1);
+      setTagCount((prev) => prev + 1);
       setClicked(true);
     }
     setLoading(false);

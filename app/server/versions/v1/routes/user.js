@@ -383,8 +383,12 @@ router.get("/:username", async (req, res, next) => {
       lastName: user.lastName,
       bio: user.bio,
       title: user.title,
+      ministry: user.ministry,
+      avatar: user.avatar,
       registeredOn: user.registeredOn,
       postCount: user.postCount,
+      notificationFrequency: user.notificationFrequency,
+      interests: user.interests,
     });
   } catch (err) {
     res.locals.err = err;
