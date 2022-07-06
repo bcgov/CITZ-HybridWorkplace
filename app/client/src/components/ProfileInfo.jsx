@@ -43,7 +43,7 @@ const ProfileInfo = (props) => {
 
   const handleEditUserInfoClick = (userInfo) =>
     props.openEditUserInfoModal(userInfo);
-
+  // comment for rebuild
   return (
     <Box width="max-content">
       <Stack spacing={0.5} minWidth="10rem">
