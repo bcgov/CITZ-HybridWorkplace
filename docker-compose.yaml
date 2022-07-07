@@ -45,6 +45,7 @@ services:
   #############################################################################################
   hwp-api:
     container_name: hwp-api
+    profiles: ["prod"]
     tty: true
     build:
       context: .
@@ -67,10 +68,11 @@ services:
       start_period: 120s
 
   #############################################################################################
-  ###                                     Express API                                       ###
+  ###                                 Express API Dev Version                               ###
   #############################################################################################
   hwp-api-dev:
     container_name: hwp-api-dev
+    profiles: ["dev"]
     tty: true
     build:
       context: .

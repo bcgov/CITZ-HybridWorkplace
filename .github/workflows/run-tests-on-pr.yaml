@@ -119,7 +119,6 @@ jobs:
       - name: Run test command
         working-directory: ./app/server
         continue-on-error: true
-        needs: 
         run: |
           npm test -- --json > tempResults
 
