@@ -215,6 +215,7 @@ const initialState = {
   editCommunity: { open: false, community: {} },
   editUserInfo: { open: false, userInfo: {} },
   editUserBio: { open: false, userBio: {} },
+  editAvatar: { open: false, avatar: {} },
   editUserInterests: { open: false, userInterests: {} },
   settings: { open: false },
   // Add State

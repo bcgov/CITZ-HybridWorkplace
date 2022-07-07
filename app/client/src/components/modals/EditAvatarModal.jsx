@@ -20,9 +20,9 @@
  * @module
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import PropTypes from "prop-types";
+import AvatarIcon from "../AvatarIcon";
 
 import {
   Dialog,
@@ -31,30 +31,91 @@ import {
   Typography,
   Button,
   Stack,
-  InputLabel,
   DialogActions,
   Radio,
+  Box,
+  TextField,
+  Checkbox,
 } from "@mui/material";
 
 import { closeEditAvatarModal } from "../../redux/ducks/modalDuck";
+import { editUserAvatar } from "../../redux/ducks/profileDuck";
 
 const EditAvatarModal = (props) => {
-  const [avatar, setAvatar] = useState(props.avatar);
+  useEffect(() => {}, [props.profile]);
+
+  const [image, setImage] = useState(props.profile.avatar.image || null);
+  const initials = props.profile.initials || "";
+  const [useGradient, setUseGradient] = useState(
+    props.profile.avatar.gradient || false
+  );
+
+  const types = ["Initials", "Person", "Emoji", "Upload"];
+  const [selectedType, setSelectedType] = useState(
+    props.profile.avatar.avatarType || "Initials"
+  );
+
+  const colors = {
+    magenta: "#cb42f5",
+    purple: "#690787",
+    blue: "#0a3194",
+    lightBlue: "#198ae6",
+    green: "#059c00",
+    lightGreen: "#2cd40b",
+    yellow: "#f0ec05",
+    orange: "#f0890c",
+    red: "#e33010",
+    pink: "#f0887a",
+  };
+
+  const [selectedColors, setSelectedColors] = useState(
+    props.profile.avatar.colors || {
+      primary: colors.magenta,
+      secondary: colors.magenta,
+    }
+  );
 
   const updateAvatar = async (event) => {
     event.preventDefault();
-    const edit = {
-      avatar,
+    const userChanges = {
+      avatar: {
+        avatarType: selectedType,
+        image: image,
+        gradient: useGradient,
+        colors: selectedColors,
+      },
     };
 
-    // const successful = await props.createPost(edit);
-    // if (successful === true) {
-    //   props.closeEditAvatarModal();
-    // }
+    const successful = await props.editUserAvatar(userChanges);
+    if (successful === true) {
+      props.closeEditAvatarModal();
+    }
   };
 
-  const handleChange = (event) => {
-    setAvatar(event.target.value);
+  const handleColorChange = (event) => {
+    setSelectedColors({
+      primary: event.target.value,
+      secondary: selectedColors.secondary,
+    });
+  };
+
+  const handleSecondaryColorChange = (event) => {
+    setSelectedColors({
+      primary: selectedColors.primary,
+      secondary: event.target.value,
+    });
+  };
+
+  const handleTypeChange = (event) => {
+    setSelectedType(event.target.value);
+  };
+
+  const handleImageChange = (event) => {
+    setImage(event.target.value);
+  };
+
+  const handleGradientToggle = (event) => {
+    setUseGradient(event.target.checked);
   };
 
   return (
@@ -66,28 +127,125 @@ const EditAvatarModal = (props) => {
     >
       <DialogTitle>
         <Typography variant="h5" sx={{ fontWeight: 600 }}>
-          Add Post
+          Edit Avatar
         </Typography>
       </DialogTitle>
       <DialogContent data-color-mode="light">
         <Stack spacing={1}>
-          <Stack container spacing={0.5}>
-            <InputLabel htmlFor="add-post-title">Title</InputLabel>
-            <Radio
-              checked={avatar === "a"}
-              onChange={handleChange}
-              value="a"
-              name="radio-buttons"
-              inputProps={{ "aria-label": "A" }}
-            />
-            <Radio
-              checked={avatar === "b"}
-              onChange={handleChange}
-              value="b"
-              name="radio-buttons"
-              inputProps={{ "aria-label": "B" }}
-            />
+          <AvatarIcon
+            type={selectedType}
+            initials={initials}
+            image={image}
+            gradient={useGradient}
+            colors={selectedColors}
+            size={150}
+          />
+
+          <Stack spacing={1} sx={{ overflow: "hidden" }}>
+            {selectedType === "Upload" ? (
+              <TextField
+                onChange={handleImageChange}
+                placeholder="Image URL"
+                value={image}
+                sx={{ width: 0.9 }}
+              />
+            ) : (
+              <>
+                <Stack
+                  spacing={1}
+                  direction="row"
+                  sx={{ alignItems: "center" }}
+                >
+                  <Typography>Use Gradient:</Typography>
+                  <Checkbox
+                    checked={useGradient}
+                    onChange={handleGradientToggle}
+                    sx={{ width: "10px" }}
+                  />
+                </Stack>
+                <Stack direction="row">
+                  {Object.keys(colors).map((color) => (
+                    <Radio
+                      key={color}
+                      checked={selectedColors.primary === colors[color]}
+                      onChange={handleColorChange}
+                      value={colors[color]}
+                      sx={{ height: "45px", width: "45px" }}
+                      icon={
+                        <Box
+                          sx={{
+                            height: "25px",
+                            width: "25px",
+                            backgroundColor: colors[color],
+                            borderRadius: "25px",
+                          }}
+                        />
+                      }
+                      checkedIcon={
+                        <Box
+                          sx={{
+                            height: "25px",
+                            width: "25px",
+                            backgroundColor: colors[color],
+                            border: "solid",
+                            borderRadius: "25px",
+                          }}
+                        />
+                      }
+                    />
+                  ))}
+                </Stack>
+                {useGradient && (
+                  <Stack direction="row">
+                    {Object.keys(colors).map((color) => (
+                      <Radio
+                        key={color}
+                        checked={selectedColors.secondary === colors[color]}
+                        onChange={handleSecondaryColorChange}
+                        value={colors[color]}
+                        sx={{ height: "45px", width: "45px" }}
+                        icon={
+                          <Box
+                            sx={{
+                              height: "25px",
+                              width: "25px",
+                              backgroundColor: colors[color],
+                              borderRadius: "25px",
+                            }}
+                          />
+                        }
+                        checkedIcon={
+                          <Box
+                            sx={{
+                              height: "25px",
+                              width: "25px",
+                              backgroundColor: colors[color],
+                              border: "solid",
+                              borderRadius: "25px",
+                            }}
+                          />
+                        }
+                      />
+                    ))}
+                  </Stack>
+                )}
+              </>
+            )}
           </Stack>
+
+          <Stack direction="row" spacing={1}>
+            {types.map((type) => (
+              <Radio
+                key={type}
+                checked={selectedType === type}
+                onChange={handleTypeChange}
+                value={type}
+                icon={<Typography>{type}</Typography>}
+                checkedIcon={<Typography>{type}</Typography>}
+              />
+            ))}
+          </Stack>
+
           <DialogActions
             sx={{
               m: 0,
@@ -109,13 +267,14 @@ const EditAvatarModal = (props) => {
   );
 };
 
-EditAvatarModal.propTypes = {};
-
 const mapStateToProps = (state) => ({
   auth: state.auth,
   open: state.modal.editAvatar.open,
+  avatar: state.modal.editAvatar.avatar,
+  profile: state.profile.user,
 });
 
 export default connect(mapStateToProps, {
   closeEditAvatarModal,
+  editUserAvatar,
 })(EditAvatarModal);
