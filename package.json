@@ -16,6 +16,7 @@
     "dotenv": "^16.0.1"
   },
   "scripts": {
-    "dev": "docker-compose --profile dev up -d --build"
+    "dev-pc": "docker-compose --profile dev up -d --build & (cd app/client && npm run start-pc)",
+    "dev-mac": "docker-compose --profile dev up -d --build & (cd app/client && npm run start-mac)"
   }
 }

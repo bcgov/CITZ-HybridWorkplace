@@ -30,6 +30,7 @@ services:
   #############################################################################################
   hwp-frontend:
     container_name: hwp-frontend
+    profiles: ["prod"]
     build:
       context: .
       dockerfile: ./app/client/Dockerfile
