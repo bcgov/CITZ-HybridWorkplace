@@ -51,15 +51,28 @@ const CLOSE_FLAG_COMMENT_MODAL =
   "CITZ-HYBRIDWORKPLACE/FLAG/CLOSE_FLAG_COMMENT_MODAL";
 
 /************************EDIT TYPES************************/
-const OPEN_EDIT_POST_MODAL = "CITZ-HYBRIDWORKPLACE/FLAG/OPEN_EDIT_POST_MODAL";
-const CLOSE_EDIT_POST_MODAL = "CITZ-HYBRIDWORKPLACE/FLAG/CLOSE_EDIT_POST_MODAL";
+const OPEN_EDIT_POST_MODAL = "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_EDIT_POST_MODAL";
+const CLOSE_EDIT_POST_MODAL = "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_EDIT_POST_MODAL";
+const OPEN_EDIT_USER_INFO_MODAL =
+  "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_EDIT_USER_INFO_MODAL";
+const CLOSE_EDIT_USER_INFO_MODAL =
+  "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_EDIT_USER_INFO_MODAL";
+const OPEN_EDIT_USER_BIO_MODAL =
+  "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_EDIT_USER_BIO_MODAL";
+const CLOSE_EDIT_USER_BIO_MODAL =
+  "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_EDIT_USER_BIO_MODAL";
+const OPEN_EDIT_USER_INTERESTS_MODAL =
+  "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_EDIT_USER_INTERESTS_MODAL";
+const CLOSE_EDIT_USER_INTERESTS_MODAL =
+  "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_EDIT_USER_INTERESTS_MODAL";
 const OPEN_EDIT_COMMUNITY_MODAL =
-  "CITZ-HYBRIDWORKPLACE/FLAG/OPEN_EDIT_COMMUNITY_MODAL";
+  "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_EDIT_COMMUNITY_MODAL";
 const CLOSE_EDIT_COMMUNITY_MODAL =
-  "CITZ-HYBRIDWORKPLACE/FLAG/CLOSE_EDIT_COMMUNITY_MODAL";
+  "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_EDIT_COMMUNITY_MODAL";
+const OPEN_SETTINGS_MODAL = "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_SETTINGS_MODAL";
+const CLOSE_SETTINGS_MODAL = "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_SETTINGS_MODAL";
 
 /*************************ADD TYPES*************************/
-
 const OPEN_ADD_POST_MODAL = "CITZ-HYBRIDWORKPLACE/ADD/OPEN_ADD_POST_MODAL";
 const OPEN_ADD_COMMUNITY_MODAL =
   "CITZ-HYBRIDWORKPLACE/ADD/OPEN_ADD_COMMUNITY_MODAL";
@@ -115,6 +128,7 @@ export const openFlagCommentModal = (comment) => (dispatch) => {
 export const closeFlagCommentModal = () => (dispatch) => {
   dispatch({ type: CLOSE_FLAG_COMMENT_MODAL });
 };
+
 /*********************** EDIT MODAL ACTIONS***********************/
 export const openEditPostModal = (post) => (dispatch) => {
   dispatch({ type: OPEN_EDIT_POST_MODAL, payload: post });
@@ -123,12 +137,39 @@ export const openEditPostModal = (post) => (dispatch) => {
 export const closeEditPostModal = () => (dispatch) =>
   dispatch({ type: CLOSE_EDIT_POST_MODAL });
 
+export const openEditUserInfoModal = (userInfo) => (dispatch) => {
+  dispatch({ type: OPEN_EDIT_USER_INFO_MODAL, payload: userInfo });
+};
+
+export const closeEditUserInfoModal = () => (dispatch) =>
+  dispatch({ type: CLOSE_EDIT_USER_INFO_MODAL });
+
+export const openEditUserBioModal = (userBio) => (dispatch) => {
+  dispatch({ type: OPEN_EDIT_USER_BIO_MODAL, payload: userBio });
+};
+
+export const closeEditUserBioModal = () => (dispatch) =>
+  dispatch({ type: CLOSE_EDIT_USER_BIO_MODAL });
+
+export const openEditUserInterestsModal = (userInterests) => (dispatch) => {
+  dispatch({ type: OPEN_EDIT_USER_INTERESTS_MODAL, payload: userInterests });
+};
+
+export const closeEditUserInterestsModal = () => (dispatch) =>
+  dispatch({ type: CLOSE_EDIT_USER_INTERESTS_MODAL });
+
 export const openEditCommunityModal = (community) => (dispatch) => {
   dispatch({ type: OPEN_EDIT_COMMUNITY_MODAL, payload: community });
 };
 
 export const closeEditCommunityModal = () => (dispatch) =>
   dispatch({ type: CLOSE_EDIT_COMMUNITY_MODAL });
+
+export const openSettingsModal = () => (dispatch) =>
+  dispatch({ type: OPEN_SETTINGS_MODAL });
+
+export const closeSettingsModal = () => (dispatch) =>
+  dispatch({ type: CLOSE_SETTINGS_MODAL });
 
 /*********************** ADD MODAL ACTIONS***********************/
 
@@ -150,17 +191,22 @@ export const closeAddCommunityModal = () => (dispatch) => {
 
 /************************MODAL REDUCER************************/
 const initialState = {
-  //Delete State
+  // Delete State
   deletePost: { open: false, post: {} },
   deleteCommunity: { open: false, community: {} },
   deleteComment: { open: false, comment: {} },
-  //Flag State
+  // Flag State
   flagPost: { open: false, post: {} },
   flagCommunity: { open: false, community: {} },
   flagComment: { open: false, comment: {} },
-  //Edit State
+  // Edit State
   editPost: { open: false, post: {} },
   editCommunity: { open: false, community: {} },
+  editUserInfo: { open: false, userInfo: {} },
+  editUserBio: { open: false, userBio: {} },
+  editUserInterests: { open: false, userInterests: {} },
+  settings: { open: false },
+  // Add State
   addPost: { open: false },
   addCommunity: { open: false },
 };
@@ -242,11 +288,47 @@ export function modalReducer(state = initialState, action) {
     case CLOSE_EDIT_POST_MODAL:
       return initialState;
 
+    case OPEN_EDIT_USER_INFO_MODAL:
+      return {
+        ...state,
+        editUserInfo: { open: true, userInfo: action.payload },
+      };
+
+    case CLOSE_EDIT_USER_INFO_MODAL:
+      return initialState;
+
+    case OPEN_EDIT_USER_BIO_MODAL:
+      return {
+        ...state,
+        editUserBio: { open: true, userBio: action.payload },
+      };
+
+    case CLOSE_EDIT_USER_BIO_MODAL:
+      return initialState;
+
+    case OPEN_EDIT_USER_INTERESTS_MODAL:
+      return {
+        ...state,
+        editUserInterests: { open: true, userInterests: action.payload },
+      };
+
+    case CLOSE_EDIT_USER_INTERESTS_MODAL:
+      return initialState;
+
     case OPEN_EDIT_COMMUNITY_MODAL:
       return {
         ...state,
         editCommunity: { open: true, community: action.payload },
       };
+
+    case OPEN_SETTINGS_MODAL:
+      return {
+        ...state,
+        settings: { open: true },
+      };
+
+    case CLOSE_SETTINGS_MODAL:
+      return initialState;
 
     case OPEN_ADD_COMMUNITY_MODAL:
       return {

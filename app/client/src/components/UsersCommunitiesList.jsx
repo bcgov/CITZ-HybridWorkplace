@@ -47,49 +47,49 @@ const UsersCommunitiesList = (props) => {
       }}
     >
       {props.communities.map((community) => (
-        <Box key={community._id} sx={{ mb: "15px" }}>
-          <Paper
-            sx={{
-              px: 0.5,
-              borderRadius: "10px",
-              m: "auto",
-              border: 0,
-              boxShadow: 1,
-            }}
-            variant="outlined"
-            square
-          >
-            <Grid container spacing={1} alignItems="center">
-              <Grid
-                item
-                xs={9}
-                onClick={() => handleCommunityClick(community.title)}
-                sx={{ cursor: "pointer" }}
-              >
-                <Grid container>
-                  <Grid item xs={12}>
-                    <Typography p={1.5} variant="h7" component="p">
-                      <b>{community.title}</b>
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} sx={{ pt: 0, pb: "10px" }}>
-                    <Stack direction="row" spacing={1} sx={{ ml: "15px" }}>
-                      <GroupsIcon sx={{ color: "#898989" }} />
-                      <Typography color="#898989">
-                        {community.memberCount || 0}
-                      </Typography>
-                    </Stack>
-                  </Grid>
-                  <Grid item xs={2}></Grid>
+        <Paper
+          key={community._id}
+          sx={{
+            px: 0.5,
+            borderRadius: "10px",
+            m: "auto",
+            mb: "15px",
+            border: 0,
+            boxShadow: 1,
+          }}
+          variant="outlined"
+          square
+        >
+          <Grid container spacing={1} alignItems="center">
+            <Grid
+              item
+              xs={9}
+              onClick={() => handleCommunityClick(community.title)}
+              sx={{ cursor: "pointer" }}
+            >
+              <Grid container>
+                <Grid item xs={12}>
+                  <Typography p={1.5} variant="h7" component="p">
+                    <b>{community.title}</b>
+                  </Typography>
                 </Grid>
-              </Grid>
-
-              <Grid item xs={3} textAlign="center">
-                <JoinButton community={community} />
+                <Grid item xs={12} sx={{ pt: 0, pb: "10px" }}>
+                  <Stack direction="row" spacing={1} sx={{ ml: "15px" }}>
+                    <GroupsIcon sx={{ color: "#898989" }} />
+                    <Typography color="#898989">
+                      {community.memberCount || 0}
+                    </Typography>
+                  </Stack>
+                </Grid>
+                <Grid item xs={2}></Grid>
               </Grid>
             </Grid>
-          </Paper>
-        </Box>
+
+            <Grid item xs={3} textAlign="center">
+              <JoinButton community={community} />
+            </Grid>
+          </Grid>
+        </Paper>
       ))}
     </Box>
   );

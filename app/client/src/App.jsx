@@ -39,13 +39,11 @@ import AlertList from "./components/AlertList";
 function App() {
   const theme = createTheme({
     components: {
-      MuiLoadingButton: {
+      MuiIconButton: {
         styleOverrides: {
-          disabledProp: ({ ownerState, theme }) => ({
-            ...(ownerState.disabled === true && {
-              backgroundColor: theme.palette.neutral[200] || "grey",
-            }),
-          }),
+          root: {
+            marginLeft: 0,
+          },
         },
       },
     },
@@ -60,6 +58,9 @@ function App() {
       neutral: {
         main: "#313132",
       },
+      banner: {
+        main: "#395988",
+      },
     },
     typography: {
       fontFamily: "BCSans",
@@ -68,7 +69,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Paper style={{ minHeight: "100vh" }}>
+      <Paper style={{ minHeight: "100vh" }} sx={{ boxShadow: 0 }}>
         <Provider store={store}>
           <div>
             <Header />

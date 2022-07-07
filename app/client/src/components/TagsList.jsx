@@ -12,7 +12,7 @@ export const TagsList = (props) => {
     }
   };
   return props.post.availableTags ? (
-    props.post.availableTags?.map((tag, index) => (
+    props.post.availableTags.map((tag, index) => (
       <Tag
         name={tag}
         clicked={tag === props.post.userTag}
