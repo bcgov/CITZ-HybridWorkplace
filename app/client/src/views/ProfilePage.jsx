@@ -32,25 +32,19 @@ import {
   openSettingsModal,
   openEditUserBioModal,
   openEditUserInterestsModal,
+  openEditAvatarModal,
 } from "../redux/ducks/modalDuck";
 import { getUsersCommunities } from "../redux/ducks/communityDuck";
-import SettingsModal from "../components/modals/SettingsModal";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import moment from "moment";
-import EditAvatarModal from "../components/modals/EditAvatarModal";
-import { openEditAvatarModal } from "../redux/ducks/modalDuck";
 
 import {
   Grid,
   Box,
   Typography,
-  Avatar,
   Chip,
   Stack,
   IconButton,
-  Divider,
-  Switch,
   Button,
 } from "@mui/material";
 
@@ -59,11 +53,14 @@ import { default as ForwardArrow } from "@mui/icons-material/ArrowForwardIosRoun
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import Carousel from "react-material-ui-carousel";
+import AvatarIcon from "../components/AvatarIcon";
 
 import ProfileInfo from "../components/ProfileInfo";
 import Community from "../components/Community";
 import EditUserBioModal from "../components/modals/EditUserBioModal";
 import EditUserInterestsModal from "../components/modals/EditUserInterestsModal";
+import EditAvatarModal from "../components/modals/EditAvatarModal";
+import SettingsModal from "../components/modals/SettingsModal";
 
 const ProfilePage = (props) => {
   let { username } = useParams();
@@ -72,7 +69,13 @@ const ProfilePage = (props) => {
     props.getProfile(username);
     props.getUsersCommunities();
     props.getUserPosts(username);
-  }, []);
+  }, [username, props]);
+
+  props.profile.initials = props.profile.lastName
+    ? `${props.profile.firstName?.charAt(0)}${props.profile.lastName?.charAt(
+        0
+      )}`
+    : props.profile.firstName?.charAt(0);
 
   const handleEditBioClick = (userBio) => props.openEditUserBioModal(userBio);
 
@@ -81,6 +84,9 @@ const ProfilePage = (props) => {
 
   const handleEditUserInterestsClick = (userInterests) =>
     props.openEditUserInterestsModal(userInterests);
+
+  const handleEditAvatarClick = (userSettings) =>
+    props.openEditAvatarModal(userSettings);
 
   return (
     <Box
@@ -99,12 +105,26 @@ const ProfilePage = (props) => {
         gap={1}
       >
         <Grid item xs={2} mr={5}>
-          <Button onClick={() => props.openEditAvatarModal()}>Me</Button>
-          <Avatar
-            sx={{ width: 150, height: 150, mb: 1 }}
-            src="https://source.unsplash.com/random/150×150/?profile%20picture"
-          />
-          <EditAvatarModal avatar={"a"} />
+          <Button
+            sx={{
+              borderRadius: "155px",
+              height: "155px",
+              width: "155px",
+              pl: 0,
+              ml: 0,
+              mb: 1,
+            }}
+            onClick={() => handleEditAvatarClick(props.profile)}
+          >
+            <AvatarIcon
+              type={props.profile.avatar.avatarType}
+              initials={props.profile.initials}
+              image={props.profile.avatar.image}
+              gradient={props.profile.avatar.gradient}
+              colors={props.profile.avatar.colors}
+              size={150}
+            />
+          </Button>
           <ProfileInfo username={username} />
           <Stack direction="column" spacing={1} width="20vw">
             <Stack direction="row" spacing={0.5} alignItems="center">
@@ -190,6 +210,7 @@ const ProfilePage = (props) => {
       </Grid>
       <EditUserBioModal user={username} />
       <EditUserInterestsModal user={username} />
+      <EditAvatarModal />
       <SettingsModal />
     </Box>
   );
