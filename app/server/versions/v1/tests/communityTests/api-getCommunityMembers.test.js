@@ -20,7 +20,6 @@ const newComRules = "hello";
 const newComTags = [
   {
     tag: "Informative",
-    count: 1,
   },
 ];
 

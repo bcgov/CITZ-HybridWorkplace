@@ -18,11 +18,10 @@ const welComTitle = "Welcome";
 
 const newComTitle = "hello create";
 const newComDescript = "world";
-const newComRules = "1. rules";
+const newComRules = "rules";
 const newComTags = [
   {
     tag: "Informative",
-    count: 1,
   },
 ];
 

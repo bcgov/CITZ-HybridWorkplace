@@ -19,13 +19,17 @@ let token = "";
 let commentResponse;
 let postResponse;
 
-const newComTitle = "hello get Titles";
+const newComTitle = "set comment replies";
 const newComDescript = "world";
-const newComRules = "1. rules";
+const newComRules = [
+  {
+    rule: "Be nice",
+    description: "be the best person you can be!",
+  },
+];
 const newComTags = [
   {
     tag: "Informative",
-    count: 1,
   },
 ];
 
@@ -52,7 +56,6 @@ describe("Logging in the test user", () => {
   });
 });
 
-
 describe("Creating new Community", () => {
   test("API returns a successful response - code 201", async () => {
     const response = await community.createCommunity(
@@ -62,7 +65,7 @@ describe("Creating new Community", () => {
       newComTags,
       token
     );
-    expect(response.status).toBe(201);
+    expect(response.text).toBe(201);
   });
 });
 
@@ -128,6 +131,13 @@ describe("Get Comment Reply - on the created comment", () => {
       token
     );
     expect(response.text).toBe("hello");
+  });
+});
+
+describe("Deleting new Community", () => {
+  test("API returns a successful response - code 204", async () => {
+    const response = await community.deleteCommunity(newComTitle, token);
+    expect(response.status).toBe(204);
   });
 });
 
