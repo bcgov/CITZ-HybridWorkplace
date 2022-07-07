@@ -31,9 +31,26 @@ import { connect } from "react-redux";
 import moment from "moment";
 import CommentReply from "./CommentReply";
 import CommentRepliesList from "./CommentRepliesList";
+import {
+  upvoteComment,
+  downvoteComment,
+  removeCommentVote,
+} from "../redux/ducks/postDuck";
+import { useNavigate } from "react-router-dom";
 
 export const Comment = (props) => {
+  const getUserVote = () => {
+    return (
+      (props.comment.upvotes.users.includes(props.userId) && "up") ||
+      (props.comment.downvotes.users.includes(props.userId) && "down") ||
+      undefined
+    );
+  };
+
+  const navigate = useNavigate();
+
   const [anchorEl, setAnchorEl] = useState(null);
+  const [userVote, setUserVote] = useState(getUserVote());
 
   const handleDeleteCommentClick = () => {
     props.openDeleteCommentModal(props.comment);
@@ -88,6 +105,44 @@ export const Comment = (props) => {
   const closeReply = () => {
     setReplyOpen(false);
   };
+  const handleCommentCreatorClick = (creator) =>
+    navigate(`/profile/${creator}`);
+
+  const handleUpVote = async () => {
+    const commentId = props.comment._id;
+    if (!userVote) {
+      await props.upvoteComment(commentId);
+      setUserVote("up");
+      return;
+    }
+
+    if (userVote === "up") {
+      await props.removeCommentVote(commentId);
+      setUserVote(undefined);
+    } else if (userVote === "down") {
+      await props.removeCommentVote(commentId);
+      await props.upvoteComment(commentId);
+      setUserVote("up");
+    }
+  };
+
+  const handleDownVote = async () => {
+    const commentId = props.comment._id;
+    if (!userVote) {
+      await props.downvoteComment(commentId);
+      setUserVote("down");
+      return;
+    }
+
+    if (userVote === "down") {
+      await props.removeCommentVote(commentId);
+      setUserVote(undefined);
+    } else if (userVote === "up") {
+      await props.removeCommentVote(commentId);
+      await props.downvoteComment(commentId);
+      setUserVote("down");
+    }
+  };
 
   return (
     <Grid container justifyContent="flex-end">
@@ -95,12 +150,36 @@ export const Comment = (props) => {
         <Card style={{ margin: 10 }}>
           <CardHeader
             title={
-              <Typography variant="h5">
+              <Typography
+                variant="h5"
+                sx={{
+                  display: "inline-block",
+                  ":hover": {
+                    textDecoration: "underline",
+                    cursor: "pointer",
+                  },
+                }}
+                onClick={() =>
+                  handleCommentCreatorClick(props.comment.creatorName)
+                }
+              >
                 {props.comment.creatorName || "Unknown Commenter"}
               </Typography>
             }
             subheader={<Typography fontSize="small">{createdOn}</Typography>}
-            avatar={<Avatar fontSize="medium" />}
+            avatar={
+              <Avatar
+                fontSize="medium"
+                sx={{
+                  ":hover": {
+                    cursor: "pointer",
+                  },
+                }}
+                onClick={() =>
+                  handleCommentCreatorClick(props.comment.creatorName)
+                }
+              />
+            }
             action={
               props.userId === props.comment.creator && (
                 <>
@@ -143,11 +222,22 @@ export const Comment = (props) => {
               </Grid>
               <Grid item xs={1}>
                 <Stack alignItems="flex-end">
-                  <IconButton aria-label="upvote" sx={{ padding: 0 }}>
+                  <IconButton
+                    aria-label="upvote"
+                    sx={{ padding: 0 }}
+                    onClick={handleUpVote}
+                    color={userVote === "up" ? "success" : "default"}
+                  >
+                    {console.log(props.comment)}
                     <UpIcon fontSize="small" />
                   </IconButton>
                   <Typography pr="5px">{props.comment.votes || 0}</Typography>
-                  <IconButton aria-label="downvote" sx={{ padding: 0 }}>
+                  <IconButton
+                    aria-label="downvote"
+                    sx={{ padding: 0 }}
+                    onClick={handleDownVote}
+                    color={userVote === "down" ? "error" : "default"}
+                  >
                     <DownIcon fontSize="small" />
                   </IconButton>
                 </Stack>
@@ -179,6 +269,12 @@ const mapStateToProps = (state) => ({
   userId: state.auth.user.id,
 });
 
-const mapDispatchToProps = { openDeleteCommentModal, openFlagCommentModal };
+const mapDispatchToProps = {
+  openDeleteCommentModal,
+  openFlagCommentModal,
+  upvoteComment,
+  downvoteComment,
+  removeCommentVote,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Comment);

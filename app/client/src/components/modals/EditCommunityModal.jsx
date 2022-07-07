@@ -23,10 +23,12 @@
 import {
   Button,
   Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import { closeEditCommunityModal } from "../../redux/ducks/modalDuck";
 import { createError } from "../../redux/ducks/alertDuck";
@@ -101,7 +103,11 @@ const EditCommunityModal = (props) => {
       fullWidth
       sx={{ zIndex: 500 }}
     >
-      <DialogTitle>Edit Community: {props.community.title}</DialogTitle>
+      <DialogTitle>
+        <Typography variant="h5" fontWeight={600}>
+          Edit Community
+        </Typography>
+      </DialogTitle>
       <DialogContent sx={{ pt: 5 }}>
         <Stack spacing={3}>
           <TextField
@@ -151,21 +157,31 @@ const EditCommunityModal = (props) => {
             helperText="Rules is required."
             required
           />
-          <Button
-            variant="contained"
-            disabled={
-              (title &&
-                description &&
-                rules &&
-                (title.length < 3 ||
-                  title.length > 25 ||
-                  description.length > 300)) ||
-              !rules
-            }
-            onClick={onSubmit}
-          >
-            Edit Community
-          </Button>
+          <DialogActions sx={{ m: 0, pb: 0 }}>
+            <Stack spacing={1} direction="row-reverse" justifyContent="end">
+              <Button
+                variant="contained"
+                disabled={
+                  (title &&
+                    description &&
+                    rules &&
+                    (title.length < 3 ||
+                      title.length > 25 ||
+                      description.length > 300)) ||
+                  !rules
+                }
+                onClick={onSubmit}
+              >
+                Edit Community
+              </Button>
+              <Button
+                variant="contained"
+                onClick={props.closeEditCommunityModal}
+              >
+                Cancel
+              </Button>
+            </Stack>
+          </DialogActions>
         </Stack>
       </DialogContent>
     </Dialog>

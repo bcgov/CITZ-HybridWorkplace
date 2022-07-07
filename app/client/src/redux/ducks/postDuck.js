@@ -24,6 +24,7 @@ import { createSuccess, createError } from "./alertDuck";
 import hwp_axios from "../../axiosInstance";
 
 export const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_POSTS";
+const SET_USER_POSTS = "CITZ-HYBRIDWORKPLACE/POST/SET_USER_POSTS";
 const GET_POST = "CITZ-HYBRIDWORKPLACE/POST/GET_POST";
 const ADD_POST = "CITZ-HYBRIDWORKPLACE/POST/ADD_POST";
 const REMOVE_POST = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_POST";
@@ -35,6 +36,9 @@ const ADD_COMMENT = "CITZ-HYBRIDWORKPLACE/POST/ADD_COMMENT";
 const REMOVE_COMMENT = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_COMMENT";
 const REPLY_TO_COMMENT = "CITZ-HYBRIDWORKPLACE/POST/REPLY_TO_COMMENT";
 const SET_COMMENT_REPLIES = "CITZ-HYBRIDWORKPLACE/POST/SET_COMMENT_REPLIES";
+const UPVOTE_COMMENT = "CITZ-HYBRIDWORKPLACE/POST/UPVOTE_COMMENT";
+const DOWNVOTE_COMMENT = "CITZ-HYBRIDWORKPLACE/POST/DOWNVOTE_COMMENT";
+const REMOVE_COMMENT_VOTE = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_COMMENT_VOTE";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
@@ -74,6 +78,32 @@ export const getPosts = () => async (dispatch, getState) => {
     dispatch({
       type: GET_POSTS,
       payload: posts,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
+export const getUserPosts = (postCreator) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const token = getState().auth.accessToken;
+    if (!token) throw new Error(noTokenText);
+
+    const response = await hwp_axios.get(`/api/post?username=${postCreator}`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      params: {
+        dispatch,
+      },
+    });
+    dispatch({
+      type: SET_USER_POSTS,
+      payload: response.data,
     });
   } catch (err) {
     console.error(err);
@@ -522,7 +552,118 @@ export const flagComment = (commentId, flag) => async (dispatch, getState) => {
   }
 };
 
+export const upvoteComment = (commentId) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const authState = getState().auth;
+    const token = authState.accessToken;
+    const userId = authState.user.id;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await hwp_axios.patch(
+      `/api/comment/vote/${commentId}?vote=up`,
+      {
+        id: commentId,
+      },
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        params: {
+          dispatch,
+        },
+      }
+    );
+    dispatch({
+      type: UPVOTE_COMMENT,
+      payload: { commentId, userId },
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
+export const downvoteComment = (commentId) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const authState = getState().auth;
+    const token = authState.accessToken;
+    const userId = authState.user.id;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await hwp_axios.patch(
+      `/api/comment/vote/${commentId}?vote=down`,
+      {
+        id: commentId,
+      },
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        params: {
+          dispatch,
+        },
+      }
+    );
+    dispatch({
+      type: DOWNVOTE_COMMENT,
+      payload: { commentId, userId },
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
+export const removeCommentVote =
+  (commentId, callAPI = false) =>
+  async (dispatch, getState) => {
+    let successful = true;
+    try {
+      const authState = getState().auth;
+      const token = authState.accessToken;
+      const userId = authState.user.id;
+
+      if (!token) throw new Error(noTokenText);
+
+      if (callAPI) {
+        await hwp_axios.patch(
+          `/api/comment/vote/${commentId}`,
+          {
+            id: commentId,
+          },
+          {
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+            params: {
+              dispatch,
+            },
+          }
+        );
+      }
+
+      dispatch({
+        type: REMOVE_COMMENT_VOTE,
+        payload: { commentId, userId },
+      });
+    } catch (err) {
+      console.error(err);
+      successful = false;
+    } finally {
+      return successful;
+    }
+  };
+
 const initialState = {
+  userPosts: [], // user posts
   items: [], //posts
   item: {}, //single post
 };
@@ -533,6 +674,11 @@ export function postReducer(state = initialState, action) {
       return {
         ...state,
         items: action.payload,
+      };
+    case SET_USER_POSTS:
+      return {
+        ...state,
+        userPosts: action.payload,
       };
     case GET_POST:
       return {
@@ -634,6 +780,81 @@ export function postReducer(state = initialState, action) {
               ? {
                   ...comment,
                   replies: action.payload.comments,
+                }
+              : comment
+          ),
+        },
+      };
+    case UPVOTE_COMMENT:
+      return {
+        ...state,
+        item: {
+          ...state.item,
+          comments: state.item.comments.map((comment) =>
+            comment._id === action.payload.commentId
+              ? {
+                  ...comment,
+                  upvotes: {
+                    ...comment.upvotes,
+                    users: [...comment.upvotes.users, action.payload.userId],
+                  },
+                  votes: comment.votes + 1,
+                }
+              : comment
+          ),
+        },
+      };
+    case DOWNVOTE_COMMENT:
+      return {
+        ...state,
+        item: {
+          ...state.item,
+          comments: state.item.comments.map((comment) =>
+            comment._id === action.payload.commentId
+              ? {
+                  ...comment,
+                  downvotes: {
+                    ...comment.downvotes,
+                    users: [...comment.downvotes.users, action.payload.userId],
+                  },
+                  votes: comment.votes - 1,
+                }
+              : comment
+          ),
+        },
+      };
+    case REMOVE_COMMENT_VOTE:
+      return {
+        ...state,
+        item: {
+          ...state.item,
+          comments: state.item.comments.map((comment) =>
+            comment._id === action.payload.commentId
+              ? {
+                  ...comment,
+                  downvotes: {
+                    ...comment.downvotes,
+                    users: comment.downvotes.users.filter(
+                      (user) => user !== action.payload.userId
+                    ),
+                  },
+                  upvotes: {
+                    ...comment.upvotes,
+                    users: comment.upvotes.users.filter(
+                      (user) => user !== action.payload.userId
+                    ),
+                  },
+                  votes: (() => {
+                    if (comment.upvotes.users.includes(action.payload.userId)) {
+                      return comment.votes - 1;
+                    } else if (
+                      comment.downvotes.users.includes(action.payload.userId)
+                    ) {
+                      return comment.votes + 1;
+                    } else {
+                      return comment.votes;
+                    }
+                  })(),
                 }
               : comment
           ),

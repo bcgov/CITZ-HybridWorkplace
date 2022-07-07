@@ -51,12 +51,11 @@ mongoose.connection.once("open", () => {
     if (err) {
       console.log(err);
     } else {
-      console.log(
-        color.bold.magenta(`MongoDB collections: ${JSON.stringify(names)}`)
-      );
-
       const collections = Object.keys(names).map((key) => names[key].name);
       // Operations on collections to be performed on startup
+      console.log(
+        color.bold.magenta(`MongoDB collection names: ${collections}`)
+      );
       mongoStartUp(db, collections);
     }
   });
