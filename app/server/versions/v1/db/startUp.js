@@ -59,7 +59,6 @@ const mongoStartUp = async (db, collections) => {
         creator: " ",
         createdOn: timeStamp,
         latestActivity: timeStamp,
-        rules: " ",
         members: [],
       });
       console.log(color.yellow("Welcome community created."));
