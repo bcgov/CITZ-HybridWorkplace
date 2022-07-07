@@ -120,7 +120,7 @@ jobs:
         working-directory: ./app/server
         continue-on-error: true
         run: |
-          npm test -- --json > tempResults
+          npm test -- --forceExit --json > tempResults
 
     # Refine results
       - name: Select only json line
