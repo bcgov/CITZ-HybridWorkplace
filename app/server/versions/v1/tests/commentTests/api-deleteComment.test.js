@@ -97,11 +97,7 @@ describe("Delete Comment - on the created post", () => {
   });
 
   test("API returns a successful response - code 204", () => {
-    expect(response.status).toBe(204);
-  });
-
-  test('API returns description -  "comment deleted"', () => {
-    expect(`${response.text}`).toContain("comment deleted");
+    expect(response.text).toBe(204);
   });
 });
 

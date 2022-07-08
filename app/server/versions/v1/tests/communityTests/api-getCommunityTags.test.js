@@ -9,7 +9,6 @@ const user = require("../functions/userFunctions");
 const { name, email } = require("../functions/randomizer");
 
 let token = "";
-
 const userName = name.gen();
 const userPassword = "Tester123!";
 const userEmail = email.gen();

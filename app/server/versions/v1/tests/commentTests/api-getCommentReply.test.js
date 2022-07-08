@@ -125,7 +125,7 @@ describe("Delete Comment Reply - on the created comment", () => {
   });
 });
 
-describe("Get Comment Reply - on the created comment", () => {
+describe("Get Comment Reply - on the created comment (2)", () => {
   test("API returns both comment replies", async () => {
     const response = await comment.getCommentReply(
       commentResponse.body._id,

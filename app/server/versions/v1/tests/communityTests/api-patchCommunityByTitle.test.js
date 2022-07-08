@@ -14,7 +14,7 @@ const userName = name.gen();
 const userPassword = "Tester123!";
 const userEmail = email.gen();
 
-const newComTitle = "Patch Communites by Title";
+const newComTitle = "Patch Communites by Titles";
 const newComDescript = "world";
 const newComRules = [
   {

@@ -156,8 +156,8 @@ describe('Get Community by Title - With Login, testing with new " " Community', 
     response = await community.getCommunitybyTitle(" ", token);
   });
 
-  test("API returns a successful response - code 200", () => {
-    expect(response.status).toBe(200);
+  test("API returns a successful response - code 204", () => {
+    expect(response.status).toBe(204);
   });
 
   test("API returns description -  includes new community Title", () => {
