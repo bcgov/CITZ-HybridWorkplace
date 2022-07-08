@@ -144,7 +144,6 @@ const User = new mongoose.Schema(
     notificationFrequency: { type: String },
     isInMailingList: { type: Boolean },
     interests: [String],
-    darkMode: { type: Boolean },
   },
   { collection: "user" }
 );
