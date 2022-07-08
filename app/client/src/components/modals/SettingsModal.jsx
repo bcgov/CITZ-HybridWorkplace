@@ -20,10 +20,9 @@
  * @module
  */
 
-import React from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-
 import {
   Dialog,
   DialogContent,
@@ -39,13 +38,27 @@ import {
   RadioGroup,
   Radio,
   Divider,
+  Select,
+  MenuItem,
 } from "@mui/material";
 
 import { closeSettingsModal } from "../../redux/ducks/modalDuck";
 import { editUserNotifications } from "../../redux/ducks/profileDuck";
 
 const SettingsModal = (props) => {
+  const [darkModeValue, setDarkModeValue] = useState(
+    localStorage.getItem("hwp-darkmode") ?? "light"
+  );
   const handleEditNotificationsClick = () => props.editUserNotifications;
+
+  const handleDarkModeChange = (e) => {
+    setDarkModeValue(e.target.value);
+  };
+
+  const handleSave = () => {
+    localStorage.setItem("hwp-darkmode", darkModeValue);
+    window.location.reload();
+  };
 
   return (
     <Dialog
@@ -105,22 +118,30 @@ const SettingsModal = (props) => {
               />
             </RadioGroup>
           </FormControl>
-          <Divider />
-          <Stack direction="row" spacing={1}>
-            <Typography
-              variant="p"
-              sx={{ fontWeight: 600, alignSelf: "center" }}
-            >
+          <FormLabel id="darkmode-preference-label">
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
               Dark Mode
             </Typography>
-            <Switch />
+          </FormLabel>
+          <Divider />
+
+          <Stack direction="row" spacing={1}>
+            <Select
+              name="darkmode-preference-label"
+              labelId="darkmode-preference-label"
+              id="demo-simple-select"
+              aria-labelledby="darkmode-preference-label"
+              value={darkModeValue}
+              onChange={handleDarkModeChange}
+            >
+              <MenuItem value={"light"}>Light</MenuItem>
+              <MenuItem value={"dark"}>Dark</MenuItem>
+              <MenuItem value={"system"}>System Default</MenuItem>
+            </Select>
           </Stack>
           <DialogActions sx={{ m: 0, pb: 0 }}>
             <Stack direction="row-reverse" justifyContent="end" spacing={1}>
-              <Button
-                variant="contained"
-                onClick={handleEditNotificationsClick}
-              >
+              <Button variant="contained" onClick={handleSave}>
                 Save
               </Button>
               <Button variant="contained" onClick={props.closeSettingsModal}>
