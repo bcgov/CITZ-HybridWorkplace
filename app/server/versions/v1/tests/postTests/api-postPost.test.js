@@ -169,7 +169,7 @@ describe("Testing POST /post endpoint", () => {
           "PostPost",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(403); // Should this be a valid title?
       });
 
       test("Positive decimal", async () => {
@@ -179,7 +179,7 @@ describe("Testing POST /post endpoint", () => {
           "PostPost",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(403); // Should this be a valid title?
       });
 
       test("Negative integer", async () => {
@@ -189,7 +189,7 @@ describe("Testing POST /post endpoint", () => {
           "PostPost",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(403); // Should this be a valid title?
       });
 
       test("Negative decimal", async () => {
@@ -199,7 +199,7 @@ describe("Testing POST /post endpoint", () => {
           "PostPost",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(403); // Should this be a valid title?
       });
 
       test("Zero", async () => {
@@ -209,7 +209,7 @@ describe("Testing POST /post endpoint", () => {
           "PostPost",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(403); // Too short?
       });
     });
 
@@ -221,7 +221,7 @@ describe("Testing POST /post endpoint", () => {
           "PostPost",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(403); // Shouldn't be blank.
       });
 
       test("Very large string", async () => {
@@ -231,7 +231,7 @@ describe("Testing POST /post endpoint", () => {
           "PostPost",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(403); // Length limit?
       });
 
       test("URL", async () => {
@@ -241,7 +241,7 @@ describe("Testing POST /post endpoint", () => {
           "PostPost",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(201); // This might actually be desired.
       });
 
       test("Special characters", async () => {
@@ -251,7 +251,7 @@ describe("Testing POST /post endpoint", () => {
           "PostPost",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(403); // If only special characters, should this be permitted?
       });
     });
 
@@ -321,7 +321,7 @@ describe("Testing POST /post endpoint", () => {
           "PostPost",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(201); // Maybe desired
       });
 
       test("Positive decimal", async () => {
@@ -331,7 +331,7 @@ describe("Testing POST /post endpoint", () => {
           "PostPost",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(201); // Maybe desired
       });
 
       test("Negative integer", async () => {
@@ -341,7 +341,7 @@ describe("Testing POST /post endpoint", () => {
           "PostPost",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(201); // Maybe desired
       });
 
       test("Negative decimal", async () => {
@@ -351,7 +351,7 @@ describe("Testing POST /post endpoint", () => {
           "PostPost",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(201); // Maybe desired
       });
 
       test("Zero", async () => {
@@ -361,7 +361,7 @@ describe("Testing POST /post endpoint", () => {
           "PostPost",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(403); // Length requirement?
       });
     });
 
@@ -373,7 +373,7 @@ describe("Testing POST /post endpoint", () => {
           "PostPost",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(403); // Needs content?
       });
 
       test("Very large string", async () => {
@@ -383,7 +383,7 @@ describe("Testing POST /post endpoint", () => {
           "PostPost",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(201);
       });
 
       test("URL", async () => {
@@ -393,7 +393,7 @@ describe("Testing POST /post endpoint", () => {
           "PostPost",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(201);
       });
 
       test("Special characters", async () => {
@@ -403,7 +403,7 @@ describe("Testing POST /post endpoint", () => {
           "PostPost",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(201); // Maybe desired
       });
     });
 

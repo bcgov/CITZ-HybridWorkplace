@@ -34,7 +34,7 @@ describe("Testing DELETE /user endpoint", () => {
     test("Trying to delete a user other than yourself should be rejected - returns 403", async () => {
       await auth.register("Todd", "todd@gmail.com", "Todd123!"); // Create new user
       response = await user.deleteUserByName(loginResponse.body.token, "Todd"); // Try to delete user with original token
-      expect(response.statusCode).toBe(403); // Authorized, but not allowed to do that
+      expect(response.status).toBe(403); // Authorized, but not allowed to do that
     });
 
     test("User is deleted upon request - returns 204", async () => {
@@ -42,7 +42,7 @@ describe("Testing DELETE /user endpoint", () => {
         loginResponse.body.token,
         userName
       );
-      expect(response.statusCode).toBe(204);
+      expect(response.status).toBe(204);
     });
 
     test("Trying to delete a user that no longer exists should be rejected - returns 404", async () => {
@@ -53,7 +53,7 @@ describe("Testing DELETE /user endpoint", () => {
         tempLoginResponse.body.token,
         "Josie"
       ); // Delete them again
-      expect(response.statusCode).toBe(404); // User not found
+      expect(response.status).toBe(404); // User not found
     });
 
     test("Trying to delete a user with an invalid token should be rejected - returns 401", async () => {
@@ -62,7 +62,7 @@ describe("Testing DELETE /user endpoint", () => {
         "reallybadtokenimeansobadithurts",
         "Josie"
       ); // Try to delete user with bad token
-      expect(response.statusCode).toBe(401); // Invalid token
+      expect(response.status).toBe(401); // Invalid token
     });
   });
 
@@ -84,84 +84,93 @@ describe("Testing DELETE /user endpoint", () => {
 
     describe("Sending numbers as username", () => {
       test("Positive integer", async () => {
-        await user.deleteUserByName(
+        response = await user.deleteUserByName(
           loginResponse.body.token,
           positiveInt.gen()
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Positive decimal", async () => {
-        await user.deleteUserByName(loginResponse.body.token, positive.gen());
-        expect(response.status).toBe(403);
+        response = await user.deleteUserByName(
+          loginResponse.body.token,
+          positive.gen()
+        );
+        expect(response.status).toBe(404);
       });
 
       test("Negative integer", async () => {
-        await user.deleteUserByName(
+        response = await user.deleteUserByName(
           loginResponse.body.token,
           negativeInt.gen()
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Negative decimal", async () => {
-        await user.deleteUserByName(loginResponse.body.token, negative.gen);
-        expect(response.status).toBe(403);
+        response = await user.deleteUserByName(
+          loginResponse.body.token,
+          negative.gen
+        );
+        expect(response.status).toBe(404);
       });
 
       test("Zero", async () => {
-        await user.deleteUserByName(loginResponse.body.token, 0);
-        expect(response.status).toBe(403);
+        response = await user.deleteUserByName(loginResponse.body.token, 0);
+        expect(response.status).toBe(404);
       });
     });
 
     describe("Sending strings as username", () => {
       test("Empty string", async () => {
-        await user.deleteUserByName(loginResponse.body.token, "");
-        expect(response.status).toBe(403);
+        response = await user.deleteUserByName(loginResponse.body.token, "");
+        expect(response.status).toBe(404);
       });
 
       test("Very large string", async () => {
-        await user.deleteUserByName(
+        response = await user.deleteUserByName(
           loginResponse.body.token,
           largeString.gen()
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("URL", async () => {
-        await user.deleteUserByName(
+        response = await user.deleteUserByName(
           loginResponse.body.token,
           "https://github.com/bcgov/CITZ-HybridWorkplace"
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Special characters", async () => {
-        await user.deleteUserByName(loginResponse.body.token, characters.gen());
-        expect(response.status).toBe(403);
+        response = await user.deleteUserByName(
+          loginResponse.body.token,
+          characters.gen()
+        );
+        expect(response.status).toBe(404);
       });
     });
 
     describe("Sending other things as username", () => {
       test("Null", async () => {
-        await user.deleteUserByName(loginResponse.body.token, null);
-        expect(response.status).toBe(403);
+        response = await user.deleteUserByName(loginResponse.body.token, null);
+        expect(response.status).toBe(404);
       });
 
       test("JS object", async () => {
-        await user.deleteUserByName(loginResponse.body.token, {
+        response = await user.deleteUserByName(loginResponse.body.token, {
           username: userName,
         });
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Array", async () => {
-        await user.deleteUserByName(loginResponse.body.token, [
+        response = await user.deleteUserByName(loginResponse.body.token, [
           userName,
           userName,
         ]);
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
     });
   });

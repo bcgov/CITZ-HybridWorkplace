@@ -198,12 +198,12 @@ describe("Testing POST /post/tag endpoint", () => {
   describe("Testing limitations of tag field", () => {
     beforeAll(async () => {
       // Register user if not already done
-      await users.register(userName, userEmail, userPassword);
-      response = await users.login(userName, userPassword);
+      await auth.register(userName, email.gen(), userPassword);
+      response = await auth.login(userName, userPassword);
     });
 
     afterAll(async () => {
-      await users.deleteUsers();
+      await auth.deleteUsers();
     });
 
     describe("Sending numbers as tag", () => {

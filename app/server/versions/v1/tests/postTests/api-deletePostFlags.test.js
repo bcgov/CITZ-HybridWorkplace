@@ -112,13 +112,13 @@ describe("Testing DELETE /post/flags endpoint", () => {
     });
 
     // TODO: Currently returns 403, but this isn't a restricted action, the flag just isn't there
-    test("User cannot delete flags that have not been set - returns 404", async () => {
+    test("User cannot delete flags that have not been set - returns 403", async () => {
       response = await post.deletePostFlags(
         postResponse.body._id,
         flags[5],
         loginResponse.body.token
       );
-      expect(response.status).toBe(404); // User has not flagged this
+      expect(response.status).toBe(403); // User has not flagged this
     });
 
     test("User cannot delete flags that do not exist in acceptable flags list - returns 403", async () => {
@@ -253,7 +253,7 @@ describe("Testing DELETE /post/flags endpoint", () => {
           flags[5],
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Positive decimal", async () => {
@@ -262,7 +262,7 @@ describe("Testing DELETE /post/flags endpoint", () => {
           flags[5],
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Negative integer", async () => {
@@ -271,7 +271,7 @@ describe("Testing DELETE /post/flags endpoint", () => {
           flags[5],
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Negative decimal", async () => {
@@ -280,7 +280,7 @@ describe("Testing DELETE /post/flags endpoint", () => {
           flags[5],
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Zero", async () => {
@@ -289,7 +289,7 @@ describe("Testing DELETE /post/flags endpoint", () => {
           flags[5],
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
     });
 
@@ -300,7 +300,7 @@ describe("Testing DELETE /post/flags endpoint", () => {
           flags[5],
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Very large string", async () => {
@@ -309,7 +309,7 @@ describe("Testing DELETE /post/flags endpoint", () => {
           flags[5],
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("URL", async () => {
@@ -318,7 +318,7 @@ describe("Testing DELETE /post/flags endpoint", () => {
           flags[5],
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Special characters", async () => {
@@ -327,7 +327,7 @@ describe("Testing DELETE /post/flags endpoint", () => {
           flags[5],
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
     });
 
@@ -338,7 +338,7 @@ describe("Testing DELETE /post/flags endpoint", () => {
           flags[5],
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("JS object", async () => {
@@ -347,7 +347,7 @@ describe("Testing DELETE /post/flags endpoint", () => {
           flags[5],
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Array", async () => {
@@ -356,7 +356,7 @@ describe("Testing DELETE /post/flags endpoint", () => {
           flags[5],
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
     });
   });

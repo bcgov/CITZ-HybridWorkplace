@@ -326,7 +326,7 @@ describe("Testing POST /post/flags endpoint", () => {
       test("JS object", async () => {
         response = await post.setPostFlags(
           postResponse.body._id,
-          { tag: tag1 },
+          { flag: flags[0] },
           loginResponse.body.token
         );
         expect(response.status).toBe(403);
@@ -335,7 +335,7 @@ describe("Testing POST /post/flags endpoint", () => {
       test("Array", async () => {
         response = await post.setPostFlags(
           postResponse.body._id,
-          [tag1, tag2],
+          flags,
           loginResponse.body.token
         );
         expect(response.status).toBe(403);

@@ -158,7 +158,7 @@ describe("Testing GET /post/tags endpoint", () => {
           positiveInt.gen(),
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Positive decimal", async () => {
@@ -166,7 +166,7 @@ describe("Testing GET /post/tags endpoint", () => {
           positive.gen(),
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Negative integer", async () => {
@@ -174,7 +174,7 @@ describe("Testing GET /post/tags endpoint", () => {
           negativeInt.gen(),
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Negative decimal", async () => {
@@ -182,19 +182,19 @@ describe("Testing GET /post/tags endpoint", () => {
           negative.gen(),
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Zero", async () => {
         response = await post.getPostTags(0, loginResponse.body.token);
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
     });
 
     describe("Sending strings as post id", () => {
       test("Empty string", async () => {
         response = await post.getPostTags("", loginResponse.body.token);
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Very large string", async () => {
@@ -202,7 +202,7 @@ describe("Testing GET /post/tags endpoint", () => {
           largeString.gen(),
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("URL", async () => {
@@ -210,7 +210,7 @@ describe("Testing GET /post/tags endpoint", () => {
           "https://github.com/bcgov/CITZ-HybridWorkplace",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Special characters", async () => {
@@ -218,14 +218,14 @@ describe("Testing GET /post/tags endpoint", () => {
           characters.gen(),
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
     });
 
     describe("Sending other things as post id", () => {
       test("Null", async () => {
         response = await post.getPostTags(null, loginResponse.body.token);
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("JS object", async () => {
@@ -233,7 +233,7 @@ describe("Testing GET /post/tags endpoint", () => {
           { _id: postResponse.body._id },
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Array", async () => {
@@ -241,7 +241,7 @@ describe("Testing GET /post/tags endpoint", () => {
           [postResponse.body._id, postResponse.body._id],
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
     });
   });

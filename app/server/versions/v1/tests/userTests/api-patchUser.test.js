@@ -31,27 +31,16 @@ describe("Testing PATCH /user endpoint", () => {
       await auth.deleteUsers();
     });
 
-    test("Edit all fields at the same time - returns 204", async () => {
-      response = await user.editUserByFields(
-        loginResponse.body.token,
-        userEmail,
-        "James",
-        "Smith",
-        "I am a small boy from Kentucky.",
-        "Modern Major General"
-      );
-      expect(response.status).toBe(204);
-    });
-
-    test("Confirm that those changes took effect", async () => {
-      response = await user.getUser(loginResponse.body.token);
-      expect(response.body.email).toBe(userEmail);
-    });
-
     test("Edit fields by passing an object - returns 204", async () => {
       userEmail = email.gen();
       const body = {
         email: userEmail,
+        firstName: "Sarah",
+        lastName: "Grace",
+        bio: "Hi I'm new! Just moved from the Ottawa",
+        title: "Jr. Software Engineer",
+        ministry: "CITZ",
+        notificationFrequency: "none",
       };
       response = await user.editUserByObject(loginResponse.body.token, body);
       expect(response.status).toBe(204);

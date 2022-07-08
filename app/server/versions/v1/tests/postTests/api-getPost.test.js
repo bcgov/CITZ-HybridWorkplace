@@ -134,6 +134,7 @@ describe("Testing GET /post endpoint", () => {
   describe("Testing limitations of post id field", () => {
     let loginResponse;
     let response;
+    let postResponse;
     const userName = name.gen();
     const userPassword = password.gen();
 
@@ -160,7 +161,7 @@ describe("Testing GET /post endpoint", () => {
       await community.joinCommunity("GET Posts 1", loginResponse.body.token);
       await community.joinCommunity("GET Posts 2", loginResponse.body.token);
       // Create some posts
-      await post.createPost(
+      postResponse = await post.createPost(
         "Post 1",
         "GOGOGO",
         "GET Posts 1",
@@ -187,7 +188,7 @@ describe("Testing GET /post endpoint", () => {
           positiveInt.gen(),
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Positive decimal", async () => {
@@ -195,7 +196,7 @@ describe("Testing GET /post endpoint", () => {
           positive.gen(),
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Negative integer", async () => {
@@ -203,7 +204,7 @@ describe("Testing GET /post endpoint", () => {
           negativeInt.gen(),
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Negative decimal", async () => {
@@ -211,19 +212,19 @@ describe("Testing GET /post endpoint", () => {
           negative.gen(),
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Zero", async () => {
         response = await post.getPostById(0, loginResponse.body.token);
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
     });
 
     describe("Sending strings as post id", () => {
       test("Empty string", async () => {
         response = await post.getPostById("", loginResponse.body.token);
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Very large string", async () => {
@@ -231,7 +232,7 @@ describe("Testing GET /post endpoint", () => {
           largeString.gen(),
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("URL", async () => {
@@ -239,7 +240,7 @@ describe("Testing GET /post endpoint", () => {
           "https://github.com/bcgov/CITZ-HybridWorkplace",
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Special characters", async () => {
@@ -247,14 +248,14 @@ describe("Testing GET /post endpoint", () => {
           characters.gen(),
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
     });
 
     describe("Sending other things as post id", () => {
       test("Null", async () => {
         response = await post.getPostById(null, loginResponse.body.token);
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("JS object", async () => {
@@ -262,7 +263,7 @@ describe("Testing GET /post endpoint", () => {
           { id: postResponse.body._id },
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Array", async () => {
@@ -270,7 +271,7 @@ describe("Testing GET /post endpoint", () => {
           [postResponse.body._id, postResponse.body._id],
           loginResponse.body.token
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
     });
   });

@@ -5,6 +5,7 @@ const {
   password,
   name,
   email,
+  positive,
   positiveInt,
   negativeInt,
   negative,
@@ -166,7 +167,7 @@ describe("Testing GET /user endpoint", () => {
           loginResponse.body.token,
           positiveInt.gen()
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Positive decimal", async () => {
@@ -174,7 +175,7 @@ describe("Testing GET /user endpoint", () => {
           loginResponse.body.token,
           positive.gen()
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Negative integer", async () => {
@@ -182,7 +183,7 @@ describe("Testing GET /user endpoint", () => {
           loginResponse.body.token,
           negativeInt.gen()
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Negative decimal", async () => {
@@ -190,19 +191,19 @@ describe("Testing GET /user endpoint", () => {
           loginResponse.body.token,
           negative.gen()
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Zero", async () => {
         response = await user.getUserByName(loginResponse.body.token, 0);
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
     });
 
     describe("Sending strings as username", () => {
       test("Empty string", async () => {
         response = await user.getUserByName(loginResponse.body.token, "");
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Very large string", async () => {
@@ -210,7 +211,7 @@ describe("Testing GET /user endpoint", () => {
           loginResponse.body.token,
           largeString.gen()
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("URL", async () => {
@@ -218,7 +219,7 @@ describe("Testing GET /user endpoint", () => {
           loginResponse.body.token,
           "https://github.com/bcgov/CITZ-HybridWorkplace"
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Special characters", async () => {
@@ -226,21 +227,21 @@ describe("Testing GET /user endpoint", () => {
           loginResponse.body.token,
           characters.gen()
         );
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
     });
 
     describe("Sending other things as username", () => {
       test("Null", async () => {
         response = await user.getUserByName(loginResponse.body.token, null);
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("JS object", async () => {
         response = await user.getUserByName(loginResponse.body.token, {
           username: userName,
         });
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       test("Array", async () => {
@@ -248,7 +249,7 @@ describe("Testing GET /user endpoint", () => {
           userName,
           userName,
         ]);
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
     });
   });
