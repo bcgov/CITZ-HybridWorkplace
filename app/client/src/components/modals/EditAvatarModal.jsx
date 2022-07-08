@@ -44,15 +44,15 @@ import { editUserAvatar } from "../../redux/ducks/profileDuck";
 const EditAvatarModal = (props) => {
   useEffect(() => {}, [props.profile]);
 
-  const [image, setImage] = useState(props.profile.avatar.image || null);
+  const [image, setImage] = useState(props.profile.avatar?.image || null);
   const initials = props.profile.initials || "";
   const [useGradient, setUseGradient] = useState(
-    props.profile.avatar.gradient || false
+    props.profile.avatar?.gradient || false
   );
 
   const types = ["Initials", "Person", "Emoji", "Upload"];
   const [selectedType, setSelectedType] = useState(
-    props.profile.avatar.avatarType || "Initials"
+    props.profile.avatar?.avatarType || "Initials"
   );
 
   const colors = {
@@ -69,7 +69,7 @@ const EditAvatarModal = (props) => {
   };
 
   const [selectedColors, setSelectedColors] = useState(
-    props.profile.avatar.colors || {
+    props.profile.avatar?.colors || {
       primary: colors.magenta,
       secondary: colors.magenta,
     }

@@ -69,7 +69,7 @@ const ProfilePage = (props) => {
     props.getProfile(username);
     props.getUsersCommunities();
     props.getUserPosts(username);
-  }, [username, props]);
+  }, [username]);
 
   props.profile.initials = props.profile.lastName
     ? `${props.profile.firstName?.charAt(0)}${props.profile.lastName?.charAt(
@@ -117,11 +117,11 @@ const ProfilePage = (props) => {
             onClick={() => handleEditAvatarClick(props.profile)}
           >
             <AvatarIcon
-              type={props.profile.avatar.avatarType}
-              initials={props.profile.initials}
-              image={props.profile.avatar.image}
-              gradient={props.profile.avatar.gradient}
-              colors={props.profile.avatar.colors}
+              type={props.profile.avatar?.avatarType ?? ""}
+              initials={props.profile?.initials ?? ""}
+              image={props.profile.avatar?.image ?? ""}
+              gradient={props.profile.avatar?.gradient ?? ""}
+              colors={props.profile.avatar?.colors ?? {}}
               size={150}
             />
           </Button>

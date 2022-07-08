@@ -41,7 +41,7 @@ const AvatarIcon = (props) => {
     "#f0887a",
   ];
 
-  const randColor = colors[Math.floor(Math.random() * colors.length)];
+  const randColor = "#585858";
 
   const defaultImage = "../images/avatar/profile-icon-vector-150x150.jpg";
 
