@@ -18,8 +18,17 @@ const welComTitle = "Welcome";
 
 const newComTitle = "hello get Tags";
 const newComDescript = "world";
-const newComRules = "1. rules";
-const newComTags = [];
+const newComRules = [
+  {
+    rule: "Be nice",
+    description: "be the best person you can be!",
+  },
+];
+const newComTags = [
+  {
+    tag: "Informative",
+  },
+];
 
 describe("Registering a test user", () => {
   test("API returns a successful response - code 201", async () => {

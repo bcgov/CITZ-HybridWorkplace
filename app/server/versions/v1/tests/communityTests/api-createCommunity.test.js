@@ -20,7 +20,12 @@ const welComRules = "string";
 
 const newComTitle = "hello create community";
 const newComDescript = "world";
-const newComRules = "1. rules";
+const newComRules = [
+  {
+    rule: "Be nice",
+    description: "be the best person you can be!",
+  },
+];
 const newComTags = [
   {
     tag: "Informative",

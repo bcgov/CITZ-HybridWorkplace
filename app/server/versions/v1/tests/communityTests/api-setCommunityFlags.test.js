@@ -16,8 +16,17 @@ const userEmail = email.gen();
 
 const newComTitle = "hello set Flags";
 const newComDescript = "world";
-const newComRules = "1. rules";
-const newComTags = [];
+const newComRules = [
+  {
+    rule: "Be nice",
+    description: "be the best person you can be!",
+  },
+];
+const newComTags = [
+  {
+    tag: "Informative",
+  },
+];
 
 const updatedFlag = "Inappropriate";
 const updatedFlagBad = "weird ;(";

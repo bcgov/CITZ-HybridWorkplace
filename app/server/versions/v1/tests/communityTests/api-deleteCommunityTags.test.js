@@ -15,10 +15,14 @@ const userPassword = "Tester123!";
 const userEmail = email.gen();
 
 const welComTitle = "Welcome";
-
 const newComTitle = "hello create";
 const newComDescript = "world";
-const newComRules = "rules";
+const newComRules = [
+  {
+    rule: "Be nice",
+    description: "be the best person you can be!",
+  },
+];
 const newComTags = [
   {
     tag: "Informative",

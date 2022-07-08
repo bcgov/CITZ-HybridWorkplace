@@ -16,7 +16,12 @@ const userEmail = email.gen();
 
 const newComTitle = "hello get members";
 const newComDescript = "world";
-const newComRules = "hello";
+const newComRules = [
+  {
+    rule: "Be nice",
+    description: "be the best person you can be!",
+  },
+];
 const newComTags = [
   {
     tag: "Informative",
