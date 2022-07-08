@@ -9,17 +9,25 @@ const user = require("../functions/userFunctions");
 const { name, email } = require("../functions/randomizer");
 
 let token = "";
-
 const userName = name.gen();
 const userPassword = "Tester123!";
 const userEmail = email.gen();
 
 const welComTitle = "Welcome";
 
-const newComTitle = "hello get Tags";
+const newComTitle = "get Community Tags";
 const newComDescript = "world";
-const newComRules = "1. rules";
-const newComTags = [];
+const newComRules = [
+  {
+    rule: "Be nice",
+    description: "be the best person you can be!",
+  },
+];
+const newComTags = [
+  {
+    tag: "Informative",
+  },
+];
 
 describe("Registering a test user", () => {
   test("API returns a successful response - code 201", async () => {
