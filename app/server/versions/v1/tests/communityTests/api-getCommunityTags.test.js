@@ -16,7 +16,7 @@ const userEmail = email.gen();
 
 const welComTitle = "Welcome";
 
-const newComTitle = "hello get Tags";
+const newComTitle = "get Community Tags";
 const newComDescript = "world";
 const newComRules = [
   {

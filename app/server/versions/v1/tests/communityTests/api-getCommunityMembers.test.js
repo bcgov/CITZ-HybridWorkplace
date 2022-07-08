@@ -14,7 +14,7 @@ const userName = name.gen();
 const userPassword = "Tester123!";
 const userEmail = email.gen();
 
-const newComTitle = "hello get members";
+const newComTitle = "get members";
 const newComDescript = "world";
 const newComRules = [
   {

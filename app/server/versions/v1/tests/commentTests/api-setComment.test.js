@@ -18,7 +18,7 @@ let token = "";
 
 let postResponse;
 
-const newComTitle = "hello get Titles";
+const newComTitle = "set comments";
 const newComDescript = "world";
 const newComRules = [
   {

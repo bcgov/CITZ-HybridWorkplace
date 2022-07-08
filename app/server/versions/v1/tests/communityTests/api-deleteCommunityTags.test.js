@@ -15,7 +15,8 @@ const userPassword = "Tester123!";
 const userEmail = email.gen();
 
 const welComTitle = "Welcome";
-const newComTitle = "hello create";
+
+const newComTitle = "delete Community Tags";
 const newComDescript = "world";
 const newComRules = [
   {

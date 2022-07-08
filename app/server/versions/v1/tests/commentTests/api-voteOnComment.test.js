@@ -19,7 +19,7 @@ let token = "";
 let commentResponse;
 let postResponse;
 
-const newComTitle = "hello get Titles";
+const newComTitle = "vote on comments";
 const newComDescript = "world";
 const newComRules = [
   {

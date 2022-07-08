@@ -14,7 +14,7 @@ const userName = name.gen();
 const userPassword = "Tester123!";
 const userEmail = email.gen();
 
-const newComTitle = "hello leave";
+const newComTitle = "Leave Communities";
 const newComDescript = "world";
 const newComRules = [
   {

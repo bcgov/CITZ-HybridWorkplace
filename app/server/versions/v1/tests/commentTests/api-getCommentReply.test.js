@@ -20,7 +20,7 @@ let commentResponse;
 let postResponse;
 let replyResponse;
 
-const newComTitle = "set comment replies";
+const newComTitle = "get comment replies";
 const newComDescript = "world";
 const newComRules = [
   {

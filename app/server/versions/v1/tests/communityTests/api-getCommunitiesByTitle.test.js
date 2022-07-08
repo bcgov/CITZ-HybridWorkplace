@@ -17,7 +17,7 @@ const userEmail = email.gen();
 const welComTitle = "Welcome";
 const welComDescript = "The Neighbourhood";
 
-const newComTitle = "hello get Titles";
+const newComTitle = "get Communities by Title";
 const newComDescript = "world";
 const newComRules = [
   {

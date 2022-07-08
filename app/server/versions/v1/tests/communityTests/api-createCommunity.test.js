@@ -18,7 +18,7 @@ const welComTitle = "Welcome";
 const welComDescript = "Welcome to theNeighbourhood";
 const welComRules = "string";
 
-const newComTitle = "hello create community";
+const newComTitle = "Create community";
 const newComDescript = "world";
 const newComRules = [
   {
