@@ -40,6 +40,9 @@ const Community = require("../../models/community.model");
 const User = require("../../models/user.model");
 const Post = require("../../models/post.model");
 const Comment = require("../../models/comment.model");
+const {
+  communityAuthorization,
+} = require("../../authorization/communityAuthorization");
 
 /**
  * @swagger
@@ -161,6 +164,7 @@ router.post("/", async (req, res, next) => {
       tags: req.body.tags,
       createdOn: timeStamp,
       latestActivity: timeStamp,
+      moderators: [user.id],
     });
     req.log.addAction("Community created.");
 
@@ -435,13 +439,20 @@ router.patch("/:title", async (req, res, next) => {
     validateCommunityInputs(req.body, options);
     req.log.addAction("Inputs valid.");
 
-    req.log.addAction("Checking user is creator of community.");
-    if (user.id !== community.creator)
+    req.log.addAction("Checking user is moderator of community.");
+    if (
+      !(await communityAuthorization.isCommunityModerator(
+        // eslint-disable-next-line no-underscore-dangle
+        user._id,
+        community.title,
+        communityAuthorization.roles.moderator
+      ))
+    )
       throw new ResponseError(
         403,
-        "Only creator of community can edit community."
+        "Only moderator of community can edit community."
       );
-    req.log.addAction("User is creator of community.");
+    req.log.addAction("User is moderator of community.");
 
     req.log.addAction("Checking if community title already exists.");
     if (req.body.title && (await Community.exists({ title: req.body.title })))
@@ -526,13 +537,20 @@ router.delete("/:title", async (req, res, next) => {
     });
     req.log.addAction("User and community found.");
 
-    req.log.addAction("Checking user is creator of community.");
-    if (user.id !== community.creator)
+    req.log.addAction("Checking user is moderator of community.");
+    if (
+      !(await communityAuthorization.isCommunityModerator(
+        // eslint-disable-next-line no-underscore-dangle
+        user._id,
+        community.title,
+        communityAuthorization.roles.moderator
+      ))
+    )
       throw new ResponseError(
         403,
-        "Only creator of community can edit community."
+        "Only moderator of community can edit community."
       );
-    req.log.addAction("User is creator of community.");
+    req.log.addAction("User is moderator of community.");
 
     // Remove community
     req.log.addAction("Removing community.");

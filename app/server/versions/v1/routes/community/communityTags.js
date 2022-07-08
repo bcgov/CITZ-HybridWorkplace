@@ -30,6 +30,9 @@ const router = express.Router();
 
 const Community = require("../../models/community.model");
 const Post = require("../../models/post.model");
+const {
+  communityAuthorization,
+} = require("../../authorization/communityAuthorization");
 
 /**
  * @swagger
@@ -108,7 +111,7 @@ router.get("/:title", async (req, res, next) => {
  *        '404':
  *          description: User not found. **||** <br>Community not found.
  *        '403':
- *          description: A community can't have more than 7 tags. **||** <br>No duplicate tags. **||** <br>Only creator of community can edit community.
+ *          description: A community can't have more than 7 tags. **||** <br>No duplicate tags. **||** <br>Only moderator of community can edit community.
  *        '204':
  *          description: Success. No content to return.
  *        '400':
@@ -165,13 +168,20 @@ router.post("/:title", async (req, res, next) => {
       );
     req.log.addAction("Tag and description are valid.");
 
-    req.log.addAction("Checking user is creator of community.");
-    if (user.id !== community.creator)
+    req.log.addAction("Checking user is moderator of community.");
+    if (
+      !(await communityAuthorization.isCommunityModerator(
+        // eslint-disable-next-line no-underscore-dangle
+        user._id,
+        community.title,
+        communityAuthorization.roles.moderator
+      ))
+    )
       throw new ResponseError(
         403,
-        "Only creator of community can edit community."
+        "Only moderator of community can edit community."
       );
-    req.log.addAction("User is creator of community.");
+    req.log.addAction("User is moderator of community.");
 
     req.log.addAction("Checking if community tag is already set.");
     if (
@@ -249,7 +259,7 @@ router.post("/:title", async (req, res, next) => {
  *        '404':
  *          description: User not found. **||** <br>Community not found. **||** <br>Tag not found in query.
  *        '403':
- *          description: Only creator of community can edit community.
+ *          description: Only moderator of community can edit community.
  *        '204':
  *          description: Success. No content to return.
  *        '400':
@@ -270,13 +280,20 @@ router.delete("/:title", async (req, res, next) => {
     if (!req.query.tag || req.query.tag === "")
       throw new ResponseError(404, "Tag not found in query.");
 
-    req.log.addAction("Checking user is creator of community.");
-    if (user.id !== community.creator)
+    req.log.addAction("Checking user is moderator of community.");
+    if (
+      !(await communityAuthorization.isCommunityModerator(
+        // eslint-disable-next-line no-underscore-dangle
+        user._id,
+        community.title,
+        communityAuthorization.roles.moderator
+      ))
+    )
       throw new ResponseError(
         403,
-        "Only creator of community can edit community."
+        "Only moderator of community can edit community."
       );
-    req.log.addAction("User is creator of community.");
+    req.log.addAction("User is moderator of community.");
 
     // Remove tag from community
     req.log.addAction("Updating community tags.");
