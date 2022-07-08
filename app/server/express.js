@@ -48,6 +48,7 @@ const {
   communityTagsRouter,
   communityRulesRouter,
   communityMembersRouter,
+  communityModeratorsRouter,
   postRouter,
   postFlagsRouter,
   postTagsRouter,
@@ -141,6 +142,14 @@ app.use("/api/register", initLogger, registerRouter, requestFinally);
 app.use("/api/login", initLogger, loginRouter, requestFinally);
 app.use("/api/logout", initLogger, logoutRouter, requestFinally);
 app.use("/api/token", initLogger, tokenRouter, requestFinally);
+
+app.use(
+  "/api/community/moderators",
+  initLogger,
+  authenticateToken,
+  communityModeratorsRouter,
+  requestFinally
+);
 
 app.use(
   "/api/community/flags",

@@ -173,8 +173,7 @@ router.post("/:title", async (req, res, next) => {
       !(await communityAuthorization.isCommunityModerator(
         // eslint-disable-next-line no-underscore-dangle
         user._id,
-        community.title,
-        communityAuthorization.roles.moderator
+        community.title
       ))
     )
       throw new ResponseError(
@@ -285,8 +284,7 @@ router.delete("/:title", async (req, res, next) => {
       !(await communityAuthorization.isCommunityModerator(
         // eslint-disable-next-line no-underscore-dangle
         user._id,
-        community.title,
-        communityAuthorization.roles.moderator
+        community.title
       ))
     )
       throw new ResponseError(

@@ -444,8 +444,7 @@ router.patch("/:title", async (req, res, next) => {
       !(await communityAuthorization.isCommunityModerator(
         // eslint-disable-next-line no-underscore-dangle
         user._id,
-        community.title,
-        communityAuthorization.roles.moderator
+        community.title
       ))
     )
       throw new ResponseError(
@@ -469,6 +468,7 @@ router.patch("/:title", async (req, res, next) => {
       "creatorName",
       "memberCount",
       "latestActivity",
+      "moderators",
     ]);
     req.log.addAction("Edit query has been cleaned.");
 
@@ -542,8 +542,7 @@ router.delete("/:title", async (req, res, next) => {
       !(await communityAuthorization.isCommunityModerator(
         // eslint-disable-next-line no-underscore-dangle
         user._id,
-        community.title,
-        communityAuthorization.roles.moderator
+        community.title
       ))
     )
       throw new ResponseError(

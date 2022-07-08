@@ -3,6 +3,7 @@ const communityFlagsRouter = require("./community/communityFlags");
 const communityTagsRouter = require("./community/communityTags");
 const communityRulesRouter = require("./community/communityRules");
 const communityMembersRouter = require("./community/communityMembers");
+const communityModeratorsRouter = require("./community/communityModerators");
 
 const postRouter = require("./post/post");
 const postFlagsRouter = require("./post/postFlags");
@@ -27,6 +28,7 @@ module.exports = {
   communityTagsRouter,
   communityRulesRouter,
   communityMembersRouter,
+  communityModeratorsRouter,
   postRouter,
   postFlagsRouter,
   postTagsRouter,

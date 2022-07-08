@@ -1,4 +1,7 @@
 const express = require("express");
+const {
+  communityAuthorization,
+} = require("../../authorization/communityAuthorization");
 const ResponseError = require("../../classes/responseError");
 const findSingleDocuments = require("../../functions/findSingleDocuments");
 
@@ -63,7 +66,33 @@ router.get("/:title", async (req, res, next) => {
   }
 });
 
-router.patch("/promote/:title", async (req, res, next) => {
+/**
+ * @swagger
+ * paths:
+ *  /api/community/moderators/{title}:
+ *    patch:
+ *      security:
+ *        - bearerAuth: []
+ *      tags:
+ *        - Community Moderators
+ *      summary: Set array of community moderators.
+ *      description: Updates array of moderators if the user is a moderator.
+ *      parameters:
+ *        - in: path
+ *          required: true
+ *          name: title
+ *          schema:
+ *            $ref: '#/components/schemas/Community/properties/title'
+ *      responses:
+ *        '404':
+ *          description: User not found. **||** <br>Community not found.
+ *        '204':
+ *          description: Success. No content to return
+ *        '403':
+ *          description: Only moderator of community can edit community.
+ */
+
+router.patch("/:title", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and community.");
     const { user, community } = await findSingleDocuments({
@@ -72,33 +101,26 @@ router.patch("/promote/:title", async (req, res, next) => {
     });
     req.log.addAction("User and community found.");
 
-    req.log.addAction("Checking if user is member of community.");
+    req.log.addAction("Checking user is moderator of community.");
     if (
-      await Community.exists({
-        title: community.title,
-        members: user.id,
-      })
+      !(await communityAuthorization.isCommunityModerator(
+        // eslint-disable-next-line no-underscore-dangle
+        user._id,
+        community.title
+      ))
     )
-      throw new ResponseError(403, "User is already a member of community.");
-    req.log.addAction("User is not a member of community.");
+      throw new ResponseError(
+        403,
+        "Only moderator of community can edit community."
+      );
+    req.log.addAction("User is moderator of community.");
 
-    req.log.addAction("Updating community members.");
+    req.log.addAction("Updating community moderators.");
     await Community.updateOne(
       { title: community.title },
-      { $addToSet: { members: user.id }, $inc: { memberCount: 1 } }
+      { $set: { moderators: req.body.moderators } }
     );
-    req.log.addAction("Community members updated.");
-
-    req.log.addAction("Updating user community list.");
-    await User.updateOne(
-      { username: user.username },
-      {
-        $addToSet: {
-          communities: { community: community.title, engagement: 0 },
-        },
-      }
-    );
-    req.log.addAction("User community list updated.");
+    req.log.addAction("Community moderators updated.");
 
     req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
