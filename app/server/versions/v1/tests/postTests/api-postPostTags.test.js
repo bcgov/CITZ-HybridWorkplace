@@ -1,64 +1,75 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-undef */
 const { AuthFunctions } = require("../functions/authFunctions");
-const { password, name, email } = require("../functions/randomizer");
 const { PostFunctions } = require("../functions/postFunctions");
 const { CommunityFunctions } = require("../functions/communityFunctions");
+const {
+  password,
+  name,
+  email,
+  positive,
+  positiveInt,
+  negative,
+  negativeInt,
+  largeString,
+  characters,
+} = require("../functions/randomizer");
 
 const community = new CommunityFunctions();
 const auth = new AuthFunctions();
 const post = new PostFunctions();
 
 describe("Testing POST /post/tag endpoint", () => {
+  let loginResponse;
+  let response;
+  let postResponse;
+  const userName = name.gen();
+  const userPassword = password.gen();
+  const communityName = name.gen();
+  const randomText = name.gen();
+  const tag1 = "great";
+  const tag2 = "not so great";
+
+  beforeAll(async () => {
+    // Set up user
+    await auth.register(userName, email.gen(), userPassword);
+    loginResponse = await auth.login(userName, userPassword);
+
+    // Create some communities
+    await community.createCommunity(
+      communityName,
+      randomText,
+      randomText,
+      [{ tag: tag1, count: 1 }],
+      loginResponse.body.token
+    );
+
+    // Join communities
+    await community.joinCommunity(communityName, loginResponse.body.token);
+
+    // Add available tags to community
+    await community.setCommunityTags(
+      communityName,
+      tag2,
+      loginResponse.body.token
+    );
+
+    // Create some posts
+    postResponse = await post.createPost(
+      randomText,
+      randomText,
+      communityName,
+      loginResponse.body.token
+    );
+  });
+
+  afterAll(async () => {
+    await post.deleteAllPosts();
+    await community.deleteCommunity(communityName, loginResponse.body.token);
+    await auth.deleteUsers();
+  });
+
   describe("Testing user's ability to POST Post Tags", () => {
-    let loginResponse;
-    let response;
-    let postResponse;
-    const userName = name.gen();
-    const userPassword = password.gen();
-    const communityName = name.gen();
-    const randomText = name.gen();
-    const tag1 = "great";
-    const tag2 = "not so great";
-
-    beforeAll(async () => {
-      // Set up user
-      await auth.register(userName, email.gen(), userPassword);
-      loginResponse = await auth.login(userName, userPassword);
-
-      // Create some communities
-      await community.createCommunity(
-        communityName,
-        randomText,
-        randomText,
-        [{ tag: tag1, count: 1 }],
-        loginResponse.body.token
-      );
-
-      // Join communities
-      await community.joinCommunity(communityName, loginResponse.body.token);
-
-      // Add available tags to community
-      await community.setCommunityTags(
-        communityName,
-        tag2,
-        loginResponse.body.token
-      );
-
-      // Create some posts
-      postResponse = await post.createPost(
-        randomText,
-        randomText,
-        communityName,
-        loginResponse.body.token
-      );
-    });
-
-    afterAll(async () => {
-      await post.deleteAllPosts();
-      await community.deleteCommunity(communityName, loginResponse.body.token);
-      await auth.deleteUsers();
-    });
-
     test("User can tag post when already defined in community tags", async () => {
       await post.setPostTags(
         postResponse.body._id,
@@ -184,7 +195,7 @@ describe("Testing POST /post/tag endpoint", () => {
     });
   });
 
-  describe("Testing limitations of username field", () => {
+  describe("Testing limitations of tag field", () => {
     beforeAll(async () => {
       // Register user if not already done
       await users.register(userName, userEmail, userPassword);
@@ -195,71 +206,116 @@ describe("Testing POST /post/tag endpoint", () => {
       await users.deleteUsers();
     });
 
-    describe("Sending numbers as username", () => {
+    describe("Sending numbers as tag", () => {
       test("Positive integer", async () => {
-        response = await users.login(positiveInt.gen(), userPassword);
+        response = await post.setPostTags(
+          postResponse.body._id,
+          positiveInt.gen(),
+          loginResponse.body.token
+        );
         expect(response.status).toBe(403);
       });
 
       test("Positive decimal", async () => {
-        response = await users.login(positive.gen(), userPassword);
+        response = await post.setPostTags(
+          postResponse.body._id,
+          positive.gen(),
+          loginResponse.body.token
+        );
         expect(response.status).toBe(403);
       });
 
       test("Negative integer", async () => {
-        response = await users.login(negativeInt.gen(), userPassword);
+        response = await post.setPostTags(
+          postResponse.body._id,
+          negativeInt.gen(),
+          loginResponse.body.token
+        );
         expect(response.status).toBe(403);
       });
 
       test("Negative decimal", async () => {
-        response = await users.login(negative.gen(), userPassword);
+        response = await post.setPostTags(
+          postResponse.body._id,
+          negative.gen(),
+          loginResponse.body.token
+        );
         expect(response.status).toBe(403);
       });
 
       test("Zero", async () => {
-        response = await users.login(0, userPassword);
+        response = await post.setPostTags(
+          postResponse.body._id,
+          0,
+          loginResponse.body.token
+        );
         expect(response.status).toBe(403);
       });
     });
 
-    describe("Sending strings as username", () => {
+    describe("Sending strings as tag", () => {
       test("Empty string", async () => {
-        response = await users.login("", userPassword);
+        response = await post.setPostTags(
+          postResponse.body._id,
+          "",
+          loginResponse.body.token
+        );
         expect(response.status).toBe(403);
       });
 
       test("Very large string", async () => {
-        response = await users.login(largeString.gen(), userPassword);
+        response = await post.setPostTags(
+          postResponse.body._id,
+          largeString.gen(),
+          loginResponse.body.token
+        );
         expect(response.status).toBe(403);
       });
 
       test("URL", async () => {
-        response = await users.login(
+        response = await post.setPostTags(
+          postResponse.body._id,
           "https://github.com/bcgov/CITZ-HybridWorkplace",
-          userPassword
+          loginResponse.body.token
         );
         expect(response.status).toBe(403);
       });
 
       test("Special characters", async () => {
-        response = await users.login(characters.gen(), userPassword);
+        response = await post.setPostTags(
+          postResponse.body._id,
+          characters.gen(),
+          loginResponse.body.token
+        );
         expect(response.status).toBe(403);
       });
     });
 
-    describe("Sending other things as username", () => {
+    describe("Sending other things as tag", () => {
       test("Null", async () => {
-        response = await users.login(null, userPassword);
+        response = await post.setPostTags(
+          postResponse.body._id,
+          null,
+          loginResponse.body.token
+        );
         expect(response.status).toBe(403);
       });
 
       test("JS object", async () => {
-        response = await users.login({ username: `${userName}` }, userPassword);
+        response = await post.setPostTags(
+          postResponse.body._id,
+          { tag: tag1 },
+          loginResponse.body.token
+        );
         expect(response.status).toBe(403);
       });
 
       test("Array", async () => {
-        response = await users.login([userName, userName], userPassword);
+        response = await post.setPostTags(
+          postResponse.body._id,
+          [tag1, tag2],
+          loginResponse.body.token
+        );
         expect(response.status).toBe(403);
       });
     });
