@@ -151,8 +151,8 @@ export const openEditUserBioModal = (userBio) => (dispatch) => {
 export const closeEditUserBioModal = () => (dispatch) =>
   dispatch({ type: CLOSE_EDIT_USER_BIO_MODAL });
 
-export const openEditUserInterestsModal = (userInterests) => (dispatch) => {
-  dispatch({ type: OPEN_EDIT_USER_INTERESTS_MODAL, payload: userInterests });
+export const openEditUserInterestsModal = (interests) => (dispatch) => {
+  dispatch({ type: OPEN_EDIT_USER_INTERESTS_MODAL, payload: interests });
 };
 
 export const closeEditUserInterestsModal = () => (dispatch) =>
@@ -165,8 +165,8 @@ export const openEditCommunityModal = (community) => (dispatch) => {
 export const closeEditCommunityModal = () => (dispatch) =>
   dispatch({ type: CLOSE_EDIT_COMMUNITY_MODAL });
 
-export const openSettingsModal = () => (dispatch) =>
-  dispatch({ type: OPEN_SETTINGS_MODAL });
+export const openSettingsModal = (userSettings) => (dispatch) =>
+  dispatch({ type: OPEN_SETTINGS_MODAL, payload: userSettings });
 
 export const closeSettingsModal = () => (dispatch) =>
   dispatch({ type: CLOSE_SETTINGS_MODAL });
@@ -204,8 +204,8 @@ const initialState = {
   editCommunity: { open: false, community: {} },
   editUserInfo: { open: false, userInfo: {} },
   editUserBio: { open: false, userBio: {} },
-  editUserInterests: { open: false, userInterests: {} },
-  settings: { open: false },
+  editUserInterests: { open: false, interests: {} },
+  editSettings: { open: false, userSettings: {} },
   // Add State
   addPost: { open: false },
   addCommunity: { open: false },
@@ -309,7 +309,7 @@ export function modalReducer(state = initialState, action) {
     case OPEN_EDIT_USER_INTERESTS_MODAL:
       return {
         ...state,
-        editUserInterests: { open: true, userInterests: action.payload },
+        editUserInterests: { open: true, interests: action.payload },
       };
 
     case CLOSE_EDIT_USER_INTERESTS_MODAL:
@@ -324,7 +324,7 @@ export function modalReducer(state = initialState, action) {
     case OPEN_SETTINGS_MODAL:
       return {
         ...state,
-        settings: { open: true },
+        editSettings: { open: true, userSettings: action.payload },
       };
 
     case CLOSE_SETTINGS_MODAL:

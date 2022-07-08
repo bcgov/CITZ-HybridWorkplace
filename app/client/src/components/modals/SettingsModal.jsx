@@ -20,7 +20,7 @@
  * @module
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import {
@@ -31,7 +31,6 @@ import {
   Button,
   Stack,
   DialogActions,
-  Switch,
   FormControl,
   FormLabel,
   FormControlLabel,
@@ -43,13 +42,30 @@ import {
 } from "@mui/material";
 
 import { closeSettingsModal } from "../../redux/ducks/modalDuck";
-import { editUserNotifications } from "../../redux/ducks/profileDuck";
+import { editUserSettings } from "../../redux/ducks/profileDuck";
 
 const SettingsModal = (props) => {
   const [darkModeValue, setDarkModeValue] = useState(
     localStorage.getItem("hwp-darkmode") ?? "light"
   );
-  const handleEditNotificationsClick = () => props.editUserNotifications;
+
+  const [notificationFrequency, setNotificationFrequency] = useState(
+    props.userSettings.notificationFrequency || null
+  );
+
+  useEffect(() => {
+    setNotificationFrequency(props.userSettings.notificationFrequency);
+  }, [props.userSettings.notificationFrequency]);
+
+  const saveEdits = async () => {
+    const userChanges = {
+      notificationFrequency,
+    };
+
+    const successful = await props.editUserSettings(userChanges);
+
+    if (successful === true) props.closeSettingsModal();
+  };
 
   const handleDarkModeChange = (e) => {
     setDarkModeValue(e.target.value);
@@ -86,22 +102,24 @@ const SettingsModal = (props) => {
             <Divider />
             <RadioGroup
               aria-labelledby="notification-frequency-radios-label"
-              defaultValue="immediately"
+              defaultValue="immediate"
+              value={notificationFrequency}
               name="notification-frequency-radios-group"
+              onChange={(e) => setNotificationFrequency(e.target.value)}
             >
               <FormControlLabel
                 value="none"
-                control={<Radio size="small" />}
+                control={<Radio value="none" size="small" />}
                 label="None"
               />
               <FormControlLabel
-                value="immediately"
-                control={<Radio size="small" />}
-                label="Immediately"
+                value="immediate"
+                control={<Radio value="immediate" size="small" />}
+                label="Immediate"
               />
               <FormControlLabel
                 value="daily"
-                control={<Radio size="small" />}
+                control={<Radio value="daily" size="small" />}
                 label="Daily"
               />
               <FormControlLabel
@@ -141,7 +159,13 @@ const SettingsModal = (props) => {
           </Stack>
           <DialogActions sx={{ m: 0, pb: 0 }}>
             <Stack direction="row-reverse" justifyContent="end" spacing={1}>
-              <Button variant="contained" onClick={handleSave}>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  saveEdits();
+                  handleSave();
+                }}
+              >
                 Save
               </Button>
               <Button variant="contained" onClick={props.closeSettingsModal}>
@@ -159,13 +183,13 @@ const SettingsModal = (props) => {
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  open: state.modal.settings.open,
-  notificationFrequency: state.profile.notificationFrequency,
+  open: state.modal.editSettings.open,
+  userSettings: state.modal.editSettings.userSettings,
 });
 
 const mapActionsToProps = {
   closeSettingsModal,
-  editUserNotifications,
+  editUserSettings,
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(SettingsModal);

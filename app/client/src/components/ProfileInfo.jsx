@@ -16,7 +16,7 @@
 
 /**
  * Application entry point
- * @author [Jayna Bettesworth](bettesworthjayna@gmail.com)
+ * @author [Brandon Bouchard](brandonjbouchard@gmail.com)
  * @module
  */
 
@@ -24,7 +24,7 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { getProfile } from "../redux/ducks/profileDuck";
 import PropTypes from "prop-types";
-import { Typography, Box, Stack, IconButton } from "@mui/material";
+import { Typography, Box, Stack, IconButton, Divider } from "@mui/material";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { openEditUserInfoModal } from "../redux/ducks/modalDuck";
 import EditUserInfoModal from "./modals/EditUserInfoModal";
