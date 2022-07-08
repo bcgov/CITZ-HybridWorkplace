@@ -27,22 +27,9 @@ import EmojiIcon from "@mui/icons-material/EmojiEmotions";
 const AvatarIcon = (props) => {
   const type = props.type;
   const size = props.size;
+  const shadow = props.shadow || false;
 
-  const colors = [
-    "#cb42f5",
-    "#690787",
-    "#0a3194",
-    "#198ae6",
-    "#059c00",
-    "#2cd40b",
-    "#f0ec05",
-    "#f0890c",
-    "#e33010",
-    "#f0887a",
-  ];
-
-  const randColor = colors[Math.floor(Math.random() * colors.length)];
-
+  const defaultColor = "#585858";
   const defaultImage = "../images/avatar/profile-icon-vector-150x150.jpg";
 
   switch (type) {
@@ -56,11 +43,11 @@ const AvatarIcon = (props) => {
             p: 0,
             backgroundColor: props.gradient
               ? "none"
-              : props.colors.primary || randColor,
+              : props.colors.primary || defaultColor,
             backgroundImage: props.gradient
               ? `linear-gradient(to bottom right, ${
-                  props.colors.primary || randColor
-                }, ${props.colors.secondary || randColor})`
+                  props.colors.primary || defaultColor
+                }, ${props.colors.secondary || defaultColor})`
               : "none",
             borderRadius: `${size}px`,
             textAlign: "center",
@@ -68,6 +55,7 @@ const AvatarIcon = (props) => {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
+            boxShadow: shadow ? `0 0 0 2px #FFF` : "none",
           }}
         >
           <PersonIcon sx={{ fontSize: size, color: "white", pb: size / 300 }} />
@@ -83,11 +71,11 @@ const AvatarIcon = (props) => {
             p: 0,
             backgroundColor: props.gradient
               ? "none"
-              : props.colors.primary || randColor,
+              : props.colors.primary || defaultColor,
             backgroundImage: props.gradient
               ? `linear-gradient(to bottom right, ${
-                  props.colors.primary || randColor
-                }, ${props.colors.secondary || randColor})`
+                  props.colors.primary || defaultColor
+                }, ${props.colors.secondary || defaultColor})`
               : "none",
             borderRadius: `${size}px`,
             textAlign: "center",
@@ -95,6 +83,7 @@ const AvatarIcon = (props) => {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
+            boxShadow: shadow ? `0 0 0 2px #FFF` : "none",
           }}
         >
           <EmojiIcon
@@ -119,17 +108,18 @@ const AvatarIcon = (props) => {
             p: 0,
             backgroundColor: props.gradient
               ? "none"
-              : props.colors.primary || randColor,
+              : props.colors.primary || defaultColor,
             backgroundImage: props.gradient
               ? `linear-gradient(to bottom right, ${
-                  props.colors.primary || randColor
-                }, ${props.colors.secondary || randColor})`
+                  props.colors.primary || defaultColor
+                }, ${props.colors.secondary || defaultColor})`
               : "none",
             borderRadius: `${size}px`,
             textAlign: "center",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
+            boxShadow: shadow ? `0 0 0 2px #FFF` : "none",
           }}
         >
           <Typography

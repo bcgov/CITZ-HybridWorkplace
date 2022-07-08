@@ -39,26 +39,14 @@ export const getProfile = (username) => async (dispatch, getState) => {
     const token = getState().auth.accessToken;
     if (!token) throw new Error(noTokenText);
 
-    let response;
-    if (username) {
-      response = await hwp_axios.get(`/api/user/${username}`, {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-        params: {
-          dispatch,
-        },
-      });
-    } else {
-      response = await hwp_axios.get(`/api/user`, {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-        params: {
-          dispatch,
-        },
-      });
-    }
+    const response = await hwp_axios.get(`/api/user/${username}`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      params: {
+        dispatch,
+      },
+    });
 
     dispatch({
       type: SET_USER,
