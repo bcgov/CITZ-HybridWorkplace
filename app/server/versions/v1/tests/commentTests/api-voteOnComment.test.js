@@ -49,6 +49,91 @@ describe("Logging in the test user", () => {
   });
 });
 
+describe("Creating new Community", () => {
+  test("API returns a successful response - code 201", async () => {
+    const response = await community.createCommunity(
+      newComTitle,
+      newComDescript,
+      newComRules,
+      newComTags,
+      token
+    );
+    expect(response.status).toBe(201);
+  });
+});
+
+describe("Creating new Post", () => {
+  test("API returns a successful response - code 201", async () => {
+    postResponse = await post.createPost(
+      newPostTitle,
+      newPostDescript,
+      newComTitle,
+      token
+    );
+    expect(postResponse.status).toBe(201);
+  });
+});
+
+describe("Create Comment - on the created post", () => {
+  beforeAll(async () => {
+    commentResponse = await comment.createComment(
+      newComment,
+      postResponse.body._id,
+      token
+    );
+  });
+
+  test("API returns a successful response - code 201", () => {
+    expect(commentResponse.status).toBe(201);
+  });
+
+  test("API returns description -  includes new comment", () => {
+    expect(`${commentResponse.text}`).toContain(newComment);
+  });
+});
+
+describe("Vote on comment - upvote", () => {
+  test("API returns a successful response - code 204", async () => {
+    const response = await comment.setCommentVote(
+      commentResponse.body._id,
+      "up",
+      token
+    );
+    expect(`${response.status}`).toContain(204);
+  });
+});
+
+describe("Get comment votes - on the created comment", () => {
+  test("API returns description -  includes an upvote of 1", async () => {
+    const response = await comment.getCommentsByPost(
+      postResponse.body._id,
+      token
+    );
+    expect(`${response.text}`).toContain("upvote101");
+  });
+});
+
+describe("Vote on comment - downvote", () => {
+  test("API returns a successful response - code 204", async () => {
+    const response = await comment.setCommentVote(
+      commentResponse.body._id,
+      "up",
+      token
+    );
+    expect(`${response.status}`).toContain(204);
+  });
+});
+
+describe("Get comment votes - on the created comment", () => {
+  test("API returns description -  includes an downvote of 1", async () => {
+    const response = await comment.getCommentsByPost(
+      postResponse.body._id,
+      token
+    );
+    expect(`${response.text}`).toContain("upvote101");
+  });
+});
+
 describe("Deleting a test user", () => {
   test("API returns a successful response - code 204", async () => {
     const response = await user.deleteUserByName(token, userName);

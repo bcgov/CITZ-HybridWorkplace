@@ -18,6 +18,7 @@ let token = "";
 
 let commentResponse;
 let postResponse;
+let replyResponse;
 
 const newComTitle = "set comment replies";
 const newComDescript = "world";
@@ -94,12 +95,12 @@ describe("Create Comment - on the created post", () => {
 
 describe("Create Comment Reply - on the created comment", () => {
   test("API returns a successful response - code 201", async () => {
-    const response = await comment.setCommentReply(
+    replyResponse = await comment.setCommentReply(
       commentResponse.body._id,
       newComment2,
       token
     );
-    expect(response.status).toBe(201);
+    expect(replyResponse.status).toBe(201);
   });
 });
 
@@ -113,10 +114,10 @@ describe("Get Comment Reply - on the created comment", () => {
   });
 });
 
-describe("Create 2nd Comment Reply - on the created comment", () => {
+describe("Delete Comment Reply - on the created comment", () => {
   test("API returns a successful response - code 201", async () => {
-    const response = await comment.setCommentReply(
-      commentResponse.body._id,
+    const response = await comment.deleteComment(
+      replyResponse.body._id,
       newComment3,
       token
     );
@@ -130,8 +131,7 @@ describe("Get Comment Reply - on the created comment", () => {
       commentResponse.body._id,
       token
     );
-    expect(response.text).toContain(newComment2);
-    expect(response.text).toContain(newComment3);
+    expect(response.text).not.toContain(newComment2);
   });
 });
 

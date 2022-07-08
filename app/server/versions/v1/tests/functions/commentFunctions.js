@@ -46,7 +46,7 @@ class CommentFunctions {
       .send({ message });
   }
 
-  getCommentsReply(id, token) {
+  getCommentReply(id, token) {
     return request
       .get(`/comment/reply/${id}`)
       .set({ authorization: `Bearer ${token}` });
