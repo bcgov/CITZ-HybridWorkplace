@@ -69,7 +69,7 @@ const ProfilePage = (props) => {
     props.getProfile(username);
     props.getUsersCommunities();
     props.getUserPosts(username);
-  }, [username]);
+  }, [username, props.profile.avatar]);
 
   props.profile.initials = props.profile.lastName
     ? `${props.profile.firstName?.charAt(0)}${props.profile.lastName?.charAt(

@@ -22,6 +22,7 @@
 
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
 import AvatarIcon from "../AvatarIcon";
 
 import {
@@ -40,21 +41,22 @@ import {
 
 import { closeEditAvatarModal } from "../../redux/ducks/modalDuck";
 import { editUserAvatar } from "../../redux/ducks/profileDuck";
+import { getUser } from "../../redux/ducks/userDuck";
 
 const EditAvatarModal = (props) => {
-  const [avatar, setAvatar] = useState(props.profile.avatar);
   useEffect(() => {
-    setAvatar(props.profile.avatar);
-  }, [props.profile, props.profile.avatar]);
+    setUseGradient(props.user.avatar?.gradient);
+    setImage(props.user.avatar?.image);
+    setSelectedType(props.user.avatar?.avatarType);
+    setSelectedColors(props.user.avatar?.colors);
+  }, [props.user.avatar]);
 
-  const [image, setImage] = useState(avatar?.image || null);
+  const [image, setImage] = useState(null);
   const initials = props.profile.initials || "";
-  const [useGradient, setUseGradient] = useState(avatar?.gradient || false);
+  const [useGradient, setUseGradient] = useState(false);
 
   const types = ["Initials", "Person", "Emoji", "Upload"];
-  const [selectedType, setSelectedType] = useState(
-    avatar?.avatarType || "Initials"
-  );
+  const [selectedType, setSelectedType] = useState("Initials");
 
   const colors = {
     magenta: "#cb42f5",
@@ -69,12 +71,10 @@ const EditAvatarModal = (props) => {
     pink: "#f0887a",
   };
 
-  const [selectedColors, setSelectedColors] = useState(
-    avatar?.colors || {
-      primary: colors.magenta,
-      secondary: colors.magenta,
-    }
-  );
+  const [selectedColors, setSelectedColors] = useState({
+    primary: colors.magenta,
+    secondary: colors.magenta,
+  });
 
   const updateAvatar = async (event) => {
     event.preventDefault();
@@ -96,13 +96,13 @@ const EditAvatarModal = (props) => {
   const handleColorChange = (event) => {
     setSelectedColors({
       primary: event.target.value,
-      secondary: selectedColors.secondary,
+      secondary: selectedColors?.secondary,
     });
   };
 
   const handleSecondaryColorChange = (event) => {
     setSelectedColors({
-      primary: selectedColors.primary,
+      primary: selectedColors?.primary,
       secondary: event.target.value,
     });
   };
@@ -168,7 +168,7 @@ const EditAvatarModal = (props) => {
                   {Object.keys(colors).map((color) => (
                     <Radio
                       key={color}
-                      checked={selectedColors.primary === colors[color]}
+                      checked={selectedColors?.primary === colors[color]}
                       onChange={handleColorChange}
                       value={colors[color]}
                       sx={{ height: "45px", width: "45px" }}
@@ -201,7 +201,7 @@ const EditAvatarModal = (props) => {
                     {Object.keys(colors).map((color) => (
                       <Radio
                         key={color}
-                        checked={selectedColors.secondary === colors[color]}
+                        checked={selectedColors?.secondary === colors[color]}
                         onChange={handleSecondaryColorChange}
                         value={colors[color]}
                         sx={{ height: "45px", width: "45px" }}
@@ -268,14 +268,19 @@ const EditAvatarModal = (props) => {
   );
 };
 
+EditAvatarModal.propTypes = {
+  user: PropTypes.object,
+};
+
 const mapStateToProps = (state) => ({
   auth: state.auth,
   open: state.modal.editAvatar.open,
-  avatar: state.modal.editAvatar.avatar,
+  user: state.self.user,
   profile: state.profile.user,
 });
 
 export default connect(mapStateToProps, {
   closeEditAvatarModal,
   editUserAvatar,
+  getUser,
 })(EditAvatarModal);

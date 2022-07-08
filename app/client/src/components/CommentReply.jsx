@@ -1,14 +1,9 @@
-import {
-  Avatar,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  TextField,
-} from "@mui/material";
+import { Button, Grid, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import { replyToComment } from "../redux/ducks/postDuck";
+import { getUser } from "../redux/ducks/userDuck";
+import AvatarIcon from "./AvatarIcon";
 
 export const CommentReply = (props) => {
   const [replyValue, setReplyValue] = useState("");
@@ -30,7 +25,14 @@ export const CommentReply = (props) => {
         sx={{ marginTop: 1 }}
       >
         <Grid item xs={0.7}>
-          <Avatar src="https://source.unsplash.com/random/150×150/?profile%20picture" />
+          <AvatarIcon
+            type={props.user.avatar?.avatarType ?? ""}
+            initials={props.user?.initials ?? ""}
+            image={props.user.avatar?.image ?? ""}
+            gradient={props.user.avatar?.gradient ?? ""}
+            colors={props.user.avatar?.colors ?? {}}
+            size={50}
+          />
         </Grid>
         <Grid item xs={11.3}>
           <TextField
@@ -57,8 +59,8 @@ export const CommentReply = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = (state) => ({ user: state.self.user });
 
-const mapDispatchToProps = { replyToComment };
+const mapDispatchToProps = { replyToComment, getUser };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CommentReply);
