@@ -25,6 +25,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs"); // hashing passwords
 const axios = require("axios").default;
 const moment = require("moment");
+const ResponseError = require("../classes/responseError");
 
 const generateRefreshToken = require("../functions/auth/generateRefreshToken");
 const User = require("../models/user.model");
@@ -81,7 +82,7 @@ router.get("/", async (req, res, next) => {
       );
       req.log.addAction("Adding Welcome community to user.");
       await User.updateOne(
-        { username: req.body.username },
+        { username: user.username },
         {
           $push: {
             communities: { community: "Welcome", engagement: 0 },
@@ -89,6 +90,38 @@ router.get("/", async (req, res, next) => {
         }
       );
       req.log.addAction("User is created.");
+
+      // GC Notify
+      if (process.env.ENABLE_GC_NOTIFY === "true") {
+        req.log.addAction("Sending gcNotify request.");
+        try {
+          await axios({
+            method: "post",
+            url: "https://api.notification.canada.ca/v2/notifications/email",
+            headers: {
+              Authorization: `ApiKey-v1 ${process.env.GC_NOTIFY_API_KEY_SECRET}`,
+              "Content-Type": "application/json",
+            },
+            data: {
+              email_address: user.email,
+              template_id: process.env.GC_NOTIFY_REGISTRATION_TEMPLATE,
+            },
+          });
+          if (process.env.ENABLE_GC_NOTIFY_TRIAL_MODE) {
+            // Trial mode requires users be in a mailing list before they can receive emails
+            req.log.addAction("Setting isInMailingList for user to true.");
+            await User.updateOne(
+              { username: user.username },
+              { $set: { isInMailingList: true } }
+            );
+          }
+          req.log.addAction("gcNotify request sent.");
+        } catch (err) {
+          req.log.addAction(
+            "gcNotify could not complete. Email is most likely not included in the email list on gcNotify."
+          );
+        }
+      }
     }
     req.log.addAction("Generating refresh token.");
     const refreshToken = generateRefreshToken(user);
@@ -107,43 +140,23 @@ router.get("/", async (req, res, next) => {
       sameSite: "None",
     });
 
-    // GC Notify
-    if (process.env.ENABLE_GC_NOTIFY === "true") {
-      req.log.addAction("Sending gcNotify request.");
-      try {
-        await axios({
-          method: "post",
-          url: "https://api.notification.canada.ca/v2/notifications/email",
-          headers: {
-            Authorization: `ApiKey-v1 ${process.env.GC_NOTIFY_API_KEY_SECRET}`,
-            "Content-Type": "application/json",
-          },
-          data: {
-            email_address: req.body.email,
-            template_id: process.env.GC_NOTIFY_REGISTRATION_TEMPLATE,
-          },
-        });
-        if (process.env.ENABLE_GC_NOTIFY_TRIAL_MODE) {
-          // Trial mode requires users be in a mailing list before they can receive emails
-          req.log.addAction("Setting isInMailingList for user to true.");
-          await User.updateOne(
-            { username: req.body.username },
-            { $set: { isInMailingList: true } }
-          );
-        }
-        req.log.addAction("gcNotify request sent.");
-      } catch (err) {
-        req.log.addAction(
-          "gcNotify could not complete. Email is most likely not included in the email list on gcNotify."
-        );
-      }
-    }
-
+    req.log.setResponse(201, "Success", null);
     return res.redirect(frontendURI);
   } catch (err) {
-    res.locals.err = err;
+    // Explicitly thrown error
+    if (res.locals.err instanceof ResponseError) {
+      req.log.setResponse(
+        res.locals.err.status,
+        "ResponseError",
+        res.locals.err.message
+      );
+      return res.status(res.locals.err.status).send(res.locals.err.message);
+    }
+    // Bad Request
+    req.log.setResponse(400, "Error", res.locals.err);
+    return res.status(400).send(`Bad Request: ${res.locals.err}`);
   } finally {
-    next();
+    req.log.print();
   }
 });
 

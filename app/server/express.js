@@ -122,13 +122,7 @@ if (process.env.TOGGLE_KEYCLOAK_AUTH === "true") {
     }
   );
   app.use(keycloak.middleware());
-  app.use(
-    "/api/keycloakLogin",
-    initLogger,
-    keycloak.protect(),
-    keycloakRouter,
-    requestFinally
-  );
+  app.use("/api/keycloakLogin", initLogger, keycloak.protect(), keycloakRouter);
 
   exports.memoryStore = memoryStore;
 }
