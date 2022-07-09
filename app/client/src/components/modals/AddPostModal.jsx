@@ -109,9 +109,7 @@ const AddPostModal = (props) => {
       sx={{ zIndex: 500, mb: 5 }}
       fullWidth
     >
-      <DialogTitle sx={{ fontWeight: 600 }}>
-        <Typography variant="h5">Add Post</Typography>
-      </DialogTitle>
+      <DialogTitle sx={{ fontWeight: 600 }}>Add Post</DialogTitle>
       <DialogContent data-color-mode="light">
         <Stack spacing={1}>
           <Stack spacing={0.5}>
