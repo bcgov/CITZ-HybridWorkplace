@@ -43,7 +43,7 @@ const EditUserInterestsModal = (props) => {
   const [interests, setInterests] = useState(props.interests);
 
   useEffect(() => {
-    setInterests(props.interests);
+    setInterests(props.interests ?? "");
   }, [props.interests]);
 
   const saveEdits = async () => {
@@ -64,11 +64,7 @@ const EditUserInterestsModal = (props) => {
       sx={{ zIndex: 500, mb: 5 }}
       fullWidth
     >
-      <DialogTitle>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
-          Edit User Info.
-        </Typography>
-      </DialogTitle>
+      <DialogTitle fontWeight={600}>Edit User Info.</DialogTitle>
       <DialogContent data-color-mode="light">
         <Stack spacing={1}>
           <Stack spacing={0.5}>

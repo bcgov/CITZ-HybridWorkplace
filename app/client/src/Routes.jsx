@@ -69,11 +69,6 @@ const App = (props) => {
     <div className="Routes">
       <Routes>
         <Route
-          path="/register"
-          exact
-          element={<GuestOnlyComponent component={<Register />} />}
-        />
-        <Route
           path="/login"
           exact
           element={<GuestOnlyComponent component={<LoginPage />} />}

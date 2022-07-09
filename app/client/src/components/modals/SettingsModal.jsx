@@ -70,11 +70,7 @@ const SettingsModal = (props) => {
         mb: 5,
       }}
     >
-      <DialogTitle>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
-          Settings
-        </Typography>
-      </DialogTitle>
+      <DialogTitle fontWeight={600}>Settings</DialogTitle>
       <DialogContent data-color-mode="light">
         <Stack spacing={1} justifyContent="center">
           <FormControl>

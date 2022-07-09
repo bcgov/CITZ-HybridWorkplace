@@ -44,15 +44,15 @@ const EditCommunityModal = (props) => {
   const [rules, setRules] = useState(props.community.rules);
 
   useEffect(() => {
-    setTitle(props.community.title);
+    setTitle(props.community.title ?? "");
   }, [props.community.title]);
 
   useEffect(() => {
-    setDescription(props.community.description);
+    setDescription(props.community.description ?? "");
   }, [props.community.description]);
 
   useEffect(() => {
-    setRules(props.community.rules);
+    setRules(props.community.rules ?? "");
   }, [props.community.rules]);
 
   const onTitleChange = (e) => {
@@ -103,11 +103,7 @@ const EditCommunityModal = (props) => {
       fullWidth
       sx={{ zIndex: 500 }}
     >
-      <DialogTitle>
-        <Typography variant="h5" fontWeight={600}>
-          Edit Community
-        </Typography>
-      </DialogTitle>
+      <DialogTitle fontWeight={600}>Edit Community</DialogTitle>
       <DialogContent sx={{ pt: 5 }}>
         <Stack spacing={3}>
           <TextField
@@ -149,7 +145,7 @@ const EditCommunityModal = (props) => {
             name="rules"
             placeholder="Rules"
             multiline
-            value={rules}
+            value={rules?.toString() /*TODO: Fix rules editing */}
             label="Rules"
             size="small"
             minRows={4}
