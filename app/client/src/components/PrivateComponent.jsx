@@ -5,7 +5,7 @@ import { createError } from "../redux/ducks/alertDuck";
 import { getAccessToken } from "../redux/ducks/authDuck";
 import PropTypes from "prop-types";
 import { useEffect } from "react";
-import { CircularProgress, Grid } from "@mui/material";
+import LoadingPage from "../views/LoadingPage";
 
 const PrivateComponent = (props) => {
   const [loading, setLoading] = useState(true);
@@ -23,7 +23,7 @@ const PrivateComponent = (props) => {
   }, []);
 
   return loading ? (
-    <CircularProgress color="primary" />
+    <LoadingPage color="primary" />
   ) : loggedIn ? (
     props.component
   ) : (
