@@ -109,12 +109,18 @@ const ProfilePage = (props) => {
 
   const randomColor = () => {
     const colors = [
-      "primary",
-      "secondary",
-      "error",
-      "info",
-      "success",
-      "warning",
+      "#2A9CA7",
+      "#5276D8",
+      "#D459C0",
+      "#D15C5E",
+      "#C48923",
+      "#C43A48",
+      "#CC622D",
+      "#1C85D6",
+      "#4771E4",
+      "#1BB879",
+      "#559E2D",
+      "#A141D2",
     ];
     return colors[Math.floor(Math.random() * colors.length)];
   };
@@ -147,10 +153,7 @@ const ProfilePage = (props) => {
           <ProfileInfo username={username} />
           <Stack direction="column" spacing={1} width="20vw">
             <Stack direction="row" spacing={0.5} alignItems="center">
-              <Typography
-                variant="h6"
-                sx={{ fontWeight: 600, color: "primary.main" }}
-              >
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Interests
               </Typography>
               <IconButton
@@ -161,15 +164,22 @@ const ProfilePage = (props) => {
                 <EditRoundedIcon fontSize="small" />
               </IconButton>
             </Stack>
-            <Stack spacing={0.5} width="max-content">
+            <Box sx={{ flexWrap: "wrap", width: 250 }}>
               {props.profile.interests?.map((interest) => (
                 <Chip
                   label={interest}
-                  color={randomColor()}
                   key={props.profile.interests.indexOf(interest)}
+                  sx={{
+                    mb: 1,
+                    mr: 1,
+                    px: 1,
+                    backgroundColor: randomColor(),
+                    color: "white",
+                    fontWeight: 600,
+                  }}
                 />
               ))}
-            </Stack>
+            </Box>
           </Stack>
           <Stack direction="row" alignItems="center" my={2} p={0}>
             <Typography variant="h6" fontWeight={600}>
