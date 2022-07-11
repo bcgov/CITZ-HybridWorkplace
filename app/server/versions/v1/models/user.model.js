@@ -37,7 +37,7 @@
  *        email:
  *          type: string
  *          description: User's email address.
- *          example: sarah@testgov.bc.ca
+ *          example: sarah@gov.bc.ca
  *        password:
  *          type: string
  *          description: User's password.
@@ -62,28 +62,8 @@
  *          type: string
  *          description: The ministry user is a part of.
  *        avatar:
- *          type: object
+ *          type: string
  *          description: Url to a profile avatar picture or an id of a default avatar.
- *          properties:
- *            type:
- *              type: string
- *              description: Initials, Person, Emoji, Upload.
- *              example: Initials
- *            image:
- *              type: string
- *              description: Image url.
- *            gradient:
- *              type: boolean
- *              description: Use gradient or just primary color.
- *            colors:
- *              type: object
- *              properties:
- *                primary:
- *                  type: string
- *                  description: Hex color code.
- *                secondary:
- *                  type: string
- *                  description: Hex color code.
  *        bio:
  *          type: string
  *          description: User's profile bio (set in profile).
@@ -132,19 +112,13 @@ const User = new mongoose.Schema(
     lastName: { type: String },
     title: { type: String },
     ministry: { type: String },
-    avatar: {
-      avatarType: String,
-      image: String,
-      gradient: Boolean,
-      colors: { primary: String, secondary: String },
-    },
+    avatar: { type: String },
     bio: { type: String },
     registeredOn: { type: String, required: true },
     communities: [{ community: String, engagement: Number }],
     notificationFrequency: { type: String },
     isInMailingList: { type: Boolean },
     interests: [String],
-    darkMode: { type: Boolean },
   },
   { collection: "user" }
 );

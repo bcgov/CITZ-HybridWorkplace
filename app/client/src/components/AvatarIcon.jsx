@@ -43,11 +43,11 @@ const AvatarIcon = (props) => {
             p: 0,
             backgroundColor: props.gradient
               ? "none"
-              : props.colors.primary || defaultColor,
+              : props.colors?.primary || defaultColor,
             backgroundImage: props.gradient
               ? `linear-gradient(to bottom right, ${
-                  props.colors.primary || defaultColor
-                }, ${props.colors.secondary || defaultColor})`
+                  props.colors?.primary || defaultColor
+                }, ${props.colors?.secondary || defaultColor})`
               : "none",
             borderRadius: `${size}px`,
             textAlign: "center",
@@ -71,11 +71,11 @@ const AvatarIcon = (props) => {
             p: 0,
             backgroundColor: props.gradient
               ? "none"
-              : props.colors.primary || defaultColor,
+              : props.colors?.primary || defaultColor,
             backgroundImage: props.gradient
               ? `linear-gradient(to bottom right, ${
-                  props.colors.primary || defaultColor
-                }, ${props.colors.secondary || defaultColor})`
+                  props.colors?.primary || defaultColor
+                }, ${props.colors?.secondary || defaultColor})`
               : "none",
             borderRadius: `${size}px`,
             textAlign: "center",
@@ -108,11 +108,11 @@ const AvatarIcon = (props) => {
             p: 0,
             backgroundColor: props.gradient
               ? "none"
-              : props.colors.primary || defaultColor,
+              : props.colors?.primary || defaultColor,
             backgroundImage: props.gradient
               ? `linear-gradient(to bottom right, ${
-                  props.colors.primary || defaultColor
-                }, ${props.colors.secondary || defaultColor})`
+                  props.colors?.primary || defaultColor
+                }, ${props.colors?.secondary || defaultColor})`
               : "none",
             borderRadius: `${size}px`,
             textAlign: "center",
