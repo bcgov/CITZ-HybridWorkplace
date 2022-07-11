@@ -68,6 +68,10 @@ const Comment = require("../models/comment.model");
  *                    $ref: '#/components/schemas/User/properties/bio'
  *                  title:
  *                    $ref: '#/components/schemas/User/properties/title'
+ *                  interests:
+ *                    $ref: '#/components/schemas/User/properties/interests'
+ *                  avatar:
+ *                    $ref: '#/components/schemas/User/properties/avatar'
  *        '400':
  *          description: Bad Request.
  */
@@ -135,6 +139,8 @@ router.get("/", async (req, res, next) => {
  *                  $ref: '#/components/schemas/User/properties/notificationFrequency'
  *                avatar:
  *                  $ref: '#/components/schemas/User/properties/avatar'
+ *                interests:
+ *                    $ref: '#/components/schemas/User/properties/interests'
  *      responses:
  *        '404':
  *          description: User not found.
@@ -245,7 +251,7 @@ router.patch("/", async (req, res, next) => {
     req.log.addAction("ministry is valid.");
 
     // Validate and trim interests
-    if (req.body.interests && req.body.interests instanceof Object) {
+    if (req.body.interests && req.body.interests instanceof Array) {
       Object.keys(req.body.interests).forEach((interest) => {
         // Trim extra spaces
         req.body.interests[interest] = trimExtraSpaces(
@@ -362,6 +368,10 @@ router.patch("/", async (req, res, next) => {
  *                    $ref: '#/components/schemas/User/properties/bio'
  *                  title:
  *                    $ref: '#/components/schemas/User/properties/title'
+ *                  interests:
+ *                    $ref: '#/components/schemas/User/properties/interests'
+ *                  avatar:
+ *                    $ref: '#/components/schemas/User/properties/avatar'
  *        '400':
  *          description: Bad Request.
  */
