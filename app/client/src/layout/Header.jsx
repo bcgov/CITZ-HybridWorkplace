@@ -20,7 +20,7 @@
  * @module
  */
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled, alpha } from "@mui/material/styles";
 import {
@@ -30,7 +30,6 @@ import {
   IconButton,
   Typography,
   InputBase,
-  Avatar,
   Badge,
   Icon,
   List,
@@ -50,7 +49,8 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import "./header.css";
 import BCLogo from "./icons/BCLogo.svg";
 import { connect } from "react-redux";
-import { getProfile } from "../redux/ducks/profileDuck";
+import { getUser } from "../redux/ducks/userDuck";
+import AvatarIcon from "../components/AvatarIcon";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -237,6 +237,14 @@ const Header = (props) => {
     </Box>
   );
 
+  useEffect(() => {
+    props.getUser();
+  }, [props.auth.accessToken]);
+
+  props.user.initials = props.user.lastName
+    ? `${props.user.firstName?.charAt(0)}${props.user.lastName?.charAt(0)}`
+    : props.user.firstName?.charAt(0);
+
   return (
     <AppBar
       sx={{
@@ -305,12 +313,14 @@ const Header = (props) => {
                   anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                   variant="dot"
                 >
-                  <Avatar
-                    alt="user account avatar"
-                    src="https://source.unsplash.com/random/150×150/?profile%20picture"
-                    sx={{
-                      boxShadow: `0 0 0 2px #FFF`,
-                    }}
+                  <AvatarIcon
+                    type={props.user.avatar?.avatarType ?? ""}
+                    initials={props.user?.initials ?? ""}
+                    image={props.user.avatar?.image ?? ""}
+                    gradient={props.user.avatar?.gradient ?? ""}
+                    colors={props.user.avatar?.colors ?? {}}
+                    size={45}
+                    shadow={true}
                   />
                 </StyledBadge>
               </IconButton>
@@ -340,8 +350,11 @@ const Header = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({ auth: state.auth });
+const mapStateToProps = (state) => ({
+  user: state.self.user,
+  auth: state.auth,
+});
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = { getUser };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);
