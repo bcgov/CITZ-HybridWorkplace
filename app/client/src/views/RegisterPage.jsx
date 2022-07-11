@@ -185,7 +185,6 @@ function RegisterPage(props) {
       <br />
       <br />
       <p>
-        {" "}
         Already have an account? <Link to="/login">Log In</Link>
       </p>
     </div>

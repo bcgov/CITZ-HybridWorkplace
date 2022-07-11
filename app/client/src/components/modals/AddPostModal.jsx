@@ -109,14 +109,10 @@ const AddPostModal = (props) => {
       sx={{ zIndex: 500, mb: 5 }}
       fullWidth
     >
-      <DialogTitle>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
-          Add Post
-        </Typography>
-      </DialogTitle>
+      <DialogTitle sx={{ fontWeight: 600 }}>Add Post</DialogTitle>
       <DialogContent data-color-mode="light">
         <Stack spacing={1}>
-          <Stack container spacing={0.5}>
+          <Stack spacing={0.5}>
             <InputLabel htmlFor="add-post-title">Title</InputLabel>
             <TextField
               id="add-post-title"
@@ -167,8 +163,10 @@ const AddPostModal = (props) => {
                 onChange={handleCommunityChange}
                 sx={{ mb: 1.5, minWidth: "15em", width: "98%" }}
               >
-                {props.communities.map((comm) => (
-                  <MenuItem value={comm.title}>{comm.title}</MenuItem>
+                {props.communities.map((comm, index) => (
+                  <MenuItem value={comm.title} key={comm.title + index}>
+                    {comm.title}
+                  </MenuItem>
                 ))}
               </Select>
             </Box>

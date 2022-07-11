@@ -47,8 +47,8 @@ const EditPostModal = (props) => {
   const minMessageLength = 3;
   const maxMessageLength = 40000;
 
-  const [title, setTitle] = useState(props.post.title || "");
-  const [message, setMessage] = useState(props.post.message);
+  const [title, setTitle] = useState(props.post.title ?? "");
+  const [message, setMessage] = useState(props.post.message ?? "");
 
   const [titleError, setTitleError] = useState(false);
   const [messageError, setMessageError] = useState(false);
@@ -70,8 +70,8 @@ const EditPostModal = (props) => {
   };
 
   useEffect(() => {
-    setTitle(props.post.title);
-    setMessage(props.post.message);
+    setTitle(props.post.title ?? "");
+    setMessage(props.post.message ?? "");
     setTitleError(false);
     setMessageError(false);
   }, [props.post]);
@@ -97,14 +97,10 @@ const EditPostModal = (props) => {
       sx={{ zIndex: 500, mb: 5 }}
       fullWidth
     >
-      <DialogTitle>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
-          Edit Post
-        </Typography>
-      </DialogTitle>
+      <DialogTitle fontWeight={600}>Edit Post</DialogTitle>
       <DialogContent data-color-mode="light">
         <Stack spacing={1}>
-          <Stack container spacing={0.5}>
+          <Stack spacing={0.5}>
             <InputLabel htmlFor="edit-post-title">Title</InputLabel>
             <TextField
               id="edit-post-title"

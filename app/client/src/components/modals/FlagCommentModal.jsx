@@ -67,11 +67,7 @@ const FlagCommentModal = (props) => {
       fullWidth
       sx={{ zIndex: 500 }}
     >
-      <DialogTitle>
-        <Typography variant="h5" fontWeight={600}>
-          Flag Comment
-        </Typography>
-      </DialogTitle>
+      <DialogTitle fontWeight={600}>Flag Comment</DialogTitle>
       <DialogContent>
         <Stack spacing={1}>
           <Typography variant="h6">{props.comment.message}</Typography>

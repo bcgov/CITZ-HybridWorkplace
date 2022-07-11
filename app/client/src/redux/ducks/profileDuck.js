@@ -27,8 +27,7 @@ const SET_USER = "CITZ-HYBRIDWORKPLACE/PROFILE/SET_USER";
 const EDIT_USER_INFO = "CITZ-HYBRIDWORKPLACE/PROFILE/EDIT_USER_INFO";
 const EDIT_USER_BIO = "CITZ-HYBRIDWORKPLACE/PROFILE/EDIT_USER_BIO";
 const EDIT_USER_INTERESTS = "CITZ-HYBRIDWORKPLACE/PROFILE/EDIT_USER_INTERESTS";
-const EDIT_USER_NOTIFICATIONS =
-  "CITZ-HYBRIDWORKPLACE/PROFILE/EDIT_USER_NOTIFICATIONS";
+const EDIT_USER_SETTINGS = "CITZ-HYBRIDWORKPLACE/PROFILE/EDIT_USER_SETTINGS";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
@@ -166,42 +165,41 @@ export const editUserInterests =
     }
   };
 
-export const editUserNotifications =
-  (userChanges) => async (dispatch, getState) => {
-    let successful = true;
-    try {
-      const authState = getState().auth;
-      const token = authState.accessToken;
+export const editUserSettings = (userChanges) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const authState = getState().auth;
+    const token = authState.accessToken;
 
-      if (!token) throw new Error(noTokenText);
+    if (!token) throw new Error(noTokenText);
 
-      const response = await hwp_axios.patch(
-        `/api/user`,
-        {
-          ...userChanges,
+    const response = await hwp_axios.patch(
+      `/api/user`,
+      {
+        ...userChanges,
+      },
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-          params: {
-            dispatch,
-          },
-        }
-      );
-      dispatch({
-        type: EDIT_USER_NOTIFICATIONS,
-        payload: userChanges,
-      });
-      createSuccess(`Successfully Edited Post`)(dispatch);
-    } catch (err) {
-      console.error(err);
-      successful = false;
-      createError("Unexpected error occurred")(dispatch);
-    } finally {
-      return successful;
-    }
-  };
+        params: {
+          dispatch,
+        },
+      }
+    );
+    dispatch({
+      type: EDIT_USER_SETTINGS,
+      payload: userChanges,
+    });
+    createSuccess(`Successfully Edited Post`)(dispatch);
+  } catch (err) {
+    console.error(err);
+    successful = false;
+    createError("Unexpected error occurred")(dispatch);
+  } finally {
+    return successful;
+  }
+};
 
 const initialState = {
   user: {}, //single profile
@@ -237,11 +235,12 @@ export function profileReducer(state = initialState, action) {
           interests: action.payload.interests,
         },
       };
-    case EDIT_USER_NOTIFICATIONS:
+    case EDIT_USER_SETTINGS:
       return {
         user: {
           ...state.user,
           notificationFrequency: action.payload.notificationFrequency,
+          darkMode: action.payload.darkMode,
         },
       };
     default:

@@ -8,7 +8,6 @@
 
 ## Project Introduction
 
-  
 
 This is the project repo for the 2022 CITZ: IMB "Hybrid Workplace" product. 
 
@@ -18,7 +17,7 @@ Come back often as content is constantly being added.
 An in-progress version of the project is available here:
 [The Neighbourhood (gov.bc.ca)](https://hwp-react-d63404-dev.apps.silver.devops.gov.bc.ca/)
 
-  
+ 
 
 ## Development Team Introduction
 

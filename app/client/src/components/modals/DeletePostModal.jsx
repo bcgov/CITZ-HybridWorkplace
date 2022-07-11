@@ -51,11 +51,7 @@ const DeletePostModal = (props) => {
       sx={{ zIndex: 500 }}
       fullWidth
     >
-      <DialogTitle>
-        <Typography variant="h5" fontWeight={600}>
-          Delete Post
-        </Typography>
-      </DialogTitle>
+      <DialogTitle fontWeight={600}>Delete Post</DialogTitle>
       <DialogContent>
         <Stack spacing={1}>
           <Stack spacing={0.5} textAlign="center" alignContent="center">

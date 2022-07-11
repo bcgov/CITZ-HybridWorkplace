@@ -46,10 +46,10 @@ const EditUserInfoModal = (props) => {
   const [ministry, setMinistry] = useState(user.ministry);
 
   useEffect(() => {
-    setFirstName(user.firstName);
-    setLastName(user.lastName);
-    setTitle(user.title);
-    setMinistry(user.ministry);
+    setFirstName(user.firstName ?? "");
+    setLastName(user.lastName ?? "");
+    setTitle(user.title ?? "");
+    setMinistry(user.ministry ?? "");
   }, [props.userInfo]);
 
   const saveEdits = async () => {
@@ -60,7 +60,6 @@ const EditUserInfoModal = (props) => {
       ministry,
       bio: user.bio,
     };
-    console.log(userChanges);
 
     const successful = await props.editUserInfo(userChanges);
     if (successful === true) {
@@ -75,11 +74,7 @@ const EditUserInfoModal = (props) => {
       sx={{ zIndex: 500, mb: 5 }}
       fullWidth
     >
-      <DialogTitle>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
-          Edit User Info.
-        </Typography>
-      </DialogTitle>
+      <DialogTitle fontWeight={600}>Edit User Info.</DialogTitle>
       <DialogContent data-color-mode="light">
         <Stack spacing={1}>
           <Stack spacing={0.5}>

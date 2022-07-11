@@ -66,16 +66,7 @@ const FlagPostModal = (props) => {
       sx={{ zIndex: 500 }}
       fullWidth
     >
-      <DialogTitle>
-        <Typography
-          variant="h5"
-          sx={{
-            fontWeight: 600,
-          }}
-        >
-          Flag Post
-        </Typography>
-      </DialogTitle>
+      <DialogTitle fontWeight={600}>Flag Post</DialogTitle>
       <DialogContent>
         <Stack spacing={1}>
           <Stack spacing={0.5}>

@@ -40,15 +40,15 @@ import { useEffect } from "react";
 import { editUserInterests } from "../../redux/ducks/profileDuck";
 
 const EditUserInterestsModal = (props) => {
-  const [interests, setInterests] = useState(props.interests);
+  const [interests, setInterests] = useState(props.interests.interests);
 
   useEffect(() => {
-    setInterests(props.interests);
+    setInterests(props.interests ?? []);
   }, [props.interests]);
 
   const saveEdits = async () => {
     const userChanges = {
-      interests,
+      interests: interests,
     };
 
     const successful = await props.editUserInterests(userChanges);
@@ -64,27 +64,26 @@ const EditUserInterestsModal = (props) => {
       sx={{ zIndex: 500, mb: 5 }}
       fullWidth
     >
-      <DialogTitle>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
-          Edit User Info.
-        </Typography>
-      </DialogTitle>
+      <DialogTitle fontWeight={600}>Edit User Info.</DialogTitle>
       <DialogContent data-color-mode="light">
         <Stack spacing={1}>
           <Stack spacing={0.5}>
             <Autocomplete
               multiple
               id="user-interests"
-              options={[]}
+              defaultValue={props.profile.interests?.map(
+                (interest) => interest
+              )}
+              options={props.profile.interests}
               freeSolo
-              renderInterests={(value, getInterestsProps) => {
+              renderTags={(value, getTagProps) => {
                 setInterests(value);
                 return value.map((option, index) => {
                   return (
                     <Chip
                       variant="outlined"
                       label={option}
-                      {...getInterestsProps({ index })}
+                      {...getTagProps({ index })}
                     />
                   );
                 });
@@ -94,7 +93,7 @@ const EditUserInterestsModal = (props) => {
                   {...params}
                   variant="filled"
                   label="Interests"
-                  helperText="Press ENTER to submit an interest. Interest length must be between 3-10 characters."
+                  helperText="Press ENTER to submit an interest. Interest length must be between 3-16 characters."
                 />
               )}
             />
@@ -123,8 +122,9 @@ EditUserInterestsModal.propTypes = {};
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  userInterests: state.modal.editUserInterests.userInterests,
+  interests: state.modal.editUserInterests.interests,
   open: state.modal.editUserInterests.open,
+  profile: state.profile.user,
 });
 
 const mapActionsToProps = {
