@@ -82,17 +82,30 @@ Please [see the Wiki](https://github.com/bcgov/CITZ-HybridWorkplace/wiki) for mo
   - Docker
   - Node.js (for development only)
 
-### Build
-
+### Build for Production
 
 1. Navigate to project root directory where `docker-compose.yaml` is located.
 
 2. Use the command: `docker-compose --profile prod up -d --build`.
-	- (Optional) Use `docker-compose --profile dev up -d --build` to run the API container with [nodemon](https://www.npmjs.com/package/nodemon). The API will take a short time to finish setup after Docker reports it as running. Once the container reports as 'healthy' (query with `docker ps`), the API is successfully running.
 
 3. The containers for the client, server, and database should now be running.
-	- Confirm this with `docker ps` to see if containers are running and marked as healthy.
+  - Confirm this with `docker ps` to see if containers (hwp-api & mongodb) are running and marked as healthy.
 
+If you have **npm** installed, use `npm run prod` from the project root as a shortcut.
+
+### Build for Development
+
+This version allows for hotloading of the API and frontend. Containers can stay up while changes are made. 
+There is a short delay for changes as the service restarts/recompiles. 
+Changes to the node_modules folder will require a rebuild of the containers. 
+
+1. Navigate to project root directory where `docker-compose.yaml` is located.
+
+2. Use the command: `docker-compose --profile dev up --build`.
+
+3. The containers for the client, server, and database should now be running. They are ready to use as soon as the API reports a connection to Mongo and the frontend reports the page has complied.
+
+If you have **npm** installed, use `npm run dev` from the project root as a shortcut.
   
 ### Teardown
 
