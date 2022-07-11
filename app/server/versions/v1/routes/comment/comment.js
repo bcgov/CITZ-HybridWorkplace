@@ -202,7 +202,7 @@ router.post("/", async (req, res, next) => {
     req.log.addAction("Post's comment count updated.");
 
     req.log.setResponse(201, "Success", null);
-    return res.status(201).json(returnComment);
+    return res.status(201).json(returnComment[0]);
   } catch (err) {
     res.locals.err = err;
   } finally {
