@@ -19,6 +19,7 @@
 
 const express = require("express");
 const moment = require("moment");
+const { ObjectId } = require("mongodb");
 const ResponseError = require("../../classes/responseError");
 
 const checkPatchQuery = require("../../functions/checkPatchQuery");
@@ -199,10 +200,27 @@ router.get("/post/:id", async (req, res, next) => {
     const comments = await Comment.aggregate([
       { $match: { post: post.id, replyTo: null } },
       {
+        $lookup: {
+          from: "user",
+          pipeline: [
+            {
+              $match: { _id: new ObjectId(post.creator) },
+            },
+          ],
+          as: "userData",
+        },
+      },
+      {
         $addFields: {
           votes: {
             $ifNull: [{ $subtract: ["$upvotes.count", "$downvotes.count"] }, 0],
           },
+          avatar: { $arrayElemAt: ["$userData.avatar", 0] },
+        },
+      },
+      {
+        $project: {
+          userData: 0,
         },
       },
       { $sort: { votes: -1, _id: 1 } },
@@ -258,8 +276,37 @@ router.get("/:id", async (req, res, next) => {
     });
     req.log.addAction("Comment found.");
 
+    const returnComment = await Comment.aggregate([
+      { $match: { _id: new ObjectId(comment.id) } },
+      {
+        $lookup: {
+          from: "user",
+          pipeline: [
+            {
+              $match: { _id: new ObjectId(comment.creator) },
+            },
+          ],
+          as: "userData",
+        },
+      },
+      {
+        $addFields: {
+          votes: {
+            $ifNull: [{ $subtract: ["$upvotes.count", "$downvotes.count"] }, 0],
+          },
+          avatar: { $arrayElemAt: ["$userData.avatar", 0] },
+        },
+      },
+      {
+        $project: {
+          userData: 0,
+        },
+      },
+      { $sort: { votes: -1, _id: 1 } },
+    ]).exec();
+
     req.log.setResponse(200, "Success", null);
-    return res.status(200).json(comment);
+    return res.status(200).json(returnComment);
   } catch (err) {
     res.locals.err = err;
   } finally {
