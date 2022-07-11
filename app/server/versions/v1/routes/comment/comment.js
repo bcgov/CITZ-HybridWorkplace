@@ -127,6 +127,61 @@ router.post("/", async (req, res, next) => {
     });
     req.log.addAction("Comment created.");
 
+    const returnComment = await Comment.aggregate([
+      { $match: { _id: new ObjectId(comment.id) } },
+      {
+        $lookup: {
+          from: "user",
+          pipeline: [
+            {
+              $match: { _id: new ObjectId(comment.creator) },
+            },
+          ],
+          as: "userData",
+        },
+      },
+      {
+        $addFields: {
+          votes: {
+            $ifNull: [{ $subtract: ["$upvotes.count", "$downvotes.count"] }, 0],
+          },
+          avatar: { $arrayElemAt: ["$userData.avatar", 0] },
+          creatorInitials: {
+            $cond: {
+              if: { $arrayElemAt: ["$userData.lastName", 0] },
+              then: {
+                $concat: [
+                  {
+                    $substr: [
+                      { $arrayElemAt: ["$userData.firstName", 0] },
+                      0,
+                      1,
+                    ],
+                  },
+                  {
+                    $substr: [
+                      { $arrayElemAt: ["$userData.lastName", 0] },
+                      0,
+                      1,
+                    ],
+                  },
+                ],
+              },
+              else: {
+                $substr: [{ $arrayElemAt: ["$userData.firstName", 0] }, 0, 1],
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          userData: 0,
+        },
+      },
+      { $sort: { votes: -1, _id: 1 } },
+    ]).exec();
+
     req.log.addAction("Updating community engagement.");
     await updateCommunityEngagement(
       user.username,
@@ -147,7 +202,7 @@ router.post("/", async (req, res, next) => {
     req.log.addAction("Post's comment count updated.");
 
     req.log.setResponse(201, "Success", null);
-    return res.status(201).json(comment);
+    return res.status(201).json(returnComment);
   } catch (err) {
     res.locals.err = err;
   } finally {
