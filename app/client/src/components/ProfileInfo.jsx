@@ -28,8 +28,12 @@ import { Typography, Box, Stack, IconButton, Divider } from "@mui/material";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { openEditUserInfoModal } from "../redux/ducks/modalDuck";
 import EditUserInfoModal from "./modals/EditUserInfoModal";
+import { useTheme } from "@emotion/react";
 
 const ProfileInfo = (props) => {
+  const theme = useTheme();
+  const neutralTextColor = theme.palette.neutral.main;
+  const body2TextColor = "#999";
   useEffect(() => {
     props.getProfile(props.username);
   }, []);
@@ -50,7 +54,7 @@ const ProfileInfo = (props) => {
         <Stack direction="row" spacing={0.5} alignItems="center">
           <Typography
             variant="h5"
-            style={{ fontWeight: 600, color: "#313132" }}
+            sx={{ fontWeight: 600, color: neutralTextColor }}
           >
             {name || "No name to display."}
           </Typography>
@@ -60,22 +64,22 @@ const ProfileInfo = (props) => {
           <EditUserInfoModal />
         </Stack>
 
-        <Typography variant="body2">
+        <Typography variant="body2" sx={{ color: body2TextColor }}>
           {props.profile.title || "No title to display"}
         </Typography>
-        <Typography variant="body2">
+        <Typography variant="body2" sx={{ color: body2TextColor }}>
           {props.profile.ministry || "No ministry to display"}
         </Typography>
         <Stack spacing={0.5}>
           <Typography
             variant="h6"
-            style={{ fontWeight: 600, color: "#313132" }}
+            style={{ fontWeight: 600, color: neutralTextColor }}
           >
             Joined
           </Typography>
           <Typography
             variant="body2"
-            style={{ fontWeight: 600, color: "#999" }}
+            style={{ fontWeight: 600, color: body2TextColor }}
           >
             {registrationDate || "No join date to display"}
           </Typography>
@@ -83,13 +87,13 @@ const ProfileInfo = (props) => {
         <Stack spacing={0.5}>
           <Typography
             variant="h6"
-            style={{ fontWeight: 600, color: "#313132" }}
+            sx={{ fontWeight: 600, color: neutralTextColor }}
           >
             Posts
           </Typography>
           <Typography
             variant="body2"
-            style={{ fontWeight: 600, color: "#999" }}
+            style={{ fontWeight: 600, color: body2TextColor }}
           >
             {props.profile.postCount || 0}
           </Typography>

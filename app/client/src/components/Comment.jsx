@@ -228,7 +228,6 @@ export const Comment = (props) => {
                     onClick={handleUpVote}
                     color={userVote === "up" ? "success" : "default"}
                   >
-                    {console.log(props.comment)}
                     <UpIcon fontSize="small" />
                   </IconButton>
                   <Typography pr="5px">{props.comment.votes || 0}</Typography>

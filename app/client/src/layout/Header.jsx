@@ -51,6 +51,7 @@ import "./header.css";
 import BCLogo from "./icons/BCLogo.svg";
 import { connect } from "react-redux";
 import { getProfile } from "../redux/ducks/profileDuck";
+import { useTheme } from "@emotion/react";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -113,6 +114,7 @@ const menuId = "account-avatar";
 // props: {darkMode, setDarkMode}
 // <SideMenu darkMode={darkMode} setDarkMode={setDarkMode}/>
 const Header = (props) => {
+  const theme = useTheme();
   const [menuOpen, setMenuOpen] = React.useState({ right: false });
 
   const navigate = useNavigate();
@@ -244,6 +246,7 @@ const Header = (props) => {
         borderColor: (theme) => theme.palette.secondary.main,
       }}
       position="static"
+      enableColorOnDark
     >
       <Toolbar>
         <Box
