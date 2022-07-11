@@ -12,10 +12,9 @@ RUN apk --update --no-cache add curl
 # Create app directory
 WORKDIR /usr/src/app/server
 
-# Copy env file to working directory (Contingency for command in docker-compose file)
-ARG env
-
-COPY $env .env
+# Install dependencies
+COPY app/server/package*.json ./
+RUN npm ci
 
 # CMD only used if not specifed in docker-compose
-CMD ["node", "index.js"]
+CMD ["nodemon", "-L", "index.js"]

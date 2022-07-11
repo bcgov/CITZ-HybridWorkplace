@@ -33,7 +33,7 @@ services:
     profiles: ["prod"]
     build:
       context: .
-      dockerfile: ./app/client/Dockerfile
+      dockerfile: ./app/client/docker/prod/Dockerfile
       args:
         env: ${ENV_FILE:-.env-template}
     networks:
@@ -78,18 +78,17 @@ services:
     build:
       context: .
       dockerfile: ./app/server/docker/dev/Dockerfile
-      args:
-        env: ${ENV_FILE:-.env-template}
+    env_file:
+      - .env
     networks:
       - hwp-network
     ports:
       - ${REACT_APP_API_PORT:-5000}:${REACT_APP_API_PORT:-5000}
     volumes:
-      - .:/usr/src/
+      - ./app/server:/usr/src/app/server
+      - /usr/src/app/server/node_modules
     command: >
-      sh -c "cp /usr/src/.env /usr/src/app/server/.env &&
-      npm --prefix /usr/src/app/server ci --only-production &&
-      nodemon -L /usr/src/app/server/index.js"
+      nodemon -L /usr/src/app/server/index.js
     depends_on:
       mongodb:
         condition: service_healthy
@@ -99,6 +98,29 @@ services:
       timeout: 30s
       retries: 10
       start_period: 120s
+
+  #############################################################################################
+  ###                              React Frontend Dev Version                               ###
+  #############################################################################################
+  hwp-frontend-dev:
+    container_name: hwp-frontend-dev
+    profiles: ["dev"]
+    build:
+      context: .
+      dockerfile: ./app/client/docker/dev/Dockerfile
+    environment:
+      WATCHPACK_POLLING: "true"
+    env_file:
+      - .env
+    command: >
+      npm run start-mac
+    networks:
+      - hwp-network
+    volumes:
+      - ./app/client:/usr/src/app/client
+      - /usr/src/app/client/node_modules
+    ports:
+      - ${FRONTEND_PORT:-8080}:${FRONTEND_PORT:-8080}
 
 networks:
   hwp-network:
