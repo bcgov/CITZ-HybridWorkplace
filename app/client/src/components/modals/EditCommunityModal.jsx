@@ -102,7 +102,7 @@ const EditCommunityModal = (props) => {
       onClose={props.closeEditCommunityModal}
       open={props.open}
       fullWidth
-      sx={{ zIndex: 500 }}
+      sx={{ zIndex: 500, mb: 5 }}
     >
       <DialogTitle>
         <Typography variant="h5" fontWeight={600}>

@@ -27,7 +27,7 @@ const JoinButton = (props) => {
 
   useEffect(() => {
     setIsInCommunity(isUserInCommunity(community.title));
-  }, [communities.usersCommunities]);
+  }, [community, communities.usersCommunities]);
 
   const isUserInCommunity = (communityName) => {
     return (
