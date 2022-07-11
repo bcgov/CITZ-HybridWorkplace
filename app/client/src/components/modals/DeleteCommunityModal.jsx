@@ -49,7 +49,7 @@ const DeleteCommunityModal = (props) => {
       fullWidth
       sx={{ zIndex: 500 }}
     >
-      <DialogTitle>Delete Community</DialogTitle>
+      <DialogTitle fontWeight={600}>Delete Community</DialogTitle>
       <DialogContent>
         <Grid
           container

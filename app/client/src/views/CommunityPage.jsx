@@ -230,16 +230,19 @@ const CommunityPage = (props) => {
                 Members of this community: {props.community.memberCount || 0}
               </Typography>
               {props.community.creatorName && (
-                <Typography
-                  sx={{
-                    fontWeight: "bold",
-                    color: "#0072A2",
-                  }}
-                >
-                  {"Created by: "}
-                  <Box
+                <Stack direction="row" spacing={0.5} justifyContent="center">
+                  <Typography
                     sx={{
-                      display: "inline-block",
+                      fontWeight: "bold",
+                      color: "#0072A2",
+                    }}
+                  >
+                    {"Created by: "}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontWeight: "bold",
+                      color: "#0072A2",
                       ":hover": {
                         textDecoration: "underline",
                         cursor: "pointer",
@@ -250,8 +253,8 @@ const CommunityPage = (props) => {
                     }
                   >
                     {props.community.creatorName}
-                  </Box>
-                </Typography>
+                  </Typography>
+                </Stack>
               )}
               <Box>
                 <JoinButton community={props.community} />
