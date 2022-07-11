@@ -47,6 +47,7 @@ import {
   Chip,
   Stack,
   IconButton,
+  Divider,
 } from "@mui/material";
 
 import { default as BackArrow } from "@mui/icons-material/ArrowBackIosNewRounded";
@@ -59,6 +60,9 @@ import ProfileInfo from "../components/ProfileInfo";
 import Community from "../components/Community";
 import EditUserBioModal from "../components/modals/EditUserBioModal";
 import EditUserInterestsModal from "../components/modals/EditUserInterestsModal";
+import EditPostModal from "../components/modals/EditPostModal";
+import FlagPostModal from "../components/modals/FlagPostModal";
+import DeletePostModal from "../components/modals/DeletePostModal";
 
 const ProfilePage = (props) => {
   let { username } = useParams();
@@ -101,7 +105,25 @@ const ProfilePage = (props) => {
     props.openSettingsModal(userSettings);
 
   const handleEditUserInterestsClick = (userInterests) =>
-    props.openEditUserInterestsModal(userInterests);
+    props.openEditUserInterestsModal(userInterests ?? []);
+
+  const randomColor = () => {
+    const colors = [
+      "#2A9CA7",
+      "#5276D8",
+      "#D459C0",
+      "#D15C5E",
+      "#C48923",
+      "#C43A48",
+      "#CC622D",
+      "#1C85D6",
+      "#4771E4",
+      "#1BB879",
+      "#559E2D",
+      "#A141D2",
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
 
   return (
     <Box
@@ -131,43 +153,48 @@ const ProfilePage = (props) => {
           <ProfileInfo username={username} />
           <Stack direction="column" spacing={1} width="20vw">
             <Stack direction="row" spacing={0.5} alignItems="center">
-              <Typography
-                variant="h6"
-                sx={{ fontWeight: 600, color: "primary.main" }}
-              >
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Interests
               </Typography>
               <IconButton
-                onClick={() => handleEditUserInterestsClick(props.profile)}
+                onClick={() =>
+                  handleEditUserInterestsClick(props.profile.interests)
+                }
               >
                 <EditRoundedIcon fontSize="small" />
               </IconButton>
             </Stack>
-            <Stack direction="row" spacing={1}>
-              <Chip label="DevOps" color="primary" />
-              <Chip label="Design" color="error" />
-            </Stack>
-            <Stack direction="row" spacing={1}>
-              <Chip label="Frontend Development" color="secondary" />
-            </Stack>
-            <Stack direction="row" spacing={1}>
-              <Chip label="Project Management" color="success" />
-            </Stack>
+            <Box sx={{ flexWrap: "wrap", width: 250 }}>
+              {props.profile.interests?.map((interest) => (
+                <Chip
+                  label={interest}
+                  key={props.profile.interests.indexOf(interest)}
+                  sx={{
+                    mb: 1,
+                    mr: 1,
+                    px: 1,
+                    backgroundColor: randomColor(),
+                    color: "white",
+                    fontWeight: 600,
+                  }}
+                />
+              ))}
+            </Box>
           </Stack>
           <Stack direction="row" alignItems="center" my={2} p={0}>
             <Typography variant="h6" fontWeight={600}>
               Settings
             </Typography>
-            <IconButton onClick={handleSettingsClick}>
+            <IconButton onClick={() => handleSettingsClick(props.profile)}>
               <SettingsRoundedIcon fontSize="medium" />
             </IconButton>
           </Stack>
         </Grid>
         <Grid item xs={8}>
-          <Box minHeight="5vh" width="max-content" my={1}>
+          <Box minHeight="5vh" width="max-content" mb={2}>
             <Stack direction="row" spacing={0.5} alignItems="center">
               <Typography variant="h5" fontWeight={600}>
-                Bio
+                About Me
               </Typography>
               <IconButton onClick={() => handleEditBioClick(props.profile)}>
                 <EditRoundedIcon fontSize="small" />
@@ -177,6 +204,7 @@ const ProfilePage = (props) => {
               {props.profile.bio || "No bio to display"}
             </Typography>
           </Box>
+          <Divider sx={{ my: 2 }} />
           <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
             My Communities
           </Typography>
@@ -193,6 +221,7 @@ const ProfilePage = (props) => {
               <Community community={element} key={element._id} />
             ))}
           </Carousel>
+          <Divider sx={{ my: 2 }} />
           <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
             My Recent Posts
           </Typography>
@@ -211,6 +240,9 @@ const ProfilePage = (props) => {
           </Carousel>
         </Grid>
       </Grid>
+      <EditPostModal />
+      <FlagPostModal />
+      <DeletePostModal />
       <EditUserBioModal user={username} />
       <EditUserInterestsModal user={username} />
       <SettingsModal />

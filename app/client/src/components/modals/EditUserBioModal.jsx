@@ -72,7 +72,7 @@ const EditUserBioModal = (props) => {
             <InputLabel htmlFor="user-bio">Bio</InputLabel>
             <TextField
               id="user-bio"
-              value={bio}
+              value={props.profile.bio}
               onChange={(e) => setBio(e.target.value)}
               type="text"
               multiline

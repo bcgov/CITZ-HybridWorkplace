@@ -60,7 +60,6 @@ const EditUserInfoModal = (props) => {
       ministry,
       bio: user.bio,
     };
-    console.log(userChanges);
 
     const successful = await props.editUserInfo(userChanges);
     if (successful === true) {

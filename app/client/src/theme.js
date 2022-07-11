@@ -26,18 +26,35 @@ export const theme = createTheme({
   },
   palette: {
     mode: getDarkModePreference(),
-    primary: {
-      main: "#003366",
-    },
-    secondary: {
-      main: "#FDB913",
-    },
-    neutral: {
-      main: "#313132",
-    },
-    banner: {
-      main: "#395988",
-    },
+    ...(getDarkModePreference() === "light"
+      ? {
+          primary: {
+            main: "#003366",
+          },
+          secondary: {
+            main: "#FDB913",
+          },
+          neutral: {
+            main: "#313132",
+          },
+          banner: {
+            main: "#395988",
+          },
+        }
+      : {
+          primary: {
+            main: "#003366",
+          },
+          secondary: {
+            main: "#FDB913",
+          },
+          neutral: {
+            main: "#313132",
+          },
+          banner: {
+            main: "#395988",
+          },
+        }),
   },
   typography: {
     fontFamily: "BCSans",

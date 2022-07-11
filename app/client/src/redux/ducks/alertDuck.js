@@ -37,7 +37,7 @@ export const createError = (errorText) => (dispatch) => {
     dispatch({
       type: REMOVE_ERROR,
     });
-  }, 2000);
+  }, 10000);
 };
 
 export const createWarning = (errorText) => (dispatch) => {

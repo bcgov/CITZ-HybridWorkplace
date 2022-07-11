@@ -26,6 +26,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  InputLabel,
   Stack,
   TextField,
   Typography,
@@ -101,17 +102,18 @@ const EditCommunityModal = (props) => {
       onClose={props.closeEditCommunityModal}
       open={props.open}
       fullWidth
-      sx={{ zIndex: 500 }}
+      sx={{ zIndex: 500, mb: 5 }}
     >
       <DialogTitle fontWeight={600}>Edit Community</DialogTitle>
       <DialogContent sx={{ pt: 5 }}>
         <Stack spacing={3}>
+          <InputLabel htmlFor="community-title-input">Title</InputLabel>
           <TextField
+            id="community-title-input"
             sx={{ mt: 1 }}
             onChange={onTitleChange}
             placeholder="Title"
             value={title}
-            label="Title"
             size="small"
             error={
               title &&
@@ -122,13 +124,14 @@ const EditCommunityModal = (props) => {
             helperText="Title must be 3-25 characters in length."
             required
           />
+          <InputLabel htmlFor="community-description-input">Title</InputLabel>
           <TextField
+            id="community-description-input"
             onChange={onDescriptionChange}
             name="description"
             placeholder="Description"
             multiline
             value={description}
-            label="Description"
             size="small"
             minRows={4}
             error={
@@ -140,13 +143,19 @@ const EditCommunityModal = (props) => {
             }
             helperText="Description must be between 1-300 characters in length."
           />
+          <InputLabel htmlFor="community-rules-input">Title</InputLabel>
           <TextField
+            id="community-rules-input"
             onChange={onRulesChange}
             name="rules"
             placeholder="Rules"
             multiline
+<<<<<<< zach-fixing-errors
             value={rules?.toString() /*TODO: Fix rules editing */}
             label="Rules"
+=======
+            value={rules}
+>>>>>>> main
             size="small"
             minRows={4}
             error={false}

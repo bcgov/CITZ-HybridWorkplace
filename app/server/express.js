@@ -48,6 +48,7 @@ const {
   communityTagsRouter,
   communityRulesRouter,
   communityMembersRouter,
+  communityModeratorsRouter,
   postRouter,
   postFlagsRouter,
   postTagsRouter,
@@ -122,13 +123,7 @@ if (process.env.TOGGLE_KEYCLOAK_AUTH === "true") {
     }
   );
   app.use(keycloak.middleware());
-  app.use(
-    "/api/keycloakLogin",
-    initLogger,
-    keycloak.protect(),
-    keycloakRouter,
-    requestFinally
-  );
+  app.use("/api/keycloakLogin", initLogger, keycloak.protect(), keycloakRouter);
 
   exports.memoryStore = memoryStore;
 }
@@ -141,6 +136,14 @@ app.use("/api/register", initLogger, registerRouter, requestFinally);
 app.use("/api/login", initLogger, loginRouter, requestFinally);
 app.use("/api/logout", initLogger, logoutRouter, requestFinally);
 app.use("/api/token", initLogger, tokenRouter, requestFinally);
+
+app.use(
+  "/api/community/moderators",
+  initLogger,
+  authenticateToken,
+  communityModeratorsRouter,
+  requestFinally
+);
 
 app.use(
   "/api/community/flags",
