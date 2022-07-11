@@ -12,7 +12,7 @@
 
 This is the project repo for the 2022 CITZ: IMB "Hybrid Workplace" product. 
 
-The second phase of development is currently underway. 
+We are currently completing our second phase: MVP development. 
 Come back often as content is constantly being added. 
 
 An in-progress version of the project is available here:
