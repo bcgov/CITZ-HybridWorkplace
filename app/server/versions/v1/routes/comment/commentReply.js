@@ -19,6 +19,7 @@
 
 const express = require("express");
 const moment = require("moment");
+const { ObjectId } = require("mongodb");
 const ResponseError = require("../../classes/responseError");
 
 const findSingleDocuments = require("../../functions/findSingleDocuments");
@@ -72,10 +73,53 @@ router.get("/:id", async (req, res, next) => {
     const replies = await Comment.aggregate([
       { $match: { replyTo: comment.id } },
       {
+        $lookup: {
+          from: "user",
+          pipeline: [
+            {
+              $match: { _id: new ObjectId(comment.creator) },
+            },
+          ],
+          as: "userData",
+        },
+      },
+      {
         $addFields: {
           votes: {
             $ifNull: [{ $subtract: ["$upvotes.count", "$downvotes.count"] }, 0],
           },
+          avatar: { $arrayElemAt: ["$userData.avatar", 0] },
+          creatorInitials: {
+            $cond: {
+              if: { $arrayElemAt: ["$userData.lastName", 0] },
+              then: {
+                $concat: [
+                  {
+                    $substr: [
+                      { $arrayElemAt: ["$userData.firstName", 0] },
+                      0,
+                      1,
+                    ],
+                  },
+                  {
+                    $substr: [
+                      { $arrayElemAt: ["$userData.lastName", 0] },
+                      0,
+                      1,
+                    ],
+                  },
+                ],
+              },
+              else: {
+                $substr: [{ $arrayElemAt: ["$userData.firstName", 0] }, 0, 1],
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          userData: 0,
         },
       },
       { $sort: { votes: -1, _id: 1 } },

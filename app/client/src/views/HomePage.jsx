@@ -20,7 +20,7 @@
  * @module
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Grid, Box, Button, Typography, Link } from "@mui/material";
 import { getPosts } from "../redux/ducks/postDuck";
@@ -35,13 +35,20 @@ import {
   openAddPostModal,
   openAddCommunityModal,
 } from "../redux/ducks/modalDuck";
+import LoadingPage from "./LoadingPage";
 
 const HomePage = (props) => {
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    props.getPosts();
+    (async () => {
+      await props.getPosts();
+      setLoading(false);
+    })();
   }, []);
 
-  return (
+  return loading ? (
+    <LoadingPage />
+  ) : (
     <Box sx={{ pb: 20 }}>
       <Grid container spacing={2}>
         <Grid item xs={8}>

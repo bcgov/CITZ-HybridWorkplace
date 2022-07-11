@@ -134,7 +134,7 @@ const Post = (props) => {
                     <ListItemText>Flag</ListItemText>
                   </MenuItem>
                   {props.userId === post.creator && (
-                    <>
+                    <Box>
                       <MenuItem onClick={handleDeletePostClick}>
                         <ListItemIcon>
                           <DeleteForeverTwoToneIcon fontSize="small" />
@@ -147,7 +147,7 @@ const Post = (props) => {
                         </ListItemIcon>
                         <ListItemText>Edit</ListItemText>
                       </MenuItem>
-                    </>
+                    </Box>
                   )}
                 </MenuList>
               </Menu>
@@ -190,9 +190,9 @@ const Post = (props) => {
             </Grid>
           }
           subheader={
-            <Typography color="white">
-              {"by "}
-              <Box
+            <Stack direction="row" spacing={0.5}>
+              <Typography color="white">{"by "}</Typography>
+              <Typography
                 sx={{
                   display: "inline-block",
                   ":hover": {
@@ -201,10 +201,11 @@ const Post = (props) => {
                   },
                 }}
                 onClick={() => handlePostCreatorClick(props.post.creatorName)}
+                color="white"
               >
                 {props.post.creatorName}
-              </Box>
-            </Typography>
+              </Typography>
+            </Stack>
           }
         />
         <CardContent

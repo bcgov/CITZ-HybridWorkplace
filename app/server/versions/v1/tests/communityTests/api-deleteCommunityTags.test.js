@@ -16,13 +16,17 @@ const userEmail = email.gen();
 
 const welComTitle = "Welcome";
 
-const newComTitle = "hello create";
+const newComTitle = "delete Community Tags";
 const newComDescript = "world";
-const newComRules = "1. rules";
+const newComRules = [
+  {
+    rule: "Be nice",
+    description: "be the best person you can be!",
+  },
+];
 const newComTags = [
   {
     tag: "Informative",
-    count: 1,
   },
 ];
 

@@ -94,6 +94,16 @@
  *                description: Users that have flagged the community.
  *                items:
  *                  - $ref: '#/components/schemas/User'
+ *        moderators:
+ *          type: array
+ *          description: List of moderator's IDs.
+ *          items:
+ *            type: object
+ *            properties:
+ *              user:
+ *                type: string
+ *                items:
+ *                  - $ref: '#/components/schemas/User'
  *      required:
  *        - title
  *        - description
@@ -129,6 +139,12 @@ const Community = new mongoose.Schema(
             ref: "User",
           },
         ],
+      },
+    ],
+    moderators: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
       },
     ],
   },

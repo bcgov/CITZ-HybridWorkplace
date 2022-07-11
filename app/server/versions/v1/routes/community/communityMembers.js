@@ -215,6 +215,16 @@ router.delete("/leave/:title", async (req, res, next) => {
     );
     req.log.addAction("Community removed from user's community list.");
 
+    req.log.addAction("Checking if user is a moderator.");
+    if (community.moderators.includes(user.id)) {
+      await Community.updateOne(
+        { title: community.title },
+        { $pull: { moderators: user.id } }
+      );
+      req.log.addAction("Removed user from moderators.");
+    }
+    req.log.addAction("Checked if user is moderator.");
+
     req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
   } catch (err) {

@@ -29,6 +29,9 @@ const getOptions = require("../../functions/getOptions");
 const router = express.Router();
 
 const Community = require("../../models/community.model");
+const {
+  communityAuthorization,
+} = require("../../authorization/communityAuthorization");
 
 /**
  * @swagger
@@ -59,7 +62,7 @@ const Community = require("../../models/community.model");
  *        '404':
  *          description: User not found. **||** <br>Community not found.
  *        '403':
- *          description: Only creator of community can edit community.
+ *          description: Only moderator of community can edit community.
  *        '204':
  *          description: Success. No content to return.
  *        '400':
@@ -85,13 +88,19 @@ router.put("/:title", async (req, res, next) => {
     } = await getOptions("community");
     req.log.addAction("Options found.");
 
-    req.log.addAction("Checking user is creator of community.");
-    if (user.id !== community.creator)
+    req.log.addAction("Checking user is moderator of community.");
+    if (
+      !(await communityAuthorization.isCommunityModerator(
+        // eslint-disable-next-line no-underscore-dangle
+        user._id,
+        community.title
+      ))
+    )
       throw new ResponseError(
         403,
-        "Only creator of community can edit community."
+        "Only moderator of community can edit community."
       );
-    req.log.addAction("User is creator of community.");
+    req.log.addAction("User is moderator of community.");
 
     // Validate rules
     req.log.addAction("Validating rules.");

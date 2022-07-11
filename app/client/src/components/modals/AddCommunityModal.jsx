@@ -110,11 +110,7 @@ const AddCommunityModal = (props) => {
       sx={{ zIndex: 500, mb: 5 }}
       fullWidth
     >
-      <DialogTitle>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
-          Create Community
-        </Typography>
-      </DialogTitle>
+      <DialogTitle fontWeight={600}>Create Community</DialogTitle>
       <DialogContent data-color-mode="light">
         <Stack spacing={1}>
           <Stack spacing={0.5}>

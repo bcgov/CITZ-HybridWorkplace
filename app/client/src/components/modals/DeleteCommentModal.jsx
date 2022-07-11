@@ -49,11 +49,7 @@ const DeleteCommentModal = (props) => {
       fullWidth
       sx={{ zIndex: 500 }}
     >
-      <DialogTitle>
-        <Typography variant="h5" fontWeight={600}>
-          Delete Comment
-        </Typography>
-      </DialogTitle>
+      <DialogTitle fontWeight={600}>Delete Comment</DialogTitle>
       <DialogContent>
         <Stack spacing={1}>
           <Stack spacing={0.5} textAlign="center">

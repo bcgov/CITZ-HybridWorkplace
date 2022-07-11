@@ -4,7 +4,7 @@
 
 ## Project Introduction
 
-This is the project repo for the 2022 CITZ IMB "Hybrid Workplace" product. We are currently completing our first phase: prototype development.Come back often as content is constantly being added. As part of that initiative we are exploring the need and benefit of a tool.
+This is the project repo for the 2022 CITZ IMB "Hybrid Workplace" product. We are currently completing our second phase: MVP development.Come back often as content is constantly being added. As part of that initiative we are exploring the need and benefit of a tool.
 
 ## Development Team Introduction
 

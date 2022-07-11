@@ -20,10 +20,9 @@
  * @module
  */
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-
 import {
   Dialog,
   DialogContent,
@@ -32,20 +31,50 @@ import {
   Button,
   Stack,
   DialogActions,
-  Switch,
   FormControl,
   FormLabel,
   FormControlLabel,
   RadioGroup,
   Radio,
   Divider,
+  Select,
+  MenuItem,
 } from "@mui/material";
 
 import { closeSettingsModal } from "../../redux/ducks/modalDuck";
-import { editUserNotifications } from "../../redux/ducks/profileDuck";
+import { editUserSettings } from "../../redux/ducks/profileDuck";
 
 const SettingsModal = (props) => {
-  const handleEditNotificationsClick = () => props.editUserNotifications;
+  const [darkModeValue, setDarkModeValue] = useState(
+    localStorage.getItem("hwp-darkmode") ?? "light"
+  );
+
+  const [notificationFrequency, setNotificationFrequency] = useState(
+    props.userSettings.notificationFrequency || null
+  );
+
+  useEffect(() => {
+    setNotificationFrequency(props.userSettings.notificationFrequency);
+  }, [props.userSettings.notificationFrequency]);
+
+  const saveEdits = async () => {
+    const userChanges = {
+      notificationFrequency,
+    };
+
+    const successful = await props.editUserSettings(userChanges);
+
+    if (successful === true) props.closeSettingsModal();
+  };
+
+  const handleDarkModeChange = (e) => {
+    setDarkModeValue(e.target.value);
+  };
+
+  const handleSave = () => {
+    localStorage.setItem("hwp-darkmode", darkModeValue);
+    window.location.reload();
+  };
 
   return (
     <Dialog
@@ -57,11 +86,7 @@ const SettingsModal = (props) => {
         mb: 5,
       }}
     >
-      <DialogTitle>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
-          Settings
-        </Typography>
-      </DialogTitle>
+      <DialogTitle fontWeight={600}>Settings</DialogTitle>
       <DialogContent data-color-mode="light">
         <Stack spacing={1} justifyContent="center">
           <FormControl>
@@ -73,22 +98,24 @@ const SettingsModal = (props) => {
             <Divider />
             <RadioGroup
               aria-labelledby="notification-frequency-radios-label"
-              defaultValue="immediately"
+              defaultValue="immediate"
+              value={notificationFrequency}
               name="notification-frequency-radios-group"
+              onChange={(e) => setNotificationFrequency(e.target.value)}
             >
               <FormControlLabel
                 value="none"
-                control={<Radio size="small" />}
+                control={<Radio value="none" size="small" />}
                 label="None"
               />
               <FormControlLabel
-                value="immediately"
-                control={<Radio size="small" />}
-                label="Immediately"
+                value="immediate"
+                control={<Radio value="immediate" size="small" />}
+                label="Immediate"
               />
               <FormControlLabel
                 value="daily"
-                control={<Radio size="small" />}
+                control={<Radio value="daily" size="small" />}
                 label="Daily"
               />
               <FormControlLabel
@@ -105,21 +132,35 @@ const SettingsModal = (props) => {
               />
             </RadioGroup>
           </FormControl>
-          <Divider />
-          <Stack direction="row" spacing={1}>
-            <Typography
-              variant="p"
-              sx={{ fontWeight: 600, alignSelf: "center" }}
-            >
+          <FormLabel id="darkmode-preference-label">
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
               Dark Mode
             </Typography>
-            <Switch />
+          </FormLabel>
+          <Divider />
+
+          <Stack direction="row" spacing={1}>
+            <Select
+              name="darkmode-preference-label"
+              labelId="darkmode-preference-label"
+              id="demo-simple-select"
+              aria-labelledby="darkmode-preference-label"
+              value={darkModeValue}
+              onChange={handleDarkModeChange}
+            >
+              <MenuItem value={"light"}>Light</MenuItem>
+              <MenuItem value={"dark"}>Dark</MenuItem>
+              <MenuItem value={"system"}>System Default</MenuItem>
+            </Select>
           </Stack>
           <DialogActions sx={{ m: 0, pb: 0 }}>
             <Stack direction="row-reverse" justifyContent="end" spacing={1}>
               <Button
                 variant="contained"
-                onClick={handleEditNotificationsClick}
+                onClick={() => {
+                  saveEdits();
+                  handleSave();
+                }}
               >
                 Save
               </Button>
@@ -138,13 +179,13 @@ const SettingsModal = (props) => {
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  open: state.modal.settings.open,
-  notificationFrequency: state.profile.notificationFrequency,
+  open: state.modal.editSettings.open,
+  userSettings: state.modal.editSettings.userSettings,
 });
 
 const mapActionsToProps = {
   closeSettingsModal,
-  editUserNotifications,
+  editUserSettings,
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(SettingsModal);

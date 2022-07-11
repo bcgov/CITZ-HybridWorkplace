@@ -36,37 +36,9 @@ import Paper from "@mui/material/Paper";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import AlertList from "./components/AlertList";
 
-function App() {
-  const theme = createTheme({
-    components: {
-      MuiIconButton: {
-        styleOverrides: {
-          root: {
-            marginLeft: 0,
-          },
-        },
-      },
-    },
-    palette: {
-      mode: "light",
-      primary: {
-        main: "#003366",
-      },
-      secondary: {
-        main: "#FDB913",
-      },
-      neutral: {
-        main: "#313132",
-      },
-      banner: {
-        main: "#395988",
-      },
-    },
-    typography: {
-      fontFamily: "BCSans",
-    },
-  });
+import { theme } from "./theme";
 
+function App() {
   return (
     <ThemeProvider theme={theme}>
       <Paper style={{ minHeight: "100vh" }} sx={{ boxShadow: 0 }}>

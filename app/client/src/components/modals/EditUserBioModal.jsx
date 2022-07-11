@@ -42,7 +42,7 @@ const EditUserBioModal = (props) => {
   const [bio, setBio] = useState(props.bio);
 
   useEffect(() => {
-    setBio(props.bio);
+    setBio(props.bio ?? "");
   }, [props.bio]);
 
   const saveEdits = async () => {
@@ -65,18 +65,14 @@ const EditUserBioModal = (props) => {
       sx={{ zIndex: 500, mb: 5 }}
       fullWidth
     >
-      <DialogTitle>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
-          Edit User Bio
-        </Typography>
-      </DialogTitle>
+      <DialogTitle fontWeight={600}>Edit User Bio</DialogTitle>
       <DialogContent data-color-mode="light">
         <Stack spacing={1}>
           <Stack spacing={0.5}>
             <InputLabel htmlFor="user-bio">Bio</InputLabel>
             <TextField
               id="user-bio"
-              value={bio}
+              value={props.profile.bio}
               onChange={(e) => setBio(e.target.value)}
               type="text"
               multiline
