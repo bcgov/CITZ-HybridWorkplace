@@ -244,6 +244,7 @@ const Header = (props) => {
       sx={{
         borderBottom: 3,
         borderColor: (theme) => theme.palette.secondary.main,
+        backgroundColor: "BCBlue.main",
       }}
       position="static"
       enableColorOnDark
@@ -271,6 +272,7 @@ const Header = (props) => {
           sx={{
             display: { xs: "none", sm: "block" },
             fontWeight: 600,
+            color: "white",
           }}
         >
           The Neighbourhood

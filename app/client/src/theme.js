@@ -27,10 +27,13 @@ const lightModeColors = {
   banner: {
     main: "#395988",
   },
+  button: {
+    main: "#003366",
+  },
 };
 const darkModeColors = {
   primary: {
-    main: "#003366",
+    main: "#014587",
   },
   secondary: {
     main: "#FDB913",
@@ -40,6 +43,9 @@ const darkModeColors = {
   },
   banner: {
     main: "#395988",
+  },
+  button: {
+    main: "#057ff5",
   },
 };
 
@@ -56,8 +62,8 @@ export const theme = createTheme({
   palette: {
     mode: getDarkModePreference(),
     ...(getDarkModePreference() === "light" ? lightModeColors : darkModeColors),
-    BCBlue: "#003366",
-    BCYellow: "#e3a82b",
+    BCBlue: { main: "#003366" },
+    BCYellow: { main: "#e3a82b" },
   },
   typography: {
     fontFamily: "BCSans",
