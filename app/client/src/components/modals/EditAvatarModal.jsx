@@ -126,10 +126,8 @@ const EditAvatarModal = (props) => {
       sx={{ zIndex: 500, mb: 5 }}
       fullWidth
     >
-      <DialogTitle>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
+      <DialogTitle sx={{ fontWeight: 600 }}>
           Edit Avatar
-        </Typography>
       </DialogTitle>
       <DialogContent data-color-mode="light">
         <Stack spacing={1}>
