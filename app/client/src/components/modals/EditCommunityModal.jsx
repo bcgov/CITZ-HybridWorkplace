@@ -150,12 +150,8 @@ const EditCommunityModal = (props) => {
             name="rules"
             placeholder="Rules"
             multiline
-<<<<<<< zach-fixing-errors
             value={rules?.toString() /*TODO: Fix rules editing */}
             label="Rules"
-=======
-            value={rules}
->>>>>>> main
             size="small"
             minRows={4}
             error={false}
