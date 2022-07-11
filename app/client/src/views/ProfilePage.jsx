@@ -35,6 +35,9 @@ import {
 } from "../redux/ducks/modalDuck";
 import { getUsersCommunities } from "../redux/ducks/communityDuck";
 import SettingsModal from "../components/modals/SettingsModal";
+import EditPostModal from "../components/modals/EditPostModal";
+import FlagPostModal from "../components/modals/FlagPostModal";
+import DeletePostModal from "../components/modals/DeletePostModal";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import moment from "moment";
@@ -214,6 +217,9 @@ const ProfilePage = (props) => {
       <EditUserBioModal user={username} />
       <EditUserInterestsModal user={username} />
       <SettingsModal />
+      <EditPostModal />
+      <FlagPostModal />
+      <DeletePostModal />
     </Box>
   );
 };
