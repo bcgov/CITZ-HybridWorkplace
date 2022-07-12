@@ -20,24 +20,39 @@
  * @module
  */
 
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, Grid, Tooltip, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React from "react";
+import Image404 from "../layout/icons/404.png";
 
 const Page404 = () => {
   const navigate = useNavigate();
   const redirect = () => {
-    navigate("/login");
+    navigate("/");
   };
   return (
-    <Grid container justifyContent="center">
-      <Grid item xs={12}>
-        <Typography variant="h3">404, Page not found.</Typography>
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      direction="column"
+      spacing={6}
+    >
+      <Grid item>
+        <Typography variant="h3">Sorry, page not found.</Typography>
       </Grid>
-      <br />
-      <Button variant="contained" color="primary" onClick={redirect}>
-        Return Home
-      </Button>
+      <Grid item>
+        <Button variant="contained" color="primary" onClick={redirect}>
+          Return Home
+        </Button>
+      </Grid>
+      <Grid item>
+        <Tooltip
+          title={`Image taken from https://www.freepik.com/free-vector/error-404-concept-landing-page_4660894.htm#query=404%20page&position=1&from_view=keyword`}
+        >
+          <img style={{ maxWidth: "80vh" }} src={Image404} />
+        </Tooltip>
+      </Grid>
     </Grid>
   );
 };
