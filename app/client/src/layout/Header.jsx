@@ -223,8 +223,6 @@ const Header = (props) => {
       sx={{
         display: { xs: "none", md: "flex" },
         zIndex: 1000,
-        backgroundColor: "#F0F0F0",
-        height: "100vh",
       }}
     >
       <List onClick={toggleDrawer("right", false)}>
