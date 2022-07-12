@@ -128,7 +128,7 @@ const Community = (props) => {
           sx={{
             borderTopLeftRadius: "10px",
             borderTopRightRadius: "10px",
-            backgroundColor: "primary.main",
+            backgroundColor: "banner.main",
             cursor: "pointer",
             color: "white",
           }}

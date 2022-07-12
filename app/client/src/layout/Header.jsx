@@ -243,7 +243,7 @@ const Header = (props) => {
     <AppBar
       sx={{
         borderBottom: 3,
-        borderColor: (theme) => theme.palette.secondary.main,
+        borderColor: "secondary.main",
         backgroundColor: "BCBlue.main",
       }}
       position="static"

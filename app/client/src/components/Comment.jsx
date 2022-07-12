@@ -37,11 +37,8 @@ import {
   removeCommentVote,
 } from "../redux/ducks/postDuck";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "@emotion/react";
 
 export const Comment = (props) => {
-  const theme = useTheme();
-  const cardColor = theme.palette.mode === "dark" ? "#121212" : "";
   const getUserVote = () => {
     return (
       (props.comment.upvotes.users.includes(props.userId) && "up") ||
@@ -152,7 +149,7 @@ export const Comment = (props) => {
       <Grid item xs={12}>
         <Card style={{ margin: 10 }}>
           <CardHeader
-            sx={{ backgroundColor: cardColor }}
+            sx={{ backgroundColor: "card.main" }}
             title={
               <Typography
                 variant="h5"
@@ -215,7 +212,7 @@ export const Comment = (props) => {
               )
             }
           />
-          <CardContent sx={{ paddingTop: "0px", backgroundColor: cardColor }}>
+          <CardContent sx={{ paddingTop: "0px", backgroundColor: "card.main" }}>
             <Grid container spacing={2}>
               <Grid item xs={11}>
                 {props.comment.edits.length > 0 && (
@@ -248,7 +245,7 @@ export const Comment = (props) => {
               </Grid>
             </Grid>
           </CardContent>
-          <CardActions sx={{ backgroundColor: cardColor }}>
+          <CardActions sx={{ backgroundColor: "card.main" }}>
             {!props.hideReply && (
               <Button
                 variant="text"

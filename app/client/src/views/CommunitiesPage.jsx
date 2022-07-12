@@ -37,7 +37,7 @@ const CommunitiesPage = (props) => {
           <Box
             mb="15px"
             sx={{
-              backgroundColor: "#036",
+              backgroundColor: "primary.main",
               borderRadius: "10px",
               color: "white",
               px: 1,

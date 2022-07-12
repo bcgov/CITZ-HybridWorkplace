@@ -105,7 +105,7 @@ const SettingsModal = (props) => {
             >
               <FormControlLabel
                 value="none"
-                control={<Radio value="none" size="small" />}
+                control={<Radio value="none" size="small" color="secondary" />}
                 label="None"
               />
               <FormControlLabel

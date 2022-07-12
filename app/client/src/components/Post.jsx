@@ -117,7 +117,7 @@ const Post = (props) => {
         square
       >
         <CardHeader
-          sx={{ backgroundColor: "primary.main", color: "white", py: 1 }}
+          sx={{ backgroundColor: "banner.main", color: "white", py: 1 }}
           action={
             <>
               <IconButton aria-label="settings" onClick={handleMenuOpen}>

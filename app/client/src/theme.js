@@ -30,6 +30,9 @@ const lightModeColors = {
   button: {
     main: "#003366",
   },
+  card: {
+    main: "#ffffff",
+  },
 };
 const darkModeColors = {
   primary: {
@@ -46,6 +49,9 @@ const darkModeColors = {
   },
   button: {
     main: "#057ff5",
+  },
+  card: {
+    main: "#121212",
   },
 };
 
