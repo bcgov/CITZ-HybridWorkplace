@@ -44,7 +44,7 @@ jobs:
       - name: Install dependencies
         working-directory: ./app/server
         run: |
-          npm install
+          npm ci
 
       - name: Relax Express request limiter
         working-directory: ./app/server
@@ -75,6 +75,7 @@ jobs:
           echo "GC_NOTIFY_API_KEY_SECRET=" >> .env
           echo "ENABLE_GC_NOTIFY_TRIAL_MODE=false" >> .env
           echo "ENABLE_GC_NOTIFY=false" >> .env
+          echo "TOGGLE_KEYCLOAK_AUTH=false" >> .env
           echo "ENV_FILE=.env" >> .env
 
       - name: Create ENV file for testing suite
@@ -97,18 +98,29 @@ jobs:
       
       - name: Wait for API container
         uses: stringbean/docker-healthcheck-action@v1
+        continue-on-error: true
+        id: api-healthcheck
         with:
           container: hwp-api
           wait-time: 60
           require-status: running 
           require-healthy: true
+      
+      - name: Print docker API logs
+        run: |
+          docker logs hwp-api
+
+      - name: Stop if API failed
+        if: steps.api-healthcheck.outcome == 'failure'
+        run: |
+          exit 1
 
     # Run tests
       - name: Run test command
         working-directory: ./app/server
         continue-on-error: true
         run: |
-          npm test -- --json > tempResults
+          npm test -- --forceExit --json > tempResults
 
     # Refine results
       - name: Select only json line
