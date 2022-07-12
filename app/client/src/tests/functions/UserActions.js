@@ -3,13 +3,14 @@ import puppeteer from "puppeteer";
 class UserActions {
   _idir;
   _password;
-  browser;
   page;
+  homepage;
 
-  constructor(idir, password, page) {
+  constructor(idir, password, page, homepage) {
     this.idir = idir;
     this.password = password;
     this.page = page;
+    this.homepage = homepage;
   }
 
   // Getters and Setters
