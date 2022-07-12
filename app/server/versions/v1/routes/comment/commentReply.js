@@ -26,7 +26,7 @@ const findSingleDocuments = require("../../functions/findSingleDocuments");
 const checkUserIsMemberOfCommunity = require("../../functions/checkUserIsMemberOfCommunity");
 const updateCommunityEngagement = require("../../functions/updateCommunityEngagement");
 const getOptions = require("../../functions/getOptions");
-const getCreatorName = require("../../functions/getCreatorName");
+const getFullName = require("../../functions/getFullName");
 
 const router = express.Router();
 
@@ -218,15 +218,12 @@ router.post("/:id", async (req, res, next) => {
     await Comment.updateOne({ _id: comment.id }, { hasReplies: true }).exec();
     req.log.addAction("hasReplies updated.");
 
-    req.log.addAction("Getting creator name.");
-    const creatorName = getCreatorName(user);
-
     // Create reply
     req.log.addAction("Creating reply.");
     const reply = await Comment.create({
       message: req.body.message,
       creator: user.id,
-      creatorName: creatorName || user.username,
+      creatorName: getFullName(user) || user.username,
       post: comment.post,
       community: comment.community,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),

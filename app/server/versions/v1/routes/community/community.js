@@ -32,7 +32,7 @@ const trimExtraSpaces = require("../../functions/trimExtraSpaces");
 const bulkNotify = require("../../functions/bulkNotify");
 const validateCommunityInputs = require("../../functions/validateCommunityInputs");
 const findCommunitiesByEngagement = require("../../functions/findCommunitiesByEngagement");
-const getCreatorName = require("../../functions/getCreatorName");
+const getFullName = require("../../functions/getFullName");
 
 const router = express.Router();
 
@@ -42,7 +42,7 @@ const Post = require("../../models/post.model");
 const Comment = require("../../models/comment.model");
 const {
   communityAuthorization,
-} = require("../../authorization/communityAuthorization");
+} = require("../../functions/auth/communityAuthorization");
 
 /**
  * @swagger
@@ -147,9 +147,6 @@ router.post("/", async (req, res, next) => {
     if (await Community.exists({ title: req.body.title }))
       throw new ResponseError(403, "Community already exists.");
 
-    req.log.addAction("Getting creator name.");
-    const creatorName = getCreatorName(user);
-
     const timeStamp = moment().format("MMMM Do YYYY, h:mm:ss a");
 
     req.log.addAction("Creating community.");
@@ -157,14 +154,25 @@ router.post("/", async (req, res, next) => {
       title: req.body.title,
       description: req.body.description,
       creator: user.id,
-      creatorName: creatorName || user.username,
+      creatorName: getFullName(user) || user.username,
       memberCount: 1,
       members: [user.id],
       rules: req.body.rules,
       tags: req.body.tags,
       createdOn: timeStamp,
       latestActivity: timeStamp,
-      moderators: [user.id],
+      moderators: [
+        {
+          userId: user.id,
+          name: getFullName(user),
+          username: user.username,
+          permissions: [
+            "set_moderators",
+            "set_permissions",
+            "remove_community",
+          ],
+        },
+      ],
     });
     req.log.addAction("Community created.");
 
@@ -412,10 +420,8 @@ router.get("/:title", async (req, res, next) => {
  */
 
 // Edit community by title
-// TODO: AUTH
 router.patch("/:title", async (req, res, next) => {
   try {
-    // TODO: AUTH USER IS MODERATOR
     req.log.addAction("Finding user and community.");
     const { user, community } = await findSingleDocuments({
       user: req.user.username,
@@ -436,14 +442,13 @@ router.patch("/:title", async (req, res, next) => {
     );
 
     req.log.addAction("Validating inputs.");
-    validateCommunityInputs(req.body, options);
+    validateCommunityInputs(req.body, options, true);
     req.log.addAction("Inputs valid.");
 
     req.log.addAction("Checking user is moderator of community.");
     if (
       !(await communityAuthorization.isCommunityModerator(
-        // eslint-disable-next-line no-underscore-dangle
-        user._id,
+        user.username,
         community.title
       ))
     )
@@ -519,7 +524,7 @@ router.patch("/:title", async (req, res, next) => {
  *        '404':
  *          description: User not found. **||** <br>Community not found.
  *        '403':
- *          description: Only creator of community can edit community.
+ *          description: Only moderators of community with 'remove_community' permission can edit community.
  *        '204':
  *          description: Success. No content to return.
  *        '400':
@@ -527,7 +532,6 @@ router.patch("/:title", async (req, res, next) => {
  */
 
 // Remove community by title
-// TODO: AUTH moderators
 router.delete("/:title", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and community.");
@@ -540,14 +544,14 @@ router.delete("/:title", async (req, res, next) => {
     req.log.addAction("Checking user is moderator of community.");
     if (
       !(await communityAuthorization.isCommunityModerator(
-        // eslint-disable-next-line no-underscore-dangle
-        user._id,
-        community.title
+        user.username,
+        community.title,
+        ["remove_community"]
       ))
     )
       throw new ResponseError(
         403,
-        "Only moderator of community can edit community."
+        "Only moderators of community with 'remove_community' permission can edit community."
       );
     req.log.addAction("User is moderator of community.");
 

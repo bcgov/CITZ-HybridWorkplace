@@ -291,7 +291,7 @@ router.patch("/", async (req, res, next) => {
     ]);
     req.log.addAction("Edit query has been cleaned.");
 
-    // Set creatorName
+    // Set fullName
     const firstName = req.body.firstName || user.firstName;
     const lastName = req.body.lastName || user.lastName;
 
@@ -303,13 +303,25 @@ router.patch("/", async (req, res, next) => {
       firstName !== ""
     ) {
       // If last name set in req.body or database, set full name, else just first name
-      const creatorName =
-        lastName && lastName !== "" ? `${firstName} ${lastName}` : firstName;
-      await Comment.updateMany({ creator: user.id }, { $set: { creatorName } });
-      await Post.updateMany({ creator: user.id }, { $set: { creatorName } });
+      const fullName =
+        lastName && lastName !== ""
+          ? `${firstName} ${lastName}`
+          : firstName || user.username;
+      await Comment.updateMany(
+        { creator: user.id },
+        { $set: { creatorName: fullName } }
+      );
+      await Post.updateMany(
+        { creator: user.id },
+        { $set: { creatorName: fullName } }
+      );
       await Community.updateMany(
         { creator: user.id },
-        { $set: { creatorName } }
+        { $set: { creatorName: fullName } }
+      );
+      await Community.updateMany(
+        { moderators: { $elemMatch: { userId: user.id } } },
+        { $set: { "moderators.$.name": fullName } }
       );
     }
 

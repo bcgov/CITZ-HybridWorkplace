@@ -23,6 +23,9 @@
 const express = require("express");
 const ResponseError = require("../../classes/responseError");
 const findSingleDocuments = require("../../functions/findSingleDocuments");
+const {
+  communityAuthorization,
+} = require("../../functions/auth/communityAuthorization");
 
 const router = express.Router();
 
@@ -67,7 +70,7 @@ const User = require("../../models/user.model");
 router.get("/:title", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and community.");
-    const { user, community } = await findSingleDocuments({
+    const { community } = await findSingleDocuments({
       user: req.user.username,
       community: req.params.title,
     });
@@ -216,12 +219,24 @@ router.delete("/leave/:title", async (req, res, next) => {
     req.log.addAction("Community removed from user's community list.");
 
     req.log.addAction("Checking if user is a moderator.");
-    if (community.moderators.includes(user.id)) {
+    if (
+      await communityAuthorization.isCommunityModerator(
+        user.username,
+        community.title
+      )
+    ) {
+      req.log.addAction("Removing user from community moderators.");
       await Community.updateOne(
         { title: community.title },
-        { $pull: { moderators: user.id } }
+        {
+          $pull: {
+            moderators: {
+              username: user.username,
+            },
+          },
+        }
       );
-      req.log.addAction("Removed user from moderators.");
+      req.log.addAction("Community moderators updated.");
     }
     req.log.addAction("Checked if user is moderator.");
 

@@ -24,9 +24,10 @@ const ResponseError = require("../classes/responseError");
 
 /**
  * @description Validates inputs for creating a post.
+ * @param patch true/false Only validates fields if patch=false or patch=true and the field is being changed.
  * @returns Nothing, but will throw a ResponseError if an input is invalid.
  */
-const validatePostInputs = (reqBody, options) => {
+const validatePostInputs = (reqBody, options, patch) => {
   const {
     titleMinLength,
     titleMaxLength,
@@ -36,32 +37,36 @@ const validatePostInputs = (reqBody, options) => {
     messageMaxLength,
   } = options;
 
-  // Validate title
-  const titleRegexStr = `(?!.*[${titleDisallowedCharacters}]).{${titleMinLength},${titleMaxLength}}`;
-  const titlePattern = new RegExp(titleRegexStr, "g");
-  const titleDisallowedCharactersReplace = titleDisallowedCharacters
-    .replace(/^\\/g, "x")
-    .replaceAll("\\", "")
-    .replace("x", "\\");
-  const titleError = `title does not meet requirements: length ${titleMinLength}-${titleMaxLength}, must not contain characters (${titleDisallowedCharactersReplace}).`;
-  if (!titlePattern.test(reqBody.title))
-    throw new ResponseError(403, titleError);
+  if (!patch || (patch && reqBody.title)) {
+    // Validate title
+    const titleRegexStr = `(?!.*[${titleDisallowedCharacters}]).{${titleMinLength},${titleMaxLength}}`;
+    const titlePattern = new RegExp(titleRegexStr, "g");
+    const titleDisallowedCharactersReplace = titleDisallowedCharacters
+      .replace(/^\\/g, "x")
+      .replaceAll("\\", "")
+      .replace("x", "\\");
+    const titleError = `title does not meet requirements: length ${titleMinLength}-${titleMaxLength}, must not contain characters (${titleDisallowedCharactersReplace}).`;
+    if (!titlePattern.test(reqBody.title))
+      throw new ResponseError(403, titleError);
 
-  titleDisallowedStrings.some((str) => {
-    const pattern = new RegExp(str, "g");
-    if (pattern.test(reqBody.title))
-      throw new ResponseError(403, `Invalid string in title: ${str}`);
-    return true;
-  });
+    titleDisallowedStrings.some((str) => {
+      const pattern = new RegExp(str, "g");
+      if (pattern.test(reqBody.title))
+        throw new ResponseError(403, `Invalid string in title: ${str}`);
+      return true;
+    });
+  }
 
-  // Validate message
-  const messageLengthError = `message does not meet requirements: length ${messageMinLength}-${messageMaxLength}.`;
-  if (
-    !reqBody.message ||
-    reqBody.message.length < messageMinLength ||
-    reqBody.message.length > messageMaxLength
-  )
-    throw new ResponseError(403, messageLengthError);
+  if (!patch || (patch && reqBody.message)) {
+    // Validate message
+    const messageLengthError = `message does not meet requirements: length ${messageMinLength}-${messageMaxLength}.`;
+    if (
+      !reqBody.message ||
+      reqBody.message.length < messageMinLength ||
+      reqBody.message.length > messageMaxLength
+    )
+      throw new ResponseError(403, messageLengthError);
+  }
 };
 
 module.exports = validatePostInputs;

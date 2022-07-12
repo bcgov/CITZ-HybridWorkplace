@@ -47,6 +47,9 @@
  *        pinned:
  *          type: boolean
  *          description: Pinned posts show at the top of the feed. Limit 3 per community.
+ *        hidden:
+ *          type: boolean
+ *          description: Post will be hidden if true.
  *        createdOn:
  *          type: string
  *        commentCount:
@@ -105,6 +108,7 @@ const Post = new mongoose.Schema(
     createdOn: { type: String, required: true },
     commentCount: { type: Number },
     availableTags: [String],
+    hidden: { type: Boolean },
     tags: [
       {
         tag: String,

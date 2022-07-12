@@ -31,7 +31,7 @@ const router = express.Router();
 const Community = require("../../models/community.model");
 const {
   communityAuthorization,
-} = require("../../authorization/communityAuthorization");
+} = require("../../functions/auth/communityAuthorization");
 
 /**
  * @swagger
@@ -91,8 +91,7 @@ router.put("/:title", async (req, res, next) => {
     req.log.addAction("Checking user is moderator of community.");
     if (
       !(await communityAuthorization.isCommunityModerator(
-        // eslint-disable-next-line no-underscore-dangle
-        user._id,
+        user.username,
         community.title
       ))
     )
