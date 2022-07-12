@@ -73,13 +73,13 @@ const ProfilePage = (props) => {
     props.getProfile(username);
     props.getUsersCommunities();
     props.getUserPosts(username);
-  }, [username, props.profile.avatar]);
+  }, [username]);
 
   props.profile.initials = props.profile.lastName
     ? `${props.profile.firstName?.charAt(0)}${props.profile.lastName?.charAt(
         0
       )}`
-    : props.profile.firstName?.charAt(0);
+    : props.profile.firstName?.charAt(0) || username?.charAt(0);
 
   const handleEditBioClick = (userBio) => props.openEditUserBioModal(userBio);
 
@@ -136,7 +136,10 @@ const ProfilePage = (props) => {
               ml: 0,
               mb: 1,
             }}
-            onClick={() => handleEditAvatarClick(props.profile)}
+            onClick={() => {
+              props.username === username &&
+                handleEditAvatarClick(props.profile);
+            }}
           >
             <AvatarIcon
               type={props.profile.avatar?.avatarType ?? ""}
@@ -153,13 +156,15 @@ const ProfilePage = (props) => {
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Interests
               </Typography>
-              <IconButton
-                onClick={() =>
-                  handleEditUserInterestsClick(props.profile.interests)
-                }
-              >
-                <EditRoundedIcon fontSize="small" />
-              </IconButton>
+              {props.username === username && (
+                <IconButton
+                  onClick={() =>
+                    handleEditUserInterestsClick(props.profile.interests)
+                  }
+                >
+                  <EditRoundedIcon fontSize="small" />
+                </IconButton>
+              )}
             </Stack>
             <Box sx={{ flexWrap: "wrap", width: 250 }}>
               {props.profile.interests?.map((interest) => (
@@ -178,14 +183,16 @@ const ProfilePage = (props) => {
               ))}
             </Box>
           </Stack>
-          <Stack direction="row" alignItems="center" my={2} p={0}>
-            <Typography variant="h6" fontWeight={600}>
-              Settings
-            </Typography>
-            <IconButton onClick={() => handleSettingsClick(props.profile)}>
-              <SettingsRoundedIcon fontSize="medium" />
-            </IconButton>
-          </Stack>
+          {props.username === username && (
+            <Stack direction="row" alignItems="center" my={2} p={0}>
+              <Typography variant="h6" fontWeight={600}>
+                Settings
+              </Typography>
+              <IconButton onClick={() => handleSettingsClick(props.profile)}>
+                <SettingsRoundedIcon fontSize="medium" />
+              </IconButton>
+            </Stack>
+          )}
         </Grid>
         <Grid item xs={8}>
           <Box minHeight="5vh" width="max-content" mb={2}>
@@ -193,9 +200,11 @@ const ProfilePage = (props) => {
               <Typography variant="h5" fontWeight={600}>
                 About Me
               </Typography>
-              <IconButton onClick={() => handleEditBioClick(props.profile)}>
-                <EditRoundedIcon fontSize="small" />
-              </IconButton>
+              {props.username === username && (
+                <IconButton onClick={() => handleEditBioClick(props.profile)}>
+                  <EditRoundedIcon fontSize="small" />
+                </IconButton>
+              )}
             </Stack>
             <Typography variant="body1">
               {props.profile.bio || "No bio to display"}
@@ -256,6 +265,7 @@ ProfilePage.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
+  username: state.auth.user.username,
   profile: state.profile.user,
   communities: state.communities.usersCommunities,
   posts: state.posts.userPosts,
