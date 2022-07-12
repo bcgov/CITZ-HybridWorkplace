@@ -12,7 +12,7 @@ describe("Given that user is on login page", () => {
   let browser;
   let page;
   beforeAll(async () => {
-    browser = await puppeteer.launch({ headless: false, slowMo: 15 });
+    browser = await puppeteer.launch({ headless: false, slowMo: 0 });
     page = await browser.newPage();
     await page.setViewport({
       width: 1366,
@@ -20,7 +20,6 @@ describe("Given that user is on login page", () => {
       deviceScaleFactor: 1,
     });
     await page.goto("http://localhost:8080");
-    await page.waitForNavigation({ waitUntil: "domcontentloaded" });
   });
 
   afterAll(async () => {
@@ -28,7 +27,6 @@ describe("Given that user is on login page", () => {
   });
 
   describe("When user logs in", () => {
-    //user.login();
     beforeAll(async () => {
       // Go to login page
       await page.goto(`http://localhost:8080/login`);
@@ -46,17 +44,19 @@ describe("Given that user is on login page", () => {
       // Click Continue Button
       await page.click(`[value="Continue"]`);
 
-      // Wait for Avatar to appear
-      await page.waitForSelector(`.MuiAvatar-img`);
+      // // Wait for Avatar to appear
+      await page.waitForSelector(`p.css-kyzvea`);
     });
 
     test("Then they should be brought to the main page", async () => {
-      await page.waitForTimeout(4000);
-      let avatar = await document.getElementsByClassName(".MuiAvatar-img");
-      console.log(avatar[0]);
-      expect(avatar).toBeInTheDocument();
-
-      // await page.waitForTimeout(4000);
+      let atHomePage;
+      try {
+        await page.waitForSelector("p.css-kyzvea");
+        atHomePage = true;
+      } catch (e) {
+        atHomePage = false;
+      }
+      expect(atHomePage).toBeTruthy();
     });
   });
 });
