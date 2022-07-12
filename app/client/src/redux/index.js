@@ -27,6 +27,7 @@ import { communityReducer } from "./ducks/communityDuck";
 import { postReducer } from "./ducks/postDuck";
 import { authReducer } from "./ducks/authDuck";
 import { profileReducer } from "./ducks/profileDuck";
+import { userReducer } from "./ducks/userDuck";
 import { alertReducer } from "./ducks/alertDuck";
 import { modalReducer } from "./ducks/modalDuck";
 
@@ -35,6 +36,7 @@ export default combineReducers({
   posts: postReducer,
   auth: authReducer,
   profile: profileReducer,
+  self: userReducer,
   alerts: alertReducer,
   modal: modalReducer,
 });

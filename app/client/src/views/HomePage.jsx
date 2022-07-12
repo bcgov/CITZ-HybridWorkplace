@@ -102,7 +102,7 @@ const HomePage = (props) => {
                 textAlign="center"
                 sx={{ fontWeight: 600 }}
               >
-                Press the '+' icon to create a post in a community you are a
+                Press the "+" icon to create a post in a community you are a
                 member of.
               </Typography>
               <Typography
