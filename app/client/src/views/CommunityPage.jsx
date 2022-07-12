@@ -212,6 +212,7 @@ const CommunityPage = (props) => {
           </Box>
           <Box
             sx={{
+              backgroundColor: "card.main",
               borderBottomLeftRadius: "10px",
               borderBottomRightRadius: "10px",
               boxShadow: 1,
@@ -287,12 +288,15 @@ const CommunityPage = (props) => {
             {props.community.rules &&
               props.community.rules.map((obj) => (
                 <Accordion key={props.community.rules.indexOf(obj)}>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    sx={{ backgroundColor: "card.main" }}
+                  >
                     <Typography>
                       {props.community.rules.indexOf(obj) + 1}. {obj.rule}
                     </Typography>
                   </AccordionSummary>
-                  <AccordionDetails>
+                  <AccordionDetails sx={{ backgroundColor: "card.main" }}>
                     <Typography>{obj.description}</Typography>
                   </AccordionDetails>
                 </Accordion>

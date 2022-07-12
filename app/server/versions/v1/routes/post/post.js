@@ -144,6 +144,7 @@ router.post("/", async (req, res, next) => {
       message: req.body.message,
       creator: user.id,
       creatorName: creatorName || user.username,
+      creatorUsername: user.username,
       community: req.body.community,
       pinned: req.body.pinned || false,
       availableTags,
@@ -469,6 +470,8 @@ router.patch("/:id", async (req, res, next) => {
     req.log.addAction("Checking edit query.");
     const query = checkPatchQuery(req.body, post, [
       "creator",
+      "creatorName",
+      "creatorUsername",
       "community",
       "createdOn",
       "availableTags",
