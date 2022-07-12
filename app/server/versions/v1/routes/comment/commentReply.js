@@ -75,10 +75,9 @@ router.get("/:id", async (req, res, next) => {
       {
         $lookup: {
           from: "user",
+          let: { objIdCreator: { $toObjectId: "$creator" } },
           pipeline: [
-            {
-              $match: { _id: new ObjectId(comment.creator) },
-            },
+            { $match: { $expr: { $eq: ["$_id", "$$objIdCreator"] } } },
           ],
           as: "userData",
         },
@@ -227,6 +226,7 @@ router.post("/:id", async (req, res, next) => {
       message: req.body.message,
       creator: user.id,
       creatorName: creatorName || user.username,
+      creatorUsername: user.username,
       post: comment.post,
       community: comment.community,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),

@@ -119,6 +119,7 @@ router.post("/", async (req, res, next) => {
       message: req.body.message,
       creator: user.id,
       creatorName: creatorName || user.username,
+      creatorUsername: user.username,
       post: post.id,
       community: post.community,
       "upvotes.count": 0,
@@ -134,7 +135,7 @@ router.post("/", async (req, res, next) => {
           from: "user",
           pipeline: [
             {
-              $match: { _id: new ObjectId(comment.creator) },
+              $match: { _id: new ObjectId(user.id) },
             },
           ],
           as: "userData",
@@ -257,10 +258,9 @@ router.get("/post/:id", async (req, res, next) => {
       {
         $lookup: {
           from: "user",
+          let: { objIdCreator: { $toObjectId: "$creator" } },
           pipeline: [
-            {
-              $match: { _id: new ObjectId(post.creator) },
-            },
+            { $match: { $expr: { $eq: ["$_id", "$$objIdCreator"] } } },
           ],
           as: "userData",
         },
@@ -362,10 +362,9 @@ router.get("/:id", async (req, res, next) => {
       {
         $lookup: {
           from: "user",
+          let: { objIdCreator: { $toObjectId: "$creator" } },
           pipeline: [
-            {
-              $match: { _id: new ObjectId(comment.creator) },
-            },
+            { $match: { $expr: { $eq: ["$_id", "$$objIdCreator"] } } },
           ],
           as: "userData",
         },
@@ -495,6 +494,7 @@ router.patch("/:id", async (req, res, next) => {
     const query = checkPatchQuery(req.body, comment, [
       "creator",
       "creatorName",
+      "creatorUsername",
       "post",
       "community",
       "createdOn",
