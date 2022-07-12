@@ -45,12 +45,20 @@ export const CommentReply = (props) => {
           />
         </Grid>
         <Grid item>
-          <Button variant="text" onClick={props.close}>
+          <Button
+            variant="text"
+            onClick={props.close}
+            sx={{ color: "button.main" }}
+          >
             Cancel
           </Button>
         </Grid>
         <Grid item>
-          <Button variant="contained" onClick={handleReply}>
+          <Button
+            variant="contained"
+            onClick={handleReply}
+            sx={{ color: "button.main" }}
+          >
             Reply
           </Button>
         </Grid>

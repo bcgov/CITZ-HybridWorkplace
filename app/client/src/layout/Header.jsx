@@ -49,6 +49,8 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import "./header.css";
 import BCLogo from "./icons/BCLogo.svg";
 import { connect } from "react-redux";
+import { useTheme } from "@emotion/react";
+
 import { getUser } from "../redux/ducks/userDuck";
 import AvatarIcon from "../components/AvatarIcon";
 
@@ -113,6 +115,7 @@ const menuId = "account-avatar";
 // props: {darkMode, setDarkMode}
 // <SideMenu darkMode={darkMode} setDarkMode={setDarkMode}/>
 const Header = (props) => {
+  const theme = useTheme();
   const [menuOpen, setMenuOpen] = React.useState({ right: false });
 
   const navigate = useNavigate();
@@ -249,9 +252,11 @@ const Header = (props) => {
     <AppBar
       sx={{
         borderBottom: 3,
-        borderColor: (theme) => theme.palette.secondary.main,
+        borderColor: "secondary.main",
+        backgroundColor: "BCBlue.main",
       }}
       position="static"
+      enableColorOnDark
     >
       <Toolbar>
         <Box
@@ -276,6 +281,7 @@ const Header = (props) => {
           sx={{
             display: { xs: "none", sm: "block" },
             fontWeight: 600,
+            color: "white",
           }}
         >
           The Neighbourhood
