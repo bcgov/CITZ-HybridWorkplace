@@ -283,9 +283,6 @@ const CommunityPage = (props) => {
               }}
             >
               <Typography variant="h6">Community Rules</Typography>
-              <Typography sx={{ fontWeight: "bold", fontStyle: "italic" }}>
-                (coming soon)
-              </Typography>
             </Box>
             {props.community.rules &&
               props.community.rules.map((obj) => (
