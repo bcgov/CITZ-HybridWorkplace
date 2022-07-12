@@ -8,11 +8,22 @@ More information can be found under the [Architectural Decision Log](https://git
 
 ## Running Tests
 
-Tests currently run from the ```app/client/src``` folder. In your terminal of choice, run ```npm test``` to start the react-scripts tests.
+Tests currently run from the `app/client/src/tests` folder. In your terminal of choice, run `npm test` to start the react-scripts tests.
 While the test watcher is running, tests will re-run if any change to code is detected. Only applicable tests should run.
 
 ## Adding New Tests
 
-New tests are to be included in the ```app/client/src/tests``` folder. 
+New tests are to be included in the `app/client/src/tests` folder.
 All files that are to be included in testing require a .test.js file extension. Otherwise they will not be detected by the test runner.
 Test files should be named appropriately based on the aspect of the application they are testing. (e.g. header.test.js for Header-related testing)
+System (end-to-end) and Unit tests should be filed in the appropriate folder.
+
+## .env file
+
+Tests require a .env file in the /client folder.
+Without these keys, system tests will not run.
+This file contains the the following
+|Key|Description|
+|--|--|
+|IDIR|IDIR username|
+|PASSWORD|Password for above user|

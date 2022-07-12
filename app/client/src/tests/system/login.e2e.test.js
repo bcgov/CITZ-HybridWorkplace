@@ -3,7 +3,7 @@ import puppeteer from "puppeteer";
 import userEvent from "@testing-library/user-event";
 
 jest.setTimeout(30000);
-const homepage = process.env.URL_TARGET;
+
 const idir = process.env.IDIR;
 const password = process.env.PASSWORD;
 
@@ -11,7 +11,7 @@ describe("Given that user is on login page", () => {
   let browser;
   let page;
   beforeAll(async () => {
-    browser = await puppeteer.launch({ headless: false, slowMo: 100 });
+    browser = await puppeteer.launch({ headless: false, slowMo: 10 });
     page = await browser.newPage();
     await page.setViewport({
       width: 1366,

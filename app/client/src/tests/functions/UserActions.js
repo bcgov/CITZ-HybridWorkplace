@@ -28,7 +28,7 @@ class UserActions {
     this._password = password;
   }
 
-  // Browser/Page Actions
+  // Browser/Page Actions (now obsolete)
   async openBrowser(homepage) {
     this.browser = await puppeteer.launch();
     this.page = await this.browser.newPage();
@@ -70,7 +70,40 @@ class UserActions {
   // Component Actions
   async openSideMenu() {}
 
+  async leaveCommunity(communityName) {}
+
+  async goToCommunity(communityName) {}
+
+  async createCommunity(communityName) {}
+
+  async createPost() {}
+
+  async goToPost() {}
+
+  async flagPost() {}
+
+  async goToPostersProfile() {}
+
+  async tagPost() {}
+
+  async deletePost() {}
+
+  async addComment() {}
+
+  async upvoteComment() {}
+
+  async downvoteComment() {}
+
+  async replyToComment() {}
+
+  async flagComment() {}
+
+  async deleteComment() {}
+
   // Navigation Actions
+  async goToHomeByLogo() {}
+
+  async goToProfileByAvatar() {}
 }
 
 module.exports = { UserActions };
