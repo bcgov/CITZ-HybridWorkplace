@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Grid,
   Stack,
   Card,
@@ -14,7 +13,7 @@ import {
   MenuList,
   Typography,
   Button,
-  TextField,
+  Box,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import UpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -37,6 +36,7 @@ import {
   removeCommentVote,
 } from "../redux/ducks/postDuck";
 import { useNavigate } from "react-router-dom";
+import AvatarIcon from "./AvatarIcon";
 
 export const Comment = (props) => {
   const getUserVote = () => {
@@ -147,111 +147,124 @@ export const Comment = (props) => {
   return (
     <Grid container justifyContent="flex-end">
       <Grid item xs={12}>
-        <Card style={{ margin: 10 }}>
-          <CardHeader
-            title={
-              <Typography
-                variant="h5"
-                sx={{
-                  display: "inline-block",
-                  ":hover": {
-                    textDecoration: "underline",
-                    cursor: "pointer",
-                  },
-                }}
-                onClick={() =>
-                  handleCommentCreatorClick(props.comment.creatorName)
-                }
+        <Stack direction="row">
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Stack alignItems="flex-end" sx={{ alignItems: "center" }}>
+              <IconButton
+                aria-label="upvote"
+                sx={{ padding: 0 }}
+                onClick={handleUpVote}
+                color={userVote === "up" ? "success" : "default"}
               >
-                {props.comment.creatorName || "Unknown Commenter"}
+                <UpIcon fontSize="large" />
+              </IconButton>
+              <Typography fontSize="1.5em" sx={{ textAlign: "center" }}>
+                {props.comment.votes || 0}
               </Typography>
-            }
-            subheader={<Typography fontSize="small">{createdOn}</Typography>}
-            avatar={
-              <Avatar
-                fontSize="medium"
-                sx={{
-                  ":hover": {
-                    cursor: "pointer",
-                  },
-                }}
-                onClick={() =>
-                  handleCommentCreatorClick(props.comment.creatorName)
-                }
-              />
-            }
-            action={
-              props.userId === props.comment.creator && (
-                <>
-                  <IconButton aria-label="settings" onClick={handleMenuOpen}>
-                    <MoreVertIcon />
-                  </IconButton>
-                  <Menu
-                    open={!!anchorEl}
-                    onClose={handleMenuClose}
-                    anchorEl={anchorEl}
-                  >
-                    <MenuList>
-                      <MenuItem onClick={handleDeleteCommentClick}>
-                        <ListItemIcon>
-                          <DeleteForeverTwoToneIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText>Delete</ListItemText>
-                      </MenuItem>
-                      <MenuItem onClick={handleFlagCommentClick}>
-                        <ListItemIcon>
-                          <FlagTwoToneIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText>Flag</ListItemText>
-                      </MenuItem>
-                    </MenuList>
-                  </Menu>
-                </>
-              )
-            }
-          />
-          <CardContent sx={{ paddingTop: "0px" }}>
-            <Grid container spacing={2}>
-              <Grid item xs={11}>
-                {props.comment.edits.length > 0 && (
-                  <Typography variant="caption" color="#898989">
-                    Edited: {editDate}
-                  </Typography>
-                )}
-                <Typography variant="body2">{props.comment.message}</Typography>
-              </Grid>
-              <Grid item xs={1}>
-                <Stack alignItems="flex-end">
-                  <IconButton
-                    aria-label="upvote"
-                    sx={{ padding: 0 }}
-                    onClick={handleUpVote}
-                    color={userVote === "up" ? "success" : "default"}
-                  >
-                    {console.log(props.comment)}
-                    <UpIcon fontSize="small" />
-                  </IconButton>
-                  <Typography pr="5px">{props.comment.votes || 0}</Typography>
-                  <IconButton
-                    aria-label="downvote"
-                    sx={{ padding: 0 }}
-                    onClick={handleDownVote}
-                    color={userVote === "down" ? "error" : "default"}
-                  >
-                    <DownIcon fontSize="small" />
-                  </IconButton>
-                </Stack>
-              </Grid>
-            </Grid>
-          </CardContent>
-          <CardActions>
-            {!props.hideReply && (
-              <Button variant="text" onClick={openReply}>
-                Reply
-              </Button>
-            )}
-          </CardActions>
-        </Card>
+              <IconButton
+                aria-label="downvote"
+                sx={{ padding: 0 }}
+                onClick={handleDownVote}
+                color={userVote === "down" ? "error" : "default"}
+              >
+                <DownIcon fontSize="large" />
+              </IconButton>
+            </Stack>
+          </Box>
+          <Card style={{ margin: 10, width: "100%" }}>
+            <CardHeader
+              title={
+                <Typography
+                  variant="h5"
+                  sx={{
+                    display: "inline-block",
+                    ":hover": {
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                    },
+                  }}
+                  onClick={() =>
+                    handleCommentCreatorClick(props.comment.creatorName)
+                  }
+                >
+                  {props.comment.creatorName || "Unknown Commenter"}
+                </Typography>
+              }
+              subheader={<Typography fontSize="small">{createdOn}</Typography>}
+              avatar={
+                <Box
+                  sx={{
+                    ":hover": {
+                      cursor: "pointer",
+                    },
+                  }}
+                  onClick={() =>
+                    handleCommentCreatorClick(props.comment.creatorName)
+                  }
+                >
+                  <AvatarIcon
+                    type={props.comment.avatar?.avatarType ?? ""}
+                    initials={props.comment?.creatorInitials ?? ""}
+                    image={props.comment.avatar?.image ?? ""}
+                    gradient={props.comment.avatar?.gradient ?? ""}
+                    colors={props.comment.avatar?.colors ?? {}}
+                    size={50}
+                  />
+                </Box>
+              }
+              action={
+                props.userId === props.comment.creator && (
+                  <>
+                    <IconButton aria-label="settings" onClick={handleMenuOpen}>
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                      open={!!anchorEl}
+                      onClose={handleMenuClose}
+                      anchorEl={anchorEl}
+                    >
+                      <MenuList>
+                        <MenuItem onClick={handleDeleteCommentClick}>
+                          <ListItemIcon>
+                            <DeleteForeverTwoToneIcon fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText>Delete</ListItemText>
+                        </MenuItem>
+                        <MenuItem onClick={handleFlagCommentClick}>
+                          <ListItemIcon>
+                            <FlagTwoToneIcon fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText>Flag</ListItemText>
+                        </MenuItem>
+                      </MenuList>
+                    </Menu>
+                  </>
+                )
+              }
+            />
+            <CardContent sx={{ paddingTop: "0px" }}>
+              {props.comment.edits.length > 0 && (
+                <Typography variant="caption" color="#898989">
+                  Edited: {editDate}
+                </Typography>
+              )}
+              <Typography variant="body2">{props.comment.message}</Typography>
+            </CardContent>
+            <CardActions>
+              {!props.hideReply && (
+                <Button variant="text" onClick={openReply}>
+                  Reply
+                </Button>
+              )}
+            </CardActions>
+          </Card>
+        </Stack>
       </Grid>
       <Grid item xs={12} sx={{ paddingLeft: 2, paddingRight: 2 }}>
         {replyOpen && (

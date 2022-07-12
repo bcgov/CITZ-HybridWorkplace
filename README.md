@@ -18,6 +18,7 @@ An in-progress version of the project is available here:
 
   - Includes two co-op students working on testing: @dbarkowsky (Camosun), @mattsiel (UVic)
 
+
 - Phase 1 January-April 2022 -> Project initiation from a team of UVic Co-op Students (@aulveland, @bettesworthjayna)
 
 - CI/CD Initiated by @poornima-sivanand
@@ -26,19 +27,23 @@ An in-progress version of the project is available here:
 
 - Executive Project Sponsor -> @CraigShutko
 
-## Problem Statement
 
 The RISE team aims to provide a forum for the exchange of information and best practices for civil servants wishing to improve their leadership skills. Participants need a platform for curated resources that are easy to locate and that can be commented on and discussed.
 
 Currently, there are a number of different tools which only fill parts of the identified need.
 This leads to more duplication and over time, a lack of product use, and orphaned information.
 
+
+Currently, there are a number of different tools which only fill parts of the identified need. 
+This leads to more duplication and over time, a lack of product use, and orphaned information.
+  
 ## Hypothesis
-
+  
 Developing a web application to support RISE and other common interest teams will assist improving team collaboration and the exchange of best practices.
-
+  
 Utilizing a platform that allows easy contribution of content in a moderated environment can facilitate effective exchange of information and provide streams of information to other platforms through the use of APIs.
 
+  
 ## Goal
 
 The goal of the CITZ Co-op/Capstone 2022 Hybrid Workplace project team is to create a modern web application as a tool for communities to collaborate.
@@ -71,16 +76,15 @@ Please [see the Wiki](https://github.com/bcgov/CITZ-HybridWorkplace/wiki) for mo
 2. Use the command: `docker-compose --profile prod up -d --build`.
 
 3. The containers for the client, server, and database should now be running.
-
-- Confirm this with `docker ps` to see if containers (hwp-api & mongodb) are running and marked as healthy.
+  - Confirm this with `docker ps` to see if containers (hwp-api & mongodb) are running and marked as healthy.
 
 If you have **npm** installed, use `npm run prod` from the project root as a shortcut.
 
 ### Build for Development
 
-This version allows for hotloading of the API and frontend. Containers can stay up while changes are made.
-There is a short delay for changes as the service restarts/recompiles.
-Changes to the node_modules folder will require a rebuild of the containers.
+This version allows for hotloading of the API and frontend. Containers can stay up while changes are made. 
+There is a short delay for changes as the service restarts/recompiles. 
+Changes to the node_modules folder will require a rebuild of the containers. 
 
 1. Navigate to project root directory where `docker-compose.yaml` is located.
 
@@ -98,7 +102,10 @@ If you have **npm** installed, use `npm run dev` from the project root as a shor
 
    - Note: the `-v` flag tells docker to dispose of the volumes associated with the containers.
 
+
 3. The containers for the client, server, and database should now be stopped and removed, along with their volumes.
+
+  
 
 ## Services
 
@@ -115,9 +122,10 @@ To change the name of the database you must change the current database name 'Th
 - ./mongo/init/create-db.js
 - .env
 
+
 ## Removing Local MongoDB Data
 
-To 'RESET' your local database, delete everything inside the ./mongo/data directory.
+  To 'RESET' your local database, delete everything inside the ./mongo/data directory.
 
 ## ENV Variable Configuration
 
@@ -156,6 +164,7 @@ The .env file must be created by using .env-template as a template.
 | SSL_REQUIRED                             | Used in creation of Keycloak object         | external                                                      |
 | RESOURCE                                 | Used in creation of Keycloak object         | abc-123                                                       |
 | ENV_FILE                                 | Path from root folder to required .env file | .env                                                          |
+
 
 ## Documentation
 
