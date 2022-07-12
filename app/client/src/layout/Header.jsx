@@ -38,6 +38,7 @@ import {
   ListItemIcon,
   ListItemText,
   Drawer,
+  Divider,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import PersonIcon from "@mui/icons-material/Person";
@@ -222,19 +223,24 @@ const Header = (props) => {
       sx={{
         display: { xs: "none", md: "flex" },
         zIndex: 1000,
+        backgroundColor: "#F0F0F0",
+        height: "100vh",
       }}
     >
       <List onClick={toggleDrawer("right", false)}>
         {menuItems.map((menuItem) => (
-          <ListItem key={menuItem.itemText} disablePadding>
-            <ListItemButton
-              onClick={() => navigate(menuItem.itemLink)}
-              value={menuItem.itemLink}
-            >
-              <ListItemIcon>{menuItem.itemIcon}</ListItemIcon>
-              <ListItemText primary={menuItem.itemText} />
-            </ListItemButton>
-          </ListItem>
+          <div>
+            <ListItem key={menuItem.itemText} disablePadding>
+              <ListItemButton
+                divider
+                onClick={() => navigate(menuItem.itemLink)}
+                value={menuItem.itemLink}
+              >
+                <ListItemIcon>{menuItem.itemIcon}</ListItemIcon>
+                <ListItemText primary={menuItem.itemText} />
+              </ListItemButton>
+            </ListItem>
+          </div>
         ))}
       </List>
     </Box>
@@ -264,7 +270,7 @@ const Header = (props) => {
             ml: 3,
           }}
         >
-          <IconButton onClick={() => navigate(`/`)}>
+          <IconButton onClick={() => navigate(`/`)} disableRipple>
             <Icon
               sx={{
                 width: "7em",
