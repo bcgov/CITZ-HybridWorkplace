@@ -81,11 +81,19 @@ const CommunityPage = (props) => {
   const isUserModerator = (communityName) => {
     return (
       isUserInCommunity(communityName) === true &&
-      props.community.moderators.find(
+      props.community.moderators.some(
         (moderator) => moderator.userId === props.userId
       )
     );
   };
+
+  const mod = isUserModerator(title)
+    ? props.community.moderators.find(
+        (moderator) => moderator.userId === props.userId
+      )
+    : {};
+
+  console.log(mod);
 
   console.log(isUserModerator(title));
 
@@ -94,7 +102,7 @@ const CommunityPage = (props) => {
   };
 
   const [isInCommunity, setIsInCommunity] = useState(isUserInCommunity(title));
-  const [isModerator, setIsModerator] = useState(true);
+  const [isModerator, setIsModerator] = useState(isUserModerator(title));
   const [showFlaggedPosts, setShowFlaggedPosts] = useState(false);
 
   const handleJoin = async () => {
@@ -281,7 +289,7 @@ const CommunityPage = (props) => {
               <Box>
                 <JoinButton community={props.community} />
               </Box>
-              {isModerator === true && (
+              {isModerator && (
                 <Box>
                   <Button
                     variant="contained"
