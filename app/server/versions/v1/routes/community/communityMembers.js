@@ -182,6 +182,8 @@ router.patch("/join/:title", async (req, res, next) => {
  *      responses:
  *        '404':
  *          description: User not found. **||** <br>Community not found.
+ *        '403':
+ *          description: Not allowed to leave community until another moderator is given permission 'set_permissions'. This is to prevent a 'lockout' situation where no moderators have any permissions
  *        '204':
  *          description: Success. No content to return.
  *        '400':
@@ -218,6 +220,7 @@ router.delete("/leave/:title", async (req, res, next) => {
     );
     req.log.addAction("Community removed from user's community list.");
 
+    // Check if user is community moderator
     req.log.addAction("Checking if user is a moderator.");
     if (
       await communityAuthorization.isCommunityModerator(
@@ -225,6 +228,44 @@ router.delete("/leave/:title", async (req, res, next) => {
         community.title
       )
     ) {
+      req.log.addAction(
+        "Finding number of moderators with 'set_permissions' permission."
+      );
+      // Find number of moderators with permission "set_permissions"
+      const permissionsSet = await Community.aggregate([
+        { $match: { title: community.title } },
+        { $unwind: "$moderators" },
+        { $match: { "moderators.permissions": "set_permissions" } },
+        {
+          $group: {
+            _id: "set_permissions",
+            total: { $sum: 1 },
+          },
+        },
+      ]);
+      const modsWSetPermissions = permissionsSet[0].total;
+
+      req.log.addAction("Finding moderator's permissions.");
+      let moderatorPermissions = [];
+      Object.keys(community.moderators).forEach((key) => {
+        if (community.moderators[key].username === user.username) {
+          moderatorPermissions = community.moderators[key].permissions;
+        }
+      });
+
+      req.log.addAction("Checking for permission lockout situation.");
+      if (
+        modsWSetPermissions === 1 &&
+        moderatorPermissions.includes("set_permissions")
+      )
+        throw new ResponseError(
+          403,
+          `Not allowed to leave community until another moderator is given 
+permission 'set_permissions'. This is to prevent a 'lockout' situation where 
+no moderators have any permissions.`
+        );
+      req.log.addAction("Permission lockout sitaution will not happen.");
+
       req.log.addAction("Removing user from community moderators.");
       await Community.updateOne(
         { title: community.title },
