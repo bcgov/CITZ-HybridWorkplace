@@ -481,6 +481,14 @@ router.patch("/:title", async (req, res, next) => {
     ]);
     req.log.addAction("Edit query has been cleaned.");
 
+    req.log.addAction("Checking if changes includes title.");
+    if (!query.title) {
+      query.title = req.params.title;
+      req.log.addAction(
+        "Changes does not include title, adding title to changes object."
+      );
+    }
+
     req.log.addAction("Updating community.");
     await Community.updateOne({ title: community.title }, query).exec();
     req.log.addAction("Community updated.");
