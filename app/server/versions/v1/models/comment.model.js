@@ -44,6 +44,9 @@
  *          $ref: '#/components/schemas/Post/properties/id'
  *        createdOn:
  *          type: string
+ *        hidden:
+ *          type: boolean
+ *          description: Comment will be hidden if true.
  *        replyTo:
  *          type: string
  *          description: The id of the comment that is being replied to.
@@ -117,6 +120,7 @@ const Comment = new mongoose.Schema(
     post: { type: String, required: true },
     community: { type: String, required: true },
     createdOn: { type: String, required: true },
+    hidden: { type: Boolean },
     replyTo: { type: String },
     hasReplies: { type: Boolean },
     edits: [{ precursor: String, timeStamp: String }],

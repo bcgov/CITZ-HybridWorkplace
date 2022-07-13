@@ -181,11 +181,12 @@ router.patch("/", async (req, res, next) => {
 
     // Trim extra spaces
     req.log.addAction("Trimming extra spaces from inputs in request body.");
-    req.body.bio = trimExtraSpaces(req.body.bio);
+    if (req.body.bio) req.body.bio = trimExtraSpaces(req.body.bio);
     req.log.addAction(`bio trimmed: ${req.body.bio}`);
-    req.body.title = trimExtraSpaces(req.body.title);
+    if (req.body.title) req.body.title = trimExtraSpaces(req.body.title);
     req.log.addAction(`title trimmed: ${req.body.title}`);
-    req.body.ministry = trimExtraSpaces(req.body.ministry);
+    if (req.body.ministry)
+      req.body.ministry = trimExtraSpaces(req.body.ministry);
     req.log.addAction(`ministry trimmed: ${req.body.ministry}`);
 
     // Validate email
@@ -291,7 +292,7 @@ router.patch("/", async (req, res, next) => {
     ]);
     req.log.addAction("Edit query has been cleaned.");
 
-    // Set creatorName
+    // Set fullName
     const firstName = req.body.firstName || user.firstName;
     const lastName = req.body.lastName || user.lastName;
 
@@ -303,13 +304,25 @@ router.patch("/", async (req, res, next) => {
       firstName !== ""
     ) {
       // If last name set in req.body or database, set full name, else just first name
-      const creatorName =
-        lastName && lastName !== "" ? `${firstName} ${lastName}` : firstName;
-      await Comment.updateMany({ creator: user.id }, { $set: { creatorName } });
-      await Post.updateMany({ creator: user.id }, { $set: { creatorName } });
+      const fullName =
+        lastName && lastName !== ""
+          ? `${firstName} ${lastName}`
+          : firstName || user.username;
+      await Comment.updateMany(
+        { creator: user.id },
+        { $set: { creatorName: fullName } }
+      );
+      await Post.updateMany(
+        { creator: user.id },
+        { $set: { creatorName: fullName } }
+      );
       await Community.updateMany(
         { creator: user.id },
-        { $set: { creatorName } }
+        { $set: { creatorName: fullName } }
+      );
+      await Community.updateMany(
+        { moderators: { $elemMatch: { userId: user.id } } },
+        { $set: { "moderators.$.name": fullName } }
       );
     }
 

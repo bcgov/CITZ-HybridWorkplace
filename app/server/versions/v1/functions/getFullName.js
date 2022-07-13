@@ -20,23 +20,20 @@
  * @module
  */
 
-const findSingleDocuments = require("../functions/findSingleDocuments");
+/**
+ * @returns The firstName of a user if only firstName is set,
+ * or returns the firstname and lastName if both are set, or null.
+ */
+const getFullName = (user) => {
+  const { firstName, lastName } = user;
+  let fullName;
 
-// Returns a boolean reflecting if the user is authorized to edit the inputted community
-const isCommunityModerator = async (userId, communityTitle) => {
-  const { community } = await findSingleDocuments({
-    community: communityTitle,
-  });
-
-  if (community.moderators.includes(userId)) {
-    return true;
+  if (firstName && firstName !== "") {
+    // If lastName, set full name, else just firstName
+    fullName =
+      lastName && lastName !== "" ? `${firstName} ${lastName}` : firstName;
   }
-
-  return false;
+  return fullName;
 };
 
-const authorization = {
-  isCommunityModerator,
-};
-
-exports.communityAuthorization = authorization;
+module.exports = getFullName;

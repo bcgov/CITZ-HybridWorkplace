@@ -227,7 +227,6 @@ router.post("/:id", async (req, res, next) => {
 // Untag post by id
 router.delete("/:id", async (req, res, next) => {
   try {
-    // TODO: MODERATORS CAN EDIT POST TOO
     req.log.addAction("Finding user and post.");
     const { user, post } = await findSingleDocuments({
       user: req.user.username,

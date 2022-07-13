@@ -70,7 +70,9 @@ const Post = (props) => {
   const handlePostClick = () =>
     !props.isPostPage && navigate(`/post/${post._id}`);
   const handleCommunityClick = (title) => navigate(`/community/${title}`);
-  const handlePostCreatorClick = (creator) => navigate(`/profile/${creator}`);
+  const handlePostCreatorClick = (creator) => {
+    if (creator) navigate(`/profile/${creator}`);
+  };
 
   // Create preview if post message has more than maxMessageLines lines
   let message = post.message;
@@ -202,7 +204,9 @@ const Post = (props) => {
                     cursor: "pointer",
                   },
                 }}
-                onClick={() => handlePostCreatorClick(props.post.creatorName)}
+                onClick={() =>
+                  handlePostCreatorClick(props.post.creatorUsername)
+                }
                 color="white"
               >
                 {props.post.creatorName}
