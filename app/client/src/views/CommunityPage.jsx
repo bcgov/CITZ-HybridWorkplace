@@ -54,6 +54,7 @@ import {
 
 const CommunityPage = (props) => {
   const { communities } = props;
+  console.log(communities);
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
 
@@ -80,13 +81,13 @@ const CommunityPage = (props) => {
   const isUserModerator = (communityName) => {
     return (
       isUserInCommunity(communityName) === true &&
-      communities.find((element) =>
-        element.moderators.find(
-          (moderator) => moderator.userId === props.userId
-        )
+      props.community.moderators.find(
+        (moderator) => moderator.userId === props.userId
       )
     );
   };
+
+  console.log(isUserModerator(title));
 
   const handleShowFlaggedPosts = () => {
     setShowFlaggedPosts(!showFlaggedPosts);
