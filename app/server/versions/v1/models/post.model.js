@@ -42,6 +42,9 @@
  *        creatorName:
  *          type: String
  *          description: The full name of the creator.
+ *        creatorUsername:
+ *          type: String
+ *          description: The username of the creator.
  *        community:
  *          $ref: '#/components/schemas/Community/properties/title'
  *        pinned:
@@ -103,6 +106,7 @@ const Post = new mongoose.Schema(
     message: { type: String, required: true },
     creator: { type: String, required: true },
     creatorName: { type: String },
+    creatorUsername: { type: String },
     community: { type: String, required: true },
     pinned: { type: Boolean },
     createdOn: { type: String, required: true },

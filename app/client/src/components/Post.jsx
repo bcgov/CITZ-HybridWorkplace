@@ -34,6 +34,7 @@ import { useNavigate } from "react-router-dom";
 import CommentIcon from "@mui/icons-material/Comment";
 import moment from "moment";
 import MDEditor from "@uiw/react-md-editor";
+import { getDarkModePreference } from "../theme";
 
 const Post = (props) => {
   const maxTitleLength = 45;
@@ -41,6 +42,7 @@ const Post = (props) => {
   const maxMessageLines = 5;
 
   const [anchorEl, setAnchorEl] = useState(null);
+  const [darkModePreference] = useState(getDarkModePreference());
 
   let { id } = useParams();
 
@@ -214,8 +216,13 @@ const Post = (props) => {
             cursor: props.isPostPage || "pointer",
           }}
         >
-          <Box name="postMessage" data-color-mode="light">
-            <MDEditor.Markdown source={message}></MDEditor.Markdown>
+          <Box name="postMessage" data-color-mode={darkModePreference}>
+            <MDEditor.Markdown
+              source={message}
+              style={{
+                backgroundColor: darkModePreference === "dark" && "#121212",
+              }}
+            ></MDEditor.Markdown>
           </Box>
         </CardContent>
         <CardActions>

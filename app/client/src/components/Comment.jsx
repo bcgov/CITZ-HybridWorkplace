@@ -247,8 +247,11 @@ export const Comment = (props) => {
                   </>
                 )
               }
+              sx={{ backgroundColor: "card.main" }}
             />
-            <CardContent sx={{ paddingTop: "0px" }}>
+            <CardContent
+              sx={{ paddingTop: "0px", backgroundColor: "card.main" }}
+            >
               {props.comment.edits.length > 0 && (
                 <Typography variant="caption" color="#898989">
                   Edited: {editDate}
@@ -256,9 +259,9 @@ export const Comment = (props) => {
               )}
               <Typography variant="body2">{props.comment.message}</Typography>
             </CardContent>
-            <CardActions>
+            <CardActions sx={{ backgroundColor: "card.main" }}>
               {!props.hideReply && (
-                <Button variant="text" onClick={openReply}>
+                <Button variant="text" onClick={openReply} color="button">
                   Reply
                 </Button>
               )}

@@ -156,6 +156,7 @@ router.post("/", async (req, res, next) => {
       message: req.body.message,
       creator: user.id,
       creatorName: getFullName(user) || user.username,
+      creatorUsername: user.username,
       community: req.body.community,
       pinned: req.body.pinned || false,
       availableTags,
@@ -521,6 +522,8 @@ router.patch("/:id", async (req, res, next) => {
     const disallowedFields = isModerator
       ? [
           "creator",
+          "creatorName",
+          "creatorUsername",
           "community",
           "createdOn",
           "availableTags",
@@ -530,6 +533,8 @@ router.patch("/:id", async (req, res, next) => {
         ]
       : [
           "creator",
+          "creatorName",
+          "creatorUsername",
           "community",
           "createdOn",
           "availableTags",
