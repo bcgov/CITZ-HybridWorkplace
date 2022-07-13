@@ -35,6 +35,7 @@ import CommentIcon from "@mui/icons-material/Comment";
 import moment from "moment";
 import MDEditor from "@uiw/react-md-editor";
 import { getDarkModePreference } from "../theme";
+import MarkDownDisplay from "./MarkDownDisplay";
 
 const Post = (props) => {
   const maxTitleLength = 45;
@@ -221,12 +222,7 @@ const Post = (props) => {
           }}
         >
           <Box name="postMessage" data-color-mode={darkModePreference}>
-            <MDEditor.Markdown
-              source={message}
-              style={{
-                backgroundColor: darkModePreference === "dark" && "#121212",
-              }}
-            ></MDEditor.Markdown>
+            <MarkDownDisplay message={message} />
           </Box>
         </CardContent>
         <CardActions>

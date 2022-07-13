@@ -52,6 +52,7 @@ import {
   getUsersCommunities,
 } from "../redux/ducks/communityDuck";
 import MDEditor from "@uiw/react-md-editor";
+import MarkDownDisplay from "../components/MarkDownDisplay";
 
 const CommunityPage = (props) => {
   const { communities } = props;
@@ -221,12 +222,7 @@ const CommunityPage = (props) => {
             }}
           >
             <Stack spacing={1} sx={{ pb: 3 }}>
-              <MDEditor.Markdown
-                source={props.community.description}
-                style={{
-                  backgroundColor: "card.main",
-                }}
-              ></MDEditor.Markdown>
+              <MarkDownDisplay message={props.community.description} />
               <Typography
                 sx={{
                   fontStyle: "italic",

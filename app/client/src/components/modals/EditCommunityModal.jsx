@@ -38,6 +38,8 @@ import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MarkDownEditor from "../MarkDownEditor";
+import { Box } from "@mui/system";
+import InputRuleList from "../InputRuleList";
 
 const EditCommunityModal = (props) => {
   const navigate = useNavigate();
@@ -136,20 +138,7 @@ const EditCommunityModal = (props) => {
             onChange={setDescription}
           />
           <InputLabel htmlFor="community-rules-input">Rules</InputLabel>
-          <TextField
-            id="community-rules-input"
-            onChange={onRulesChange}
-            name="rules"
-            placeholder="Rules"
-            multiline
-            value={rules?.toString() /*TODO: Fix rules editing */}
-            label="Rules"
-            size="small"
-            minRows={4}
-            error={false}
-            helperText="Rules is required."
-            required
-          />
+          <InputRuleList rules={rules} setRules={setRules} />
           <DialogActions sx={{ m: 0, pb: 0 }}>
             <Stack spacing={1} direction="row-reverse" justifyContent="end">
               <Button
