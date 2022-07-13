@@ -22,14 +22,16 @@
 
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
+import { useParams } from "react-router-dom";
 import { getProfile } from "../redux/ducks/profileDuck";
 import PropTypes from "prop-types";
-import { Typography, Box, Stack, IconButton, Divider } from "@mui/material";
+import { Typography, Box, Stack, IconButton } from "@mui/material";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { openEditUserInfoModal } from "../redux/ducks/modalDuck";
 import EditUserInfoModal from "./modals/EditUserInfoModal";
 
 const ProfileInfo = (props) => {
+  let { username } = useParams();
   const body2TextColor = "#999";
   useEffect(() => {
     props.getProfile(props.username);
@@ -38,7 +40,7 @@ const ProfileInfo = (props) => {
   const registeredOn = props.profile.registeredOn || "";
   const registrationDate = registeredOn.split(",")[0];
 
-  let name = props.profile.firstName || props.username;
+  let name = props.profile.firstName || username;
   if (props.profile.firstName && props.profile.lastName)
     name += ` ${props.profile.lastName}`;
 
@@ -55,9 +57,11 @@ const ProfileInfo = (props) => {
           >
             {name || "No name to display."}
           </Typography>
-          <IconButton onClick={() => handleEditUserInfoClick(props.profile)}>
-            <EditRoundedIcon fontSize="small" />
-          </IconButton>
+          {props.username === username && (
+            <IconButton onClick={() => handleEditUserInfoClick(props.profile)}>
+              <EditRoundedIcon fontSize="small" />
+            </IconButton>
+          )}
           <EditUserInfoModal />
         </Stack>
 
@@ -106,6 +110,7 @@ ProfileInfo.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
+  username: state.auth.user.username,
   profile: state.profile.user,
 });
 

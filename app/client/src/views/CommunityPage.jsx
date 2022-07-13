@@ -93,8 +93,9 @@ const CommunityPage = (props) => {
 
   const handleSettingsClick = () =>
     props.openEditCommunityModal(props.community);
-  const handleCommunityCreatorClick = (creator) =>
-    navigate(`/profile/${creator}`);
+  const handleCommunityCreatorClick = (creator) => {
+    if (creator) navigate(`/profile/${creator}`);
+  };
 
   return (
     <Box sx={{ pb: 20 }}>
@@ -250,7 +251,9 @@ const CommunityPage = (props) => {
                       },
                     }}
                     onClick={() =>
-                      handleCommunityCreatorClick(props.community.creatorName)
+                      handleCommunityCreatorClick(
+                        props.community.creatorUsername
+                      )
                     }
                   >
                     {props.community.creatorName}
@@ -281,9 +284,6 @@ const CommunityPage = (props) => {
               }}
             >
               <Typography variant="h6">Community Rules</Typography>
-              <Typography sx={{ fontWeight: "bold", fontStyle: "italic" }}>
-                (coming soon)
-              </Typography>
             </Box>
             {props.community.rules &&
               props.community.rules.map((obj) => (

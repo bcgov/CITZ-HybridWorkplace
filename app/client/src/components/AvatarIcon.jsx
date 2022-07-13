@@ -94,7 +94,11 @@ const AvatarIcon = (props) => {
     case "Upload":
       return (
         <Avatar
-          sx={{ width: size, height: size }}
+          sx={{
+            width: size,
+            height: size,
+            boxShadow: shadow ? `0 0 0 2px #FFF` : "none",
+          }}
           src={props.image || defaultImage}
         />
       );

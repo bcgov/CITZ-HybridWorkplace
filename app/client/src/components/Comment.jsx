@@ -105,8 +105,9 @@ export const Comment = (props) => {
   const closeReply = () => {
     setReplyOpen(false);
   };
-  const handleCommentCreatorClick = (creator) =>
-    navigate(`/profile/${creator}`);
+  const handleCommentCreatorClick = (creator) => {
+    if (creator) navigate(`/profile/${creator}`);
+  };
 
   const handleUpVote = async () => {
     const commentId = props.comment._id;
@@ -190,7 +191,7 @@ export const Comment = (props) => {
                     },
                   }}
                   onClick={() =>
-                    handleCommentCreatorClick(props.comment.creatorName)
+                    handleCommentCreatorClick(props.comment.creatorUsername)
                   }
                 >
                   {props.comment.creatorName || "Unknown Commenter"}
@@ -205,7 +206,7 @@ export const Comment = (props) => {
                     },
                   }}
                   onClick={() =>
-                    handleCommentCreatorClick(props.comment.creatorName)
+                    handleCommentCreatorClick(props.comment.creatorUsername)
                   }
                 >
                   <AvatarIcon
