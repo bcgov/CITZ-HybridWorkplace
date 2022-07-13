@@ -1,7 +1,9 @@
-import { Avatar, Button, Grid, Stack, TextField } from "@mui/material";
+import { Button, Grid, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import { createComment } from "../redux/ducks/postDuck";
+import AvatarIcon from "../components/AvatarIcon";
+import { getUser } from "../redux/ducks/userDuck";
 
 export const CreateComment = (props) => {
   const [commentText, setCommentText] = useState("");
@@ -24,13 +26,25 @@ export const CreateComment = (props) => {
       setCommentText("");
     }
   };
+
+  props.user.initials = props.user.lastName
+    ? `${props.user.firstName?.charAt(0)}${props.user.lastName?.charAt(0)}`
+    : props.user.firstName?.charAt(0);
+
   return (
     <>
       {showCommentInput ? (
         <>
           <Grid container spacing={2} direction="row" justifyContent="right">
             <Grid item xs={0.7}>
-              <Avatar src="https://source.unsplash.com/random/150×150/?profile%20picture" />
+              <AvatarIcon
+                type={props.user.avatar?.avatarType ?? ""}
+                initials={props.user?.initials ?? ""}
+                image={props.user.avatar?.image ?? ""}
+                gradient={props.user.avatar?.gradient ?? ""}
+                colors={props.user.avatar?.colors ?? {}}
+                size={50}
+              />
             </Grid>
             <Grid item xs={11.3}>
               <TextField
@@ -69,8 +83,8 @@ export const CreateComment = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = (state) => ({ user: state.self.user });
 
-const mapDispatchToProps = { createComment };
+const mapDispatchToProps = { createComment, getUser };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateComment);

@@ -20,12 +20,13 @@
  * @module
 
  */
-import { createSuccess, createError } from "./alertDuck";
+import { createError } from "./alertDuck";
 import hwp_axios from "../../axiosInstance";
 
 const SET_USER = "CITZ-HYBRIDWORKPLACE/PROFILE/SET_USER";
 const EDIT_USER_INFO = "CITZ-HYBRIDWORKPLACE/PROFILE/EDIT_USER_INFO";
 const EDIT_USER_BIO = "CITZ-HYBRIDWORKPLACE/PROFILE/EDIT_USER_BIO";
+const EDIT_USER_AVATAR = "CITZ-HYBRIDWORKPLACE/PROFILE/EDIT_USER_AVATAR";
 const EDIT_USER_INTERESTS = "CITZ-HYBRIDWORKPLACE/PROFILE/EDIT_USER_INTERESTS";
 const EDIT_USER_SETTINGS = "CITZ-HYBRIDWORKPLACE/PROFILE/EDIT_USER_SETTINGS";
 
@@ -37,14 +38,26 @@ export const getProfile = (username) => async (dispatch, getState) => {
     const token = getState().auth.accessToken;
     if (!token) throw new Error(noTokenText);
 
-    const response = await hwp_axios.get(`/api/user/${username}`, {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-      params: {
-        dispatch,
-      },
-    });
+    let response;
+    if (username) {
+      response = await hwp_axios.get(`/api/user/${username}`, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        params: {
+          dispatch,
+        },
+      });
+    } else {
+      response = await hwp_axios.get(`/api/user`, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        params: {
+          dispatch,
+        },
+      });
+    }
 
     dispatch({
       type: SET_USER,
@@ -84,7 +97,6 @@ export const editUserInfo = (userChanges) => async (dispatch, getState) => {
       type: EDIT_USER_INFO,
       payload: userChanges,
     });
-    createSuccess(`Successfully Edited Post`)(dispatch);
   } catch (err) {
     console.error(err);
     successful = false;
@@ -118,7 +130,35 @@ export const editUserBio = (userChanges) => async (dispatch, getState) => {
       type: EDIT_USER_BIO,
       payload: userChanges,
     });
-    createSuccess(`Successfully Edited Post`)(dispatch);
+  } catch (err) {
+    console.error(err);
+    successful = false;
+    createError("Unexpected error occurred")(dispatch);
+  } finally {
+    return successful;
+  }
+};
+
+export const editUserAvatar = (userChanges) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const authState = getState().auth;
+    const token = authState.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await hwp_axios.patch(`/api/user`, userChanges, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      params: {
+        dispatch,
+      },
+    });
+    dispatch({
+      type: EDIT_USER_AVATAR,
+      payload: userChanges,
+    });
   } catch (err) {
     console.error(err);
     successful = false;
@@ -155,7 +195,6 @@ export const editUserInterests =
         type: EDIT_USER_INTERESTS,
         payload: userChanges,
       });
-      createSuccess(`Successfully Edited Post`)(dispatch);
     } catch (err) {
       console.error(err);
       successful = false;
@@ -191,7 +230,6 @@ export const editUserSettings = (userChanges) => async (dispatch, getState) => {
       type: EDIT_USER_SETTINGS,
       payload: userChanges,
     });
-    createSuccess(`Successfully Edited Post`)(dispatch);
   } catch (err) {
     console.error(err);
     successful = false;
@@ -226,6 +264,13 @@ export function profileReducer(state = initialState, action) {
         user: {
           ...state.user,
           bio: action.payload.bio,
+        },
+      };
+    case EDIT_USER_AVATAR:
+      return {
+        user: {
+          ...state.user,
+          avatar: action.payload.avatar,
         },
       };
     case EDIT_USER_INTERESTS:

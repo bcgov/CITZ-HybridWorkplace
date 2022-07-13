@@ -19,6 +19,7 @@
 
 const express = require("express");
 const moment = require("moment");
+const { ObjectId } = require("mongodb");
 const ResponseError = require("../../classes/responseError");
 
 const checkPatchQuery = require("../../functions/checkPatchQuery");
@@ -118,6 +119,7 @@ router.post("/", async (req, res, next) => {
       message: req.body.message,
       creator: user.id,
       creatorName: creatorName || user.username,
+      creatorUsername: user.username,
       post: post.id,
       community: post.community,
       "upvotes.count": 0,
@@ -125,6 +127,61 @@ router.post("/", async (req, res, next) => {
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
     req.log.addAction("Comment created.");
+
+    const returnComment = await Comment.aggregate([
+      { $match: { _id: new ObjectId(comment.id) } },
+      {
+        $lookup: {
+          from: "user",
+          pipeline: [
+            {
+              $match: { _id: new ObjectId(user.id) },
+            },
+          ],
+          as: "userData",
+        },
+      },
+      {
+        $addFields: {
+          votes: {
+            $ifNull: [{ $subtract: ["$upvotes.count", "$downvotes.count"] }, 0],
+          },
+          avatar: { $arrayElemAt: ["$userData.avatar", 0] },
+          creatorInitials: {
+            $cond: {
+              if: { $arrayElemAt: ["$userData.lastName", 0] },
+              then: {
+                $concat: [
+                  {
+                    $substr: [
+                      { $arrayElemAt: ["$userData.firstName", 0] },
+                      0,
+                      1,
+                    ],
+                  },
+                  {
+                    $substr: [
+                      { $arrayElemAt: ["$userData.lastName", 0] },
+                      0,
+                      1,
+                    ],
+                  },
+                ],
+              },
+              else: {
+                $substr: [{ $arrayElemAt: ["$userData.firstName", 0] }, 0, 1],
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          userData: 0,
+        },
+      },
+      { $sort: { votes: -1, _id: 1 } },
+    ]).exec();
 
     req.log.addAction("Updating community engagement.");
     await updateCommunityEngagement(
@@ -146,7 +203,7 @@ router.post("/", async (req, res, next) => {
     req.log.addAction("Post's comment count updated.");
 
     req.log.setResponse(201, "Success", null);
-    return res.status(201).json(comment);
+    return res.status(201).json(returnComment[0]);
   } catch (err) {
     res.locals.err = err;
   } finally {
@@ -199,10 +256,52 @@ router.get("/post/:id", async (req, res, next) => {
     const comments = await Comment.aggregate([
       { $match: { post: post.id, replyTo: null } },
       {
+        $lookup: {
+          from: "user",
+          let: { objIdCreator: { $toObjectId: "$creator" } },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$_id", "$$objIdCreator"] } } },
+          ],
+          as: "userData",
+        },
+      },
+      {
         $addFields: {
           votes: {
             $ifNull: [{ $subtract: ["$upvotes.count", "$downvotes.count"] }, 0],
           },
+          avatar: { $arrayElemAt: ["$userData.avatar", 0] },
+          creatorInitials: {
+            $cond: {
+              if: { $arrayElemAt: ["$userData.lastName", 0] },
+              then: {
+                $concat: [
+                  {
+                    $substr: [
+                      { $arrayElemAt: ["$userData.firstName", 0] },
+                      0,
+                      1,
+                    ],
+                  },
+                  {
+                    $substr: [
+                      { $arrayElemAt: ["$userData.lastName", 0] },
+                      0,
+                      1,
+                    ],
+                  },
+                ],
+              },
+              else: {
+                $substr: [{ $arrayElemAt: ["$userData.firstName", 0] }, 0, 1],
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          userData: 0,
         },
       },
       { $sort: { votes: -1, _id: 1 } },
@@ -258,8 +357,62 @@ router.get("/:id", async (req, res, next) => {
     });
     req.log.addAction("Comment found.");
 
+    const returnComment = await Comment.aggregate([
+      { $match: { _id: new ObjectId(comment.id) } },
+      {
+        $lookup: {
+          from: "user",
+          let: { objIdCreator: { $toObjectId: "$creator" } },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$_id", "$$objIdCreator"] } } },
+          ],
+          as: "userData",
+        },
+      },
+      {
+        $addFields: {
+          votes: {
+            $ifNull: [{ $subtract: ["$upvotes.count", "$downvotes.count"] }, 0],
+          },
+          avatar: { $arrayElemAt: ["$userData.avatar", 0] },
+          creatorInitials: {
+            $cond: {
+              if: { $arrayElemAt: ["$userData.lastName", 0] },
+              then: {
+                $concat: [
+                  {
+                    $substr: [
+                      { $arrayElemAt: ["$userData.firstName", 0] },
+                      0,
+                      1,
+                    ],
+                  },
+                  {
+                    $substr: [
+                      { $arrayElemAt: ["$userData.lastName", 0] },
+                      0,
+                      1,
+                    ],
+                  },
+                ],
+              },
+              else: {
+                $substr: [{ $arrayElemAt: ["$userData.firstName", 0] }, 0, 1],
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          userData: 0,
+        },
+      },
+      { $sort: { votes: -1, _id: 1 } },
+    ]).exec();
+
     req.log.setResponse(200, "Success", null);
-    return res.status(200).json(comment);
+    return res.status(200).json(returnComment);
   } catch (err) {
     res.locals.err = err;
   } finally {
@@ -341,6 +494,7 @@ router.patch("/:id", async (req, res, next) => {
     const query = checkPatchQuery(req.body, comment, [
       "creator",
       "creatorName",
+      "creatorUsername",
       "post",
       "community",
       "createdOn",

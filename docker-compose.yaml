@@ -30,37 +30,34 @@ services:
   #############################################################################################
   hwp-frontend:
     container_name: hwp-frontend
+    profiles: ["prod"]
     build:
       context: .
-      dockerfile: ./app/client/Dockerfile
+      dockerfile: ./app/client/docker/prod/Dockerfile
       args:
         env: ${ENV_FILE:-.env-template}
     networks:
       - hwp-network
     ports:
       - ${FRONTEND_PORT:-8080}:${FRONTEND_PORT:-8080}
-    volumes:
-      - .:/usr/src/app/
-      - /usr/src/app/node_modules
 
   #############################################################################################
   ###                                     Express API                                       ###
   #############################################################################################
   hwp-api:
     container_name: hwp-api
+    profiles: ["prod"]
     tty: true
     build:
       context: .
-      dockerfile: ./app/server/Dockerfile
+      dockerfile: ./app/server/docker/prod/Dockerfile
       args:
         env: ${ENV_FILE:-.env-template}
     networks:
       - hwp-network
     ports:
       - ${REACT_APP_API_PORT:-5000}:${REACT_APP_API_PORT:-5000}
-    volumes:
-      - .:/usr/src/app/
-    command: nodemon -L /usr/src/app/app/server/index.js
+    command: node /usr/src/app/index.js
     depends_on:
       mongodb:
         condition: service_healthy
@@ -70,6 +67,60 @@ services:
       timeout: 30s
       retries: 10
       start_period: 120s
+
+  #############################################################################################
+  ###                                 Express API Dev Version                               ###
+  #############################################################################################
+  hwp-api-dev:
+    container_name: hwp-api-dev
+    profiles: ["dev"]
+    tty: true
+    build:
+      context: .
+      dockerfile: ./app/server/docker/dev/Dockerfile
+    env_file:
+      - .env
+    networks:
+      - hwp-network
+    ports:
+      - ${REACT_APP_API_PORT:-5000}:${REACT_APP_API_PORT:-5000}
+    volumes:
+      - ./app/server:/usr/src/app/server
+      - /usr/src/app/server/node_modules
+    command: >
+      nodemon -L /usr/src/app/server/index.js
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: curl localhost:${REACT_APP_API_PORT:-5000} | grep 'Node.js Server is live!'
+      interval: 20s
+      timeout: 30s
+      retries: 10
+      start_period: 120s
+
+  #############################################################################################
+  ###                              React Frontend Dev Version                               ###
+  #############################################################################################
+  hwp-frontend-dev:
+    container_name: hwp-frontend-dev
+    profiles: ["dev"]
+    build:
+      context: .
+      dockerfile: ./app/client/docker/dev/Dockerfile
+    environment:
+      WATCHPACK_POLLING: "true"
+    env_file:
+      - .env
+    command: >
+      npm run start-mac
+    networks:
+      - hwp-network
+    volumes:
+      - ./app/client:/usr/src/app/client
+      - /usr/src/app/client/node_modules
+    ports:
+      - ${FRONTEND_PORT:-8080}:${FRONTEND_PORT:-8080}
 
 networks:
   hwp-network:
