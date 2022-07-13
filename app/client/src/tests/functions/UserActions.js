@@ -76,7 +76,30 @@ class UserActions {
 
   async createCommunity(communityName) {}
 
-  async createPost() {}
+  async createPost(title, body, community = "") {
+    await this.page.waitForSelector("button.css-rxr26v"); // try to get first + button
+    await this.page.click("button.css-rxr26v"); // try to click first + button
+    await this.page.waitForSelector("#add-post-title"); // wait for field to appear
+
+    await this.page.type("#add-post-title", `${title}`); // type in title field
+    await this.page.type("textarea.w-md-editor-text-input", `${body}`); // type in body field
+
+    // if no community was provided
+    if (community.length !== 0) {
+      await this.page.click('div[aria-haspopup="listbox"]'); // open select menu
+      await this.page.click(`li[data-value="${community}"]`); // select community
+    }
+
+    await this.page.waitForTimeout(1000); // needs a second for button not to be disabled
+
+    // Try and get button, then click it.
+    const [button] = await this.page.$x(
+      "//button[contains(., 'Submit')][not(@disabled)]"
+    );
+    if (button) {
+      await button.click();
+    }
+  }
 
   async goToPost() {}
 

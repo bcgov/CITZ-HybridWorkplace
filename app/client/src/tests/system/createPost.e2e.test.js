@@ -28,38 +28,24 @@ describe("Given that user on Home page", () => {
   });
 
   afterAll(async () => {
-    browser.close();
+    await browser.close();
   });
 
   describe("When user creates a post", () => {
+    let title = "Separated function";
+    let body = "> wow \n ### this is neat";
+    let community = "Welcome";
+
     beforeAll(async () => {
-      //let add = await page.$('button.css-zbvyun');
-      await page.waitForSelector("button.css-rxr26v"); // try to get first + button
-      await page.click("button.css-rxr26v"); // try to click first + button
-      await page.waitForSelector("#add-post-title"); // wait for field to appear
-
-      await page.type("#add-post-title", "createPost with Puppeteer"); // type in title field
-      await page.type(
-        "textarea.w-md-editor-text-input",
-        `
-      ### header
-      **bold**
-      and some text`
-      ); // type in body field
-
-      await page.click('div[aria-haspopup="listbox"]'); // open select menu
-      await page.click('li[data-value="Welcome"]'); // select community
-
-      await page.click("button.css-ojc9ou"); // click submit
+      await user.createPost(title, body, community);
     });
     test("Then the post should be visible on the Home page", async () => {
       let postIsVisible;
       try {
-        await page.$x(`//b[contains(., 'createPost with Puppeteer')]`);
-        await page.$x(`//p[contains(., '
-        ### header
-        **bold**
-        and some text')]`);
+        let titleCheck = await page.$x(`//b[contains(., '${title}')]`);
+        let bodyCheck = await page.$x(`//p[contains(., '${body}')]`);
+        if (!titleCheck || !bodyCheck)
+          throw new Error(`Didn't find title or body`);
         postIsVisible = true;
       } catch (e) {
         postIsVisible = false;
