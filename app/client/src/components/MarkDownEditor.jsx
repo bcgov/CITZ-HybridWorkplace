@@ -20,7 +20,7 @@ const MarkDownEditor = (props) => {
         </InputLabel>
         <Box
           sx={{
-            border: 1.75,
+            border: 1.95,
             borderColor: props.error
               ? "rgb(244, 67, 54)"
               : "rgba(255, 255, 255, 0.5)",

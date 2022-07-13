@@ -51,6 +51,7 @@ import {
   joinCommunity,
   getUsersCommunities,
 } from "../redux/ducks/communityDuck";
+import MDEditor from "@uiw/react-md-editor";
 
 const CommunityPage = (props) => {
   const { communities } = props;
@@ -220,9 +221,12 @@ const CommunityPage = (props) => {
             }}
           >
             <Stack spacing={1} sx={{ pb: 3 }}>
-              <Typography sx={{ mt: 1 }}>
-                {props.community.description}
-              </Typography>
+              <MDEditor.Markdown
+                source={props.community.description}
+                style={{
+                  backgroundColor: "card.main",
+                }}
+              ></MDEditor.Markdown>
               <Typography
                 sx={{
                   fontStyle: "italic",

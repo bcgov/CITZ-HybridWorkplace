@@ -37,6 +37,7 @@ import { editCommunity } from "../../redux/ducks/communityDuck";
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import MarkDownEditor from "../MarkDownEditor";
 
 const EditCommunityModal = (props) => {
   const navigate = useNavigate();
@@ -60,10 +61,6 @@ const EditCommunityModal = (props) => {
     setTitle(e.target.value);
   };
 
-  const onDescriptionChange = (e) => {
-    setDescription(e.target.value);
-  };
-
   const onRulesChange = (e) => {
     setRules(e.target.value);
   };
@@ -85,14 +82,15 @@ const EditCommunityModal = (props) => {
   };
 
   const onSubmit = async () => {
-    const changes = makeChangesObject(title, description, rules);
-    if (!changes) {
-      props.createError("Modifying a community requires at least one change.");
-      return;
-    }
-    const successful = await props.editCommunity(changes);
+    const newComm = {
+      description,
+      rules,
+      oldTitle: props.community.title,
+    };
+    newComm.title = title !== props.community.title && title;
+    const successful = await props.editCommunity(newComm);
     if (successful) {
-      navigate(`/community/${changes.title || changes.oldTitle}`);
+      navigate(`/community/${newComm.title}`);
       document.location.reload();
     }
   };
@@ -106,7 +104,7 @@ const EditCommunityModal = (props) => {
     >
       <DialogTitle fontWeight={600}>Edit Community</DialogTitle>
       <DialogContent sx={{ pt: 5 }}>
-        <Stack spacing={3}>
+        <Stack spacing={2}>
           <InputLabel htmlFor="community-title-input">Title</InputLabel>
           <TextField
             id="community-title-input"
@@ -116,34 +114,28 @@ const EditCommunityModal = (props) => {
             value={title}
             size="small"
             error={
-              title &&
-              (title === "" || (title.length >= 3 && title.length <= 25))
+              !title ||
+              (title === "" || (title.length >= 3 && title.length <= 25)
                 ? false
-                : true
+                : true)
             }
             helperText="Title must be 3-25 characters in length."
             required
           />
-          <InputLabel htmlFor="community-description-input">Title</InputLabel>
-          <TextField
-            id="community-description-input"
-            onChange={onDescriptionChange}
-            name="description"
-            placeholder="Description"
-            multiline
-            value={description}
-            size="small"
-            minRows={4}
+          <MarkDownEditor
+            label="Description"
             error={
-              description &&
-              description.length >= 0 &&
-              description.length <= 300
+              !description ||
+              (description === "" ||
+              (description.length >= 3 && description.length <= 300)
                 ? false
-                : true
+                : true)
             }
-            helperText="Description must be between 1-300 characters in length."
+            id="description-input"
+            value={description}
+            onChange={setDescription}
           />
-          <InputLabel htmlFor="community-rules-input">Title</InputLabel>
+          <InputLabel htmlFor="community-rules-input">Rules</InputLabel>
           <TextField
             id="community-rules-input"
             onChange={onRulesChange}

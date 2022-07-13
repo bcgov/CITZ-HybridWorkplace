@@ -48,6 +48,7 @@ import { closeAddCommunityModal } from "../../redux/ducks/modalDuck";
 import AddIcon from "@mui/icons-material/Add";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { createError } from "../../redux/ducks/alertDuck";
+import MarkDownEditor from "../MarkDownEditor";
 
 const AddCommunityModal = (props) => {
   const navigate = useNavigate();
@@ -111,7 +112,7 @@ const AddCommunityModal = (props) => {
       fullWidth
     >
       <DialogTitle fontWeight={600}>Create Community</DialogTitle>
-      <DialogContent data-color-mode="light">
+      <DialogContent>
         <Stack spacing={1}>
           <Stack spacing={0.5}>
             <InputLabel htmlFor="create-community-title">Title</InputLabel>
@@ -131,25 +132,17 @@ const AddCommunityModal = (props) => {
             />
           </Stack>
           <Stack spacing={0.5}>
-            <InputLabel htmlFor="create-community-description">
-              Description
-            </InputLabel>
-            <TextField
-              id="create-community-description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              type="text"
-              multiline
-              maxRows={3}
-              placeholder="Description"
+            <MarkDownEditor
+              label="Description"
               error={
                 description === "" ||
                 (description.length >= 3 && description.length <= 300)
                   ? false
                   : true
               }
-              helperText="Description is required."
-              required
+              id="description-input"
+              value={description}
+              onChange={setDescription}
             />
           </Stack>
           <Stack sx={{ mb: 2 }}>
