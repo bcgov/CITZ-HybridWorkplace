@@ -1,6 +1,5 @@
 import { UserActions } from "../functions/UserActions";
 import puppeteer from "puppeteer";
-import userEvent from "@testing-library/user-event";
 
 jest.setTimeout(30000);
 
@@ -11,7 +10,11 @@ describe("Given that user is on login page", () => {
   let browser;
   let page;
   beforeAll(async () => {
-    browser = await puppeteer.launch({ headless: false, slowMo: 10 });
+    browser = await puppeteer.launch({
+      headless: false,
+      slowMo: 10,
+      args: [`--window-size=1366,768`],
+    });
     page = await browser.newPage();
     await page.setViewport({
       width: 1366,
