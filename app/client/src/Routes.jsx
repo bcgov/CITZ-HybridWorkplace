@@ -30,7 +30,6 @@ import GuestOnlyComponent from "./components/GuestOnlyComponent";
 
 // Views
 import LoginPage from "./views/LoginPage";
-import Register from "./views/RegisterPage";
 import HomePage from "./views/HomePage";
 import AboutPage from "./views/AboutPage";
 import ProfilePage from "./views/ProfilePage";
@@ -40,7 +39,6 @@ import Page404 from "./views/Page404";
 import CommunityPage from "./views/CommunityPage";
 
 //Components
-import EditProfile from "./components/EditProfile";
 import NewCommunity from "./components/NewCommunity";
 import LogoutPage from "./views/LogoutPage";
 import PostPage from "./views/PostPage";
@@ -82,10 +80,6 @@ const App = (props) => {
         <Route
           path="/profile/:username"
           element={<PrivateComponent component={<ProfilePage />} />}
-        />
-        <Route
-          path="/profile/:username/edit"
-          element={<PrivateComponent component={<EditProfile />} />}
         />
         <Route
           path="/communities"
