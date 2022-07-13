@@ -69,6 +69,8 @@ import DeletePostModal from "../components/modals/DeletePostModal";
 const ProfilePage = (props) => {
   let { username } = useParams();
 
+const interestsWidth = 200
+
   useEffect(() => {
     props.getProfile(username);
     props.getUsersCommunities();
@@ -166,7 +168,7 @@ const ProfilePage = (props) => {
                 </IconButton>
               )}
             </Stack>
-            <Box sx={{ flexWrap: "wrap", width: 250 }}>
+            <Box sx={{ flexWrap: "wrap", maxWidth: interestsWidth }}>
               {props.profile.interests?.map((interest) => (
                 <Chip
                   label={interest}
