@@ -10,7 +10,7 @@ import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import Rule from "./RuleInput";
 import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
-const CommunityRuleInput = (props) => {
+const InputRuleList = (props) => {
   const [rules, setRules] = useState(props.rules);
 
   useEffect(() => {
@@ -38,30 +38,37 @@ const CommunityRuleInput = (props) => {
   };
 
   const createNewRule = () => {
-    props.setRules((prev) => [...prev, { rule: "", description: "" }]);
+    props.setRules((prev) => [
+      ...prev,
+      { rule: "", description: "", editRuleOpen: true },
+    ]);
   };
 
   return (
-    <Box sx={{ maxHeight: "500px", overflowY: "auto" }}>
-      <Grid container>
-        {props.rules &&
-          rules.map((rule, index) => (
-            <Grid item xs={11} key={rule + index}>
-              <Rule
-                rule={rule.rule}
-                description={rule.description}
-                index={index}
-                setRule={setRule(index)}
-              />
-            </Grid>
-          ))}
-      </Grid>
+    <Box sx={{ maxHeight: "600px", overflowY: "auto" }}>
+      <Stack alignItems="flex-start" spacing={1}>
+        <Grid container>
+          {props.rules &&
+            rules.map((rule, index) => (
+              <Grid item xs={11} key={rule + index}>
+                <Rule
+                  rule={rule.rule}
+                  description={rule.description}
+                  index={index}
+                  setRule={setRule(index)}
+                  editRuleOpen={false}
+                />
+              </Grid>
+            ))}
+        </Grid>
 
-      <IconButton onClick={createNewRule}>
-        <AddCircleTwoToneIcon color="success" />
-      </IconButton>
+        <Button onClick={createNewRule} color="button">
+          <AddCircleTwoToneIcon color="button" />
+          <Typography variant="body1">Add Rule</Typography>
+        </Button>
+      </Stack>
     </Box>
   );
 };
 
-export default CommunityRuleInput;
+export default InputRuleList;

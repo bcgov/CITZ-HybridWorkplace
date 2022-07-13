@@ -301,38 +301,39 @@ export const deleteCommunity =
     }
   };
 
-export const editCommunity = (newCommunity) => async (dispatch, getState) => {
-  let successful = true;
-  try {
-    const authState = getState().auth;
-    const token = authState.accessToken;
-    if (!token) throw new Error(noTokenText);
+export const editCommunity =
+  (commName, changes) => async (dispatch, getState) => {
+    let successful = true;
+    try {
+      const authState = getState().auth;
+      const token = authState.accessToken;
+      if (!token) throw new Error(noTokenText);
 
-    const response = await hwp_axios.patch(
-      `api/community/${newCommunity.oldTitle}`,
-      newCommunity,
-      {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-        params: {
-          dispatch,
-        },
-      }
-    );
+      const response = await hwp_axios.patch(
+        `api/community/${commName}`,
+        { ...changes },
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          params: {
+            dispatch,
+          },
+        }
+      );
 
-    dispatch({
-      type: EDIT_COMMUNITY,
-      payload: newCommunity,
-    });
-  } catch (err) {
-    console.error(err);
-    successful = false;
-    createError(err.response.data)(dispatch);
-  } finally {
-    return successful;
-  }
-};
+      dispatch({
+        type: EDIT_COMMUNITY,
+        payload: changes,
+      });
+    } catch (err) {
+      console.error(err);
+      successful = false;
+      createError(err.response.data)(dispatch);
+    } finally {
+      return successful;
+    }
+  };
 
 const initialState = {
   usersCommunities: [], //users communities

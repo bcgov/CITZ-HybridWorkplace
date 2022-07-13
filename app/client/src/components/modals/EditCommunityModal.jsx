@@ -63,10 +63,6 @@ const EditCommunityModal = (props) => {
     setTitle(e.target.value);
   };
 
-  const onRulesChange = (e) => {
-    setRules(e.target.value);
-  };
-
   const makeChangesObject = (commTitle, commDescription, commRules) => {
     const newComm = {};
     if (commTitle !== props.community.title) {
@@ -84,15 +80,16 @@ const EditCommunityModal = (props) => {
   };
 
   const onSubmit = async () => {
-    const newComm = {
-      description,
-      rules,
-      oldTitle: props.community.title,
-    };
-    newComm.title = title !== props.community.title && title;
-    const successful = await props.editCommunity(newComm);
+    const changes = makeChangesObject(title, description, rules);
+    if (!changes) return;
+
+    const successful = await props.editCommunity(
+      props.community.title,
+      changes
+    );
     if (successful) {
-      navigate(`/community/${newComm.title}`);
+      // To be uncommented when backend supports community title change
+      //navigate(`/community/${newComm.title || props.community.title}`);
       document.location.reload();
     }
   };
@@ -101,6 +98,7 @@ const EditCommunityModal = (props) => {
     <Dialog
       onClose={props.closeEditCommunityModal}
       open={props.open}
+      maxWidth="md"
       fullWidth
       sx={{ zIndex: 500, mb: 5 }}
     >

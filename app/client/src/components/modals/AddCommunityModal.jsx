@@ -49,6 +49,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { createError } from "../../redux/ducks/alertDuck";
 import MarkDownEditor from "../MarkDownEditor";
+import InputRuleList from "../InputRuleList";
 
 const AddCommunityModal = (props) => {
   const navigate = useNavigate();
@@ -56,9 +57,7 @@ const AddCommunityModal = (props) => {
   const [description, setDescription] = useState("");
   const [createCommunityLoading, setCreateCommunityLoading] = useState(false);
 
-  const [rules, setRules] = useState([]);
-  const [rule, setRule] = useState("");
-  const [ruleDesc, setRuleDesc] = useState("");
+  const [rules, setRules] = useState([{ rule: "", description: "" }]);
 
   const [tags, setTags] = useState([]);
   const [tag, setTag] = useState("");
@@ -84,14 +83,6 @@ const AddCommunityModal = (props) => {
     }
   };
 
-  const addRule = () => {
-    let updatedRules = rules;
-    updatedRules.push({ rule, description: ruleDesc });
-    setRules(updatedRules);
-    setRule("");
-    setRuleDesc("");
-  };
-
   const addTag = () => {
     if (tags.length < 7) {
       let updatedTags = tags;
@@ -109,6 +100,7 @@ const AddCommunityModal = (props) => {
       open={props.open}
       onClose={props.closeAddCommunityModal}
       sx={{ zIndex: 500, mb: 5 }}
+      maxWidth="md"
       fullWidth
     >
       <DialogTitle fontWeight={600}>Create Community</DialogTitle>
@@ -150,83 +142,7 @@ const AddCommunityModal = (props) => {
               Community Rules
             </InputLabel>
 
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                Set rules for community members to follow.
-              </AccordionSummary>
-              <AccordionDetails>
-                <List
-                  sx={{
-                    overflow: "auto",
-                    maxHeight: 300,
-                    border: "solid",
-                    borderRadius: "5px",
-                    borderColor: "#D0D0D0",
-                  }}
-                >
-                  {rules.map((obj) => (
-                    <ListItem key={rules.indexOf(obj)} sx={{ py: 0 }}>
-                      <ListItemText
-                        primary={
-                          <>
-                            <Typography>
-                              {rules.indexOf(obj) + 1}. {obj.rule}
-                            </Typography>
-                            <Typography sx={{ pl: 2, color: "#999999" }}>
-                              {obj.description}
-                            </Typography>
-                          </>
-                        }
-                      />
-                    </ListItem>
-                  ))}
-                  {rules.length > 0 && (
-                    <Divider variant="middle" sx={{ pt: 3 }} />
-                  )}
-                  <ListItem key={"input-rules"}>
-                    <Stack spacing={1} width="1">
-                      <Typography>Add a new rule:</Typography>
-                      <TextField
-                        id="create-community-rule"
-                        value={rule}
-                        onChange={(e) => setRule(e.target.value)}
-                        type="text"
-                        multiline
-                        maxRows={3}
-                        placeholder="New rule"
-                        error={
-                          rule === "" || (rule.length >= 3 && rule.length <= 50)
-                            ? false
-                            : true
-                        }
-                        helperText="Rule must be 3-50 characters in length."
-                        sx={{ width: 0.95 }}
-                      />
-                      <TextField
-                        id="create-community-rule-desc"
-                        value={ruleDesc}
-                        onChange={(e) => setRuleDesc(e.target.value)}
-                        type="text"
-                        multiline
-                        maxRows={3}
-                        placeholder="Add a description"
-                        error={
-                          ruleDesc === "" || ruleDesc.length <= 200
-                            ? false
-                            : true
-                        }
-                        helperText="Rule description must be less than 200 characters in length."
-                        sx={{ width: 0.95 }}
-                      />
-                      <Button onClick={addRule} sx={{ width: 0.1 }}>
-                        <Typography>Add</Typography>
-                        <AddIcon />
-                      </Button>
-                    </Stack>
-                  </ListItem>
-                </List>
-              </AccordionDetails>
-            </Accordion>
+            <InputRuleList rules={rules} setRules={setRules} />
           </Stack>
 
           <Stack sx={{ mb: 2 }}>
