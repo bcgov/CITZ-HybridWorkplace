@@ -22,14 +22,12 @@
 
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import PropTypes from "prop-types";
 import { closeEditUserBioModal } from "../../redux/ducks/modalDuck";
 import { editUserBio } from "../../redux/ducks/profileDuck";
 import {
   TextField,
   Dialog,
   DialogTitle,
-  Typography,
   DialogContent,
   Stack,
   InputLabel,
@@ -48,8 +46,6 @@ const EditUserBioModal = (props) => {
   const saveEdits = async () => {
     const userChanges = {
       bio,
-      title: props.profile.title,
-      ministry: props.profile.ministry,
     };
 
     const successful = await props.editUserBio(userChanges);
@@ -95,8 +91,6 @@ const EditUserBioModal = (props) => {
     </Dialog>
   );
 };
-
-EditUserBioModal.propTypes = {};
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
