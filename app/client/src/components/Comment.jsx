@@ -206,7 +206,7 @@ export const Comment = (props) => {
                     },
                   }}
                   onClick={() =>
-                    handleCommentCreatorClick(props.comment.creatorName)
+                    handleCommentCreatorClick(props.comment.creatorUsername)
                   }
                 >
                   <AvatarIcon
