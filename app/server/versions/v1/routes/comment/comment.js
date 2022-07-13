@@ -93,7 +93,7 @@ router.post("/", async (req, res, next) => {
     req.log.addAction("Options found.");
 
     req.log.addAction("Trimming leading and trailing spaces.");
-    req.body.message = req.body.message.trim();
+    if (req.body.message) req.body.message = req.body.message.trim();
     req.log.addAction(`Comment trimmed: ${req.body.message}.`);
 
     // Validate comment length
@@ -491,7 +491,7 @@ router.patch("/:id", async (req, res, next) => {
     req.log.addAction("Options found.");
 
     req.log.addAction("Trimming leading and trailing spaces.");
-    req.body.message = req.body.message.trim();
+    if (req.body.message) req.body.message = req.body.message.trim();
     req.log.addAction(`Comment trimmed: ${req.body.message}.`);
 
     // Validate comment length

@@ -118,8 +118,9 @@ router.post("/", async (req, res, next) => {
 
     // Trim extra spaces
     req.log.addAction("Trimming extra spaces from inputs in request body.");
-    req.body.title = trimExtraSpaces(req.body.title);
-    req.body.description = trimExtraSpaces(req.body.description);
+    if (req.body.title) req.body.title = trimExtraSpaces(req.body.title);
+    if (req.body.description)
+      req.body.description = trimExtraSpaces(req.body.description);
     req.log.addAction(
       `Extra spaces trimmed. title: ${req.body.title}, description: ${req.body.description}`
     );
@@ -436,8 +437,9 @@ router.patch("/:title", async (req, res, next) => {
 
     // Trim extra spaces
     req.log.addAction("Trimming extra spaces from inputs in request body.");
-    req.body.title = trimExtraSpaces(req.body.title);
-    req.body.description = trimExtraSpaces(req.body.description);
+    if (req.body.title) req.body.title = trimExtraSpaces(req.body.title);
+    if (req.body.description)
+      req.body.description = trimExtraSpaces(req.body.description);
     req.log.addAction(
       `Extra spaces trimmed. title: ${req.body.title}, description: ${req.body.description}`
     );

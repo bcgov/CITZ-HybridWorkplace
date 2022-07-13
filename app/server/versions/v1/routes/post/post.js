@@ -102,9 +102,9 @@ router.post("/", async (req, res, next) => {
 
     // Trim extra spaces
     req.log.addAction("Trimming extra spaces from inputs in request body.");
-    req.body.title = trimExtraSpaces(req.body.title);
+    if (req.body.title) req.body.title = trimExtraSpaces(req.body.title);
     req.log.addAction(`title trimmed: ${req.body.title}`);
-    req.body.message = req.body.message.trim();
+    if (req.body.message) req.body.message = req.body.message.trim();
     req.log.addAction(`description trimmed: ${req.body.description}`);
 
     req.log.addAction("Validating inputs.");

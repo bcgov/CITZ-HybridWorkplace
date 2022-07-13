@@ -181,11 +181,12 @@ router.patch("/", async (req, res, next) => {
 
     // Trim extra spaces
     req.log.addAction("Trimming extra spaces from inputs in request body.");
-    req.body.bio = trimExtraSpaces(req.body.bio);
+    if (req.body.bio) req.body.bio = trimExtraSpaces(req.body.bio);
     req.log.addAction(`bio trimmed: ${req.body.bio}`);
-    req.body.title = trimExtraSpaces(req.body.title);
+    if (req.body.title) req.body.title = trimExtraSpaces(req.body.title);
     req.log.addAction(`title trimmed: ${req.body.title}`);
-    req.body.ministry = trimExtraSpaces(req.body.ministry);
+    if (req.body.ministry)
+      req.body.ministry = trimExtraSpaces(req.body.ministry);
     req.log.addAction(`ministry trimmed: ${req.body.ministry}`);
 
     // Validate email
