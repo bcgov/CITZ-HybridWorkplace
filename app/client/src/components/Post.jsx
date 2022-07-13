@@ -13,7 +13,7 @@ import {
   MenuList,
   Typography,
   Stack,
-  Button,
+  Tooltip,
 } from "@mui/material";
 import FlagTwoToneIcon from "@mui/icons-material/FlagTwoTone";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -27,6 +27,8 @@ import {
 import { useState } from "react";
 import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import PushPinIcon from "@mui/icons-material/PushPin";
 import TagsList from "./TagsList";
 import { useParams } from "react-router-dom";
 import { getPost } from "../redux/ducks/postDuck";
@@ -35,6 +37,7 @@ import CommentIcon from "@mui/icons-material/Comment";
 import moment from "moment";
 import MDEditor from "@uiw/react-md-editor";
 import { getDarkModePreference } from "../theme";
+import { editPost } from "../redux/ducks/postDuck";
 
 const Post = (props) => {
   const maxTitleLength = 45;
@@ -46,9 +49,40 @@ const Post = (props) => {
 
   let { id } = useParams();
 
+  // TODO: Get if user is moderator
+  const isModerator = false;
+
   const navigate = useNavigate();
 
   const post = props.post;
+
+  const editPost = async (field) => {
+    let post = {};
+    switch (field) {
+      case "pinned":
+        post = {
+          id: props.post._id,
+          title: props.post.title,
+          message: props.post.message,
+          pinned: !props.post.pinned,
+          hidden: props.post.hidden,
+        };
+        break;
+      case "hidden":
+        post = {
+          id: props.post._id,
+          title: props.post.title,
+          message: props.post.message,
+          pinned: props.post.pinned,
+          hidden: !props.post.hidden,
+        };
+        break;
+      default:
+        return;
+    }
+
+    await props.editPost(post);
+  };
 
   const handleFlagPostClick = () => {
     props.openFlagPostModal(post);
@@ -119,7 +153,11 @@ const Post = (props) => {
         square
       >
         <CardHeader
-          sx={{ backgroundColor: "banner.main", color: "white", py: 1 }}
+          sx={{
+            backgroundColor: props.post.hidden ? "#9C9C9C" : "banner.main",
+            color: "white",
+            py: 1,
+          }}
           action={
             <>
               <IconButton aria-label="settings" onClick={handleMenuOpen}>
@@ -137,21 +175,41 @@ const Post = (props) => {
                     </ListItemIcon>
                     <ListItemText>Flag</ListItemText>
                   </MenuItem>
+                  {(props.userId === post.creator || isModerator) && (
+                    <MenuItem onClick={handleDeletePostClick}>
+                      <ListItemIcon>
+                        <DeleteForeverTwoToneIcon fontSize="small" />
+                      </ListItemIcon>
+                      <ListItemText>Delete</ListItemText>
+                    </MenuItem>
+                  )}
                   {props.userId === post.creator && (
-                    <Box>
-                      <MenuItem onClick={handleDeletePostClick}>
+                    <MenuItem onClick={handleEditPostClick}>
+                      <ListItemIcon>
+                        <EditTwoToneIcon fontSize="small" />
+                      </ListItemIcon>
+                      <ListItemText>Edit</ListItemText>
+                    </MenuItem>
+                  )}
+                  {isModerator && (
+                    <>
+                      <MenuItem onClick={() => editPost("hidden")}>
                         <ListItemIcon>
-                          <DeleteForeverTwoToneIcon fontSize="small" />
+                          <VisibilityOffIcon fontSize="small" />
                         </ListItemIcon>
-                        <ListItemText>Delete</ListItemText>
+                        <ListItemText>
+                          {props.post.hidden ? "Show" : "Hide"}
+                        </ListItemText>
                       </MenuItem>
-                      <MenuItem onClick={handleEditPostClick}>
+                      <MenuItem onClick={() => editPost("pinned")}>
                         <ListItemIcon>
-                          <EditTwoToneIcon fontSize="small" />
+                          <PushPinIcon fontSize="small" />
                         </ListItemIcon>
-                        <ListItemText>Edit</ListItemText>
+                        <ListItemText>
+                          {props.post.pinned ? "Unpin" : "Pin"}
+                        </ListItemText>
                       </MenuItem>
-                    </Box>
+                    </>
                   )}
                 </MenuList>
               </Menu>
@@ -160,19 +218,35 @@ const Post = (props) => {
           title={
             <Grid container spacing={2}>
               <Grid item xs={9}>
-                <Typography
-                  variant="h6"
-                  onClick={handlePostClick}
-                  sx={{
-                    cursor: props.isPostPage || "pointer",
-                  }}
+                <Stack
+                  direction="row"
+                  spacing={0.5}
+                  sx={{ alignItems: "center" }}
                 >
-                  <b>
-                    {post.title.length >= maxTitleLength
-                      ? post.title.substring(0, maxTitleLength) + "..."
-                      : post.title}
-                  </b>
-                </Typography>
+                  {props.post.hidden && (
+                    <Tooltip title={<Typography>Hidden Post</Typography>} arrow>
+                      <VisibilityOffIcon />
+                    </Tooltip>
+                  )}
+                  {props.post.pinned && (
+                    <Tooltip title={<Typography>Pinned Post</Typography>} arrow>
+                      <PushPinIcon />
+                    </Tooltip>
+                  )}
+                  <Typography
+                    variant="h6"
+                    onClick={handlePostClick}
+                    sx={{
+                      cursor: props.isPostPage || "pointer",
+                    }}
+                  >
+                    <b>
+                      {post.title.length >= maxTitleLength
+                        ? post.title.substring(0, maxTitleLength) + "..."
+                        : post.title}
+                    </b>
+                  </Typography>
+                </Stack>
               </Grid>
               <Grid item xs={3}>
                 <Typography
@@ -276,6 +350,7 @@ const mapActionsToProps = {
   openDeletePostModal,
   openEditPostModal,
   getPost,
+  editPost,
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(Post);

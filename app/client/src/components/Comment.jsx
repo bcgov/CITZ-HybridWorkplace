@@ -14,11 +14,13 @@ import {
   Typography,
   Button,
   Box,
+  Tooltip,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import UpIcon from "@mui/icons-material/KeyboardArrowUp";
 import DownIcon from "@mui/icons-material/KeyboardArrowDown";
 import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import React, { useState } from "react";
 import {
   openDeleteCommentModal,
@@ -178,24 +180,43 @@ export const Comment = (props) => {
               </IconButton>
             </Stack>
           </Box>
-          <Card style={{ margin: 10, width: "100%" }}>
+          <Card
+            style={{
+              margin: 10,
+              width: "100%",
+            }}
+          >
             <CardHeader
               title={
-                <Typography
-                  variant="h5"
-                  sx={{
-                    display: "inline-block",
-                    ":hover": {
-                      textDecoration: "underline",
-                      cursor: "pointer",
-                    },
-                  }}
-                  onClick={() =>
-                    handleCommentCreatorClick(props.comment.creatorUsername)
-                  }
+                <Stack
+                  spacing={0.5}
+                  direction="row"
+                  sx={{ alignItems: "center" }}
                 >
-                  {props.comment.creatorName || "Unknown Commenter"}
-                </Typography>
+                  {props.comment.hidden && (
+                    <Tooltip
+                      title={<Typography>Hidden Comment</Typography>}
+                      arrow
+                    >
+                      <VisibilityOffIcon />
+                    </Tooltip>
+                  )}
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      display: "inline-block",
+                      ":hover": {
+                        textDecoration: "underline",
+                        cursor: "pointer",
+                      },
+                    }}
+                    onClick={() =>
+                      handleCommentCreatorClick(props.comment.creatorUsername)
+                    }
+                  >
+                    {props.comment.creatorName || "Unknown Commenter"}
+                  </Typography>
+                </Stack>
               }
               subheader={<Typography fontSize="small">{createdOn}</Typography>}
               avatar={
@@ -248,10 +269,12 @@ export const Comment = (props) => {
                   </>
                 )
               }
-              sx={{ backgroundColor: "card.main" }}
             />
             <CardContent
-              sx={{ paddingTop: "0px", backgroundColor: "card.main" }}
+              sx={{
+                paddingTop: "0px",
+                backgroundColor: "card.main",
+              }}
             >
               {props.comment.edits.length > 0 && (
                 <Typography variant="caption" color="#898989">
