@@ -81,8 +81,10 @@ const CommunityPage = (props) => {
     return (
       isUserInCommunity(communityName) === true &&
       communities.find((element) =>
-        element.moderators.includes(props.userId)
-      ) !== undefined
+        element.moderators.find(
+          (moderator) => moderator.userId === props.userId
+        )
+      )
     );
   };
 
@@ -108,6 +110,7 @@ const CommunityPage = (props) => {
 
   const handleSettingsClick = () =>
     props.openEditCommunityModal(props.community);
+
   const handleCommunityCreatorClick = (creator) =>
     navigate(`/profile/${creator}`);
 
