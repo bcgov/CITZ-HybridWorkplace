@@ -27,7 +27,10 @@ const findSingleDocuments = require("../../functions/findSingleDocuments");
 const checkUserIsMemberOfCommunity = require("../../functions/checkUserIsMemberOfCommunity");
 const updateCommunityEngagement = require("../../functions/updateCommunityEngagement");
 const getOptions = require("../../functions/getOptions");
-const getCreatorName = require("../../functions/getCreatorName");
+const getFullName = require("../../functions/getFullName");
+const {
+  communityAuthorization,
+} = require("../../functions/auth/communityAuthorization");
 
 const router = express.Router();
 
@@ -90,7 +93,7 @@ router.post("/", async (req, res, next) => {
     req.log.addAction("Options found.");
 
     req.log.addAction("Trimming leading and trailing spaces.");
-    req.body.message = req.body.message.trim();
+    if (req.body.message) req.body.message = req.body.message.trim();
     req.log.addAction(`Comment trimmed: ${req.body.message}.`);
 
     // Validate comment length
@@ -111,14 +114,11 @@ router.post("/", async (req, res, next) => {
     if (!req.body.message || req.body.message === "")
       throw new ResponseError(403, "Missing message in body of the request.");
 
-    req.log.addAction("Getting creator name.");
-    const creatorName = getCreatorName(user);
-
     req.log.addAction("Creating comment.");
     const comment = await Comment.create({
       message: req.body.message,
       creator: user.id,
-      creatorName: creatorName || user.username,
+      creatorName: getFullName(user) || user.username,
       creatorUsername: user.username,
       post: post.id,
       community: post.community,
@@ -246,15 +246,36 @@ router.post("/", async (req, res, next) => {
 router.get("/post/:id", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and post.");
-    const { post } = await findSingleDocuments({
+    const { user, post } = await findSingleDocuments({
       user: req.user.username,
       post: req.params.id,
     });
     req.log.addAction("User and post found.");
 
+    req.log.addAction(
+      `Checking if user is moderator of community (${post.community}).`
+    );
+    const isModerator = await communityAuthorization.isCommunityModerator(
+      user.username,
+      post.community
+    );
+
+    const matchQuery = isModerator
+      ? {
+          post: post.id,
+          replyTo: null,
+        }
+      : {
+          post: post.id,
+          replyTo: null,
+          $or: [{ hidden: false }, { hidden: null }],
+        };
+
     req.log.addAction("Finding comments on post.");
     const comments = await Comment.aggregate([
-      { $match: { post: post.id, replyTo: null } },
+      {
+        $match: matchQuery,
+      },
       {
         $lookup: {
           from: "user",
@@ -470,7 +491,7 @@ router.patch("/:id", async (req, res, next) => {
     req.log.addAction("Options found.");
 
     req.log.addAction("Trimming leading and trailing spaces.");
-    req.body.message = req.body.message.trim();
+    if (req.body.message) req.body.message = req.body.message.trim();
     req.log.addAction(`Comment trimmed: ${req.body.message}.`);
 
     // Validate comment length
@@ -490,20 +511,45 @@ router.patch("/:id", async (req, res, next) => {
     if (!req.body.message || req.body.message === "")
       throw new ResponseError(403, "Missing message in body of the request.");
 
+    req.log.addAction(
+      `Checking if user is moderator of community (${comment.community}).`
+    );
+    const isModerator = await communityAuthorization.isCommunityModerator(
+      user.username,
+      comment.community
+    );
+
+    const disallowedFields = isModerator
+      ? [
+          "creator",
+          "creatorName",
+          "creatorUsername",
+          "post",
+          "community",
+          "createdOn",
+          "replyTo",
+          "hasReplies",
+          "edits",
+          "upvotes",
+          "downvotes",
+        ]
+      : [
+          "creator",
+          "creatorName",
+          "creatorUsername",
+          "post",
+          "hidden",
+          "community",
+          "createdOn",
+          "replyTo",
+          "hasReplies",
+          "edits",
+          "upvotes",
+          "downvotes",
+        ];
+
     req.log.addAction("Checking edit query.");
-    const query = checkPatchQuery(req.body, comment, [
-      "creator",
-      "creatorName",
-      "creatorUsername",
-      "post",
-      "community",
-      "createdOn",
-      "replyTo",
-      "hasReplies",
-      "edits",
-      "upvotes",
-      "downvotes",
-    ]);
+    const query = checkPatchQuery(req.body, comment, disallowedFields);
     req.log.addAction("Edit query has been cleaned.");
 
     // Edit history
@@ -565,7 +611,6 @@ router.patch("/:id", async (req, res, next) => {
 // Remove comment by id
 router.delete("/:id", async (req, res, next) => {
   try {
-    // TODO: MODERATORS CAN DELETE COMMENT TOO
     req.log.addAction("Finding user and comment.");
     const { user, comment } = await findSingleDocuments({
       user: req.user.username,
