@@ -94,13 +94,8 @@ const CommunityPage = (props) => {
         )
       : {};
 
-  console.log(mod);
-
-  console.log(isUserModerator(title));
-
   const handleShowFlaggedPosts = () => {
     setShowFlaggedPosts(!showFlaggedPosts);
-    console.log(showFlaggedPosts);
   };
 
   const [isInCommunity, setIsInCommunity] = useState(isUserInCommunity(title));
