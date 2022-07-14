@@ -82,6 +82,7 @@ const EditPostModal = (props) => {
       title: title || props.post.title,
       message: message || props.post.message,
       pinned: props.post.pinned,
+      hidden: props.post.hidden,
     };
 
     const successful = await props.editPost(post);
