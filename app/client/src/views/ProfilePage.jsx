@@ -68,6 +68,7 @@ import DeletePostModal from "../components/modals/DeletePostModal";
 
 const ProfilePage = (props) => {
   let { username } = useParams();
+  const bioWidth = "90ch";
 
 const interestsWidth = 200
 
@@ -208,7 +209,7 @@ const interestsWidth = 200
                 </IconButton>
               )}
             </Stack>
-            <Typography variant="body1">
+            <Typography maxWidth={bioWidth} variant="body1">
               {props.profile.bio || "No bio to display"}
             </Typography>
           </Box>
