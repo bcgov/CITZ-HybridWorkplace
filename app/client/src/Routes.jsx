@@ -37,6 +37,7 @@ import CommunitiesPage from "./views/CommunitiesPage";
 import PostsPage from "./views/PostsPage";
 import Page404 from "./views/Page404";
 import CommunityPage from "./views/CommunityPage";
+import TestAdminPage from "./views/TestAdmin";
 
 //Components
 import NewCommunity from "./components/NewCommunity";
@@ -101,6 +102,7 @@ const App = (props) => {
           path="/post/:id"
           element={<PrivateComponent component={<PostPage />} />}
         />
+        <Route path="/testadmin" element={<TestAdminPage />} />
         <Route path="/logout" element={<LogoutPage />} />
         <Route path="*" exact element={<Page404 />}></Route>
       </Routes>
