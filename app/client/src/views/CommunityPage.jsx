@@ -81,17 +81,18 @@ const CommunityPage = (props) => {
   const isUserModerator = (communityName) => {
     return (
       isUserInCommunity(communityName) === true &&
-      props.community.moderators.some(
-        (moderator) => moderator.userId === props.userId
+      props.community.moderators?.some(
+        (moderator) => moderator.username === props.username
       )
     );
   };
 
-  const mod = isUserModerator(title)
-    ? props.community.moderators.find(
-        (moderator) => moderator.userId === props.userId
-      )
-    : {};
+  const mod =
+    isUserModerator(title) === true
+      ? props.community.moderators?.find(
+          (moderator) => moderator.userId === props.userId
+        )
+      : {};
 
   console.log(mod);
 
@@ -99,6 +100,7 @@ const CommunityPage = (props) => {
 
   const handleShowFlaggedPosts = () => {
     setShowFlaggedPosts(!showFlaggedPosts);
+    console.log(showFlaggedPosts);
   };
 
   const [isInCommunity, setIsInCommunity] = useState(isUserInCommunity(title));
@@ -166,7 +168,7 @@ const CommunityPage = (props) => {
             />
           </Box>
           {props.posts.length > 0 ? (
-            <PostsList posts={props.posts} />
+            <PostsList posts={props.posts} showFlagged={showFlaggedPosts} />
           ) : (
             <Box sx={{ mt: 5 }}>
               <Typography
@@ -289,7 +291,7 @@ const CommunityPage = (props) => {
               <Box>
                 <JoinButton community={props.community} />
               </Box>
-              {isModerator && (
+              {isModerator === true && (
                 <Box>
                   <Button
                     variant="contained"
