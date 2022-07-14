@@ -68,10 +68,6 @@ const CommunityPage = (props) => {
   const [show, setShow] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
-  // TODO: Add onClick and modals for moderator settings
-  // TODO: Get if user is moderator
-  const isModerator = false;
-
   const { title } = useParams();
 
   useEffect(() => {
@@ -180,7 +176,7 @@ const CommunityPage = (props) => {
             />
           </Box>
           {props.posts.length > 0 ? (
-            <PostsList posts={props.posts} showFlagged={showFlaggedPosts} />
+            <PostsList posts={props.posts} />
           ) : (
             <Box sx={{ mt: 5 }}>
               <Typography

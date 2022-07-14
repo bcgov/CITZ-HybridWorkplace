@@ -30,17 +30,11 @@ import DeletePostModal from "./modals/DeletePostModal";
 import EditPostModal from "./modals/EditPostModal";
 
 const PostsList = (props) => {
-  const [showFlagged, setShowFlagged] = useState();
-
   return (
     <div>
-      {props.posts?.map((post) =>
-        showFlagged && post.flags.length > 0 ? (
-          <Post post={post.flags.length > 0} key={post._id} />
-        ) : (
-          <Post post={post} key={post._id} />
-        )
-      )}
+      {props.posts?.map((post) => (
+        <Post post={post} key={post._id} />
+      ))}
       <FlagPostModal />
       <DeletePostModal />
       <EditPostModal />
