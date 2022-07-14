@@ -17,6 +17,8 @@
 /**
  * Application entry point
  * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
+ * @author [Brandon Bouchard](brandonjbouchard@gmail.com)
+ * @author [Zach Bourque](zachbourque01@gmail)
  * @module
  */
 
