@@ -129,6 +129,7 @@ const CommunityPage = (props) => {
 
   const handleSettingsClick = () =>
     props.openEditCommunityModal(props.community);
+
   const handleCommunityCreatorClick = (creator) => {
     if (creator) navigate(`/profile/${creator}`);
   };
@@ -176,7 +177,13 @@ const CommunityPage = (props) => {
             />
           </Box>
           {props.posts.length > 0 ? (
-            <PostsList posts={props.posts} />
+            showFlaggedPosts === true ? (
+              <PostsList
+                posts={props.posts.filter((post) => post.flags.length > 0)}
+              />
+            ) : (
+              <PostsList posts={props.posts} />
+            )
           ) : (
             <Box sx={{ mt: 5 }}>
               <Typography
