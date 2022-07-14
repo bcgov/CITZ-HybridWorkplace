@@ -490,11 +490,6 @@ router.patch("/:id", async (req, res, next) => {
     validatePostInputs(req.body, options, true);
     req.log.addAction("Inputs valid.");
 
-    req.log.addAction("Checking user is creator of post.");
-    if (post.creator !== user.id)
-      throw new ResponseError(403, "Only creator of post can edit post.");
-    req.log.addAction("User is creator of post.");
-
     req.log.addAction("Checking if pinned field set in req body.");
     if (req.body.pinned === true) {
       // Trying to pin post
@@ -518,6 +513,14 @@ router.patch("/:id", async (req, res, next) => {
       user.username,
       post.community
     );
+
+    req.log.addAction("Checking user is creator of post or a moderator.");
+    if (!(isModerator || post.creator === user.id))
+      throw new ResponseError(
+        403,
+        "Only creator of post or a moderator can edit post."
+      );
+    req.log.addAction("User is creator of post or a moderator.");
 
     const disallowedFields = isModerator
       ? [
