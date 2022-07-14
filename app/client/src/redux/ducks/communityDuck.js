@@ -151,6 +151,7 @@ export const getCommunityPosts = (title) => async (dispatch, getState) => {
       ...post,
       userTag: getUserTag(post, authState.user.id),
     }));
+    console.log("posts", posts);
 
     dispatch({
       type: GET_POSTS,
@@ -335,6 +336,8 @@ export const editCommunity = (newCommunity) => async (dispatch, getState) => {
 };
 
 const initialState = {
+  currentCommunityIndex: -1,
+  communities: [],
   usersCommunities: [], //users communities
   items: [], //communities
   item: {}, //single community
