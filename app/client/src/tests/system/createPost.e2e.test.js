@@ -1,6 +1,5 @@
 import { UserActions } from "../functions/UserActions";
 import puppeteer from "puppeteer";
-import $ from "jquery";
 
 jest.setTimeout(30000);
 
@@ -53,6 +52,37 @@ describe("Given that user is on the Home page", () => {
         });
         // Is header there?
         await page.waitForXPath(`//h3[contains(., "header 3")]`, {
+          timeout: 2000,
+        });
+
+        postIsVisible = true;
+      } catch (e) {
+        postIsVisible = false;
+      }
+
+      expect(postIsVisible).toBeTruthy();
+    });
+  });
+
+  describe("When user navigates to a community and creates a post", () => {
+    let title = "Posting from Community page";
+    let community = "Welcome";
+    let body = `I posted from the ${community} page!`;
+
+    beforeAll(async () => {
+      await user.goToHomeByLogo();
+      await user.goToCommunity(community);
+      await user.createPost(title, body);
+    });
+    test("Then the post should be visible on the Community page", async () => {
+      let postIsVisible;
+      try {
+        // Is title there?
+        await page.waitForXPath(`//b[contains(., "${title}")]`, {
+          timeout: 2000,
+        });
+        // Is body there?
+        await page.waitForXPath(`//p[contains(., "${body}")]`, {
           timeout: 2000,
         });
 

@@ -137,7 +137,18 @@ class UserActions {
   async deleteComment() {}
 
   // Navigation Actions
-  async goToHomeByLogo() {}
+  async goToHomeByLogo() {
+    // Try and get button, then click it.
+    const [button] = await this.page.$x(
+      "//button/span/img[@src='http://localhost:8080/static/media/BCLogo.0490750b1c69a5f084115e9422336dce.svg']"
+    );
+    if (button) {
+      await button.click();
+    }
+
+    // Wait for Avatar to appear
+    await this.page.waitForXPath(`//h5[contains(., 'Top Posts')]`);
+  }
 
   async goToProfileByAvatar() {}
 }
