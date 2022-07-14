@@ -504,9 +504,6 @@ router.patch("/:id", async (req, res, next) => {
       throw new ResponseError(403, messageLengthError);
     req.log.addAction("message is valid.");
 
-    req.log.addAction("Checking user is creator of comment.");
-    if (comment.creator !== user.id)
-      throw new ResponseError(403, "Only creator of comment can edit comment.");
     req.log.addAction("Checking message in req body.");
     if (!req.body.message || req.body.message === "")
       throw new ResponseError(403, "Missing message in body of the request.");
@@ -518,6 +515,14 @@ router.patch("/:id", async (req, res, next) => {
       user.username,
       comment.community
     );
+
+    req.log.addAction("Checking user is creator of comment or a moderator.");
+    if (!(isModerator || comment.creator === user.id))
+      throw new ResponseError(
+        403,
+        "Only creator of comment or moderator can edit comment."
+      );
+    req.log.addAction("User is creator of comment or a moderator.");
 
     const disallowedFields = isModerator
       ? [
