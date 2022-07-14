@@ -31,13 +31,14 @@ describe("Given that user is on login page", () => {
   describe("When user logs in", () => {
     beforeAll(async () => {
       const user = new UserActions(idir, password, page);
-      user.login();
+      await user.login();
     });
 
     test("Then they should be brought to the main page", async () => {
-      let atHomePage;
+      // Checking if avatar is visible
+      let atHomePage = false;
       try {
-        await page.waitForSelector("p.css-kyzvea");
+        await page.waitForSelector("p.css-kyzvea", { timeout: 2000 });
         atHomePage = true;
       } catch (e) {
         atHomePage = false;

@@ -49,7 +49,6 @@ class UserActions {
   async login() {
     // Go to login page
     await this.page.goto(`http://localhost:8080/login`);
-    // await page.waitForTimeout(5000);
     await this.page.waitForSelector(".css-ojc9ou"); // Login button
 
     // Click login button
@@ -63,18 +62,29 @@ class UserActions {
     // Click Continue Button
     await this.page.click(`[value="Continue"]`);
 
-    // // Wait for Avatar to appear
+    // Wait for Avatar to appear
     await this.page.waitForSelector(`p.css-kyzvea`);
   }
 
   // Component Actions
   async openSideMenu() {}
 
-  async leaveCommunity(communityName) {}
+  async leaveCommunity(community) {}
 
-  async goToCommunity(communityName) {}
+  async goToCommunity(community) {
+    // Find community title link and click it
+    const [communityTitle] = await this.page.$x(
+      `//p/b[contains(., '${community}')]`
+    );
+    if (communityTitle) {
+      await communityTitle.click();
+    }
 
-  async createCommunity(communityName) {}
+    // Wait until Community page
+    await this.page.waitForSelector(".css-9mgnpw"); // Community name on community page
+  }
+
+  async createCommunity(community) {}
 
   async createPost(title, body, community = "") {
     await this.page.waitForSelector("button.css-rxr26v"); // try to get first + button
@@ -99,6 +109,9 @@ class UserActions {
     if (button) {
       await button.click();
     }
+
+    // Wait for Avatar to appear
+    await this.page.waitForSelector(`p.css-kyzvea`);
   }
 
   async goToPost() {}

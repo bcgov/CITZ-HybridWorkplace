@@ -1,12 +1,13 @@
 import { UserActions } from "../functions/UserActions";
 import puppeteer from "puppeteer";
+import $ from "jquery";
 
 jest.setTimeout(30000);
 
 const idir = process.env.IDIR;
 const password = process.env.PASSWORD;
 
-describe("Given that user on Home page", () => {
+describe("Given that user is on the Home page", () => {
   let browser;
   let page;
   let user;
@@ -32,8 +33,8 @@ describe("Given that user on Home page", () => {
   });
 
   describe("When user creates a post", () => {
-    let title = "Separated function";
-    let body = "> wow \n ### this is neat";
+    let title = "Posting from Home page";
+    let body = "> block quote \n ### header 3";
     let community = "Welcome";
 
     beforeAll(async () => {
@@ -42,10 +43,19 @@ describe("Given that user on Home page", () => {
     test("Then the post should be visible on the Home page", async () => {
       let postIsVisible;
       try {
-        let titleCheck = await page.$x(`//b[contains(., '${title}')]`);
-        let bodyCheck = await page.$x(`//p[contains(., '${body}')]`);
-        if (!titleCheck || !bodyCheck)
-          throw new Error(`Didn't find title or body`);
+        // Is title there?
+        await page.waitForXPath(`//b[contains(., "${title}")]`, {
+          timeout: 2000,
+        });
+        // Is blockquote there?
+        await page.waitForXPath(`//blockquote[contains(p, "block quote")]`, {
+          timeout: 2000,
+        });
+        // Is header there?
+        await page.waitForXPath(`//h3[contains(., "header 3")]`, {
+          timeout: 2000,
+        });
+
         postIsVisible = true;
       } catch (e) {
         postIsVisible = false;
