@@ -365,7 +365,7 @@ const CommunityPage = (props) => {
                     }}
                     onClick={handleShowFlaggedPosts}
                   >
-                    Flagged Posts
+                    {showFlaggedPosts ? "Show All Posts" : "Show Flagged Posts"}
                   </Button>
                 </Box>
               )}
