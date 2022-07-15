@@ -119,7 +119,7 @@ router.get("/:title", async (req, res, next) => {
  *        '404':
  *          description: User not found. **||** <br>Community not found.
  *        '403':
- *          description: User is already a member of community. **||** <br>Not allowed to join this community because you have been kicked.
+ *          description: User is already a member of community. **||** <br>You have been suspended from this community.
  *        '204':
  *          description: Success. No content to return.
  *        '400':
