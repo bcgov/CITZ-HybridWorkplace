@@ -80,8 +80,18 @@ router.get("/:title", async (req, res, next) => {
     if (req.query.count === "true")
       return res.status(200).json({ count: community.members.length || 0 });
 
+    req.log.addAction("Getting member data.");
+    const members = await User.aggregate([
+      {
+        $match: { "communities.community": community.title },
+      },
+      {
+        $project: { _id: 1, username: 1, firstName: 1, lastName: 1, avatar: 1 },
+      },
+    ]);
+
     req.log.setResponse(204, "Success", null);
-    return res.status(200).json(community.members);
+    return res.status(200).json(members);
   } catch (err) {
     res.locals.err = err;
   } finally {
@@ -109,7 +119,7 @@ router.get("/:title", async (req, res, next) => {
  *        '404':
  *          description: User not found. **||** <br>Community not found.
  *        '403':
- *          description: User is already a member of community.
+ *          description: User is already a member of community. **||** <br>Not allowed to join this community because you have been kicked.
  *        '204':
  *          description: Success. No content to return.
  *        '400':
@@ -135,6 +145,19 @@ router.patch("/join/:title", async (req, res, next) => {
     )
       throw new ResponseError(403, "User is already a member of community.");
     req.log.addAction("User is not a member of community.");
+
+    req.log.addAction("Checking if user is kicked from community.");
+    if (
+      await Community.exists({
+        title: community.title,
+        "kicked.userId": user.id,
+      })
+    )
+      throw new ResponseError(
+        403,
+        "Not allowed to join this community because you have been kicked."
+      );
+    req.log.addAction("User is not kicked from community.");
 
     req.log.addAction("Updating community members.");
     await Community.updateOne(
@@ -200,26 +223,6 @@ router.delete("/leave/:title", async (req, res, next) => {
     });
     req.log.addAction("User and community found.");
 
-    // Remove user from community
-    req.log.addAction("Removing user from community members.");
-    await Community.updateOne(
-      { title: community.title },
-      { $pull: { members: user.id }, $inc: { memberCount: -1 } }
-    );
-    req.log.addAction("User removed from community members.");
-
-    // Remove community from user's communities array
-    req.log.addAction("Removing community from user's community list.");
-    await User.updateOne(
-      { username: user.username },
-      {
-        $pull: {
-          communities: { community: community.title },
-        },
-      }
-    );
-    req.log.addAction("Community removed from user's community list.");
-
     // Check if user is community moderator
     req.log.addAction("Checking if user is a moderator.");
     if (
@@ -280,6 +283,26 @@ no moderators have any permissions.`
       req.log.addAction("Community moderators updated.");
     }
     req.log.addAction("Checked if user is moderator.");
+
+    // Remove user from community
+    req.log.addAction("Removing user from community members.");
+    await Community.updateOne(
+      { title: community.title },
+      { $pull: { members: user.id }, $inc: { memberCount: -1 } }
+    );
+    req.log.addAction("User removed from community members.");
+
+    // Remove community from user's communities array
+    req.log.addAction("Removing community from user's community list.");
+    await User.updateOne(
+      { username: user.username },
+      {
+        $pull: {
+          communities: { community: community.title },
+        },
+      }
+    );
+    req.log.addAction("Community removed from user's community list.");
 
     req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");
