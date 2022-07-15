@@ -65,7 +65,6 @@ import {
 
 const CommunityPage = (props) => {
   const { communities } = props;
-  console.log(communities);
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
