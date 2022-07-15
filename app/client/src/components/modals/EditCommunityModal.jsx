@@ -174,14 +174,9 @@ const EditCommunityModal = (props) => {
                 }
                 onClick={onSubmit}
               >
-                Edit Community
+                Edit
               </Button>
-              <Button
-                variant="contained"
-                onClick={props.closeEditCommunityModal}
-              >
-                Cancel
-              </Button>
+              <Button onClick={props.closeEditCommunityModal}>Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>

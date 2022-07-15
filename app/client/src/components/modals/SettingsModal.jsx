@@ -156,9 +156,7 @@ const SettingsModal = (props) => {
               >
                 Save
               </Button>
-              <Button variant="contained" onClick={props.closeSettingsModal}>
-                Close
-              </Button>
+              <Button onClick={props.closeSettingsModal}>Close</Button>
             </Stack>
           </DialogActions>
         </Stack>

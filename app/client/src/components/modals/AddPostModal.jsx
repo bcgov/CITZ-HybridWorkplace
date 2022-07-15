@@ -171,11 +171,9 @@ const AddPostModal = (props) => {
                 }
                 onClick={registerPost}
               >
-                Submit
+                Post
               </Button>
-              <Button variant="contained" onClick={props.closeAddPostModal}>
-                Cancel
-              </Button>
+              <Button onClick={props.closeAddPostModal}>Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>

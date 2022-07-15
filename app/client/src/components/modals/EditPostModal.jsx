@@ -134,11 +134,9 @@ const EditPostModal = (props) => {
                 onClick={registerPost}
                 disabled={messageError || titleError}
               >
-                Submit
+                Edit
               </Button>
-              <Button variant="contained" onClick={props.closeEditPostModal}>
-                Cancel
-              </Button>
+              <Button onClick={props.closeEditPostModal}>Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>

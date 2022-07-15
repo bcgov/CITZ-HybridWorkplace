@@ -26,7 +26,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Grid,
   InputLabel,
   MenuItem,
   Select,
@@ -94,11 +93,9 @@ const FlagCommentModal = (props) => {
                 variant="contained"
                 color="error"
               >
-                Flag Comment
+                Flag
               </Button>
-              <Button onClick={props.closeFlagCommentModal} variant="contained">
-                Cancel
-              </Button>
+              <Button onClick={props.closeFlagCommentModal}>Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>
