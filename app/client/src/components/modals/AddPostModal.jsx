@@ -91,7 +91,7 @@ const AddPostModal = (props) => {
   const resetInput = () => {
     setTitle("");
     setMessage("");
-    setCommunity("");
+    setCommunity(props.communityName ?? "");
     setTitleError(false);
     setMessageError(false);
   };
@@ -166,7 +166,13 @@ const AddPostModal = (props) => {
             <Stack spacing={1} direction="row-reverse" justifyContent="end">
               <Button
                 variant="contained"
-                disabled={titleError || messageError || !community}
+                disabled={
+                  titleError ||
+                  messageError ||
+                  !community ||
+                  title === "" ||
+                  message === ""
+                }
                 onClick={registerPost}
               >
                 Submit
