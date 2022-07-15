@@ -75,7 +75,7 @@ const CommunityPage = (props) => {
   // TODO: Get if user is moderator
 
   const { title } = useParams();
-
+  const { userIsModerator } = props.community;
   useEffect(() => {
     (async () => {
       const successful = await props.getCommunity(title);
@@ -101,10 +101,6 @@ const CommunityPage = (props) => {
 
   const [isInCommunity, setIsInCommunity] = useState(
     props.community.userIsInCommunity
-  );
-
-  const [isModerator, setIsModerator] = useState(
-    props.community.userIsModerator
   );
 
   const handleJoin = async () => {
@@ -295,7 +291,7 @@ const CommunityPage = (props) => {
                           sx={{
                             justifyContent: "center",
                             alignItems: "center",
-                            pl: isModerator ? 1.5 : 0,
+                            pl: userIsModerator ? 1.5 : 0,
                             py: 0.2,
                           }}
                         >
@@ -315,7 +311,7 @@ const CommunityPage = (props) => {
                           >
                             {props.community.moderators[key].name}
                           </Typography>
-                          {isModerator && (
+                          {userIsModerator && (
                             <>
                               <IconButton
                                 aria-label="settings"
@@ -356,7 +352,7 @@ const CommunityPage = (props) => {
               <Box>
                 <JoinButton community={props.community} />
               </Box>
-              {isModerator === true && (
+              {props.community.userIsModerator === true && (
                 <Box>
                   <Button
                     variant="contained"
