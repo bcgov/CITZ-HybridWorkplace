@@ -90,13 +90,9 @@ const FlagPostModal = (props) => {
                 variant="contained"
                 color="error"
               >
-                Flag Post
+                Flag
               </Button>
-              <Button
-                sx={{ ml: 1 }}
-                variant="contained"
-                onClick={props.closeFlagPostModal}
-              >
+              <Button sx={{ ml: 1 }} onClick={props.closeFlagPostModal}>
                 Cancel
               </Button>
             </Stack>

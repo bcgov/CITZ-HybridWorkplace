@@ -81,9 +81,7 @@ const EditUserBioModal = (props) => {
               <Button variant="contained" onClick={saveEdits}>
                 Save
               </Button>
-              <Button variant="contained" onClick={props.closeEditUserBioModal}>
-                Cancel
-              </Button>
+              <Button onClick={props.closeEditUserBioModal}>Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>

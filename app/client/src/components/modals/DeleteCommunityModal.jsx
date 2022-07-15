@@ -26,6 +26,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Stack,
   Grid,
   Typography,
 } from "@mui/material";
@@ -68,13 +69,16 @@ const DeleteCommunityModal = (props) => {
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button
-          onClick={handleDeleteCommunity}
-          variant="contained"
-          color="error"
-        >
-          Delete Community
-        </Button>
+        <Stack spacing={1} direction="row-reverse" justifyContent="end">
+          <Button
+            onClick={handleDeleteCommunity}
+            variant="contained"
+            color="error"
+          >
+            Delete
+          </Button>
+          <Button onClick={props.closeDeleteCommunityModal}>Cancel</Button>
+        </Stack>
       </DialogActions>
     </Dialog>
   );
