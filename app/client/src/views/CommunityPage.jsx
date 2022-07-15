@@ -17,6 +17,8 @@
 /**
  * Application entry point
  * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
+ * @author [Brandon Bouchard](brandonjbouchard@gmail.com)
+ * @author [Zach Bourque](zachbourque01@gmail)
  * @module
  */
 
@@ -67,10 +69,6 @@ const CommunityPage = (props) => {
   const [show, setShow] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
-  // TODO: Add onClick and modals for moderator settings
-  // TODO: Get if user is moderator
-  const isModerator = false;
-
   const { title } = useParams();
 
   useEffect(() => {
@@ -94,7 +92,29 @@ const CommunityPage = (props) => {
     );
   };
 
+  const isUserModerator = (communityName) => {
+    return (
+      isUserInCommunity(communityName) === true &&
+      props.community.moderators?.some(
+        (moderator) => moderator.username === props.username
+      )
+    );
+  };
+
+  const mod =
+    isUserModerator(title) === true
+      ? props.community.moderators?.find(
+          (moderator) => moderator.userId === props.userId
+        )
+      : {};
+
+  const handleShowFlaggedPosts = () => {
+    setShowFlaggedPosts(!showFlaggedPosts);
+  };
+
   const [isInCommunity, setIsInCommunity] = useState(isUserInCommunity(title));
+  const [isModerator, setIsModerator] = useState(isUserModerator(title));
+  const [showFlaggedPosts, setShowFlaggedPosts] = useState(false);
 
   const handleJoin = async () => {
     setIsInCommunity(true);
@@ -110,6 +130,7 @@ const CommunityPage = (props) => {
 
   const handleSettingsClick = () =>
     props.openEditCommunityModal(props.community);
+
   const handleCommunityCreatorClick = (creator) => {
     if (creator) navigate(`/profile/${creator}`);
   };
@@ -157,7 +178,13 @@ const CommunityPage = (props) => {
             />
           </Box>
           {props.posts.length > 0 ? (
-            <PostsList posts={props.posts} />
+            showFlaggedPosts === true ? (
+              <PostsList
+                posts={props.posts.filter((post) => post.flags.length > 0)}
+              />
+            ) : (
+              <PostsList posts={props.posts} />
+            )
           ) : (
             <Box sx={{ mt: 5 }}>
               <Typography
@@ -328,6 +355,19 @@ const CommunityPage = (props) => {
               <Box>
                 <JoinButton community={props.community} />
               </Box>
+              {isModerator === true && (
+                <Box>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      backgroundColor: "error.main",
+                    }}
+                    onClick={handleShowFlaggedPosts}
+                  >
+                    {showFlaggedPosts ? "Show All Posts" : "Show Flagged Posts"}
+                  </Button>
+                </Box>
+              )}
             </Stack>
           </Box>
           {props.community.rules && props.community.rules.length > 0 && (
