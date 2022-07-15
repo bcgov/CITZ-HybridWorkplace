@@ -279,9 +279,11 @@ router.get("/post/:id", async (req, res, next) => {
       {
         $lookup: {
           from: "user",
-          let: { objIdCreator: { $toObjectId: "$creator" } },
+          let: { commentUsername: "$creatorUsername" },
           pipeline: [
-            { $match: { $expr: { $eq: ["$_id", "$$objIdCreator"] } } },
+            {
+              $match: { $expr: { $eq: ["$username", "$$commentUsername"] } },
+            },
           ],
           as: "userData",
         },
