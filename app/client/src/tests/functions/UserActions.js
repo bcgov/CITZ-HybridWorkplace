@@ -151,11 +151,10 @@ class UserActions {
 
   // Navigation Actions
 
-  // Currently not working
   async goToHomeByLogo() {
     // Try and get button, then click it.
     const [button] = await this.page.$x(
-      "//button/span/img[@src='http://localhost:8080/static/media/BCLogo.0490750b1c69a5f084115e9422336dce.svg']"
+      "//*[@id='root']/div/div/header/div/div[1]/button/span[1]/img"
     );
     if (button) {
       await button.click();
@@ -226,6 +225,40 @@ class UserActions {
       timeout: 2000,
     });
   }
+
+  // Profile page actions
+  async editAvatar() {}
+
+  async editBio(input) {
+    // Get and click pencil
+    const [pencil] = await this.page.$x(
+      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[2]/div[1]/div/button`
+    );
+    if (pencil) {
+      await pencil.click();
+    }
+
+    // Wait for modal
+    await this.page.waitForXPath(`//h2[contains(., "Edit User Bio")]`);
+
+    // Type in bio field
+    await this.page.type("#user-bio", input);
+
+    // Get and click save button
+    const [button] = await this.page.$x(`//button[contains(., "Save")]`);
+    if (button) {
+      await button.click();
+    }
+
+    // Wait for modal to close
+    await this.page.waitForXPath(`//div[@id="root"][@aria-hidden!="true"]`);
+  }
+
+  async editInfo() {}
+
+  async editIntrests() {}
+
+  async editSettings() {}
 }
 
 module.exports = { UserActions };
