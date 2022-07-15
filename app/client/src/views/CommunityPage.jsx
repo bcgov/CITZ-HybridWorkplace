@@ -62,20 +62,34 @@ import {
   joinCommunity,
   getUsersCommunities,
 } from "../redux/ducks/communityDuck";
+import LoadingPage from "./LoadingPage";
+import CommunityNotFoundPage from "./CommunityNotFoundPage";
 
 const CommunityPage = (props) => {
-  const { communities } = props;
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [communityFound, setCommunityFound] = useState(true);
+  // TODO: Add onClick and modals for moderator settings
+  // TODO: Get if user is moderator
 
   const { title } = useParams();
-
+  const { userIsModerator } = props.community;
   useEffect(() => {
-    props.getCommunityPosts(title);
-    props.getCommunity(title);
-    props.getUsersCommunities();
+    (async () => {
+      const successful = await props.getCommunity(title);
+      if (!successful) {
+        setLoading(false);
+        setCommunityFound(false);
+      }
+      await props.getCommunityPosts(title);
+      await props.getUsersCommunities();
+      setLoading(false);
+    })();
   }, []);
+
+  useEffect(() => {}, [props.community]);
 
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
@@ -85,36 +99,9 @@ const CommunityPage = (props) => {
     return useMemo(() => new URLSearchParams(search), [search]);
   }
 
-  const isUserInCommunity = (communityName) => {
-    return (
-      communities.find((element) => element.title === communityName) !==
-      undefined
-    );
-  };
-
-  const isUserModerator = (communityName) => {
-    return (
-      isUserInCommunity(communityName) === true &&
-      props.community.moderators?.some(
-        (moderator) => moderator.username === props.username
-      )
-    );
-  };
-
-  const mod =
-    isUserModerator(title) === true
-      ? props.community.moderators?.find(
-          (moderator) => moderator.userId === props.userId
-        )
-      : {};
-
-  const handleShowFlaggedPosts = () => {
-    setShowFlaggedPosts(!showFlaggedPosts);
-  };
-
-  const [isInCommunity, setIsInCommunity] = useState(isUserInCommunity(title));
-  const [isModerator, setIsModerator] = useState(isUserModerator(title));
-  const [showFlaggedPosts, setShowFlaggedPosts] = useState(false);
+  const [isInCommunity, setIsInCommunity] = useState(
+    props.community.userIsInCommunity
+  );
 
   const handleJoin = async () => {
     setIsInCommunity(true);
@@ -135,7 +122,17 @@ const CommunityPage = (props) => {
     if (creator) navigate(`/profile/${creator}`);
   };
 
-  return (
+  const [showFlaggedPosts, setShowFlaggedPosts] = useState(false);
+
+  const handleShowFlaggedPosts = () => {
+    setShowFlaggedPosts(!showFlaggedPosts);
+  };
+
+  return loading ? (
+    <LoadingPage />
+  ) : !communityFound ? (
+    <CommunityNotFoundPage title={title} />
+  ) : (
     <Box sx={{ pb: 20 }}>
       <Grid container spacing={2}>
         <Grid item xs={8}>
@@ -294,7 +291,7 @@ const CommunityPage = (props) => {
                           sx={{
                             justifyContent: "center",
                             alignItems: "center",
-                            pl: isModerator ? 1.5 : 0,
+                            pl: userIsModerator ? 1.5 : 0,
                             py: 0.2,
                           }}
                         >
@@ -314,7 +311,7 @@ const CommunityPage = (props) => {
                           >
                             {props.community.moderators[key].name}
                           </Typography>
-                          {isModerator && (
+                          {userIsModerator && (
                             <>
                               <IconButton
                                 aria-label="settings"
@@ -355,7 +352,7 @@ const CommunityPage = (props) => {
               <Box>
                 <JoinButton community={props.community} />
               </Box>
-              {isModerator === true && (
+              {props.community.userIsModerator === true && (
                 <Box>
                   <Button
                     variant="contained"
@@ -423,10 +420,10 @@ CommunityPage.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  community: state.communities.item,
-  communities: state.communities.usersCommunities,
+  community:
+    state.communities.communities[state.communities.currentCommunityIndex] ??
+    {},
   posts: state.posts.items,
-  username: state.auth.user.username,
   userId: state.auth.user.id,
 });
 
