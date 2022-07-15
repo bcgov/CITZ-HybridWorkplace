@@ -190,7 +190,9 @@ AddPostModal.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  communities: state.communities.usersCommunities,
+  communities: state.communities.communities.filter(
+    (comm) => comm.userIsInCommunity
+  ),
   auth: state.auth,
   open: state.modal.addPost.open,
 });

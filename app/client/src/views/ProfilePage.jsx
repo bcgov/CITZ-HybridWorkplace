@@ -70,7 +70,7 @@ const ProfilePage = (props) => {
   let { username } = useParams();
   const bioWidth = "90ch";
 
-const interestsWidth = 200
+  const interestsWidth = 200;
 
   useEffect(() => {
     props.getProfile(username);
@@ -270,7 +270,9 @@ ProfilePage.propTypes = {
 const mapStateToProps = (state) => ({
   username: state.auth.user.username,
   profile: state.profile.user,
-  communities: state.communities.usersCommunities,
+  communities: state.communities.communities.filter(
+    (comm) => comm.userIsInCommunity
+  ),
   posts: state.posts.userPosts,
 });
 
