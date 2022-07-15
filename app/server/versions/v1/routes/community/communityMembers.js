@@ -155,7 +155,7 @@ router.patch("/join/:title", async (req, res, next) => {
     )
       throw new ResponseError(
         403,
-        "Not allowed to join this community because you have been kicked."
+        "You have been suspended from this community."
       );
     req.log.addAction("User is not kicked from community.");
 
