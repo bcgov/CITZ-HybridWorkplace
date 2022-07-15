@@ -439,7 +439,7 @@ router.patch("/:title", async (req, res, next) => {
     req.log.addAction("Trimming extra spaces from inputs in request body.");
     if (req.body.title) req.body.title = trimExtraSpaces(req.body.title);
     if (req.body.description)
-      req.body.description = trimExtraSpaces(req.body.description);
+      req.body.description = req.body.description.trim();
     req.log.addAction(
       `Extra spaces trimmed. title: ${req.body.title}, description: ${req.body.description}`
     );
@@ -490,20 +490,20 @@ router.patch("/:title", async (req, res, next) => {
     }
 
     req.log.addAction("Updating community.");
-    await Community.updateOne({ title: community.title }, query).exec();
+    await Community.updateOne({ title: community.title }, query.$set).exec();
     req.log.addAction("Community updated.");
 
     req.log.addAction("Updating posts in community.");
     await Post.updateMany(
       { community: community.title },
-      { $set: { community: req.body.title } }
+      { $set: { community: query.$set.title } }
     ).exec();
     req.log.addAction("Community posts updated.");
 
     req.log.addAction("Updating user community lists.");
     await User.updateMany(
       { communities: { $elemMatch: { community: community.title } } },
-      { $set: { "communities.$.community": req.body.title } }
+      { $set: { "communities.$.community": query.$set.title } }
     ).exec();
     req.log.addAction("User community lists updated.");
 
