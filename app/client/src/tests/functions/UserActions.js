@@ -67,7 +67,18 @@ class UserActions {
   }
 
   // Component Actions
-  async openSideMenu() {}
+  async openSideMenu() {
+    // Get and click hamburger menu
+    const [button] = await this.page.$x(`//button[@aria-label="open drawer"]`);
+    if (button) {
+      await button.click();
+    }
+
+    // Wait for side menu overlay to confirm Profile load
+    await this.page.waitForSelector(`div[role="presentation"]`, {
+      timeout: 2000,
+    });
+  }
 
   async leaveCommunity(community) {}
 
@@ -111,7 +122,9 @@ class UserActions {
     }
 
     // Wait for Avatar to appear
-    await this.page.waitForSelector(`p.css-kyzvea`);
+    await this.page.waitForXPath(
+      '//button[@aria-label="account of current user"]'
+    );
   }
 
   async goToPost() {}
@@ -137,6 +150,8 @@ class UserActions {
   async deleteComment() {}
 
   // Navigation Actions
+
+  // Currently not working
   async goToHomeByLogo() {
     // Try and get button, then click it.
     const [button] = await this.page.$x(
@@ -146,11 +161,71 @@ class UserActions {
       await button.click();
     }
 
-    // Wait for Avatar to appear
-    await this.page.waitForXPath(`//h5[contains(., 'Top Posts')]`);
+    // Wait for Top Post bar to appear
+    await this.page.waitForXPath(`//h5[contains(., "Top Posts")]`);
   }
 
-  async goToProfileByAvatar() {}
+  async goToHomeByFooter() {
+    // Try and get button, then click it.
+    const [button] = await this.page.$x(`//a[contains(., "Home")]`);
+    if (button) {
+      await button.click();
+    }
+
+    // Wait for Top Post bar to appear
+    await this.page.waitForXPath(`//h5[contains(., "Top Posts")]`);
+  }
+
+  async goToHomeBySidemenu() {
+    await this.openSideMenu();
+
+    // Get and click Home link
+    const [button] = await this.page.$x(`//span[contains(., "Home")]`);
+    if (button) {
+      await button.click();
+    }
+
+    // Wait for Top Post bar to appear
+    await this.page.waitForXPath(`//h5[contains(., "Top Posts")]`);
+  }
+
+  async goToProfileByAvatar() {
+    // Ensure avatar is visible
+    await this.page.waitForXPath(
+      '//button[@aria-label="account of current user"]',
+      {
+        timeout: 2000,
+      }
+    );
+
+    // Get and click avatar
+    const [button] = await this.page.$x(
+      `//button[@aria-label="account of current user"]`
+    );
+    if (button) {
+      await button.click();
+    }
+
+    // Wait for Settings cog to confirm Profile load
+    await this.page.waitForSelector(`svg[data-testid="SettingsRoundedIcon"]`, {
+      timeout: 2000,
+    });
+  }
+
+  async goToProfileBySidemenu() {
+    await this.openSideMenu();
+
+    // Get and click profile link
+    const [button] = await this.page.$x(`//span[contains(., "Profile")]`);
+    if (button) {
+      await button.click();
+    }
+
+    // Wait for Settings cog to confirm Profile load
+    await this.page.waitForSelector(`svg[data-testid="SettingsRoundedIcon"]`, {
+      timeout: 2000,
+    });
+  }
 }
 
 module.exports = { UserActions };
