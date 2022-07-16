@@ -4,7 +4,7 @@ services:
   ###                                     MONGO DB                                          ###
   #############################################################################################
   mongodb:
-    image: "mongo:4"
+    image: "mongo:3.6"
     container_name: "mongodb"
     tty: true
     environment:
