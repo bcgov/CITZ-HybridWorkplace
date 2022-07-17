@@ -140,7 +140,7 @@ router.post("/:id", async (req, res, next) => {
         { _id: comment.id },
         {
           $push: {
-            flags: { flag: req.query.flag, flaggedBy: [user.id] },
+            flags: { flag: req.query.flag, flaggedBy: [user.username] },
           },
         }
       );
@@ -152,7 +152,7 @@ router.post("/:id", async (req, res, next) => {
           _id: comment.id,
           flags: { $elemMatch: { flag: req.query.flag } },
         },
-        { $addToSet: { "flags.$.flaggedBy": [user.id] } }
+        { $addToSet: { "flags.$.flaggedBy": [user.username] } }
       );
     }
 
@@ -217,7 +217,7 @@ router.delete("/:id", async (req, res, next) => {
       !(await Comment.exists({
         _id: comment.id,
         "flags.flag": req.query.flag,
-        "flags.flaggedBy": user.id,
+        "flags.flaggedBy": user.username,
       }))
     )
       throw new ResponseError(
@@ -233,7 +233,7 @@ router.delete("/:id", async (req, res, next) => {
         _id: comment.id,
         flags: { $elemMatch: { flag: req.query.flag } },
       },
-      { $pull: { "flags.$.flaggedBy": user.id } }
+      { $pull: { "flags.$.flaggedBy": user.username } }
     );
     req.log.addAction("User removed from flaggedBy.");
 

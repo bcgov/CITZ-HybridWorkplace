@@ -145,7 +145,7 @@ router.post("/:title", async (req, res, next) => {
         { title: community.title },
         {
           $push: {
-            flags: { flag: req.query.flag, flaggedBy: [user.id] },
+            flags: { flag: req.query.flag, flaggedBy: [user.username] },
           },
         }
       );
@@ -157,7 +157,7 @@ router.post("/:title", async (req, res, next) => {
           title: community.title,
           flags: { $elemMatch: { flag: req.query.flag } },
         },
-        { $addToSet: { "flags.$.flaggedBy": [user.id] } }
+        { $addToSet: { "flags.$.flaggedBy": [user.username] } }
       );
     }
     req.log.addAction("Community flag set.");
@@ -223,7 +223,7 @@ router.delete("/:title", async (req, res, next) => {
       !(await Community.exists({
         title: community.title,
         "flags.flag": req.query.flag,
-        "flags.flaggedBy": user.id,
+        "flags.flaggedBy": user.username,
       }))
     )
       throw new ResponseError(
@@ -238,7 +238,7 @@ router.delete("/:title", async (req, res, next) => {
         title: community.title,
         flags: { $elemMatch: { flag: req.query.flag } },
       },
-      { $pull: { "flags.$.flaggedBy": user.id } }
+      { $pull: { "flags.$.flaggedBy": user.username } }
     );
     req.log.addAction("User removed from flaggedBy.");
 

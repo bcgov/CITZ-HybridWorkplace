@@ -130,7 +130,6 @@ const Post = new mongoose.Schema(
         flaggedBy: [
           {
             type: String,
-            ref: "User",
           },
         ],
       },
