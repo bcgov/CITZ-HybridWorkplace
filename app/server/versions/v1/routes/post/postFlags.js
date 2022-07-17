@@ -140,7 +140,7 @@ router.post("/:id", async (req, res, next) => {
         { _id: post.id },
         {
           $push: {
-            flags: { flag: req.query.flag, flaggedBy: [user.id] },
+            flags: { flag: req.query.flag, flaggedBy: [user.username] },
           },
         }
       );
@@ -152,7 +152,7 @@ router.post("/:id", async (req, res, next) => {
           _id: post.id,
           flags: { $elemMatch: { flag: req.query.flag } },
         },
-        { $addToSet: { "flags.$.flaggedBy": [user.id] } }
+        { $addToSet: { "flags.$.flaggedBy": [user.username] } }
       );
     }
 

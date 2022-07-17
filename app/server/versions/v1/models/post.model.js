@@ -89,7 +89,7 @@
  *                type: array
  *                description: Users that have flagged the post.
  *                items:
- *                  - $ref: '#/components/schemas/User'
+ *                  type: string
  *      required:
  *        - title
  *        - message
@@ -129,7 +129,7 @@ const Post = new mongoose.Schema(
         flag: String,
         flaggedBy: [
           {
-            type: mongoose.Schema.Types.ObjectId,
+            type: String,
             ref: "User",
           },
         ],
