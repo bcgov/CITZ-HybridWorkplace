@@ -217,7 +217,7 @@ router.delete("/:id", async (req, res, next) => {
       !(await Post.exists({
         _id: post.id,
         "flags.flag": req.query.flag,
-        "flags.flaggedBy": user.id,
+        "flags.flaggedBy": user.username,
       }))
     )
       throw new ResponseError(
@@ -233,7 +233,7 @@ router.delete("/:id", async (req, res, next) => {
         _id: post.id,
         flags: { $elemMatch: { flag: req.query.flag } },
       },
-      { $pull: { "flags.$.flaggedBy": user.id } }
+      { $pull: { "flags.$.flaggedBy": user.username } }
     );
     req.log.addAction("User removed from flaggedBy.");
 
