@@ -55,6 +55,7 @@ import PostModal from "../components/modals/AddPostModal";
 import JoinButton from "../components/JoinButton";
 import { openEditCommunityModal } from "../redux/ducks/modalDuck";
 import EditCommunityModal from "../components/modals/EditCommunityModal";
+import ResolveFlagsModal from "../components/modals/ResolveFlagsModal";
 import { openAddPostModal } from "../redux/ducks/modalDuck";
 import {
   getCommunityPosts,
@@ -408,6 +409,7 @@ const CommunityPage = (props) => {
         </Grid>
       </Grid>
       <EditCommunityModal />
+      <ResolveFlagsModal />
     </Box>
   );
 };

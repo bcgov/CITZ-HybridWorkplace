@@ -23,6 +23,7 @@ import {
   openFlagPostModal,
   openDeletePostModal,
   openEditPostModal,
+  openResolveFlagsModal,
 } from "../redux/ducks/modalDuck";
 import { useState } from "react";
 import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
@@ -108,6 +109,7 @@ const Post = (props) => {
   const handlePostCreatorClick = (creator) => {
     if (creator) navigate(`/profile/${creator}`);
   };
+  const handleFlagIconClick = () => props.openResolveFlagsModal(post);
 
   // Create preview if post message has more than maxMessageLines lines
   let message = post.message;
@@ -239,7 +241,12 @@ const Post = (props) => {
                       title={<Typography>Flagged Post</Typography>}
                       arrow
                     >
-                      <FlagRounded />
+                      <IconButton
+                        onClick={handleFlagIconClick}
+                        sx={{ padding: 0 }}
+                      >
+                        <FlagRounded />
+                      </IconButton>
                     </Tooltip>
                   )}
                   <Typography
@@ -360,6 +367,7 @@ const mapActionsToProps = {
   openEditPostModal,
   getPost,
   editPost,
+  openResolveFlagsModal,
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(Post);
