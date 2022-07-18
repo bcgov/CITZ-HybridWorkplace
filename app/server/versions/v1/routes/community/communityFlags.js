@@ -125,10 +125,7 @@ router.post("/:title", async (req, res, next) => {
 
     req.log.addAction("Checking flag is valid.");
     if (!flags.includes(req.query.flag))
-      throw new ResponseError(
-        403,
-        "Invalid flag. Use one of [Inappropriate, Hate, Harassment or Bullying, Spam, Misinformation, Against Community Rules]"
-      );
+      throw new ResponseError(403, `Invalid flag. Use one of ${flags}`);
     req.log.addAction("Flag is valid.");
 
     // If flag isn't set on community
