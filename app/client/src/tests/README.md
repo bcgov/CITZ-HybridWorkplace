@@ -8,7 +8,7 @@ More information can be found under the [Architectural Decision Log](https://git
 
 ## Running Tests
 
-Tests currently run from the `app/client/src/tests` folder. In your terminal of choice, run `npm test` to start the react-scripts tests.
+Tests currently run from the `app/client` folder. In your terminal of choice, run `npm test` to start the react-scripts tests.
 While the test watcher is running, tests will re-run if any change to code is detected. Only applicable tests should run.
 
 ## Adding New Tests
@@ -25,5 +25,8 @@ Without these keys, system tests will not run.
 This file contains the the following
 |Key|Description|
 |--|--|
+|URL|Target URL|
 |IDIR|IDIR username|
 |PASSWORD|Password for above user|
+|HEADLESS|Whether test browser should run headless (true or false)|
+|SLOWMO|Millisecond value for pause between each simulated action|
