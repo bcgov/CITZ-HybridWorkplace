@@ -56,7 +56,7 @@ class UserActions {
     if (button) {
       await button.click();
     }
-    await this.page.waitForNavigation({ waitUntil: "domcontentloaded" });
+    await this.page.waitForSelector("#user");
 
     // Enter info into fields
     await this.page.type("#user", this.idir);
@@ -267,14 +267,130 @@ class UserActions {
     }
 
     // Wait for modal to close
-    await this.page.waitForXPath(`//div[@id="root"][@aria-hidden!="true"]`);
+    await this.page.waitForXPath(`//p[contains(., '${input}')]`, {
+      timeout: 2000,
+    });
   }
 
-  async editInfo() {}
+  async editInfo(firstName, lastName, title, ministry) {
+    // Click edit pencil
+    const [pencil] = await this.page.$x(
+      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[1]/div[1]/div/div[1]/button`
+    );
+    if (pencil) {
+      await pencil.click();
+    }
 
-  async editIntrests() {}
+    // Wait for modal
+    await this.page.waitForXPath(`//h2[contains(., "Edit User Info")]`);
 
-  async editSettings() {}
+    // Clear fields
+    const firstNameValue = await this.page.$eval(
+      "#user-name",
+      (el) => el.value
+    );
+    await this.page.focus("#user-name");
+    for (let i = 0; i < firstNameValue.length; i++) {
+      await this.page.keyboard.press("Backspace");
+    }
+
+    const lastNameValue = await this.page.$eval(
+      "#user-lastName",
+      (el) => el.value
+    );
+    await this.page.focus("#user-lastName");
+    for (let i = 0; i < lastNameValue.length; i++) {
+      await this.page.keyboard.press("Backspace");
+    }
+
+    const titleValue = await this.page.$eval("#user-title", (el) => el.value);
+    await this.page.focus("#user-title");
+    for (let i = 0; i < titleValue.length; i++) {
+      await this.page.keyboard.press("Backspace");
+    }
+
+    const ministryValue = await this.page.$eval(
+      "#user-ministry",
+      (el) => el.value
+    );
+    await this.page.focus("#user-ministry");
+    for (let i = 0; i < ministryValue.length; i++) {
+      await this.page.keyboard.press("Backspace");
+    }
+
+    // Fill fields
+    await this.page.type("#user-name", firstName);
+    await this.page.type("#user-lastName", lastName);
+    await this.page.type("#user-title", title);
+    await this.page.type("#user-ministry", ministry);
+
+    // Click save
+    const [button] = await this.page.$x(`//button[contains(., 'Save')]`);
+    if (button) {
+      await button.click();
+    }
+  }
+
+  async editInterests(input) {
+    // Click edit pencil
+    const [pencil] = await this.page.$x(
+      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[1]/div[2]/div[1]/button`
+    );
+    if (pencil) {
+      await pencil.click();
+    }
+    // Loop the following: type input, hit enter
+    for (let i = 0; i < input.length; i++) {
+      await this.page.type("#user-interests", input[i]);
+      await this.page.keyboard.press("Enter");
+    }
+    // Click save
+    const [button] = await this.page.$x(`//button[contains(., 'Save')]`);
+    if (button) {
+      await button.click();
+    }
+    // Wait until at least one interest is visible
+    await this.page.waitForXPath(`//span`, {
+      timeout: 2000,
+    });
+    await this.page.waitForTimeout(5000);
+  }
+
+  async editSettings(notification, theme) {
+    // Click edit gear
+    const [gear] = await this.page.$x(
+      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[1]/div[3]/button`
+    );
+    if (gear) {
+      await gear.click();
+    }
+
+    // Wait for modal
+    await this.page.waitForXPath(`//input[@value="${notification}"]`);
+
+    // Choose setting for notifications
+    const [radio] = await this.page.$x(`//input[@value="${notification}"]`);
+    if (radio) {
+      await radio.click();
+    }
+
+    // Select Theme
+    await this.page.click('div[aria-labelledby="darkmode-preference-label"]'); // open select menu
+    await this.page.click(`li[data-value="${theme}"]`); // select li
+
+    // Click save
+    const [button] = await this.page.$x(`//button[contains(., 'Save')]`);
+    if (button) {
+      await button.click();
+    }
+
+    // Wait for gear to be visible after reload
+    await this.page.waitForXPath(
+      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[1]/div[3]/button`
+    );
+  }
 }
+
+// document.evaluate(`//xpath`, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 
 module.exports = { UserActions };

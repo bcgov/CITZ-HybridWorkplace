@@ -5,6 +5,8 @@ jest.setTimeout(30000);
 
 const idir = process.env.IDIR;
 const password = process.env.PASSWORD;
+const headless = process.env.HEADLESS === "true";
+const slowmo = parseInt(process.env.SLOWMO);
 
 describe("Given that user is on home page", () => {
   let browser;
@@ -12,8 +14,8 @@ describe("Given that user is on home page", () => {
   let user;
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: process.env.HEADLESS,
-      slowMo: process.env.SLOWMO,
+      headless: headless,
+      slowMo: slowmo,
       args: [`--window-size=1366,768`],
     });
     page = await browser.newPage();
