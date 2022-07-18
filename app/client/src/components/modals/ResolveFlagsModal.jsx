@@ -111,7 +111,6 @@ export const ResolveFlagsModal = ({
           Absolve
         </Button>
       </DialogActions>
-      {console.log(post)}
     </Dialog>
   );
 };

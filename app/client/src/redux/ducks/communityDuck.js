@@ -102,7 +102,6 @@ export const getCommunities = () => async (dispatch, getState) => {
       authState.user.id,
       response.data
     );
-    console.log(response.data);
 
     dispatch({
       type: SET_COMMUNITIES,

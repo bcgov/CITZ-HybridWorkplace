@@ -90,7 +90,6 @@ const EditCommunityModal = (props) => {
       props.createError("Modifying a community requires at least one change.");
       return;
     }
-    console.log("changes", changes);
     const successful = await props.editCommunity(changes);
     if (successful) {
       navigate(`/community/${changes.title || changes.oldTitle}`);

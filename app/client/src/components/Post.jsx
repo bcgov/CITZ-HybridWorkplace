@@ -57,7 +57,6 @@ const Post = (props) => {
   const isModerator = props.communities.find(
     (comm) => comm.title === props.post.community
   )?.userIsModerator;
-  console.log("isModerator", isModerator);
 
   const navigate = useNavigate();
 
