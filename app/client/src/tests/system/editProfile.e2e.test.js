@@ -12,8 +12,8 @@ describe("Given that user is on Profile page", () => {
   let user;
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: process.env.HEADLESS,
-      slowMo: process.env.SLOWMO,
+      headless: false,
+      slowMo: 30,
       args: [`--window-size=1366,768`],
     });
     page = await browser.newPage();

@@ -49,10 +49,13 @@ class UserActions {
   async login() {
     // Go to login page
     await this.page.goto(`http://localhost:8080/login`);
-    await this.page.waitForSelector(".css-ojc9ou"); // Login button
+    await this.page.waitForXPath(`//button[contains(., 'Login')]`); // Login button
 
     // Click login button
-    await this.page.click(".css-ojc9ou");
+    const [button] = await this.page.$x(`//button[contains(., 'Login')]`);
+    if (button) {
+      await button.click();
+    }
     await this.page.waitForNavigation({ waitUntil: "domcontentloaded" });
 
     // Enter info into fields
@@ -63,7 +66,9 @@ class UserActions {
     await this.page.click(`[value="Continue"]`);
 
     // Wait for Avatar to appear
-    await this.page.waitForSelector(`p.css-kyzvea`);
+    await this.page.waitForXPath(
+      `//button[@aria-label="account of current user"]`
+    );
   }
 
   // Component Actions
@@ -92,14 +97,23 @@ class UserActions {
     }
 
     // Wait until Community page
-    await this.page.waitForSelector(".css-9mgnpw"); // Community name on community page
+    await this.page.waitForXPath(`//h5[contains(., '${community}')]`); // Community name on community page
   }
 
   async createCommunity(community) {}
 
   async createPost(title, body, community = "") {
-    await this.page.waitForSelector("button.css-rxr26v"); // try to get first + button
-    await this.page.click("button.css-rxr26v"); // try to click first + button
+    await this.page.waitForXPath(
+      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[1]/div[1]/div/div[2]/button`
+    ); // try to get first + button
+
+    // try to click first + button
+    const [plus] = await this.page.$x(
+      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[1]/div[1]/div/div[2]/button`
+    );
+    if (plus) {
+      await plus.click();
+    }
     await this.page.waitForSelector("#add-post-title"); // wait for field to appear
 
     await this.page.type("#add-post-title", `${title}`); // type in title field
@@ -245,7 +259,9 @@ class UserActions {
     await this.page.type("#user-bio", input);
 
     // Get and click save button
-    const [button] = await this.page.$x(`//button[contains(., "Save")]`);
+    const [button] = await this.page.$x(
+      `/html/body/div[2]/div[3]/div/div/div/div[2]/div/button[1]`
+    );
     if (button) {
       await button.click();
     }

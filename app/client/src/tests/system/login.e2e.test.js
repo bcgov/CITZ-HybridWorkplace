@@ -38,7 +38,10 @@ describe("Given that user is on login page", () => {
       // Checking if avatar is visible
       let atHomePage = false;
       try {
-        await page.waitForSelector("p.css-kyzvea", { timeout: 2000 });
+        await page.waitForXPath(
+          `//button[@aria-label="account of current user"]`,
+          { timeout: 2000 }
+        );
         atHomePage = true;
       } catch (e) {
         atHomePage = false;
