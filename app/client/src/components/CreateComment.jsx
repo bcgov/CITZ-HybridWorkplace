@@ -77,7 +77,9 @@ export const CreateComment = (props) => {
           </Grid>
         </>
       ) : (
-        <Button onClick={handleAddCommentButton}>+ Add Comment</Button>
+        <Button onClick={handleAddCommentButton} sx={{ color: "button.main" }}>
+          + Add Comment
+        </Button>
       )}
     </>
   );

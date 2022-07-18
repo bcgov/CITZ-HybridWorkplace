@@ -45,6 +45,13 @@ import { closeSettingsModal } from "../../redux/ducks/modalDuck";
 import { editUserSettings } from "../../redux/ducks/profileDuck";
 
 const SettingsModal = (props) => {
+  const notificationPreferences = [
+    { value: "none", label: "None", disabled: false },
+    { value: "immediate", label: "Immediate", disabled: false },
+    { value: "daily", label: "Daily", disabled: false },
+    { value: "weekly", label: "Weekly", disabled: true },
+    { value: "monthly", label: "Monthly", disabled: true },
+  ];
   const [darkModeValue, setDarkModeValue] = useState(
     localStorage.getItem("hwp-darkmode") ?? "light"
   );
@@ -90,7 +97,7 @@ const SettingsModal = (props) => {
       <DialogContent data-color-mode="light">
         <Stack spacing={1} justifyContent="center">
           <FormControl>
-            <FormLabel id="notification-frequency-radios-label">
+            <FormLabel id="notification-frequency-radios-label" color="neutral">
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Notifications
               </Typography>
@@ -103,56 +110,41 @@ const SettingsModal = (props) => {
               name="notification-frequency-radios-group"
               onChange={(e) => setNotificationFrequency(e.target.value)}
             >
-              <FormControlLabel
-                value="none"
-                control={<Radio value="none" size="small" />}
-                label="None"
-              />
-              <FormControlLabel
-                value="immediate"
-                control={<Radio value="immediate" size="small" />}
-                label="Immediate"
-              />
-              <FormControlLabel
-                value="daily"
-                control={<Radio value="daily" size="small" />}
-                label="Daily"
-              />
-              <FormControlLabel
-                disabled
-                value="weekly"
-                control={<Radio size="small" />}
-                label="Weekly"
-              />
-              <FormControlLabel
-                disabled
-                value="monthly"
-                control={<Radio size="small" />}
-                label="Monthly"
-              />
+              {notificationPreferences.map((item) => (
+                <FormControlLabel
+                  {...item}
+                  key={item.value}
+                  control={
+                    <Radio value={item.value} size="medium" color="button" />
+                  }
+                />
+              ))}
             </RadioGroup>
           </FormControl>
-          <FormLabel id="darkmode-preference-label">
-            <Typography variant="h6" sx={{ fontWeight: 600 }}>
-              Dark Mode
-            </Typography>
-          </FormLabel>
-          <Divider />
+          <FormControl>
+            <FormLabel id="darkmode-preference-label" color="neutral">
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                Dark Mode
+              </Typography>
+            </FormLabel>
+            <Divider />
 
-          <Stack direction="row" spacing={1}>
-            <Select
-              name="darkmode-preference-label"
-              labelId="darkmode-preference-label"
-              id="demo-simple-select"
-              aria-labelledby="darkmode-preference-label"
-              value={darkModeValue}
-              onChange={handleDarkModeChange}
-            >
-              <MenuItem value={"light"}>Light</MenuItem>
-              <MenuItem value={"dark"}>Dark</MenuItem>
-              <MenuItem value={"system"}>System Default</MenuItem>
-            </Select>
-          </Stack>
+            <Stack direction="row" spacing={1}>
+              <Select
+                name="darkmode-preference-label"
+                labelId="darkmode-preference-label"
+                id="demo-simple-select"
+                aria-labelledby="darkmode-preference-label"
+                value={darkModeValue}
+                onChange={handleDarkModeChange}
+                color="button"
+              >
+                <MenuItem value={"light"}>Light</MenuItem>
+                <MenuItem value={"dark"}>Dark</MenuItem>
+                <MenuItem value={"system"}>System Default</MenuItem>
+              </Select>
+            </Stack>
+          </FormControl>
           <DialogActions sx={{ m: 0, pb: 0 }}>
             <Stack direction="row-reverse" justifyContent="end" spacing={1}>
               <Button
@@ -164,9 +156,7 @@ const SettingsModal = (props) => {
               >
                 Save
               </Button>
-              <Button variant="contained" onClick={props.closeSettingsModal}>
-                Close
-              </Button>
+              <Button onClick={props.closeSettingsModal}>Close</Button>
             </Stack>
           </DialogActions>
         </Stack>

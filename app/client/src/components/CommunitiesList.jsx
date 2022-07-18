@@ -47,9 +47,7 @@ const CommunitiesList = (props) => {
   }, []);
 
   const communities = hideJoined
-    ? props.communities.filter(
-        (community) => !community.members.includes(props.userId)
-      )
+    ? props.communities.filter((community) => !community.userIsInCommunity)
     : props.communities;
 
   return (
@@ -69,7 +67,7 @@ CommunitiesList.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  communities: state.communities.items,
+  communities: state.communities.communities,
   userId: state.auth.user.id,
 });
 

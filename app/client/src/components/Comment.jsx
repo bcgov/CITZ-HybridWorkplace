@@ -14,11 +14,13 @@ import {
   Typography,
   Button,
   Box,
+  Tooltip,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import UpIcon from "@mui/icons-material/KeyboardArrowUp";
 import DownIcon from "@mui/icons-material/KeyboardArrowDown";
 import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import React, { useState } from "react";
 import {
   openDeleteCommentModal,
@@ -105,8 +107,9 @@ export const Comment = (props) => {
   const closeReply = () => {
     setReplyOpen(false);
   };
-  const handleCommentCreatorClick = (creator) =>
-    navigate(`/profile/${creator}`);
+  const handleCommentCreatorClick = (creator) => {
+    if (creator) navigate(`/profile/${creator}`);
+  };
 
   const handleUpVote = async () => {
     const commentId = props.comment._id;
@@ -177,24 +180,43 @@ export const Comment = (props) => {
               </IconButton>
             </Stack>
           </Box>
-          <Card style={{ margin: 10, width: "100%" }}>
+          <Card
+            style={{
+              margin: 10,
+              width: "100%",
+            }}
+          >
             <CardHeader
               title={
-                <Typography
-                  variant="h5"
-                  sx={{
-                    display: "inline-block",
-                    ":hover": {
-                      textDecoration: "underline",
-                      cursor: "pointer",
-                    },
-                  }}
-                  onClick={() =>
-                    handleCommentCreatorClick(props.comment.creatorName)
-                  }
+                <Stack
+                  spacing={0.5}
+                  direction="row"
+                  sx={{ alignItems: "center" }}
                 >
-                  {props.comment.creatorName || "Unknown Commenter"}
-                </Typography>
+                  {props.comment.hidden && (
+                    <Tooltip
+                      title={<Typography>Hidden Comment</Typography>}
+                      arrow
+                    >
+                      <VisibilityOffIcon />
+                    </Tooltip>
+                  )}
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      display: "inline-block",
+                      ":hover": {
+                        textDecoration: "underline",
+                        cursor: "pointer",
+                      },
+                    }}
+                    onClick={() =>
+                      handleCommentCreatorClick(props.comment.creatorUsername)
+                    }
+                  >
+                    {props.comment.creatorName || "Unknown Commenter"}
+                  </Typography>
+                </Stack>
               }
               subheader={<Typography fontSize="small">{createdOn}</Typography>}
               avatar={
@@ -205,7 +227,7 @@ export const Comment = (props) => {
                     },
                   }}
                   onClick={() =>
-                    handleCommentCreatorClick(props.comment.creatorName)
+                    handleCommentCreatorClick(props.comment.creatorUsername)
                   }
                 >
                   <AvatarIcon
@@ -248,7 +270,12 @@ export const Comment = (props) => {
                 )
               }
             />
-            <CardContent sx={{ paddingTop: "0px" }}>
+            <CardContent
+              sx={{
+                paddingTop: "0px",
+                backgroundColor: "card.main",
+              }}
+            >
               {props.comment.edits.length > 0 && (
                 <Typography variant="caption" color="#898989">
                   Edited: {editDate}
@@ -256,9 +283,9 @@ export const Comment = (props) => {
               )}
               <Typography variant="body2">{props.comment.message}</Typography>
             </CardContent>
-            <CardActions>
+            <CardActions sx={{ backgroundColor: "card.main" }}>
               {!props.hideReply && (
-                <Button variant="text" onClick={openReply}>
+                <Button variant="text" onClick={openReply} color="button">
                   Reply
                 </Button>
               )}

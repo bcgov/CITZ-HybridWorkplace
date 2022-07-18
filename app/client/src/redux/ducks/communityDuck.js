@@ -21,13 +21,17 @@
  */
 
 import hwp_axios from "../../axiosInstance";
+import {
+  reshapeCommunitiesForFrontend,
+  reshapeCommunityForFrontend,
+} from "../../helperFunctions/communityHelpers";
 
 import { createError } from "./alertDuck";
 import { GET_POSTS } from "./postDuck";
 
 const SET_COMMUNITIES = "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_COMMUNITIES";
 const GET_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/GET_COMMUNITY";
-const EDIT_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/GET_COMMUNITY";
+const EDIT_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/EDIT_COMMUNITY";
 const SET_USERS_COMMUNITIES =
   "CITZ-HYBRIDWORKPLACE/COMMUNITY/SET_USERS_COMMUNITIES";
 const ADD_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/ADD_COMMUNITY";
@@ -51,7 +55,8 @@ const getUserTag = (post, userId) => {
 export const getCommunity = (title) => async (dispatch, getState) => {
   let successful = true;
   try {
-    const token = getState().auth.accessToken;
+    const authState = getState().auth;
+    const token = authState.accessToken;
     if (!token) throw new Error(noTokenText);
 
     const response = await hwp_axios.get(`/api/community/${title}`, {
@@ -62,7 +67,10 @@ export const getCommunity = (title) => async (dispatch, getState) => {
         dispatch,
       },
     });
-
+    response.data = reshapeCommunityForFrontend(
+      authState.user.id,
+      response.data
+    );
     dispatch({
       type: GET_COMMUNITY,
       payload: response.data,
@@ -78,7 +86,8 @@ export const getCommunity = (title) => async (dispatch, getState) => {
 export const getCommunities = () => async (dispatch, getState) => {
   let successful = true;
   try {
-    const token = getState().auth.accessToken;
+    const authState = getState().auth;
+    const token = authState.accessToken;
     if (!token) throw new Error(noTokenText);
 
     const response = await hwp_axios.get("/api/community", {
@@ -89,6 +98,11 @@ export const getCommunities = () => async (dispatch, getState) => {
         dispatch,
       },
     });
+    response.data = reshapeCommunitiesForFrontend(
+      authState.user.id,
+      response.data
+    );
+    console.log(response.data);
 
     dispatch({
       type: SET_COMMUNITIES,
@@ -105,7 +119,8 @@ export const getCommunities = () => async (dispatch, getState) => {
 export const getUsersCommunities = () => async (dispatch, getState) => {
   let successful = true;
   try {
-    const token = getState().auth.accessToken;
+    const authState = getState().auth;
+    const token = authState.accessToken;
     if (!token) throw new Error(noTokenText);
 
     const response = await hwp_axios.get(`/api/community?orderBy=lastJoined`, {
@@ -116,6 +131,10 @@ export const getUsersCommunities = () => async (dispatch, getState) => {
         dispatch,
       },
     });
+    response.data = reshapeCommunitiesForFrontend(
+      authState.user.id,
+      response.data
+    );
     dispatch({
       type: SET_USERS_COMMUNITIES,
       payload: response.data,
@@ -189,6 +208,11 @@ export const createCommunity =
             dispatch,
           },
         }
+      );
+
+      response.data = reshapeCommunityForFrontend(
+        authState.user.id,
+        response.data
       );
 
       dispatch({
@@ -335,9 +359,8 @@ export const editCommunity = (newCommunity) => async (dispatch, getState) => {
 };
 
 const initialState = {
-  usersCommunities: [], //users communities
-  items: [], //communities
-  item: {}, //single community
+  currentCommunityIndex: -1,
+  communities: [],
 };
 
 export function communityReducer(state = initialState, action) {
@@ -345,70 +368,94 @@ export function communityReducer(state = initialState, action) {
     case GET_COMMUNITY_POSTS:
       return {
         ...state,
-        item: { ...state.item, posts: action.payload },
+        currentCommunity: { ...state.currentCommunity, posts: action.payload },
       };
     case GET_COMMUNITY:
-      return {
-        ...state,
-        item: { ...state.item, ...action.payload },
-      };
+      return (() => {
+        const newState = { ...state };
+        const commIndex = newState.communities.findIndex(
+          (comm) => comm._id === action.payload._id
+        );
+        if (commIndex !== -1) {
+          newState.communities[commIndex] = action.payload;
+          newState.currentCommunityIndex = commIndex;
+        } else {
+          newState.communities.unshift(action.payload);
+          newState.currentCommunityIndex = 0;
+        }
+        return newState;
+      })();
     case EDIT_COMMUNITY:
-      return {
-        ...state,
-        item: Object.assign(state.community, action.payload),
-      };
+      return (() => {
+        const newState = { ...state };
+        //Assigning currentCommunity to be a reference of the community object in the array
+        const commIndex = newState.communities.findIndex(
+          (comm) => comm.title === action.payload.oldTitle
+        );
+        //Making changes to currentCommunity
+        newState.communities[commIndex].title =
+          action.payload.title ?? newState.communities[commIndex].title;
+        newState.communities[commIndex].description =
+          action.payload.description ??
+          newState.communities[commIndex].description;
+        newState.communities[commIndex].rules =
+          action.payload.rules ?? newState.communities[commIndex].rules;
+
+        return newState;
+      })();
     case SET_COMMUNITIES:
       return {
         ...state,
-        items: action.payload,
+        communities: action.payload,
       };
     case SET_USERS_COMMUNITIES:
-      return {
-        ...state,
-        usersCommunities: action.payload,
-      };
+      return (() => {
+        const newState = { ...state };
+        // Merging Array of UsersCommunities and Communities already in the store
+        newState.communities = [
+          ...newState.communities,
+          ...action.payload.filter(
+            (comm) =>
+              !newState.communities.find(
+                (stateComm) => stateComm._id === comm._id
+              )
+          ),
+        ];
+        return newState;
+      })();
     case ADD_COMMUNITY:
       return {
         ...state,
-        items: [action.payload, ...state.items],
-        usersCommunities: [action.payload, ...state.usersCommunities],
+        communities: [action.payload, ...state.communities],
       };
     case JOIN_COMMUNITY:
-      const comm = state.items.find(
+      const comm = state.communities.find(
         (element) => element.title === action.payload
       );
       if (!comm) return state;
       return {
         ...state,
-        usersCommunities: [
-          { ...comm, memberCount: comm.memberCount + 1 },
-          ...state.usersCommunities,
-        ],
-        items: state.items.map((e) => {
+        communities: state.communities.map((e) => {
           return e._id === comm._id
-            ? { ...e, memberCount: e.memberCount + 1 }
+            ? { ...e, memberCount: e.memberCount + 1, userIsInCommunity: true }
             : e;
         }),
       };
     case LEAVE_COMMUNITY:
       return {
         ...state,
-        usersCommunities: state.usersCommunities?.filter(
-          (item, index) => item.title !== action.payload
-        ),
-        items: state.items.map((e) => {
+        communities: state.communities.map((e) => {
           return e.title === action.payload
-            ? { ...e, memberCount: e.memberCount - 1 }
+            ? { ...e, memberCount: e.memberCount - 1, userIsInCommunity: false }
             : e;
         }),
       };
     case DELETE_COMMUNITY:
       return {
         ...state,
-        usersCommunities: state.usersCommunities.filter(
+        communities: state.communities.filter(
           (item) => item.title !== action.payload
         ),
-        items: state.items.filter((item) => item.title !== action.payload),
       };
     default:
       return state;

@@ -147,8 +147,10 @@ const Community = new mongoose.Schema(
     ],
     moderators: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        userId: String,
+        name: String,
+        username: String,
+        permissions: [String],
       },
     ],
   },

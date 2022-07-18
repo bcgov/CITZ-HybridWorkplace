@@ -1,30 +1,23 @@
 [![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://github.com/bcgov/citz-HybridWorkplace)
 
-  
-
 # CITZ Hybrid Workplace
-
-  
 
 ## Project Introduction
 
+This is the project repo for the 2022 CITZ: IMB "Hybrid Workplace" product.
 
-This is the project repo for the 2022 CITZ: IMB "Hybrid Workplace" product. 
-
-We are currently completing our second phase: MVP development. 
-Come back often as content is constantly being added. 
+We are currently completing our second phase: MVP development.
+Come back often as content is constantly being added.
 
 An in-progress version of the project is available here:
 [The Neighbourhood (gov.bc.ca)](https://hwp-react-d63404-dev.apps.silver.devops.gov.bc.ca/)
 
- 
-
 ## Development Team Introduction
 
-  
+- Phase 2 May-August 2022 -> Currently a team of three Camosun Capstone students (@BradyMitch, @Bottle7, @ZachBourque)
 
-- Phase 2 May-August 2022 -> Currently a team of three Camosun Capstone students (@BradyMitch, @Bottle7, @ZachBourque) 
-	- Includes two co-op students working on testing: @dbarkowsky (Camosun), @mattsiel (UVic)
+  - Includes two co-op students working on testing: @dbarkowsky (Camosun), @mattsiel (UVic)
+
 
 - Phase 1 January-April 2022 -> Project initiation from a team of UVic Co-op Students (@aulveland, @bettesworthjayna)
 
@@ -34,11 +27,12 @@ An in-progress version of the project is available here:
 
 - Executive Project Sponsor -> @CraigShutko
 
-  
 
-## Problem Statement
-  
-The RISE team aims to provide a forum for the exchange of information and best practices for civil servants wishing to improve their leadership skills. Participants need a platform for curated resources that are easy to locate and that can be commented on and discussed. 
+The RISE team aims to provide a forum for the exchange of information and best practices for civil servants wishing to improve their leadership skills. Participants need a platform for curated resources that are easy to locate and that can be commented on and discussed.
+
+Currently, there are a number of different tools which only fill parts of the identified need.
+This leads to more duplication and over time, a lack of product use, and orphaned information.
+
 
 Currently, there are a number of different tools which only fill parts of the identified need. 
 This leads to more duplication and over time, a lack of product use, and orphaned information.
@@ -54,7 +48,6 @@ Utilizing a platform that allows easy contribution of content in a moderated env
 
 The goal of the CITZ Co-op/Capstone 2022 Hybrid Workplace project team is to create a modern web application as a tool for communities to collaborate.
 
-
 Objectives include:
 
 - Apply modern application development methodology based on AGILE principles
@@ -65,21 +58,16 @@ Objectives include:
 
 - Host the solution in the BC Dev Exchange's container environment
 
-  
-
 ## Project Structure
-
-  
 
 Please [see the Wiki](https://github.com/bcgov/CITZ-HybridWorkplace/wiki) for more information.
 
-  
-
 ## Running the Application
 
-  ### Requirements
-  - Docker
-  - Node.js (for development only)
+### Requirements
+
+- Docker
+- Node.js (for development only)
 
 ### Build for Production
 
@@ -105,14 +93,15 @@ Changes to the node_modules folder will require a rebuild of the containers.
 3. The containers for the client, server, and database should now be running. They are ready to use as soon as the API reports a connection to Mongo and the frontend reports the page has complied.
 
 If you have **npm** installed, use `npm run dev` from the project root as a shortcut.
-  
+
 ### Teardown
 
 1. Navigate to the project root directory.
 
 2. Use the command: `docker-compose down -v`.
 
-	- Note: the `-v` flag tells docker to dispose of the volumes associated with the containers.
+   - Note: the `-v` flag tells docker to dispose of the volumes associated with the containers.
+
 
 3. The containers for the client, server, and database should now be stopped and removed, along with their volumes.
 
@@ -120,22 +109,19 @@ If you have **npm** installed, use `npm run dev` from the project root as a shor
 
 ## Services
 
-  
-
 Frontend -> accessible at [http://localhost:8080](http://localhost:8080)
 
 API -> accessible at [http://localhost:5000/api](http://localhost:5000/api)
 
 MongoDB -> instance available at exposed port 27017
 
-  
-
 ## Mongo Configuration
 
-  To change the name of the database you must change the current database name 'TheNeighbourhood' in the following files: 
-* ./mongo/init/create-db.js 
-* .env
- 
+To change the name of the database you must change the current database name 'TheNeighbourhood' in the following files:
+
+- ./mongo/init/create-db.js
+- .env
+
 
 ## Removing Local MongoDB Data
 
@@ -144,40 +130,41 @@ MongoDB -> instance available at exposed port 27017
 ## ENV Variable Configuration
 
 The .env file must be created by using .env-template as a template.
-  
-|ENV Key | Description | Example |
-|--|--|--|
-|REACT_APP_API_PORT | API listens on this port | 5000 |
-|REACT_APP_LOCAL_DEV | Toggle for URI paths in local environment | true \|\| false
-|REACT_APP_API_REF | URI pointing to API location | localhost \|\| http://...
-|API_VERSION | Used in setting path to API routes | 1
-|ENABLE_API_REQUEST_LOGS | Toggle for API logging | true \|\| false
-|FRONTEND_REF | URI pointing to frontend location | localhost \|\| http://...
-|FRONTEND_PORT | Port used by frontend | 8080
-|MONGO_REF | Name of MongoDB container name | mongodb
-|MONGO_PORT | Port used by MongoDB | 27017
-|MONGO_ROOT_USERNAME | Used to log in to MongoDB CLI | admin
-|MONGO_ROOT_PASSWORD | Used to log in to MongoDB CLI | admin
-|MONGO_DB_USERNAME | Used when API connects to MongoDB | db-admin
-|MONGO_DB_PASSWORD | Used when API connects to MongoDB | db-admin
-|MONGO_DATABASE_NAME | Name of database | TheNeighbourhood
-|JWT_SECRET | Used to verify JWT tokens | aVerySecureSecret
-|JWT_REFRESH_SECRET | Used to verify  refresh tokens | aVerySecureSecret
-|JWT_TOKEN_EXPIRY | Time until authentication token expires | 4h
-|GC_NOTIFY_REGISTRATION_TEMPLATE | Reference to GC Notify template | See [GC Notify](https://notification.canada.ca/features) page
-|GC_NOTIFY_NEW_COMMUNITY_INSTANT_TEMPLATE | Reference to GC Notify template | See [GC Notify](https://notification.canada.ca/features) page
-|GC_NOTIFY_NEW_COMMUNITIES_DAILY_TEMPLATE | Reference to GC Notify template | See [GC Notify](https://notification.canada.ca/features) page
-|GC_NOTIFY_API_KEY_SECRET | Secret used in GC Notify implementation | See [GC Notify](https://notification.canada.ca/features) page
-|ENABLE_GC_NOTIFY_TRIAL_MODE | Toggle for trial account mode | true \|\| false
-|ENABLE_GC_NOTIFY | Toggle GC Notify feature | true \|\| false
-|TOGGLE_KEYCLOAK_AUTH | Toggle Keycloak implementation | true \|\| false
-|KEYCLOAK_CLIENT_SECRET | Secret used in Keycloak authorization | aVerySecureSecret
-|CONFIDENTIAL_PORT | Used in creation of Keycloak object | 0
-|AUTH_SERVER_URL | URL for Keycloak authorization server | https://...
-|REALM | Used in creation of Keycloak object | standard
-|SSL_REQUIRED | Used in creation of Keycloak object | external
-|RESOURCE | Used in creation of Keycloak object | abc-123
-|ENV_FILE | Path from root folder to required .env file | .env
+
+| ENV Key                                  | Description                                 | Example                                                       |
+| ---------------------------------------- | ------------------------------------------- | ------------------------------------------------------------- |
+| REACT_APP_API_PORT                       | API listens on this port                    | 5000                                                          |
+| REACT_APP_LOCAL_DEV                      | Toggle for URI paths in local environment   | true \|\| false                                               |
+| REACT_APP_API_REF                        | URI pointing to API location                | localhost \|\| http://...                                     |
+| API_VERSION                              | Used in setting path to API routes          | 1                                                             |
+| ENABLE_API_REQUEST_LOGS                  | Toggle for API logging                      | true \|\| false                                               |
+| FRONTEND_REF                             | URI pointing to frontend location           | localhost \|\| http://...                                     |
+| FRONTEND_PORT                            | Port used by frontend                       | 8080                                                          |
+| MONGO_REF                                | Name of MongoDB container name              | mongodb                                                       |
+| MONGO_PORT                               | Port used by MongoDB                        | 27017                                                         |
+| MONGO_ROOT_USERNAME                      | Used to log in to MongoDB CLI               | root                                                          |
+| MONGO_ROOT_PASSWORD                      | Used to log in to MongoDB CLI               | example                                                       |
+| MONGO_DB_USERNAME                        | Used when API connects to MongoDB           | db-root                                                       |
+| MONGO_DB_PASSWORD                        | Used when API connects to MongoDB           | db-example                                                    |
+| MONGO_DATABASE_NAME                      | Name of database                            | TheNeighbourhood                                              |
+| JWT_SECRET                               | Used to verify JWT tokens                   | aVerySecureSecret                                             |
+| JWT_REFRESH_SECRET                       | Used to verify refresh tokens               | aVerySecureSecret                                             |
+| JWT_TOKEN_EXPIRY                         | Time until authentication token expires     | 4h                                                            |
+| GC_NOTIFY_REGISTRATION_TEMPLATE          | Reference to GC Notify template             | See [GC Notify](https://notification.canada.ca/features) page |
+| GC_NOTIFY_NEW_COMMUNITY_INSTANT_TEMPLATE | Reference to GC Notify template             | See [GC Notify](https://notification.canada.ca/features) page |
+| GC_NOTIFY_NEW_COMMUNITIES_DAILY_TEMPLATE | Reference to GC Notify template             | See [GC Notify](https://notification.canada.ca/features) page |
+| GC_NOTIFY_API_KEY_SECRET                 | Secret used in GC Notify implementation     | See [GC Notify](https://notification.canada.ca/features) page |
+| ENABLE_GC_NOTIFY_TRIAL_MODE              | Toggle for trial account mode               | true \|\| false                                               |
+| ENABLE_GC_NOTIFY                         | Toggle GC Notify feature                    | true \|\| false                                               |
+| TOGGLE_KEYCLOAK_AUTH                     | Toggle Keycloak implementation              | true \|\| false                                               |
+| KEYCLOAK_CLIENT_SECRET                   | Secret used in Keycloak authorization       | aVerySecureSecret                                             |
+| CONFIDENTIAL_PORT                        | Used in creation of Keycloak object         | 0                                                             |
+| AUTH_SERVER_URL                          | URL for Keycloak authorization server       | https://...                                                   |
+| REALM                                    | Used in creation of Keycloak object         | standard                                                      |
+| SSL_REQUIRED                             | Used in creation of Keycloak object         | external                                                      |
+| RESOURCE                                 | Used in creation of Keycloak object         | abc-123                                                       |
+| ENV_FILE                                 | Path from root folder to required .env file | .env                                                          |
+
 
 ## Documentation
 

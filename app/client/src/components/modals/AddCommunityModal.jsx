@@ -331,14 +331,9 @@ const AddCommunityModal = (props) => {
                 }
                 onClick={registerCommunity}
               >
-                Submit
+                Create
               </LoadingButton>
-              <Button
-                variant="contained"
-                onClick={props.closeAddCommunityModal}
-              >
-                Cancel
-              </Button>
+              <Button onClick={props.closeAddCommunityModal}>Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>

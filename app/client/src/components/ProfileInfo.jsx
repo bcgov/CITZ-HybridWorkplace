@@ -22,14 +22,17 @@
 
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
+import { useParams } from "react-router-dom";
 import { getProfile } from "../redux/ducks/profileDuck";
 import PropTypes from "prop-types";
-import { Typography, Box, Stack, IconButton, Divider } from "@mui/material";
+import { Typography, Box, Stack, IconButton } from "@mui/material";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { openEditUserInfoModal } from "../redux/ducks/modalDuck";
 import EditUserInfoModal from "./modals/EditUserInfoModal";
 
 const ProfileInfo = (props) => {
+  let { username } = useParams();
+  const body2TextColor = "#999";
   useEffect(() => {
     props.getProfile(props.username);
   }, []);
@@ -37,7 +40,7 @@ const ProfileInfo = (props) => {
   const registeredOn = props.profile.registeredOn || "";
   const registrationDate = registeredOn.split(",")[0];
 
-  let name = props.profile.firstName || props.username;
+  let name = props.profile.firstName || username;
   if (props.profile.firstName && props.profile.lastName)
     name += ` ${props.profile.lastName}`;
 
@@ -50,32 +53,34 @@ const ProfileInfo = (props) => {
         <Stack direction="row" spacing={0.5} alignItems="center">
           <Typography
             variant="h5"
-            style={{ fontWeight: 600, color: "#313132" }}
+            sx={{ fontWeight: 600, color: "neutral.main" }}
           >
             {name || "No name to display."}
           </Typography>
-          <IconButton onClick={() => handleEditUserInfoClick(props.profile)}>
-            <EditRoundedIcon fontSize="small" />
-          </IconButton>
+          {props.username === username && (
+            <IconButton onClick={() => handleEditUserInfoClick(props.profile)}>
+              <EditRoundedIcon fontSize="small" />
+            </IconButton>
+          )}
           <EditUserInfoModal />
         </Stack>
 
-        <Typography variant="body2">
+        <Typography variant="body2" sx={{ color: body2TextColor }}>
           {props.profile.title || "No title to display"}
         </Typography>
-        <Typography variant="body2">
+        <Typography variant="body2" sx={{ color: body2TextColor }}>
           {props.profile.ministry || "No ministry to display"}
         </Typography>
         <Stack spacing={0.5}>
           <Typography
             variant="h6"
-            style={{ fontWeight: 600, color: "#313132" }}
+            sx={{ fontWeight: 600, color: "neutral.main" }}
           >
             Joined
           </Typography>
           <Typography
             variant="body2"
-            style={{ fontWeight: 600, color: "#999" }}
+            sx={{ fontWeight: 600, color: body2TextColor }}
           >
             {registrationDate || "No join date to display"}
           </Typography>
@@ -83,13 +88,13 @@ const ProfileInfo = (props) => {
         <Stack spacing={0.5}>
           <Typography
             variant="h6"
-            style={{ fontWeight: 600, color: "#313132" }}
+            sx={{ fontWeight: 600, color: "neutral.main" }}
           >
             Posts
           </Typography>
           <Typography
             variant="body2"
-            style={{ fontWeight: 600, color: "#999" }}
+            sx={{ fontWeight: 600, color: body2TextColor }}
           >
             {props.profile.postCount || 0}
           </Typography>
@@ -105,6 +110,7 @@ ProfileInfo.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
+  username: state.auth.user.username,
   profile: state.profile.user,
 });
 

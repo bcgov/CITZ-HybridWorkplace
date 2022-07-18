@@ -23,37 +23,25 @@ import { IconButton, Typography, Button } from "@mui/material";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 
 const JoinButton = (props) => {
-  const { community, communities } = props;
-
+  const { community } = props;
   useEffect(() => {
-    setIsInCommunity(isUserInCommunity(community.title));
-  }, [community, communities.usersCommunities]);
-
-  const isUserInCommunity = (communityName) => {
-    return (
-      communities.usersCommunities.find(
-        (element) => element.title === communityName
-      ) !== undefined
-    );
-  };
+    setIsInCommunity(community.userIsInCommunity);
+    return () => {};
+  }, [community]);
 
   const [isInCommunity, setIsInCommunity] = useState(
-    isUserInCommunity(community.title)
+    community.userIsInCommunity
   );
 
   const handleJoin = async () => {
-    setIsInCommunity(true);
     const successful = await props.joinCommunity(community.title);
-    if (successful === false) {
-      setIsInCommunity(false);
-    }
+    setIsInCommunity(successful);
   };
 
   const handleLeave = async () => {
-    setIsInCommunity(false);
     const successful = await props.leaveCommunity(community.title);
-    if (successful === false) {
-      setIsInCommunity(true);
+    if (successful) {
+      setIsInCommunity(false);
     }
   };
 
@@ -85,9 +73,7 @@ JoinButton.propTypes = {
   joinCommunity: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => ({
-  communities: state.communities,
-});
+const mapStateToProps = (state) => ({});
 
 const mapActionsToProps = {
   joinCommunity,

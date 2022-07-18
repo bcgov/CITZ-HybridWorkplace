@@ -90,6 +90,7 @@ const EditCommunityModal = (props) => {
       props.createError("Modifying a community requires at least one change.");
       return;
     }
+    console.log("changes", changes);
     const successful = await props.editCommunity(changes);
     if (successful) {
       navigate(`/community/${changes.title || changes.oldTitle}`);
@@ -173,14 +174,9 @@ const EditCommunityModal = (props) => {
                 }
                 onClick={onSubmit}
               >
-                Edit Community
+                Edit
               </Button>
-              <Button
-                variant="contained"
-                onClick={props.closeEditCommunityModal}
-              >
-                Cancel
-              </Button>
+              <Button onClick={props.closeEditCommunityModal}>Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>

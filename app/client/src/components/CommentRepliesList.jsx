@@ -5,7 +5,9 @@ import { getCommentReplies } from "../redux/ducks/postDuck";
 import Comment from "./Comment";
 import ArrowDropDownTwoToneIcon from "@mui/icons-material/ArrowDropDownTwoTone";
 import ArrowDropUpTwoToneIcon from "@mui/icons-material/ArrowDropUpTwoTone";
+import { useTheme } from "@emotion/react";
 export const CommentRepliesList = (props) => {
+  const theme = useTheme();
   const [showReplies, setShowReplies] = useState(false);
 
   const getReplies = async () => {
@@ -29,7 +31,11 @@ export const CommentRepliesList = (props) => {
               </Grid>
             ))}
           </Grid>
-          <Button variant="text" onClick={hideReplies}>
+          <Button
+            variant="text"
+            onClick={hideReplies}
+            sx={{ color: "button.main" }}
+          >
             <ArrowDropUpTwoToneIcon />
             Hide Replies
           </Button>
@@ -38,7 +44,11 @@ export const CommentRepliesList = (props) => {
         props.comment.hasReplies && (
           <Grid container justifyContent="flex-start">
             <Grid item>
-              <Button variant="text" onClick={getReplies}>
+              <Button
+                variant="text"
+                onClick={getReplies}
+                sx={{ color: "button.main" }}
+              >
                 <ArrowDropDownTwoToneIcon />
                 See Replies
               </Button>

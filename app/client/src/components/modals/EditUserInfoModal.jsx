@@ -22,13 +22,11 @@
 
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import PropTypes from "prop-types";
 import { closeEditUserInfoModal } from "../../redux/ducks/modalDuck";
 import {
   TextField,
   Dialog,
   DialogTitle,
-  Typography,
   DialogContent,
   Stack,
   InputLabel,
@@ -58,7 +56,6 @@ const EditUserInfoModal = (props) => {
       lastName,
       title,
       ministry,
-      bio: user.bio,
     };
 
     const successful = await props.editUserInfo(userChanges);
@@ -117,12 +114,7 @@ const EditUserInfoModal = (props) => {
               <Button variant="contained" onClick={saveEdits}>
                 Save
               </Button>
-              <Button
-                variant="contained"
-                onClick={props.closeEditUserInfoModal}
-              >
-                Cancel
-              </Button>
+              <Button onClick={props.closeEditUserInfoModal}>Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>
@@ -130,8 +122,6 @@ const EditUserInfoModal = (props) => {
     </Dialog>
   );
 };
-
-EditUserInfoModal.propTypes = {};
 
 const mapStateToProps = (state) => ({
   auth: state.auth,

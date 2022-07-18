@@ -17,6 +17,8 @@
 /**
  * Application entry point
  * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
+ * @author [Brandon Bouchard](brandonjbouchard@gmail.com)
+ * @author [Zach Bourque](zachbourque01@gmail)
  * @module
  */
 
@@ -31,10 +33,19 @@ import {
   Box,
   Button,
   Typography,
+  ListItemIcon,
+  ListItemText,
+  IconButton,
+  Menu,
+  MenuItem,
+  MenuList,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SettingsTwoToneIcon from "@mui/icons-material/SettingsTwoTone";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+import EditAttributesIcon from "@mui/icons-material/EditAttributes";
 
 import { connect } from "react-redux";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
@@ -51,33 +62,46 @@ import {
   joinCommunity,
   getUsersCommunities,
 } from "../redux/ducks/communityDuck";
+import LoadingPage from "./LoadingPage";
+import CommunityNotFoundPage from "./CommunityNotFoundPage";
 
 const CommunityPage = (props) => {
-  const { communities } = props;
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [communityFound, setCommunityFound] = useState(true);
+  // TODO: Add onClick and modals for moderator settings
+  // TODO: Get if user is moderator
 
   const { title } = useParams();
-
+  const { userIsModerator } = props.community;
   useEffect(() => {
-    props.getCommunityPosts(title);
-    props.getCommunity(title);
-    props.getUsersCommunities();
+    (async () => {
+      const successful = await props.getCommunity(title);
+      if (!successful) {
+        setLoading(false);
+        setCommunityFound(false);
+      }
+      await props.getCommunityPosts(title);
+      await props.getUsersCommunities();
+      setLoading(false);
+    })();
   }, []);
+
+  useEffect(() => {}, [props.community]);
+
+  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
 
   function useQuery() {
     const { search } = useLocation();
     return useMemo(() => new URLSearchParams(search), [search]);
   }
 
-  const isUserInCommunity = (communityName) => {
-    return (
-      communities.find((element) => element.title === communityName) !==
-      undefined
-    );
-  };
-
-  const [isInCommunity, setIsInCommunity] = useState(isUserInCommunity(title));
+  const [isInCommunity, setIsInCommunity] = useState(
+    props.community.userIsInCommunity
+  );
 
   const handleJoin = async () => {
     setIsInCommunity(true);
@@ -93,10 +117,22 @@ const CommunityPage = (props) => {
 
   const handleSettingsClick = () =>
     props.openEditCommunityModal(props.community);
-  const handleCommunityCreatorClick = (creator) =>
-    navigate(`/profile/${creator}`);
 
-  return (
+  const handleCommunityCreatorClick = (creator) => {
+    if (creator) navigate(`/profile/${creator}`);
+  };
+
+  const [showFlaggedPosts, setShowFlaggedPosts] = useState(false);
+
+  const handleShowFlaggedPosts = () => {
+    setShowFlaggedPosts(!showFlaggedPosts);
+  };
+
+  return loading ? (
+    <LoadingPage />
+  ) : !communityFound ? (
+    <CommunityNotFoundPage title={title} />
+  ) : (
     <Box sx={{ pb: 20 }}>
       <Grid container spacing={2}>
         <Grid item xs={8}>
@@ -118,7 +154,7 @@ const CommunityPage = (props) => {
                   variant="h5"
                   component="h5"
                   sx={{
-                    pl: "8em",
+                    pl: "9em",
                     fontWeight: 600,
                   }}
                 >
@@ -139,7 +175,13 @@ const CommunityPage = (props) => {
             />
           </Box>
           {props.posts.length > 0 ? (
-            <PostsList posts={props.posts} />
+            showFlaggedPosts === true ? (
+              <PostsList
+                posts={props.posts.filter((post) => post.flags.length > 0)}
+              />
+            ) : (
+              <PostsList posts={props.posts} />
+            )
           ) : (
             <Box sx={{ mt: 5 }}>
               <Typography
@@ -211,6 +253,7 @@ const CommunityPage = (props) => {
           </Box>
           <Box
             sx={{
+              backgroundColor: "card.main",
               borderBottomLeftRadius: "10px",
               borderBottomRightRadius: "10px",
               boxShadow: 1,
@@ -229,75 +272,139 @@ const CommunityPage = (props) => {
               >
                 Members of this community: {props.community.memberCount || 0}
               </Typography>
-              {props.community.creatorName && (
-                <Stack direction="row" spacing={0.5} justifyContent="center">
-                  <Typography
-                    sx={{
-                      fontWeight: "bold",
-                      color: "#0072A2",
-                    }}
-                  >
-                    {"Created by: "}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontWeight: "bold",
-                      color: "#0072A2",
-                      ":hover": {
-                        textDecoration: "underline",
-                        cursor: "pointer",
-                      },
-                    }}
-                    onClick={() =>
-                      handleCommunityCreatorClick(props.community.creatorName)
-                    }
-                  >
-                    {props.community.creatorName}
-                  </Typography>
-                </Stack>
-              )}
+              {props.community.moderators &&
+                props.community.moderators.length > 0 && (
+                  <>
+                    <Typography
+                      sx={{
+                        fontWeight: "bold",
+                        color: "#0072A2",
+                      }}
+                    >
+                      {"Moderated by: "}
+                    </Typography>
+                    <Box sx={{ flexWrap: "wrap" }}>
+                      {Object.keys(props.community.moderators).map((key) => (
+                        <Stack
+                          direction="row"
+                          spacing={0}
+                          sx={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                            pl: userIsModerator ? 1.5 : 0,
+                            py: 0.2,
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontWeight: "bold",
+                              ":hover": {
+                                textDecoration: "underline",
+                                cursor: "pointer",
+                              },
+                            }}
+                            onClick={() =>
+                              handleCommunityCreatorClick(
+                                props.community.moderators[key].username
+                              )
+                            }
+                          >
+                            {props.community.moderators[key].name}
+                          </Typography>
+                          {userIsModerator && (
+                            <>
+                              <IconButton
+                                aria-label="settings"
+                                onClick={handleMenuOpen}
+                                sx={{ py: 0.2 }}
+                              >
+                                <AdminPanelSettingsIcon />
+                              </IconButton>
+                              <Menu
+                                open={!!anchorEl}
+                                onClose={handleMenuClose}
+                                anchorEl={anchorEl}
+                              >
+                                <MenuList>
+                                  <MenuItem>
+                                    <ListItemIcon>
+                                      <EditAttributesIcon fontSize="small" />
+                                    </ListItemIcon>
+                                    <ListItemText>
+                                      Edit Permissions
+                                    </ListItemText>
+                                  </MenuItem>
+                                  <MenuItem>
+                                    <ListItemIcon>
+                                      <PersonRemoveIcon fontSize="small" />
+                                    </ListItemIcon>
+                                    <ListItemText>Demote</ListItemText>
+                                  </MenuItem>
+                                </MenuList>
+                              </Menu>
+                            </>
+                          )}
+                        </Stack>
+                      ))}
+                    </Box>
+                  </>
+                )}
               <Box>
                 <JoinButton community={props.community} />
               </Box>
+              {props.community.userIsModerator === true && (
+                <Box>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      backgroundColor: "error.main",
+                    }}
+                    onClick={handleShowFlaggedPosts}
+                  >
+                    {showFlaggedPosts ? "Show All Posts" : "Show Flagged Posts"}
+                  </Button>
+                </Box>
+              )}
             </Stack>
           </Box>
-          <Box
-            sx={{
-              borderRadius: "10px",
-              textAlign: "left",
-            }}
-          >
+          {props.community.rules && props.community.rules.length > 0 && (
             <Box
               sx={{
-                backgroundColor: "primary.main",
-                borderTopLeftRadius: "10px",
-                borderTopRightRadius: "10px",
-                pt: 1,
-                pb: 1,
-                mt: 3,
-                color: "white",
-                textAlign: "center",
+                borderRadius: "10px",
+                textAlign: "left",
               }}
             >
-              <Typography variant="h6">Community Rules</Typography>
-              <Typography sx={{ fontWeight: "bold", fontStyle: "italic" }}>
-                (coming soon)
-              </Typography>
-            </Box>
-            {props.community.rules &&
-              props.community.rules.map((obj) => (
+              <Box
+                sx={{
+                  backgroundColor: "primary.main",
+                  borderTopLeftRadius: "10px",
+                  borderTopRightRadius: "10px",
+                  pt: 1,
+                  pb: 1,
+                  mt: 3,
+                  color: "white",
+                  textAlign: "center",
+                }}
+              >
+                <Typography variant="h6">Community Rules</Typography>
+              </Box>
+              {props.community.rules.map((obj) => (
                 <Accordion key={props.community.rules.indexOf(obj)}>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    sx={{ backgroundColor: "card.main" }}
+                  >
                     <Typography>
                       {props.community.rules.indexOf(obj) + 1}. {obj.rule}
                     </Typography>
                   </AccordionSummary>
-                  <AccordionDetails>
+                  <AccordionDetails sx={{ backgroundColor: "card.main" }}>
                     <Typography>{obj.description}</Typography>
                   </AccordionDetails>
                 </Accordion>
               ))}
-          </Box>
+            </Box>
+          )}
         </Grid>
       </Grid>
       <EditCommunityModal />
@@ -313,10 +420,10 @@ CommunityPage.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  community: state.communities.item,
-  communities: state.communities.usersCommunities,
+  community:
+    state.communities.communities[state.communities.currentCommunityIndex] ??
+    {},
   posts: state.posts.items,
-  username: state.auth.user.username,
   userId: state.auth.user.id,
 });
 
