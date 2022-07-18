@@ -90,7 +90,6 @@ export const ResolveFlagsModal = ({
 
               <Box sx={{ height: 300 }}>
                 <DataGrid
-                  color="success"
                   sx={{ accentColor: "button.main" }}
                   columns={dataGridColumns}
                   rows={dataGridRows}
@@ -102,7 +101,10 @@ export const ResolveFlagsModal = ({
         )}
       </DialogContent>
       <DialogActions>
-        <Button variant="outlined" color="error" onClick={handleHidePostClick}>
+        <Button variant="text" color="button" onClick={closeResolveFlagsModal}>
+          Cancel
+        </Button>
+        <Button variant="contained" color="error" onClick={handleHidePostClick}>
           Hide Post
         </Button>
         <Button variant="contained" color="button" onClick={handleAbsolveClick}>
