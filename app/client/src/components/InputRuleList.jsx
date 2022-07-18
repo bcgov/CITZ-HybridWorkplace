@@ -1,11 +1,4 @@
-import {
-  Button,
-  Grid,
-  IconButton,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Button, Grid, Stack, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import Rule from "./RuleInput";
@@ -56,7 +49,6 @@ const InputRuleList = (props) => {
                   description={rule.description}
                   index={index}
                   setRule={setRule(index)}
-                  editRuleOpen={false}
                 />
               </Grid>
             ))}

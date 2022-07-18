@@ -57,7 +57,7 @@ const AddCommunityModal = (props) => {
   const [description, setDescription] = useState("");
   const [createCommunityLoading, setCreateCommunityLoading] = useState(false);
 
-  const [rules, setRules] = useState([{ rule: "", description: "" }]);
+  const [rules, setRules] = useState([]);
 
   const [tags, setTags] = useState([]);
   const [tag, setTag] = useState("");
@@ -235,8 +235,8 @@ const AddCommunityModal = (props) => {
                 disabled={
                   title.length < 3 ||
                   title.length > 25 ||
-                  description.length > 300 ||
-                  rules.length === 0
+                  description.length < 3 ||
+                  description.length > 300
                 }
                 onClick={registerCommunity}
               >

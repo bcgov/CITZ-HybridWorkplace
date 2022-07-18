@@ -29,20 +29,16 @@ import {
   InputLabel,
   Stack,
   TextField,
-  Typography,
 } from "@mui/material";
 import { closeEditCommunityModal } from "../../redux/ducks/modalDuck";
 import { createError } from "../../redux/ducks/alertDuck";
 import { editCommunity } from "../../redux/ducks/communityDuck";
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import MarkDownEditor from "../MarkDownEditor";
-import { Box } from "@mui/system";
 import InputRuleList from "../InputRuleList";
 
 const EditCommunityModal = (props) => {
-  const navigate = useNavigate();
   const [title, setTitle] = useState(props.community.title);
   const [description, setDescription] = useState(props.community.description);
   const [rules, setRules] = useState(props.community.rules);
@@ -142,13 +138,12 @@ const EditCommunityModal = (props) => {
               <Button
                 variant="contained"
                 disabled={
-                  (title &&
-                    description &&
-                    rules &&
-                    (title.length < 3 ||
-                      title.length > 25 ||
-                      description.length > 300)) ||
-                  !rules
+                  title &&
+                  description &&
+                  (title.length < 3 ||
+                    title.length > 25 ||
+                    description.length < 3 ||
+                    description.length > 300)
                 }
                 onClick={onSubmit}
               >

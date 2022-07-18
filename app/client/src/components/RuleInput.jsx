@@ -2,7 +2,6 @@ import {
   Button,
   Card,
   CardContent,
-  CardHeader,
   Grid,
   IconButton,
   InputLabel,
@@ -14,10 +13,9 @@ import React, { useState } from "react";
 import ClearTwoToneIcon from "@mui/icons-material/ClearTwoTone";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import { useEffect } from "react";
-import { Box } from "@mui/system";
 
 const RuleInput = (props) => {
-  const [showInput, setShowInput] = useState(props.editRuleOpen ?? false);
+  const [showInput, setShowInput] = useState(props.editRuleOpen ?? true);
   const [rule, setRule] = useState(props.rule);
   const [description, setDescription] = useState(props.description);
 
@@ -46,9 +44,13 @@ const RuleInput = (props) => {
   };
 
   const onCancel = () => {
-    setShowInput(false);
-    setRule(props.rule);
-    setDescription(props.description);
+    if (rule.length < 3 || rule.length > 50) {
+      deleteRule();
+    } else {
+      setShowInput(false);
+      setRule(props.rule);
+      setDescription(props.description);
+    }
   };
 
   const onSaveRule = () => {
@@ -130,7 +132,7 @@ const RuleInput = (props) => {
                   name="description"
                   onChange={onDescriptionChange}
                   helperText="Rule description must be less than 200 characters in length."
-                  error={!description || description.length >= 200}
+                  error={description.length >= 200}
                 ></TextField>
               </Stack>
             </Grid>
@@ -139,7 +141,15 @@ const RuleInput = (props) => {
               <Button variant="text" color="button" onClick={onCancel}>
                 Cancel
               </Button>
-              <Button variant="contained" color="button" onClick={onSaveRule}>
+              <Button
+                variant="contained"
+                color="button"
+                disabled={
+                  rule.length < 3 || rule.length > 50 || description > 200
+                }
+                sx={{ color: "white" }}
+                onClick={onSaveRule}
+              >
                 Save Rule
               </Button>
             </Grid>

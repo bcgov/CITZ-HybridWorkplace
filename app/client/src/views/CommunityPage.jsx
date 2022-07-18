@@ -51,7 +51,6 @@ import {
   joinCommunity,
   getUsersCommunities,
 } from "../redux/ducks/communityDuck";
-import MDEditor from "@uiw/react-md-editor";
 import MarkDownDisplay from "../components/MarkDownDisplay";
 
 const CommunityPage = (props) => {

@@ -28,6 +28,7 @@ import { openFlagCommunityModal } from "../redux/ducks/modalDuck";
 import { openDeleteCommunityModal } from "../redux/ducks/modalDuck";
 import JoinButton from "./JoinButton";
 import moment from "moment";
+import MarkDownDisplay from "./MarkDownDisplay";
 
 const Community = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -177,7 +178,7 @@ const Community = (props) => {
           }
         />
         <CardContent>
-          <Typography variant="body1">{community.description}</Typography>
+          <MarkDownDisplay message={props.community.description} />
         </CardContent>
         <CardActions>
           <Stack direction="row" spacing={1} width="0.95" alignItems="center">
