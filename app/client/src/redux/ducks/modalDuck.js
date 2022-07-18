@@ -214,7 +214,7 @@ const initialState = {
   editPost: { open: false, post: {} },
   editCommunity: { open: false, community: {} },
   editUserInfo: { open: false, userInfo: {} },
-  editUserBio: { open: false, userBio: {} },
+  editUserBio: { open: false, userBio: "" },
   editAvatar: { open: false, avatar: {} },
   editUserInterests: { open: false, interests: {} },
   editSettings: { open: false, userSettings: {} },

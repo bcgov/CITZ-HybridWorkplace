@@ -40,8 +40,8 @@ const EditUserBioModal = (props) => {
   const [bio, setBio] = useState(props.bio);
 
   useEffect(() => {
-    setBio(props.bio ?? "");
-  }, [props.bio]);
+    setBio(props.userBio ?? "");
+  }, [props.userBio]);
 
   const saveEdits = async () => {
     const userChanges = {
