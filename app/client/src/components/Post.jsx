@@ -35,8 +35,8 @@ import { getPost } from "../redux/ducks/postDuck";
 import { useNavigate } from "react-router-dom";
 import CommentIcon from "@mui/icons-material/Comment";
 import moment from "moment";
-import MDEditor from "@uiw/react-md-editor";
 import { getDarkModePreference } from "../theme";
+import MarkDownDisplay from "./MarkDownDisplay";
 import { editPost } from "../redux/ducks/postDuck";
 import { FlagRounded } from "@mui/icons-material";
 
@@ -304,12 +304,7 @@ const Post = (props) => {
           }}
         >
           <Box name="postMessage" data-color-mode={darkModePreference}>
-            <MDEditor.Markdown
-              source={message}
-              style={{
-                backgroundColor: darkModePreference === "dark" && "#121212",
-              }}
-            ></MDEditor.Markdown>
+            <MarkDownDisplay message={message} />
           </Box>
         </CardContent>
         <CardActions>

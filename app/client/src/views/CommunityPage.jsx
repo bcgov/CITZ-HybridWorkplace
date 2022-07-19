@@ -66,6 +66,7 @@ import {
   joinCommunity,
   getUsersCommunities,
 } from "../redux/ducks/communityDuck";
+import MarkDownDisplay from "../components/MarkDownDisplay";
 import LoadingPage from "./LoadingPage";
 import CommunityNotFoundPage from "./CommunityNotFoundPage";
 import { isUserModerator } from "../helperFunctions/communityHelpers";
@@ -285,9 +286,7 @@ const CommunityPage = (props) => {
             }}
           >
             <Stack spacing={1} sx={{ pb: 3 }}>
-              <Typography sx={{ mt: 1 }}>
-                {props.community.description}
-              </Typography>
+              <MarkDownDisplay message={props.community.description} />
               <Typography
                 sx={{
                   fontStyle: "italic",
