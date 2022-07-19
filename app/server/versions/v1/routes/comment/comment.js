@@ -121,6 +121,8 @@ router.post("/", async (req, res, next) => {
       creatorName: getFullName(user) || user.username,
       creatorUsername: user.username,
       post: post.id,
+      removed: false,
+      hidden: false,
       community: post.community,
       "upvotes.count": 0,
       "downvotes.count": 0,
@@ -202,7 +204,7 @@ router.post("/", async (req, res, next) => {
     await Post.updateOne({ _id: post.id }, { $inc: { commentCount: 1 } });
     req.log.addAction("Post's comment count updated.");
 
-    req.log.setResponse(201, "Success", null);
+    req.log.setResponse(201, "Success");
     return res.status(201).json(returnComment[0]);
   } catch (err) {
     res.locals.err = err;
@@ -264,10 +266,12 @@ router.get("/post/:id", async (req, res, next) => {
       ? {
           post: post.id,
           replyTo: null,
+          removed: false,
         }
       : {
           post: post.id,
           replyTo: null,
+          removed: false,
           $or: [{ hidden: false }, { hidden: null }],
         };
 
@@ -333,7 +337,7 @@ router.get("/post/:id", async (req, res, next) => {
     if (!comments) throw new ResponseError(404, "Comments not found.");
     req.log.addAction("Comments found.");
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json(comments);
   } catch (err) {
     res.locals.err = err;
@@ -434,7 +438,7 @@ router.get("/:id", async (req, res, next) => {
       { $sort: { votes: -1, _id: 1 } },
     ]).exec();
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json(returnComment);
   } catch (err) {
     res.locals.err = err;
@@ -532,6 +536,7 @@ router.patch("/:id", async (req, res, next) => {
           "creatorName",
           "creatorUsername",
           "post",
+          "removed",
           "community",
           "createdOn",
           "replyTo",
@@ -546,6 +551,7 @@ router.patch("/:id", async (req, res, next) => {
           "creatorUsername",
           "post",
           "hidden",
+          "removed",
           "community",
           "createdOn",
           "replyTo",
@@ -578,7 +584,7 @@ router.patch("/:id", async (req, res, next) => {
     await Comment.updateOne({ _id: req.params.id }, query).exec();
     req.log.addAction("Comment edited.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;
@@ -637,11 +643,26 @@ router.delete("/:id", async (req, res, next) => {
       );
     req.log.addAction("User is creator of comment.");
 
+    // TODO: Only allow admins to do this
+    // Permanently delete data
+    const purgeData = req.query.purge === "true";
+
     // Remove the replies to comment, then comment
     req.log.addAction("Removing replies to comment.");
-    await Comment.deleteMany({ replyTo: comment.id }).exec();
+    if (purgeData) {
+      await Comment.deleteMany({ replyTo: comment.id }).exec();
+    } else {
+      await Comment.updateMany(
+        { replyTo: comment.id },
+        { removed: true }
+      ).exec();
+    }
     req.log.addAction("Replies removed. Removing comment.");
-    await Comment.deleteOne({ _id: comment.id }).exec();
+    if (purgeData) {
+      await Comment.deleteOne({ _id: comment.id }).exec();
+    } else {
+      await Comment.updateOne({ _id: comment.id }, { removed: true }).exec();
+    }
     req.log.addAction("Comment removed.");
 
     // If replyTo comment has no more replies
@@ -670,7 +691,7 @@ router.delete("/:id", async (req, res, next) => {
     await Post.updateOne({ _id: comment.post }, { $inc: { commentCount: -1 } });
     req.log.addAction("Post's comment count updated.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;

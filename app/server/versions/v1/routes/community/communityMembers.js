@@ -281,7 +281,7 @@ no moderators have any permissions.`
     }
     req.log.addAction("Checked if user is moderator.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;

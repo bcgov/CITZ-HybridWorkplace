@@ -56,6 +56,9 @@
  *            - $ref: '#/components/schemas/User'
  *        createdOn:
  *          type: string
+ *        removed:
+ *          type: boolean
+ *          description: Community will be effectively removed in the view of a user if true.
  *        rules:
  *          type: array
  *          description: Community rules set by moderators.
@@ -125,6 +128,7 @@ const Community = new mongoose.Schema(
     creatorUsername: { type: String },
     createdOn: { type: String, required: true },
     latestActivity: { type: String },
+    removed: { type: Boolean },
     memberCount: { type: Number },
     members: [
       {

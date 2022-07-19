@@ -82,7 +82,7 @@ router.get("/", async (req, res, next) => {
     });
     req.log.addAction("User found.");
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json({
       username: user.username,
       email: user.email,
@@ -96,6 +96,7 @@ router.get("/", async (req, res, next) => {
       postCount: user.postCount,
       notificationFrequency: user.notificationFrequency,
       interests: user.interests,
+      communities: user.communities,
     });
   } catch (err) {
     res.locals.err = err;
@@ -395,7 +396,7 @@ router.get("/:username", async (req, res, next) => {
     });
     req.log.addAction("User found.");
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json({
       username: user.username,
       email: user.email,
@@ -409,6 +410,7 @@ router.get("/:username", async (req, res, next) => {
       postCount: user.postCount,
       notificationFrequency: user.notificationFrequency,
       interests: user.interests,
+      communities: user.communities,
     });
   } catch (err) {
     res.locals.err = err;

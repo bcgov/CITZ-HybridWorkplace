@@ -19,7 +19,6 @@
 
 const express = require("express");
 const moment = require("moment");
-const { ObjectId } = require("mongodb");
 const ResponseError = require("../../classes/responseError");
 
 const findSingleDocuments = require("../../functions/findSingleDocuments");
@@ -71,7 +70,7 @@ router.get("/:id", async (req, res, next) => {
 
     req.log.addAction("Finding replies.");
     const replies = await Comment.aggregate([
-      { $match: { replyTo: comment.id } },
+      { $match: { replyTo: comment.id, removed: false } },
       {
         $lookup: {
           from: "user",
@@ -125,6 +124,7 @@ router.get("/:id", async (req, res, next) => {
     ]).exec();
     req.log.addAction("Replies found.");
 
+    req.log.setResponse(200, "Success");
     return res.status(200).json(replies);
   } catch (err) {
     res.locals.err = err;
@@ -239,6 +239,7 @@ router.post("/:id", async (req, res, next) => {
     );
     req.log.addAction("Community engagement updated.");
 
+    req.log.setResponse(201, "Success");
     return res.status(201).json(reply);
   } catch (err) {
     res.locals.err = err;

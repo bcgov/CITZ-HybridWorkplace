@@ -47,6 +47,9 @@
  *        hidden:
  *          type: boolean
  *          description: Comment will be hidden if true.
+ *        removed:
+ *          type: boolean
+ *          description: Comment will be effectively removed in the view of a user if true.
  *        replyTo:
  *          type: string
  *          description: The id of the comment that is being replied to.
@@ -121,6 +124,7 @@ const Comment = new mongoose.Schema(
     community: { type: String, required: true },
     createdOn: { type: String, required: true },
     hidden: { type: Boolean },
+    removed: { type: Boolean },
     replyTo: { type: String },
     hasReplies: { type: Boolean },
     edits: [{ precursor: String, timeStamp: String }],
