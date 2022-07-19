@@ -38,29 +38,27 @@ export const hidePost = (postId) => async (dispatch, getState) => {
   }
 };
 
-export const absolvePost = (postId) => async (dispatch, getState) => {
+export const absolvePost = (postId, showPost) => async (dispatch, getState) => {
   let successful = true;
+  console.log("helo");
   try {
     const authState = getState().auth;
     const token = authState.accessToken;
-    const changes = { hidden: false, flags: [] };
+    const changes = { hidden: !showPost, flags: [] };
 
     if (!token) throw new Error(noTokenText);
 
-    // const response = await hwp_axios.patch(
-    //   `/api/post/${postId}`,
-    //   {
-    //     ...changes,
-    //   },
-    //   {
-    //     headers: {
-    //       authorization: `Bearer ${token}`,
-    //     },
-    //     params: {
-    //       dispatch,
-    //     },
-    //   }
-    // );
+    const response = await hwp_axios.delete(
+      `/api/post/flags/resolve/${postId}?show=${showPost}`,
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        params: {
+          dispatch,
+        },
+      }
+    );
 
     dispatch({
       type: EDIT_POST,
