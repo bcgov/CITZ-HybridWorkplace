@@ -75,6 +75,10 @@ const OPEN_EDIT_AVATAR_MODAL =
   "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_EDIT_AVATAR_MODAL";
 const CLOSE_EDIT_AVATAR_MODAL =
   "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_EDIT_AVATAR_MODAL";
+const OPEN_EDIT_MODERATOR_PERMISSIONS_MODAL =
+  "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_EDIT_MODERATOR_PERMISSIONS_MODAL";
+const CLOSE_EDIT_MODERATOR_PERMISSIONS_MODAL =
+  "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_EDIT_MODERATOR_PERMISSIONS_MODAL";
 
 /*************************ADD TYPES*************************/
 const OPEN_ADD_POST_MODAL = "CITZ-HYBRIDWORKPLACE/ADD/OPEN_ADD_POST_MODAL";
@@ -182,6 +186,16 @@ export const openEditAvatarModal = (avatar) => (dispatch) => {
 export const closeEditAvatarModal = () => (dispatch) =>
   dispatch({ type: CLOSE_EDIT_AVATAR_MODAL });
 
+export const openEditModeratorPermissionsModal = (moderator) => (dispatch) => {
+  dispatch({
+    type: OPEN_EDIT_MODERATOR_PERMISSIONS_MODAL,
+    payload: moderator,
+  });
+};
+
+export const closeEditModeratorPermissionsModal = () => (dispatch) =>
+  dispatch({ type: CLOSE_EDIT_MODERATOR_PERMISSIONS_MODAL });
+
 /*********************** ADD MODAL ACTIONS***********************/
 
 export const openAddPostModal = () => (dispatch) => {
@@ -218,6 +232,7 @@ const initialState = {
   editAvatar: { open: false, avatar: {} },
   editUserInterests: { open: false, interests: {} },
   editSettings: { open: false, userSettings: {} },
+  editModPermissions: { open: false, moderator: {} },
   // Add State
   addPost: { open: false },
   addCommunity: { open: false },
@@ -365,6 +380,15 @@ export function modalReducer(state = initialState, action) {
 
     case CLOSE_EDIT_COMMUNITY_MODAL:
       return initialState;
+
+    case CLOSE_EDIT_MODERATOR_PERMISSIONS_MODAL:
+      return initialState;
+
+    case OPEN_EDIT_MODERATOR_PERMISSIONS_MODAL:
+      return {
+        ...state,
+        editModPermissions: { open: true, moderator: action.payload },
+      };
 
     default:
       return state;
