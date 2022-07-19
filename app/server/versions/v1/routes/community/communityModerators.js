@@ -22,6 +22,7 @@
  */
 
 const express = require("express");
+const moment = require("moment");
 const ResponseError = require("../../classes/responseError");
 
 const findSingleDocuments = require("../../functions/findSingleDocuments");
@@ -35,6 +36,9 @@ const router = express.Router();
 
 const Community = require("../../models/community.model");
 const User = require("../../models/user.model");
+
+const communityUnKick = require("../../jobs/communityUnKick");
+const { agenda } = require("../../../../db");
 
 /**
  * @swagger
@@ -157,7 +161,7 @@ router.patch("/add/:title", async (req, res, next) => {
     )
       throw new ResponseError(
         403,
-        "Only moderator's with permission: 'set_moderators' can set moderators of community."
+        "Only moderators with permission: 'set_moderators' can set moderators of community."
       );
     req.log.addAction(
       "User is moderator of community with the right permissions."
@@ -264,7 +268,7 @@ router.delete("/remove/:title", async (req, res, next) => {
     )
       throw new ResponseError(
         403,
-        "Only moderator's with permission: 'set_moderators' can set moderators of community."
+        "Only moderators with permission: 'set_moderators' can set moderators of community."
       );
     req.log.addAction(
       "User is moderator of community with the right permissions."
@@ -399,7 +403,7 @@ router.patch("/permissions/:title", async (req, res, next) => {
     )
       throw new ResponseError(
         403,
-        "Only moderator's with permission: 'set_permissions' can set moderator permissions."
+        "Only moderators with permission: 'set_permissions' can set moderator permissions."
       );
     req.log.addAction(
       "User is moderator of community with the right permissions."
@@ -464,6 +468,169 @@ no moderators have any permissions.`
       }
     );
     req.log.addAction("Community moderators updated.");
+
+    req.log.setResponse(204, "Success", null);
+    return res.status(204).send("Success. No content to return.");
+  } catch (err) {
+    res.locals.err = err;
+  } finally {
+    next();
+  }
+});
+
+/**
+ * @swagger
+ * paths:
+ *  /api/community/moderators/kick/{title}:
+ *    post:
+ *      security:
+ *        - bearerAuth: []
+ *      tags:
+ *        - Community Moderators
+ *      summary: Kick user from community.
+ *      description: Field "period" can any one of ["hour", "day", "week", "forever"].
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                username:
+ *                  $ref: '#/components/schemas/User/properties/username'
+ *                period:
+ *                  $ref: '#/components/schemas/Community/properties/kicked/properties/period'
+ *      parameters:
+ *        - in: path
+ *          required: true
+ *          name: title
+ *          schema:
+ *            $ref: '#/components/schemas/Community/properties/title'
+ *      responses:
+ *        '404':
+ *          description: User not found. **||** <br>Community not found. **||** <br>Kick user username not found.
+ *        '403':
+ *          description: Only moderators can kick members. **||** <br>Field 'period' in request body is missing or invalid. **||** <br>Remove user as a moderator before kicking.
+ *        '204':
+ *          description: Success. No content to return.
+ *        '400':
+ *          description: Bad Request.
+ */
+
+// Kick user from community
+router.post("/kick/:title", async (req, res, next) => {
+  try {
+    req.log.addAction("Finding user and community.");
+    const { user, community } = await findSingleDocuments({
+      user: req.user.username,
+      community: req.params.title,
+    });
+    req.log.addAction("User and community found.");
+
+    req.log.addAction("Checking user is moderator of community.");
+    if (
+      !(await communityAuthorization.isCommunityModerator(
+        user.username,
+        community.title
+      ))
+    )
+      throw new ResponseError(403, "Only moderators can kick members.");
+    req.log.addAction("User is moderator of community.");
+
+    req.log.addAction("Finding kick user's user data.");
+    const kickUser = await User.findOne({ username: req.body.username });
+    if (!kickUser)
+      throw new ResponseError(404, "Kick user username not found.");
+    req.log.addAction("Kick user's user data found.");
+
+    req.log.addAction("Checking if kick user is moderator of community.");
+    if (
+      await communityAuthorization.isCommunityModerator(
+        kickUser.username,
+        community.title
+      )
+    )
+      throw new ResponseError(
+        403,
+        "Remove user as a moderator before kicking."
+      );
+    req.log.addAction("Kick user is not a moderator of community.");
+
+    req.log.addAction("Checking for 'period' value from request body.");
+    let periodEnd;
+    if (!req.body.period)
+      throw new ResponseError(
+        403,
+        "Field 'period' in request body is missing."
+      );
+
+    // Define job for kicking user
+    await communityUnKick(
+      agenda,
+      community.title,
+      kickUser.id,
+      kickUser.username
+    );
+    switch (req.body.period) {
+      // TODO: REMOVE TEST CASE
+      case "test":
+        periodEnd = moment()
+          .add(5, "minutes")
+          .format("MMMM Do YYYY, h:mm:ss a");
+        agenda.schedule("in 5 minutes", `communityUnKick-${kickUser.id}`);
+        break;
+      case "hour":
+        periodEnd = moment().add(1, "hour").format("MMMM Do YYYY, h:mm:ss a");
+        agenda.schedule("in 1 hour", `communityUnKick-${kickUser.id}`);
+        break;
+      case "day":
+        periodEnd = moment().add(1, "days").format("MMMM Do YYYY, h:mm:ss a");
+        agenda.schedule("in 1 day", `communityUnKick-${kickUser.id}`);
+        break;
+      case "week":
+        periodEnd = moment().add(1, "week").format("MMMM Do YYYY, h:mm:ss a");
+        agenda.schedule("in 1 week", `communityUnKick-${kickUser.id}`);
+        break;
+      case "forever":
+        periodEnd = "N/A";
+        break;
+      default:
+        throw new ResponseError(
+          403,
+          "Field 'period' in request body is missing or invalid."
+        );
+    }
+
+    req.log.addAction("Updating community kicked users.");
+    await Community.updateOne(
+      { title: community.title },
+      {
+        $push: {
+          kicked: { userId: kickUser.id, period: req.body.period, periodEnd },
+        },
+      }
+    );
+    req.log.addAction("Community kicked users updated.");
+
+    // Remove user from community
+    req.log.addAction("Removing user from community members.");
+    await Community.updateOne(
+      { title: community.title },
+      { $pull: { members: kickUser.id }, $inc: { memberCount: -1 } }
+    );
+    req.log.addAction("User removed from community members.");
+
+    // Remove community from user's communities array
+    req.log.addAction("Removing community from user's community list.");
+    await User.updateOne(
+      { username: kickUser.username },
+      {
+        $pull: {
+          communities: { community: community.title },
+        },
+      }
+    );
+    req.log.addAction("Community removed from user's community list.");
 
     req.log.setResponse(204, "Success", null);
     return res.status(204).send("Success. No content to return.");

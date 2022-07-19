@@ -82,8 +82,18 @@ router.get("/:title", async (req, res, next) => {
     if (req.query.count === "true")
       return res.status(200).json({ count: community.members.length || 0 });
 
+    req.log.addAction("Getting member data.");
+    const members = await User.aggregate([
+      {
+        $match: { "communities.community": community.title },
+      },
+      {
+        $project: { _id: 1, username: 1, firstName: 1, lastName: 1, avatar: 1 },
+      },
+    ]);
+
     req.log.setResponse(204, "Success", null);
-    return res.status(200).json(community.members);
+    return res.status(200).json(members);
   } catch (err) {
     res.locals.err = err;
   } finally {
@@ -111,7 +121,7 @@ router.get("/:title", async (req, res, next) => {
  *        '404':
  *          description: User not found. **||** <br>Community not found.
  *        '403':
- *          description: User is already a member of community.
+ *          description: User is already a member of community. **||** <br>You have been suspended from this community.
  *        '204':
  *          description: Success. No content to return.
  *        '400':
@@ -137,6 +147,19 @@ router.patch("/join/:title", async (req, res, next) => {
     )
       throw new ResponseError(403, "User is already a member of community.");
     req.log.addAction("User is not a member of community.");
+
+    req.log.addAction("Checking if user is kicked from community.");
+    if (
+      await Community.exists({
+        title: community.title,
+        "kicked.userId": user.id,
+      })
+    )
+      throw new ResponseError(
+        403,
+        "You have been suspended from this community."
+      );
+    req.log.addAction("User is not kicked from community.");
 
     req.log.addAction("Updating community members.");
     await Community.updateOne(
@@ -263,7 +286,7 @@ no moderators have any permissions.`
       req.log.addAction("Community moderators updated.");
     }
     req.log.addAction("Checked if user is moderator.");
-
+    
     req.log.addAction("Checking if user is last community member.");
     if (community.memberCount === 1) {
       req.log.addAction("User is last community member.");
