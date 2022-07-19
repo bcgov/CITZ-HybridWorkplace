@@ -1,6 +1,5 @@
 import { UserActions } from "../functions/UserActions";
 import puppeteer from "puppeteer";
-import { min } from "moment";
 
 jest.setTimeout(30000);
 
