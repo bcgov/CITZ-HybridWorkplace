@@ -1,22 +1,26 @@
 import {
   Box,
   Button,
+  ButtonGroup,
+  Checkbox,
   Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Divider,
+  FormControlLabel,
   Stack,
   Typography,
 } from "@mui/material";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { closeResolveFlagsModal } from "../../redux/ducks/modalDuck";
 import { absolvePost, hidePost } from "../../redux/ducks/moderatorDuck";
 import Post from "../Post";
 import { DataGrid } from "@mui/x-data-grid";
+import { CheckBox } from "@mui/icons-material";
 
 export const ResolveFlagsModal = ({
   post,
@@ -25,6 +29,7 @@ export const ResolveFlagsModal = ({
   hidePost,
   absolvePost,
 }) => {
+  const [hidePostIsChecked, setHidePostIsChecked] = useState(false);
   const getFlagRows = () => {
     let id = 0;
     const flagInstances = [];
@@ -59,7 +64,7 @@ export const ResolveFlagsModal = ({
   };
 
   const handleAbsolveClick = async () => {
-    const successful = await absolvePost(post._id);
+    const successful = await absolvePost(post._id, !hidePostIsChecked);
     if (successful) closeResolveFlagsModal();
   };
 
@@ -99,6 +104,26 @@ export const ResolveFlagsModal = ({
             </Stack>
           </Stack>
         )}
+        {post.hidden && (
+          <Stack
+            direction="row-reverse"
+            alignItems="flex-end"
+            justifyContent="flex-start"
+          >
+            <FormControlLabel
+              sx={{ margin: 0 }}
+              label="Keep post hidden"
+              control={
+                <Checkbox
+                  value={hidePostIsChecked}
+                  onChange={() => setHidePostIsChecked((prev) => !prev)}
+                  label="Hide Post"
+                  color="button"
+                />
+              }
+            />
+          </Stack>
+        )}
       </DialogContent>
       <DialogActions>
         <Button variant="text" color="button" onClick={closeResolveFlagsModal}>
@@ -107,7 +132,7 @@ export const ResolveFlagsModal = ({
         <Button variant="contained" color="error" onClick={handleHidePostClick}>
           Hide Post
         </Button>
-        <Button variant="contained" color="button" onClick={handleAbsolveClick}>
+        <Button variant="contained" onClick={handleAbsolveClick}>
           Absolve
         </Button>
       </DialogActions>
