@@ -95,7 +95,7 @@ const FlagPostModal = (props) => {
               >
                 Flag
               </Button>
-              <Button sx={{ ml: 1 }} onClick={props.closeFlagPostModal}>
+              <Button sx={{ ml: 1 }} onClick={props.closeFlagPostModal} color="button">
                 Cancel
               </Button>
             </Stack>

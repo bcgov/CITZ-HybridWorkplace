@@ -255,7 +255,7 @@ const EditAvatarModal = (props) => {
               <Button variant="contained" onClick={updateAvatar}>
                 Save
               </Button>
-              <Button variant="contained" onClick={props.closeEditAvatarModal}>
+              <Button variant="contained" onClick={props.closeEditAvatarModal} color="button">
                 Cancel
               </Button>
             </Stack>

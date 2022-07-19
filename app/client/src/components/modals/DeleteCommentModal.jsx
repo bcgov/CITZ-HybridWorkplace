@@ -68,7 +68,7 @@ const DeleteCommentModal = (props) => {
               >
                 Delete
               </Button>
-              <Button onClick={props.closeDeleteCommentModal}>Cancel</Button>
+              <Button onClick={props.closeDeleteCommentModal} color="button">Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>

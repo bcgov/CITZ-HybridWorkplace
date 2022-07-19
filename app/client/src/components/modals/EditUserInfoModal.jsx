@@ -114,7 +114,7 @@ const EditUserInfoModal = (props) => {
               <Button variant="contained" onClick={saveEdits}>
                 Save
               </Button>
-              <Button onClick={props.closeEditUserInfoModal}>Cancel</Button>
+              <Button onClick={props.closeEditUserInfoModal} color="button">Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>

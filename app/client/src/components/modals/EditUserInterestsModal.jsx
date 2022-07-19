@@ -121,7 +121,7 @@ const EditUserInterestsModal = (props) => {
               <Button variant="contained" onClick={saveEdits}>
                 Save
               </Button>
-              <Button onClick={props.closeEditUserInterestsModal}>
+              <Button onClick={props.closeEditUserInterestsModal} color="button">
                 Cancel
               </Button>
             </Stack>
