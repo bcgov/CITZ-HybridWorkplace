@@ -44,7 +44,12 @@ const RuleInput = (props) => {
   };
 
   const onCancel = () => {
-    if (rule.length < 3 || rule.length > 50) {
+    if (
+      rule.length < 3 ||
+      rule.length > 50 ||
+      !props.rule.rule ||
+      props.rule.rule === ""
+    ) {
       deleteRule();
     } else {
       setShowInput(false);
@@ -54,8 +59,12 @@ const RuleInput = (props) => {
   };
 
   const onSaveRule = () => {
-    setShowInput(false);
-    editRuleObject();
+    if (rule.length < 3 || rule.length > 50) {
+      deleteRule();
+    } else {
+      setShowInput(false);
+      editRuleObject();
+    }
   };
 
   return (
@@ -139,13 +148,15 @@ const RuleInput = (props) => {
 
             <Grid item>
               <Button variant="text" color="button" onClick={onCancel}>
-                Cancel
+                Discard Changes
               </Button>
               <Button
                 variant="contained"
                 color="button"
                 disabled={
-                  rule.length < 3 || rule.length > 50 || description > 200
+                  (rule.length > 0 && rule.length < 3) ||
+                  rule.length > 50 ||
+                  description > 200
                 }
                 sx={{ color: "white" }}
                 onClick={onSaveRule}
