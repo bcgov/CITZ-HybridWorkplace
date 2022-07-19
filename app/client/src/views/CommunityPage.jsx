@@ -68,6 +68,7 @@ import {
 } from "../redux/ducks/communityDuck";
 import LoadingPage from "./LoadingPage";
 import CommunityNotFoundPage from "./CommunityNotFoundPage";
+import { isUserModerator } from "../helperFunctions/communityHelpers";
 
 const CommunityPage = (props) => {
   const navigate = useNavigate();
@@ -136,6 +137,14 @@ const CommunityPage = (props) => {
     });
     props.openEditModeratorPermissionsModal(moderator);
   };
+
+  let modPermissions = [];
+  if (props.community.moderators)
+    Object.keys(props.community.moderators).forEach((key) => {
+      if (props.community.moderators[key].userId === props.userId) {
+        modPermissions = props.community.moderators[key].permissions;
+      }
+    });
 
   const [showFlaggedPosts, setShowFlaggedPosts] = useState(false);
 
@@ -341,20 +350,26 @@ const CommunityPage = (props) => {
                                 anchorEl={anchorEl}
                               >
                                 <MenuList>
-                                  <MenuItem
-                                    onClick={() =>
-                                      handleEditModeratorPermissionsClick(
-                                        props.community.moderators[key].username
-                                      )
-                                    }
-                                  >
-                                    <ListItemIcon>
-                                      <EditAttributesIcon fontSize="small" />
-                                    </ListItemIcon>
-                                    <ListItemText>
-                                      Edit Permissions
-                                    </ListItemText>
-                                  </MenuItem>
+                                  {modPermissions &&
+                                    modPermissions.includes(
+                                      "set_permissions"
+                                    ) && (
+                                      <MenuItem
+                                        onClick={() =>
+                                          handleEditModeratorPermissionsClick(
+                                            props.community.moderators[key]
+                                              .username
+                                          )
+                                        }
+                                      >
+                                        <ListItemIcon>
+                                          <EditAttributesIcon fontSize="small" />
+                                        </ListItemIcon>
+                                        <ListItemText>
+                                          Edit Permissions
+                                        </ListItemText>
+                                      </MenuItem>
+                                    )}
                                   <MenuItem>
                                     <ListItemIcon>
                                       <PersonRemoveIcon fontSize="small" />
