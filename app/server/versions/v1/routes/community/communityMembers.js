@@ -30,6 +30,8 @@ const {
 const router = express.Router();
 
 const Community = require("../../models/community.model");
+const Post = require("../../models/post.model");
+const Comment = require("../../models/comment.model");
 const User = require("../../models/user.model");
 
 /**
@@ -200,26 +202,6 @@ router.delete("/leave/:title", async (req, res, next) => {
     });
     req.log.addAction("User and community found.");
 
-    // Remove user from community
-    req.log.addAction("Removing user from community members.");
-    await Community.updateOne(
-      { title: community.title },
-      { $pull: { members: user.id }, $inc: { memberCount: -1 } }
-    );
-    req.log.addAction("User removed from community members.");
-
-    // Remove community from user's communities array
-    req.log.addAction("Removing community from user's community list.");
-    await User.updateOne(
-      { username: user.username },
-      {
-        $pull: {
-          communities: { community: community.title },
-        },
-      }
-    );
-    req.log.addAction("Community removed from user's community list.");
-
     // Check if user is community moderator
     req.log.addAction("Checking if user is a moderator.");
     if (
@@ -255,6 +237,7 @@ router.delete("/leave/:title", async (req, res, next) => {
 
       req.log.addAction("Checking for permission lockout situation.");
       if (
+        community.memberCount > 1 &&
         modsWSetPermissions === 1 &&
         moderatorPermissions.includes("set_permissions")
       )
@@ -281,7 +264,56 @@ no moderators have any permissions.`
     }
     req.log.addAction("Checked if user is moderator.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.addAction("Checking if user is last community member.");
+    if (community.memberCount === 1) {
+      req.log.addAction("User is last community member.");
+      // Remove community
+      req.log.addAction("Removing community.");
+      await Community.deleteOne({
+        title: req.params.title,
+      }).exec();
+      req.log.addAction("Community removed.");
+
+      // Remove reference to community from users
+      req.log.addAction("Removing community from user community lists.");
+      await User.updateMany(
+        { "communities.community": community.title },
+        { $pull: { communities: { community: community.title } } }
+      ).exec();
+      req.log.addAction("Community removed from user community lists.");
+
+      // Remove posts from community
+      req.log.addAction("Removing posts from community.");
+      await Post.deleteMany({ community: community.title }).exec();
+      req.log.addAction("Posts removed from community.");
+
+      // Remove comments from posts in community
+      req.log.addAction("Removing comments from community.");
+      await Comment.deleteMany({ community: community.title }).exec();
+      req.log.addAction("Comments removed from community.");
+    } else {
+      // Remove user from community
+      req.log.addAction("Removing user from community members.");
+      await Community.updateOne(
+        { title: community.title },
+        { $pull: { members: user.id }, $inc: { memberCount: -1 } }
+      );
+      req.log.addAction("User removed from community members.");
+
+      // Remove community from user's communities array
+      req.log.addAction("Removing community from user's community list.");
+      await User.updateOne(
+        { username: user.username },
+        {
+          $pull: {
+            communities: { community: community.title },
+          },
+        }
+      );
+      req.log.addAction("Community removed from user's community list.");
+    }
+
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;
