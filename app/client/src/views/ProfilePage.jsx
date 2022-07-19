@@ -68,6 +68,9 @@ import DeletePostModal from "../components/modals/DeletePostModal";
 
 const ProfilePage = (props) => {
   let { username } = useParams();
+  const bioWidth = "90ch";
+
+  const interestsWidth = 200;
 
   useEffect(() => {
     props.getProfile(username);
@@ -166,7 +169,7 @@ const ProfilePage = (props) => {
                 </IconButton>
               )}
             </Stack>
-            <Box sx={{ flexWrap: "wrap", width: 250 }}>
+            <Box sx={{ flexWrap: "wrap", maxWidth: interestsWidth }}>
               {props.profile.interests?.map((interest) => (
                 <Chip
                   label={interest}
@@ -201,12 +204,14 @@ const ProfilePage = (props) => {
                 About Me
               </Typography>
               {props.username === username && (
-                <IconButton onClick={() => handleEditBioClick(props.profile)}>
+                <IconButton
+                  onClick={() => handleEditBioClick(props.profile.bio)}
+                >
                   <EditRoundedIcon fontSize="small" />
                 </IconButton>
               )}
             </Stack>
-            <Typography variant="body1">
+            <Typography maxWidth={bioWidth} variant="body1">
               {props.profile.bio || "No bio to display"}
             </Typography>
           </Box>
@@ -267,7 +272,9 @@ ProfilePage.propTypes = {
 const mapStateToProps = (state) => ({
   username: state.auth.user.username,
   profile: state.profile.user,
-  communities: state.communities.usersCommunities,
+  communities: state.communities.communities.filter(
+    (comm) => comm.userIsInCommunity
+  ),
   posts: state.posts.userPosts,
 });
 

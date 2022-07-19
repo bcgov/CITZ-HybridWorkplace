@@ -709,6 +709,7 @@ export function postReducer(state = initialState, action) {
                 title: action.payload.title,
                 message: action.payload.message,
                 pinned: action.payload.pinned,
+                hidden: action.payload.hidden,
               }
             : post
         ),

@@ -77,12 +77,12 @@ const EditCommunityModal = (props) => {
 
   const onSubmit = async () => {
     const changes = makeChangesObject(title, description, rules);
-    if (!changes) return;
-
-    const successful = await props.editCommunity(
-      props.community.title,
-      changes
-    );
+    if (!changes) {
+      props.createError("Modifying a community requires at least one change.");
+      return;
+    }
+    console.log("changes", changes);
+    const successful = await props.editCommunity(changes);
     if (successful) {
       // To be uncommented when backend supports community title change
       //navigate(`/community/${newComm.title || props.community.title}`);
@@ -147,12 +147,9 @@ const EditCommunityModal = (props) => {
                 }
                 onClick={onSubmit}
               >
-                Edit Community
+                Edit
               </Button>
-              <Button
-                variant="contained"
-                onClick={props.closeEditCommunityModal}
-              >
+              <Button onClick={props.closeEditCommunityModal} color="button">
                 Cancel
               </Button>
             </Stack>

@@ -50,7 +50,7 @@ export const CommentReply = (props) => {
           </Button>
         </Grid>
         <Grid item>
-          <Button variant="contained" onClick={handleReply} color="button">
+          <Button variant="contained" onClick={handleReply}>
             Reply
           </Button>
         </Grid>

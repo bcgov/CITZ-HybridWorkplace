@@ -101,7 +101,9 @@ UsersCommunitiesList.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  communities: state.communities.usersCommunities,
+  communities: state.communities.communities.filter(
+    (comm) => comm.userIsInCommunity
+  ),
 });
 
 const mapActionsToProps = {

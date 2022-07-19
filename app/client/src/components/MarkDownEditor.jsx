@@ -10,12 +10,7 @@ const MarkDownEditor = (props) => {
   return (
     <Box data-color-mode={darkModePreference}>
       <Stack spacing={0.5}>
-        <InputLabel
-          htmlFor="message-input"
-          sx={{
-            color: props.error ? "rgb(244, 67, 54)" : "-moz-initial",
-          }}
-        >
+        <InputLabel htmlFor="message-input" error={props.error}>
           {props.label}
         </InputLabel>
         <Box

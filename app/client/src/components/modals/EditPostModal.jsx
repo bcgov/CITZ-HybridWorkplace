@@ -82,6 +82,7 @@ const EditPostModal = (props) => {
       title: title || props.post.title,
       message: message || props.post.message,
       pinned: props.post.pinned,
+      hidden: props.post.hidden,
     };
 
     const successful = await props.editPost(post);
@@ -133,11 +134,9 @@ const EditPostModal = (props) => {
                 onClick={registerPost}
                 disabled={messageError || titleError}
               >
-                Submit
+                Edit
               </Button>
-              <Button variant="contained" onClick={props.closeEditPostModal}>
-                Cancel
-              </Button>
+              <Button onClick={props.closeEditPostModal} color="button">Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>

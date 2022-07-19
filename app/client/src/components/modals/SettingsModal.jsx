@@ -115,7 +115,7 @@ const SettingsModal = (props) => {
                   {...item}
                   key={item.value}
                   control={
-                    <Radio value={item.value} size="medium" color="button" />
+                    <Radio value={item.value} size="medium" color="button"/>
                   }
                 />
               ))}
@@ -137,7 +137,6 @@ const SettingsModal = (props) => {
                 aria-labelledby="darkmode-preference-label"
                 value={darkModeValue}
                 onChange={handleDarkModeChange}
-                color="button"
               >
                 <MenuItem value={"light"}>Light</MenuItem>
                 <MenuItem value={"dark"}>Dark</MenuItem>
@@ -156,9 +155,7 @@ const SettingsModal = (props) => {
               >
                 Save
               </Button>
-              <Button variant="contained" onClick={props.closeSettingsModal}>
-                Close
-              </Button>
+              <Button onClick={props.closeSettingsModal} color="button">Close</Button>
             </Stack>
           </DialogActions>
         </Stack>
