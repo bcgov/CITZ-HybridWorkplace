@@ -50,8 +50,7 @@ const Post = (props) => {
 
   let { id } = useParams();
 
-  // TODO: Get if user is moderator
-  const isModerator = false;
+  let isModerator = props.isModerator || false;
 
   const navigate = useNavigate();
 

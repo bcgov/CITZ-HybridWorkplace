@@ -204,7 +204,7 @@ const CommunityPage = (props) => {
                 posts={props.posts.filter((post) => post.flags.length > 0)}
               />
             ) : (
-              <PostsList posts={props.posts} />
+              <PostsList posts={props.posts} isModerator={userIsModerator} />
             )
           ) : (
             <Box sx={{ mt: 5 }}>
