@@ -48,7 +48,7 @@ const FlagPostModal = (props) => {
     "Misinformation",
     "Against Community Rules",
   ];
-  const [flag, setFlag] = useState("");
+  const [flag, setFlag] = useState(" ");
 
   const handleFlagChange = (event) => setFlag(event.target.value);
 
@@ -70,11 +70,13 @@ const FlagPostModal = (props) => {
       <DialogContent>
         <Stack spacing={1}>
           <Stack spacing={0.5}>
-            <InputLabel id="demo-simple-select-standard-label">Flag</InputLabel>
+
             <Select
               id="demo-simple-select-standard"
               value={flag}
+              variant="outlined"
               onChange={handleFlagChange}
+              renderValue={value => value === " " ? <div style={{opacity: 0.7}}>Reason for flagging</div> : value}
             >
               {flags.map((element) => (
                 <MenuItem value={element} key={element}>
@@ -89,14 +91,11 @@ const FlagPostModal = (props) => {
                 onClick={handleFlagPost}
                 variant="contained"
                 color="error"
+                disabled={flag === " "}
               >
-                Flag Post
+                Flag
               </Button>
-              <Button
-                sx={{ ml: 1 }}
-                variant="contained"
-                onClick={props.closeFlagPostModal}
-              >
+              <Button sx={{ ml: 1 }} onClick={props.closeFlagPostModal} color="button">
                 Cancel
               </Button>
             </Stack>

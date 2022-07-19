@@ -38,6 +38,7 @@ import moment from "moment";
 import MDEditor from "@uiw/react-md-editor";
 import { getDarkModePreference } from "../theme";
 import { editPost } from "../redux/ducks/postDuck";
+import { FlagRounded } from "@mui/icons-material";
 
 const Post = (props) => {
   const maxTitleLength = 45;
@@ -231,6 +232,14 @@ const Post = (props) => {
                   {props.post.pinned && (
                     <Tooltip title={<Typography>Pinned Post</Typography>} arrow>
                       <PushPinIcon />
+                    </Tooltip>
+                  )}
+                  {props.post.flags.length > 0 && (
+                    <Tooltip
+                      title={<Typography>Flagged Post</Typography>}
+                      arrow
+                    >
+                      <FlagRounded />
                     </Tooltip>
                   )}
                   <Typography

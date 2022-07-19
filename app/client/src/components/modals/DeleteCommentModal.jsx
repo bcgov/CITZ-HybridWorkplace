@@ -66,14 +66,9 @@ const DeleteCommentModal = (props) => {
                 variant="contained"
                 color="error"
               >
-                Delete Comment
+                Delete
               </Button>
-              <Button
-                variant="contained"
-                onClick={props.closeDeleteCommentModal}
-              >
-                Cancel
-              </Button>
+              <Button onClick={props.closeDeleteCommentModal} color="button">Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>

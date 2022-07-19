@@ -121,10 +121,7 @@ router.post("/:id", async (req, res, next) => {
 
     req.log.addAction("Checking flag query is valid.");
     if (!flags.includes(req.query.flag))
-      throw new ResponseError(
-        403,
-        "Invalid flag. Use one of [Inappropriate, Hate, Harassment or Bullying, Spam, Misinformation, Against Community Rules]"
-      );
+      throw new ResponseError(403, `Invalid flag. Use one of ${flags}`);
 
     // If flag isn't set on post
     req.log.addAction("Checking if flag is set on post.");
@@ -140,7 +137,7 @@ router.post("/:id", async (req, res, next) => {
         { _id: post.id },
         {
           $push: {
-            flags: { flag: req.query.flag, flaggedBy: [user.id] },
+            flags: { flag: req.query.flag, flaggedBy: [user.username] },
           },
         }
       );
@@ -152,7 +149,7 @@ router.post("/:id", async (req, res, next) => {
           _id: post.id,
           flags: { $elemMatch: { flag: req.query.flag } },
         },
-        { $addToSet: { "flags.$.flaggedBy": [user.id] } }
+        { $addToSet: { "flags.$.flaggedBy": [user.username] } }
       );
     }
 
@@ -217,7 +214,7 @@ router.delete("/:id", async (req, res, next) => {
       !(await Post.exists({
         _id: post.id,
         "flags.flag": req.query.flag,
-        "flags.flaggedBy": user.id,
+        "flags.flaggedBy": user.username,
       }))
     )
       throw new ResponseError(
@@ -233,7 +230,7 @@ router.delete("/:id", async (req, res, next) => {
         _id: post.id,
         flags: { $elemMatch: { flag: req.query.flag } },
       },
-      { $pull: { "flags.$.flaggedBy": user.id } }
+      { $pull: { "flags.$.flaggedBy": user.username } }
     );
     req.log.addAction("User removed from flaggedBy.");
 

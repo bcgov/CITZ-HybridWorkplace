@@ -40,8 +40,8 @@ const EditUserBioModal = (props) => {
   const [bio, setBio] = useState(props.bio);
 
   useEffect(() => {
-    setBio(props.bio ?? "");
-  }, [props.bio]);
+    setBio(props.userBio ?? "");
+  }, [props.userBio]);
 
   const saveEdits = async () => {
     const userChanges = {
@@ -81,9 +81,7 @@ const EditUserBioModal = (props) => {
               <Button variant="contained" onClick={saveEdits}>
                 Save
               </Button>
-              <Button variant="contained" onClick={props.closeEditUserBioModal}>
-                Cancel
-              </Button>
+              <Button onClick={props.closeEditUserBioModal} color="button">Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>

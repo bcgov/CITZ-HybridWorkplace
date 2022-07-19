@@ -83,11 +83,17 @@ const AddPostModal = (props) => {
 
     const successful = await props.createPost(post);
     if (successful === true) {
-      setTitle("");
-      setMessage("");
-      setCommunity("");
       props.closeAddPostModal();
+      resetInput();
     }
+  };
+
+  const resetInput = () => {
+    setTitle("");
+    setMessage("");
+    setCommunity(props.communityName ?? "");
+    setTitleError(false);
+    setMessageError(false);
   };
 
   const onTitleChange = (event) => {
@@ -113,18 +119,16 @@ const AddPostModal = (props) => {
       <DialogContent>
         <Stack spacing={1}>
           <Stack spacing={0.5}>
-            <InputLabel htmlFor="add-post-title">Title</InputLabel>
+            <InputLabel htmlFor="add-post-title" error={titleError}>
+              Title
+            </InputLabel>
             <TextField
               id="add-post-title"
               onChange={onTitleChange}
               name="title"
               placeholder="Title"
               value={title}
-              error={
-                title === "" || (title.length >= 3 && title.length <= 50)
-                  ? false
-                  : true
-              }
+              error={titleError}
               helperText="Title must be 3-50 characters in length."
               required
               fullWidth
@@ -163,19 +167,17 @@ const AddPostModal = (props) => {
               <Button
                 variant="contained"
                 disabled={
-                  title.length < 3 ||
-                  title.length > 50 ||
-                  message.length < 3 ||
-                  message.length > 40000 ||
-                  !community
+                  titleError ||
+                  messageError ||
+                  !community ||
+                  title === "" ||
+                  message === ""
                 }
                 onClick={registerPost}
               >
-                Submit
+                Post
               </Button>
-              <Button variant="contained" onClick={props.closeAddPostModal}>
-                Cancel
-              </Button>
+              <Button onClick={props.closeAddPostModal} color="button">Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>
@@ -190,7 +192,9 @@ AddPostModal.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  communities: state.communities.usersCommunities,
+  communities: state.communities.communities.filter(
+    (comm) => comm.userIsInCommunity
+  ),
   auth: state.auth,
   open: state.modal.addPost.open,
 });

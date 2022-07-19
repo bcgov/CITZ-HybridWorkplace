@@ -101,7 +101,7 @@
  *                type: array
  *                description: Users that have flagged the comment.
  *                items:
- *                  - $ref: '#/components/schemas/User'
+ *                  type: string
  *      required:
  *        - message
  *        - creator
@@ -147,8 +147,7 @@ const Comment = new mongoose.Schema(
         flag: String,
         flaggedBy: [
           {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+            type: String,
           },
         ],
       },

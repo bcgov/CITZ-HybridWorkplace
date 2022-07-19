@@ -70,7 +70,7 @@ const ProfilePage = (props) => {
   let { username } = useParams();
   const bioWidth = "90ch";
 
-const interestsWidth = 200
+  const interestsWidth = 200;
 
   useEffect(() => {
     props.getProfile(username);
@@ -204,7 +204,9 @@ const interestsWidth = 200
                 About Me
               </Typography>
               {props.username === username && (
-                <IconButton onClick={() => handleEditBioClick(props.profile)}>
+                <IconButton
+                  onClick={() => handleEditBioClick(props.profile.bio)}
+                >
                   <EditRoundedIcon fontSize="small" />
                 </IconButton>
               )}
@@ -270,7 +272,9 @@ ProfilePage.propTypes = {
 const mapStateToProps = (state) => ({
   username: state.auth.user.username,
   profile: state.profile.user,
-  communities: state.communities.usersCommunities,
+  communities: state.communities.communities.filter(
+    (comm) => comm.userIsInCommunity
+  ),
   posts: state.posts.userPosts,
 });
 

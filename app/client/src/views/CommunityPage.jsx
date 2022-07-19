@@ -17,6 +17,8 @@
 /**
  * Application entry point
  * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
+ * @author [Brandon Bouchard](brandonjbouchard@gmail.com)
+ * @author [Zach Bourque](zachbourque01@gmail)
  * @module
  */
 
@@ -53,31 +55,46 @@ import PostModal from "../components/modals/AddPostModal";
 import JoinButton from "../components/JoinButton";
 import { openEditCommunityModal } from "../redux/ducks/modalDuck";
 import EditCommunityModal from "../components/modals/EditCommunityModal";
-import { openAddPostModal } from "../redux/ducks/modalDuck";
+import EditModPermsModal from "../components/modals/EditModPermsModal";
+import {
+  openAddPostModal,
+  openEditModeratorPermissionsModal,
+} from "../redux/ducks/modalDuck";
 import {
   getCommunityPosts,
   getCommunity,
   joinCommunity,
   getUsersCommunities,
 } from "../redux/ducks/communityDuck";
+import LoadingPage from "./LoadingPage";
+import CommunityNotFoundPage from "./CommunityNotFoundPage";
+import { isUserModerator } from "../helperFunctions/communityHelpers";
 
 const CommunityPage = (props) => {
-  const { communities } = props;
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-
+  const [loading, setLoading] = useState(true);
+  const [communityFound, setCommunityFound] = useState(true);
   // TODO: Add onClick and modals for moderator settings
   // TODO: Get if user is moderator
-  const isModerator = false;
 
   const { title } = useParams();
-
+  const { userIsModerator } = props.community;
   useEffect(() => {
-    props.getCommunityPosts(title);
-    props.getCommunity(title);
-    props.getUsersCommunities();
+    (async () => {
+      const successful = await props.getCommunity(title);
+      if (!successful) {
+        setLoading(false);
+        setCommunityFound(false);
+      }
+      await props.getCommunityPosts(title);
+      await props.getUsersCommunities();
+      setLoading(false);
+    })();
   }, []);
+
+  useEffect(() => {}, [props.community]);
 
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
@@ -87,14 +104,9 @@ const CommunityPage = (props) => {
     return useMemo(() => new URLSearchParams(search), [search]);
   }
 
-  const isUserInCommunity = (communityName) => {
-    return (
-      communities.find((element) => element.title === communityName) !==
-      undefined
-    );
-  };
-
-  const [isInCommunity, setIsInCommunity] = useState(isUserInCommunity(title));
+  const [isInCommunity, setIsInCommunity] = useState(
+    props.community.userIsInCommunity
+  );
 
   const handleJoin = async () => {
     setIsInCommunity(true);
@@ -110,11 +122,41 @@ const CommunityPage = (props) => {
 
   const handleSettingsClick = () =>
     props.openEditCommunityModal(props.community);
+
   const handleCommunityCreatorClick = (creator) => {
     if (creator) navigate(`/profile/${creator}`);
   };
 
-  return (
+  const handleEditModeratorPermissionsClick = (username) => {
+    handleMenuClose();
+    let moderator = {};
+    Object.keys(props.community.moderators).forEach((key) => {
+      if (props.community.moderators[key].username === username) {
+        moderator = props.community.moderators[key];
+      }
+    });
+    props.openEditModeratorPermissionsModal(moderator);
+  };
+
+  let modPermissions = [];
+  if (props.community.moderators)
+    Object.keys(props.community.moderators).forEach((key) => {
+      if (props.community.moderators[key].userId === props.userId) {
+        modPermissions = props.community.moderators[key].permissions;
+      }
+    });
+
+  const [showFlaggedPosts, setShowFlaggedPosts] = useState(false);
+
+  const handleShowFlaggedPosts = () => {
+    setShowFlaggedPosts(!showFlaggedPosts);
+  };
+
+  return loading ? (
+    <LoadingPage />
+  ) : !communityFound ? (
+    <CommunityNotFoundPage title={title} />
+  ) : (
     <Box sx={{ pb: 20 }}>
       <Grid container spacing={2}>
         <Grid item xs={8}>
@@ -157,7 +199,13 @@ const CommunityPage = (props) => {
             />
           </Box>
           {props.posts.length > 0 ? (
-            <PostsList posts={props.posts} />
+            showFlaggedPosts === true ? (
+              <PostsList
+                posts={props.posts.filter((post) => post.flags.length > 0)}
+              />
+            ) : (
+              <PostsList posts={props.posts} />
+            )
           ) : (
             <Box sx={{ mt: 5 }}>
               <Typography
@@ -267,7 +315,7 @@ const CommunityPage = (props) => {
                           sx={{
                             justifyContent: "center",
                             alignItems: "center",
-                            pl: isModerator ? 1.5 : 0,
+                            pl: userIsModerator ? 1.5 : 0,
                             py: 0.2,
                           }}
                         >
@@ -287,7 +335,7 @@ const CommunityPage = (props) => {
                           >
                             {props.community.moderators[key].name}
                           </Typography>
-                          {isModerator && (
+                          {userIsModerator && (
                             <>
                               <IconButton
                                 aria-label="settings"
@@ -302,14 +350,26 @@ const CommunityPage = (props) => {
                                 anchorEl={anchorEl}
                               >
                                 <MenuList>
-                                  <MenuItem>
-                                    <ListItemIcon>
-                                      <EditAttributesIcon fontSize="small" />
-                                    </ListItemIcon>
-                                    <ListItemText>
-                                      Edit Permissions
-                                    </ListItemText>
-                                  </MenuItem>
+                                  {modPermissions &&
+                                    modPermissions.includes(
+                                      "set_permissions"
+                                    ) && (
+                                      <MenuItem
+                                        onClick={() =>
+                                          handleEditModeratorPermissionsClick(
+                                            props.community.moderators[key]
+                                              .username
+                                          )
+                                        }
+                                      >
+                                        <ListItemIcon>
+                                          <EditAttributesIcon fontSize="small" />
+                                        </ListItemIcon>
+                                        <ListItemText>
+                                          Edit Permissions
+                                        </ListItemText>
+                                      </MenuItem>
+                                    )}
                                   <MenuItem>
                                     <ListItemIcon>
                                       <PersonRemoveIcon fontSize="small" />
@@ -328,6 +388,19 @@ const CommunityPage = (props) => {
               <Box>
                 <JoinButton community={props.community} />
               </Box>
+              {props.community.userIsModerator === true && (
+                <Box>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      backgroundColor: "error.main",
+                    }}
+                    onClick={handleShowFlaggedPosts}
+                  >
+                    {showFlaggedPosts ? "Show All Posts" : "Show Flagged Posts"}
+                  </Button>
+                </Box>
+              )}
             </Stack>
           </Box>
           {props.community.rules && props.community.rules.length > 0 && (
@@ -371,6 +444,7 @@ const CommunityPage = (props) => {
         </Grid>
       </Grid>
       <EditCommunityModal />
+      <EditModPermsModal community={props.community.title} />
     </Box>
   );
 };
@@ -383,10 +457,10 @@ CommunityPage.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  community: state.communities.item,
-  communities: state.communities.usersCommunities,
+  community:
+    state.communities.communities[state.communities.currentCommunityIndex] ??
+    {},
   posts: state.posts.items,
-  username: state.auth.user.username,
   userId: state.auth.user.id,
 });
 
@@ -395,6 +469,7 @@ const mapDispatchToProps = {
   getUsersCommunities,
   getCommunity,
   openEditCommunityModal,
+  openEditModeratorPermissionsModal,
   openAddPostModal,
   joinCommunity,
 };

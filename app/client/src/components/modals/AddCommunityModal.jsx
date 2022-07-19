@@ -225,7 +225,7 @@ const AddCommunityModal = (props) => {
                         helperText="Rule description must be less than 200 characters in length."
                         sx={{ width: 0.95 }}
                       />
-                      <Button onClick={addRule} sx={{ width: 0.1 }}>
+                      <Button onClick={addRule} sx={{ width: 0.1 }} color="button">
                         <Typography>Add</Typography>
                         <AddIcon />
                       </Button>
@@ -307,7 +307,7 @@ const AddCommunityModal = (props) => {
                         helperText="Tag description must be less than 200 characters in length."
                         sx={{ width: 0.95 }}
                       />
-                      <Button onClick={addTag} sx={{ width: 0.1 }}>
+                      <Button onClick={addTag} sx={{ width: 0.1 }} color="button"> 
                         <Typography>Add</Typography>
                         <AddIcon />
                       </Button>
@@ -331,14 +331,9 @@ const AddCommunityModal = (props) => {
                 }
                 onClick={registerCommunity}
               >
-                Submit
+                Create
               </LoadingButton>
-              <Button
-                variant="contained"
-                onClick={props.closeAddCommunityModal}
-              >
-                Cancel
-              </Button>
+              <Button onClick={props.closeAddCommunityModal} color="button">Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>
