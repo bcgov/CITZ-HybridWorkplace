@@ -204,7 +204,9 @@ const ProfilePage = (props) => {
                 About Me
               </Typography>
               {props.username === username && (
-                <IconButton onClick={() => handleEditBioClick(props.profile)}>
+                <IconButton
+                  onClick={() => handleEditBioClick(props.profile.bio)}
+                >
                   <EditRoundedIcon fontSize="small" />
                 </IconButton>
               )}

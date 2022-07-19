@@ -77,7 +77,7 @@ const DeleteCommunityModal = (props) => {
           >
             Delete
           </Button>
-          <Button onClick={props.closeDeleteCommunityModal}>Cancel</Button>
+          <Button onClick={props.closeDeleteCommunityModal} color="button">Cancel</Button>
         </Stack>
       </DialogActions>
     </Dialog>

@@ -40,6 +40,8 @@ const LEAVE_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/LEAVE_COMMUNITY";
 const DELETE_COMMUNITY = "CITZ-HYBRIDWORKPLACE/COMMUNITY/DELETE_COMMUNITY";
 const GET_COMMUNITY_POSTS =
   "CITZ-HYBRIDWORKPLACE/COMMUNITY/GET_COMMUNITY_POSTS";
+const EDIT_COMMUNITY_MODERATOR_PERMISSIONS =
+  "CITZ-HYBRIDWORKPLACE/COMMUNITY/EDIT_COMMUNITY_MODERATOR_PERMISSIONS";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
@@ -357,6 +359,41 @@ export const editCommunity = (newCommunity) => async (dispatch, getState) => {
   }
 };
 
+export const editCommunityModeratorPermissions =
+  (moderator) => async (dispatch, getState) => {
+    let successful = true;
+    try {
+      const authState = getState().auth;
+      const token = authState.accessToken;
+      if (!token) throw new Error(noTokenText);
+
+      const response = await hwp_axios.patch(
+        `/api/community/moderators/permissions/${moderator.community}`,
+        {
+          ...moderator,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          params: {
+            dispatch,
+          },
+        }
+      );
+
+      dispatch({
+        type: EDIT_COMMUNITY_MODERATOR_PERMISSIONS,
+        payload: moderator,
+      });
+    } catch (err) {
+      console.error(err);
+      successful = false;
+    } finally {
+      return successful;
+    }
+  };
+
 const initialState = {
   currentCommunityIndex: -1,
   communities: [],
@@ -456,6 +493,22 @@ export function communityReducer(state = initialState, action) {
           (item) => item.title !== action.payload
         ),
       };
+    case EDIT_COMMUNITY_MODERATOR_PERMISSIONS:
+      return (() => {
+        const newState = { ...state };
+        //Assigning currentCommunity to be a reference of the community object in the array
+        const commIndex = newState.communities.findIndex(
+          (comm) => comm.title === action.payload.community
+        );
+        const modIndex = newState.communities[commIndex].moderators.findIndex(
+          (mod) => mod.username === action.payload.username
+        );
+        newState.communities[commIndex].moderators[modIndex].permissions =
+          action.payload.permissions ??
+          newState.communities[commIndex].moderators[modIndex].permissions;
+
+        return newState;
+      })();
     default:
       return state;
   }

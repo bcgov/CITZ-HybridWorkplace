@@ -136,7 +136,7 @@ const EditPostModal = (props) => {
               >
                 Edit
               </Button>
-              <Button onClick={props.closeEditPostModal}>Cancel</Button>
+              <Button onClick={props.closeEditPostModal} color="button">Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>

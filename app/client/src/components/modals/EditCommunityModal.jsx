@@ -175,7 +175,7 @@ const EditCommunityModal = (props) => {
               >
                 Edit
               </Button>
-              <Button onClick={props.closeEditCommunityModal}>Cancel</Button>
+              <Button onClick={props.closeEditCommunityModal} color="button">Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>

@@ -95,7 +95,7 @@ const FlagCommentModal = (props) => {
               >
                 Flag
               </Button>
-              <Button onClick={props.closeFlagCommentModal}>Cancel</Button>
+              <Button onClick={props.closeFlagCommentModal} color="button">Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>

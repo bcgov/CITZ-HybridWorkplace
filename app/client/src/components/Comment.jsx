@@ -187,6 +187,7 @@ export const Comment = (props) => {
             }}
           >
             <CardHeader
+              sx={{ backgroundColor: "card.main" }}
               title={
                 <Stack
                   spacing={0.5}
