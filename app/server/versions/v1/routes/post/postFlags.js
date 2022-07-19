@@ -19,8 +19,12 @@
 
 const express = require("express");
 const ResponseError = require("../../classes/responseError");
+
 const findSingleDocuments = require("../../functions/findSingleDocuments");
 const getOptions = require("../../functions/getOptions");
+const {
+  communityAuthorization,
+} = require("../../functions/auth/communityAuthorization");
 
 const router = express.Router();
 
@@ -235,6 +239,80 @@ router.delete("/:id", async (req, res, next) => {
     req.log.addAction("User removed from flaggedBy.");
 
     req.log.setResponse(204, "Success", null);
+    return res.status(204).send("Success. No content to return.");
+  } catch (err) {
+    res.locals.err = err;
+  } finally {
+    next();
+  }
+});
+
+/**
+ * @swagger
+ * paths:
+ *  /api/post/flags/resolve/{id}:
+ *    delete:
+ *      security:
+ *        - bearerAuth: []
+ *      tags:
+ *        - Post Flags
+ *      summary: Resolve all flags on post by post id.
+ *      description: Optional query 'show=true' will show the post if it's hidden.
+ *      parameters:
+ *        - in: path
+ *          required: true
+ *          name: id
+ *          schema:
+ *            $ref: '#/components/schemas/Post/properties/id'
+ *        - in: query
+ *          required: false
+ *          name: show
+ *      responses:
+ *        '404':
+ *          description: User not found. **||** <br>Post not found.
+ *        '403':
+ *          description: Not allowed to resolve flags unless you are a moderator of community.
+ *        '204':
+ *          description: Success. No content to return.
+ *        '400':
+ *          description: Bad Request.
+ */
+
+// Resolve all flags on post by post id
+router.delete("/resolve/:id", async (req, res, next) => {
+  try {
+    req.log.addAction("Finding user and post.");
+    const { user, post } = await findSingleDocuments({
+      user: req.user.username,
+      post: req.params.id,
+    });
+    req.log.addAction("User and post found.");
+
+    req.log.addAction(
+      `Checking if user is moderator of community (${post.community}).`
+    );
+    const isModerator = await communityAuthorization.isCommunityModerator(
+      user.username,
+      post.community
+    );
+
+    if (!isModerator)
+      throw new ResponseError(
+        403,
+        `Not allowed to resolve flags unless you are a moderator of ${post.community} community.`
+      );
+
+    if (req.query.show === "true") {
+      req.log.addAction("Resolving flags and setting hidden to false.");
+      await Post.updateOne({ _id: post.id }, { flags: [], hidden: false });
+      req.log.addAction("Flags resolved.");
+    } else {
+      req.log.addAction("Resolving flags.");
+      await Post.updateOne({ _id: post.id }, { flags: [] });
+      req.log.addAction("Flags resolved.");
+    }
+
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;
