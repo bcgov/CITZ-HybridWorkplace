@@ -55,7 +55,11 @@ import PostModal from "../components/modals/AddPostModal";
 import JoinButton from "../components/JoinButton";
 import { openEditCommunityModal } from "../redux/ducks/modalDuck";
 import EditCommunityModal from "../components/modals/EditCommunityModal";
-import { openAddPostModal } from "../redux/ducks/modalDuck";
+import EditModPermsModal from "../components/modals/EditModPermsModal";
+import {
+  openAddPostModal,
+  openEditModeratorPermissionsModal,
+} from "../redux/ducks/modalDuck";
 import {
   getCommunityPosts,
   getCommunity,
@@ -120,6 +124,17 @@ const CommunityPage = (props) => {
 
   const handleCommunityCreatorClick = (creator) => {
     if (creator) navigate(`/profile/${creator}`);
+  };
+
+  const handleEditModeratorPermissionsClick = (username) => {
+    handleMenuClose();
+    let moderator = {};
+    Object.keys(props.community.moderators).forEach((key) => {
+      if (props.community.moderators[key].username === username) {
+        moderator = props.community.moderators[key];
+      }
+    });
+    props.openEditModeratorPermissionsModal(moderator);
   };
 
   const [showFlaggedPosts, setShowFlaggedPosts] = useState(false);
@@ -326,7 +341,13 @@ const CommunityPage = (props) => {
                                 anchorEl={anchorEl}
                               >
                                 <MenuList>
-                                  <MenuItem>
+                                  <MenuItem
+                                    onClick={() =>
+                                      handleEditModeratorPermissionsClick(
+                                        props.community.moderators[key].username
+                                      )
+                                    }
+                                  >
                                     <ListItemIcon>
                                       <EditAttributesIcon fontSize="small" />
                                     </ListItemIcon>
@@ -408,6 +429,7 @@ const CommunityPage = (props) => {
         </Grid>
       </Grid>
       <EditCommunityModal />
+      <EditModPermsModal community={props.community.title} />
     </Box>
   );
 };
@@ -432,6 +454,7 @@ const mapDispatchToProps = {
   getUsersCommunities,
   getCommunity,
   openEditCommunityModal,
+  openEditModeratorPermissionsModal,
   openAddPostModal,
   joinCommunity,
 };
