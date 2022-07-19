@@ -177,7 +177,7 @@ const AddPostModal = (props) => {
               >
                 Post
               </Button>
-              <Button onClick={props.closeAddPostModal}>Cancel</Button>
+              <Button onClick={props.closeAddPostModal} color="button">Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>

@@ -35,15 +35,19 @@ import {
   Stack,
   DialogActions,
   Button,
+  InputLabel,
 } from "@mui/material";
 import { useEffect } from "react";
 import { editUserInterests } from "../../redux/ducks/profileDuck";
+import { Box } from "@mui/system";
 
 const EditUserInterestsModal = (props) => {
-  const [interests, setInterests] = useState(props.interests.interests);
+  const [interests, setInterests] = useState(props.profile.interests);
+  const [interestInput, setInterestInput] = useState("");
+  const [inputError, setInputError] = useState(false);
 
   useEffect(() => {
-    setInterests(props.interests ?? []);
+    setInterests(props.profile.interests);
   }, [props.interests]);
 
   const saveEdits = async () => {
@@ -56,7 +60,22 @@ const EditUserInterestsModal = (props) => {
       props.closeEditUserInterestsModal();
     }
   };
+  const handleChipDelete = (index) => {
+    setInterests((prev) => prev.filter((item, i) => i !== index));
+  };
 
+  const handleTagSubmit = (e) => {
+    e.preventDefault();
+    const input = e.target.TagInput.value
+    if (input.length < 3) {
+      setInputError(true)
+      return
+    } 
+    setInterests((prev) => [...prev, e.target.TagInput.value]);
+    setInterestInput("");
+    setInputError(false)
+    console.log(e.target.TagInput.value);
+  };
   return (
     <Dialog
       open={props.open}
@@ -67,44 +86,42 @@ const EditUserInterestsModal = (props) => {
       <DialogTitle fontWeight={600}>Edit User Info.</DialogTitle>
       <DialogContent data-color-mode="light">
         <Stack spacing={1}>
-          <Stack spacing={0.5}>
-            <Autocomplete
-              multiple
-              id="user-interests"
-              defaultValue={props.profile.interests?.map(
-                (interest) => interest
-              )}
-              options={props.profile.interests}
-              freeSolo
-              renderTags={(value, getTagProps) => {
-                setInterests(value);
-                return value.map((option, index) => {
-                  return (
-                    <Chip
-                      variant="outlined"
-                      label={option}
-                      {...getTagProps({ index })}
-                    />
-                  );
-                });
+          <form onSubmit={handleTagSubmit}>
+            <InputLabel htmlFor="tag-input" error={inputError}>Interests</InputLabel>
+            <TextField
+            sx={{pt: 0}}
+              name="TagInput"
+              id="tag-input"
+              error={inputError}
+              size="small"
+              fullWidth
+              variant="filled"
+              helperText="Press ENTER to submit an interest. Interest length must be between 3-16 characters."
+              value={interestInput}
+              onChange={(e) => setInterestInput(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <Stack direction="row" spacing={0}>
+                    {interests?.map((data, index) => {
+                      return (
+                        <Chip
+                          label={data}
+                          onDelete={() => handleChipDelete(index)}
+                        ></Chip>
+                      );
+                    })}
+                  </Stack>
+                ),
               }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="filled"
-                  label="Interests"
-                  helperText="Press ENTER to submit an interest. Interest length must be between 3-16 characters."
-                />
-              )}
             />
-          </Stack>
+          </form>
 
           <DialogActions>
             <Stack spacing={1} direction="row-reverse" justifyContent="end">
               <Button variant="contained" onClick={saveEdits}>
                 Save
               </Button>
-              <Button onClick={props.closeEditUserInterestsModal}>
+              <Button onClick={props.closeEditUserInterestsModal} color="button">
                 Cancel
               </Button>
             </Stack>

@@ -71,7 +71,7 @@ const DeletePostModal = (props) => {
               >
                 Delete
               </Button>
-              <Button onClick={props.closeDeletePostModal}>Cancel</Button>
+              <Button onClick={props.closeDeletePostModal} color="button">Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>
