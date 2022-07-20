@@ -646,6 +646,7 @@ export function communityReducer(state = initialState, action) {
                 moderators: [
                   ...comm.moderators,
                   {
+                    name: action.payload.username,
                     username: action.payload.username,
                     permissions: action.payload.permissions,
                   },
