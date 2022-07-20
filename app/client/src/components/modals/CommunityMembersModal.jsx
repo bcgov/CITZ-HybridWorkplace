@@ -20,7 +20,7 @@
  * @module
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
@@ -28,29 +28,45 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Typography,
   Button,
   Stack,
   DialogActions,
   List,
   ListItem,
-  ListItemButton,
   ListItemText,
-  ListItemIcon,
   IconButton,
+  Typography,
 } from "@mui/material";
 
 import NoMeetingRoomRoundedIcon from "@mui/icons-material/NoMeetingRoomRounded";
-import { closeCommunityMembersModal } from "../../redux/ducks/modalDuck";
+import {
+  closeCommunityMembersModal,
+  openPromoteUserModal,
+} from "../../redux/ducks/modalDuck";
 import {
   getCommunityMembers,
   kickCommunityMember,
 } from "../../redux/ducks/communityDuck";
+import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
+import PromoteUserModal from "./PromoteUserModal";
+import AvatarIcon from "../AvatarIcon";
+import { useNavigate } from "react-router-dom";
 
 const CommunityMembersModal = (props) => {
+  const navigate = useNavigate();
+
   useEffect(() => {
     props.getCommunityMembers(props.community.title);
-  }, [props.open, props.community.membersList]);
+  }, [props.open]);
+
+  const handlePromoteClick = () => {
+    props.openPromoteUserModal();
+  };
+
+  const handleUserClick = (username) => {
+    if (username) navigate(`/profile/${username}`);
+    props.closeCommunityMembersModal();
+  };
 
   return (
     <Dialog
@@ -63,27 +79,105 @@ const CommunityMembersModal = (props) => {
       <DialogContent>
         <Stack spacing={1}>
           <List>
-            {props.community.membersList.map((member) => {
+            {props.community.membersList?.map((member) => {
               return props.isUserModerator ? (
                 <ListItem
                   key={member._id}
                   secondaryAction={
-                    <IconButton edge="end" aria-label="kick user">
-                      <NoMeetingRoomRoundedIcon />
-                    </IconButton>
+                    <Stack
+                      direction="row"
+                      sx={{ display: "flex", alignItems: "center" }}
+                    >
+                      <IconButton color="success" onClick={handlePromoteClick}>
+                        <AddCircleTwoToneIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton edge="end" aria-label="kick user">
+                        <NoMeetingRoomRoundedIcon />
+                      </IconButton>
+                    </Stack>
                   }
                 >
                   <ListItemText
                     primary={
-                      member.lastName
-                        ? `${member.firstName} ${member.lastName}`
-                        : member.firstName
+                      <Stack
+                        direction="row"
+                        spacing={1}
+                        sx={{ display: "flex", alignItems: "center" }}
+                      >
+                        <AvatarIcon
+                          type={member.avatar?.avatarType ?? ""}
+                          initials={
+                            member.lastName
+                              ? `${member.firstName?.charAt(
+                                  0
+                                )}${member.lastName?.charAt(0)}`
+                              : member.firstName?.charAt(0) ??
+                                member.username?.charAt(0) ??
+                                ""
+                          }
+                          image={member.avatar?.image ?? ""}
+                          gradient={member.avatar?.gradient ?? ""}
+                          colors={member.avatar?.colors ?? {}}
+                          size={30}
+                        />
+                        <Typography
+                          sx={{
+                            ":hover": {
+                              cursor: "pointer",
+                            },
+                          }}
+                          onClick={() => handleUserClick(member.username)}
+                        >
+                          {member.lastName
+                            ? `${member.firstName} ${member.lastName}`
+                            : member.firstName ?? member.username}
+                        </Typography>
+                        <PromoteUserModal username={member.username} />
+                      </Stack>
                     }
                   />
                 </ListItem>
               ) : (
-                <ListItem key={member._id} disablePadding>
-                  <ListItemText primary={member} />
+                <ListItem key={member._id}>
+                  <ListItemText
+                    primary={
+                      <Stack
+                        direction="row"
+                        spacing={1}
+                        sx={{ display: "flex", alignItems: "center" }}
+                      >
+                        <AvatarIcon
+                          type={member.avatar?.avatarType ?? ""}
+                          initials={
+                            member.lastName
+                              ? `${member.firstName?.charAt(
+                                  0
+                                )}${member.lastName?.charAt(0)}`
+                              : member.firstName?.charAt(0) ??
+                                member.username?.charAt(0) ??
+                                ""
+                          }
+                          image={member.avatar?.image ?? ""}
+                          gradient={member.avatar?.gradient ?? ""}
+                          colors={member.avatar?.colors ?? {}}
+                          size={30}
+                        />
+                        <Typography
+                          sx={{
+                            ":hover": {
+                              cursor: "pointer",
+                            },
+                          }}
+                          onClick={() => handleUserClick(member.username)}
+                        >
+                          {member.lastName
+                            ? `${member.firstName} ${member.lastName}`
+                            : member.firstName ?? member.username}
+                        </Typography>
+                        <PromoteUserModal username={member.username} />
+                      </Stack>
+                    }
+                  />
                 </ListItem>
               );
             })}
@@ -111,7 +205,6 @@ const CommunityMembersModal = (props) => {
 
 CommunityMembersModal.propTypes = {
   getCommunityMembers: PropTypes.func.isRequired,
-  members: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -125,6 +218,7 @@ const mapActionsToProps = {
   closeCommunityMembersModal,
   kickCommunityMember,
   getCommunityMembers,
+  openPromoteUserModal,
 };
 
 export default connect(

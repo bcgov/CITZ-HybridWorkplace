@@ -62,7 +62,6 @@ import {
   openEditCommunityModal,
   openEditModeratorPermissionsModal,
   openDemoteUserModal,
-  openPromoteUserModal,
 } from "../redux/ducks/modalDuck";
 import {
   getCommunityPosts,
@@ -76,8 +75,6 @@ import LoadingPage from "./LoadingPage";
 import CommunityNotFoundPage from "./CommunityNotFoundPage";
 import { isUserModerator } from "../helperFunctions/communityHelpers";
 import DemoteUserModal from "../components/modals/DemoteUserModal";
-import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
-import PromoteUserModal from "../components/modals/PromoteUserModal";
 import CommunityMembersModal from "../components/modals/CommunityMembersModal";
 
 const CommunityPage = (props) => {
@@ -419,11 +416,6 @@ const CommunityPage = (props) => {
                   </>
                 )}
               <Box>
-                <IconButton color="success" onClick={handlePromoteClick}>
-                  <AddCircleTwoToneIcon fontSize="small" />
-                </IconButton>
-              </Box>
-              <Box>
                 <JoinButton community={props.community} />
               </Box>
               {props.community.userIsModerator === true && (
@@ -484,7 +476,6 @@ const CommunityPage = (props) => {
       <EditCommunityModal />
       <EditModPermsModal community={props.community.title} />
       <DemoteUserModal />
-      <PromoteUserModal />
       <CommunityMembersModal
         isUserModerator={userIsModerator}
         community={props.community}
@@ -518,7 +509,6 @@ const mapDispatchToProps = {
   openCommunityMembersModal,
   joinCommunity,
   openDemoteUserModal,
-  openPromoteUserModal,
   getCommunityMembers,
 };
 

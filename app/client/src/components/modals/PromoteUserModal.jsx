@@ -19,7 +19,7 @@ export const PromoteUserModal = (props) => {
   "set_moderators";
   "set_permissions";
   "remove_community";
-  const [usernameInput, setUsernameInput] = useState("");
+  const [usernameInput, setUsernameInput] = useState(props.username ?? "");
 
   const [setModeratorsPerm, setSetModeratorsPerm] = useState(false);
   const [setPermissionsPerm, setSetPermissionsPerm] = useState(false);
