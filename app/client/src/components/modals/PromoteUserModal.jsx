@@ -64,6 +64,7 @@ export const PromoteUserModal = (props) => {
 
     const successful = await props.promoteUser(user);
     if (successful) {
+      props.closeCommunityMembersModal();
       props.closePromoteUserModal();
     }
   };
