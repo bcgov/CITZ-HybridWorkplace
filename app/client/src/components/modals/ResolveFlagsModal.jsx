@@ -133,7 +133,7 @@ export const ResolveFlagsModal = ({
           Hide Post
         </Button>
         <Button variant="contained" onClick={handleAbsolveClick}>
-          Absolve
+          Resolve
         </Button>
       </DialogActions>
     </Dialog>

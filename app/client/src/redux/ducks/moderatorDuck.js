@@ -40,7 +40,6 @@ export const hidePost = (postId) => async (dispatch, getState) => {
 
 export const absolvePost = (postId, showPost) => async (dispatch, getState) => {
   let successful = true;
-  console.log("helo");
   try {
     const authState = getState().auth;
     const token = authState.accessToken;
