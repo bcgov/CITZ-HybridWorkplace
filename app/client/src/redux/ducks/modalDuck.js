@@ -73,6 +73,10 @@ const OPEN_EDIT_COMMUNITY_MODAL =
   "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_EDIT_COMMUNITY_MODAL";
 const CLOSE_EDIT_COMMUNITY_MODAL =
   "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_EDIT_COMMUNITY_MODAL";
+const OPEN_COMMUNITY_MEMBERS_MODAL =
+  "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_COMMUNITY_MEMBERS_MODAL";
+const CLOSE_COMMUNITY_MEMBERS_MODAL =
+  "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_COMMUNITY_MEMBERS_MODAL";
 const OPEN_SETTINGS_MODAL = "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_SETTINGS_MODAL";
 const CLOSE_SETTINGS_MODAL = "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_SETTINGS_MODAL";
 const OPEN_EDIT_AVATAR_MODAL =
@@ -195,6 +199,13 @@ export const openEditCommunityModal = (community) => (dispatch) => {
 export const closeEditCommunityModal = () => (dispatch) =>
   dispatch({ type: CLOSE_EDIT_COMMUNITY_MODAL });
 
+export const openCommunityMembersModal = () => (dispatch) => {
+  dispatch({ type: OPEN_COMMUNITY_MEMBERS_MODAL });
+};
+
+export const closeCommunityMembersModal = () => (dispatch) =>
+  dispatch({ type: CLOSE_COMMUNITY_MEMBERS_MODAL });
+
 export const openSettingsModal = (userSettings) => (dispatch) =>
   dispatch({ type: OPEN_SETTINGS_MODAL, payload: userSettings });
 
@@ -246,8 +257,8 @@ export const closeDemoteUserModal = () => (dispatch) => {
   dispatch({ type: CLOSE_DEMOTE_USER_MODAL });
 };
 
-export const openPromoteUserModal = () => (dispatch) => {
-  dispatch({ type: OPEN_PROMOTE_USER_MODAL });
+export const openPromoteUserModal = (username) => (dispatch) => {
+  dispatch({ type: OPEN_PROMOTE_USER_MODAL, payload: username });
 };
 
 export const closePromoteUserModal = () => (dispatch) => {
@@ -275,12 +286,13 @@ const initialState = {
   editUserInterests: { open: false, interests: {} },
   editSettings: { open: false, userSettings: {} },
   editModPermissions: { open: false, moderator: {} },
+  editCommunityMembers: { open: false, members: [] },
   // Add State
   addPost: { open: false },
   addCommunity: { open: false },
   // Moderator State
   demoteUser: { open: false, username: "" },
-  promoteUser: { open: false },
+  promoteUser: { open: false, username: "" },
 };
 
 export function modalReducer(state = initialState, action) {
@@ -402,6 +414,9 @@ export function modalReducer(state = initialState, action) {
         editCommunity: { open: true, community: action.payload },
       };
 
+    case CLOSE_EDIT_COMMUNITY_MODAL:
+      return initialState;
+
     case OPEN_SETTINGS_MODAL:
       return {
         ...state,
@@ -432,9 +447,6 @@ export function modalReducer(state = initialState, action) {
         addCommunity: { open: false },
       };
 
-    case CLOSE_EDIT_COMMUNITY_MODAL:
-      return initialState;
-
     case CLOSE_EDIT_MODERATOR_PERMISSIONS_MODAL:
       return initialState;
 
@@ -457,10 +469,17 @@ export function modalReducer(state = initialState, action) {
     case OPEN_PROMOTE_USER_MODAL:
       return {
         ...state,
-        promoteUser: { open: true },
+        promoteUser: { open: true, username: action.payload },
       };
 
     case CLOSE_PROMOTE_USER_MODAL:
+    case OPEN_COMMUNITY_MEMBERS_MODAL:
+      return {
+        ...state,
+        editCommunityMembers: { open: true, members: action.payload },
+      };
+
+    case CLOSE_COMMUNITY_MEMBERS_MODAL:
       return initialState;
 
     default:

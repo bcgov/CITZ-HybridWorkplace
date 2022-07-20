@@ -11,15 +11,19 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { closePromoteUserModal } from "../../redux/ducks/modalDuck";
+import {
+  closePromoteUserModal,
+  closeCommunityMembersModal,
+} from "../../redux/ducks/modalDuck";
 import { promoteUser } from "../../redux/ducks/communityDuck";
 import WarningIcon from "@mui/icons-material/Warning";
 
 export const PromoteUserModal = (props) => {
-  "set_moderators";
-  "set_permissions";
-  "remove_community";
-  const [usernameInput, setUsernameInput] = useState("");
+  useEffect(() => {
+    setUsernameInput(props.username);
+  }, [props.username]);
+
+  const [usernameInput, setUsernameInput] = useState(props.username ?? "");
 
   const [setModeratorsPerm, setSetModeratorsPerm] = useState(false);
   const [setPermissionsPerm, setSetPermissionsPerm] = useState(false);
@@ -48,6 +52,7 @@ export const PromoteUserModal = (props) => {
     setUsernameInput(e.target.value);
   };
   const handleCancelClick = () => {
+    props.closeCommunityMembersModal();
     props.closePromoteUserModal();
   };
   const handlePromoteClick = async () => {
@@ -59,6 +64,7 @@ export const PromoteUserModal = (props) => {
 
     const successful = await props.promoteUser(user);
     if (successful) {
+      props.closeCommunityMembersModal();
       props.closePromoteUserModal();
     }
   };
@@ -153,11 +159,16 @@ export const PromoteUserModal = (props) => {
 
 const mapStateToProps = (state) => ({
   open: state.modal.promoteUser.open,
+  username: state.modal.promoteUser.username,
   communityTitle:
     state.communities.communities[state.communities.currentCommunityIndex]
       ?.title ?? "",
 });
 
-const mapDispatchToProps = { closePromoteUserModal, promoteUser };
+const mapDispatchToProps = {
+  closePromoteUserModal,
+  promoteUser,
+  closeCommunityMembersModal,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(PromoteUserModal);
