@@ -78,3 +78,5 @@ async function graceful() {
 
 process.on("SIGTERM", graceful);
 process.on("SIGINT", graceful);
+
+module.exports = { agenda };

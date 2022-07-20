@@ -299,7 +299,7 @@ router.get("/", async (req, res, next) => {
     } else if (req.query.orderBy === "engagement") {
       // Order by engagment (posts, comments, votes)
       req.log.addAction("Ordering by engagement. Finding communities.");
-      communities = findCommunitiesByEngagement(user);
+      communities = await findCommunitiesByEngagement(user);
     } else if (req.query.orderBy === "latestActivity") {
       // Order by latestActivity, only communities user is a member of.
       req.log.addAction("Ordering by latestActivity. Finding communities.");
@@ -365,7 +365,7 @@ router.get("/:title", async (req, res, next) => {
     });
     req.log.addAction("Community found.");
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json(community);
   } catch (err) {
     res.locals.err = err;
@@ -485,54 +485,22 @@ router.patch("/:title", async (req, res, next) => {
     if (query.removed && query.removed === false) {
       // Add community back to users community lists
       req.log.addAction("Adding community to users community lists.");
-      const users = await User.find({
-        "removedCommunities.community": community.title,
-      });
-      // eslint-disable-next-line no-restricted-syntax, guard-for-in
-      for (const userIndex in users) {
-        // eslint-disable-next-line no-await-in-loop
-        let indexOfCommunity = await User.aggregate([
-          { $match: { username: users[userIndex].username } },
-          {
-            $project: {
-              index: {
-                $indexOfArray: [
-                  "$removedCommunities.community",
-                  community.title,
-                ],
-              },
-            },
-          },
-        ]);
-        indexOfCommunity = indexOfCommunity[0].index;
-        // eslint-disable-next-line no-await-in-loop
-        await User.updateOne(
-          { username: users[userIndex].username },
-          {
-            $push: {
-              communities: {
-                community:
-                  users[userIndex].removedCommunities[indexOfCommunity]
-                    .community,
-                engagement:
-                  users[userIndex].removedCommunities[indexOfCommunity]
-                    .engagement,
-              },
-            },
-          }
-        );
-      }
-      // Remove community from users removedCommunities lists
-      req.log.addAction(
-        "Removing community from users removedCommunities lists."
-      );
       await User.updateMany(
-        { "removedCommunities.community": community.title },
-        { $pull: { removedCommunities: { community: community.title } } }
+        { communities: { $elemMatch: { community: community.title } } },
+        { "communities.$.removed": false }
       ).exec();
-      req.log.addAction(
-        "Community removed from users removedCommunities lists."
-      );
+
+      // Bring back posts
+      await Post.updateMany(
+        { community: community.title },
+        { removed: false }
+      ).exec();
+
+      // Bring back comments
+      await Comment.updateMany(
+        { community: community.title },
+        { removed: false }
+      ).exec();
     }
 
     req.log.addAction("Updating community.");
@@ -629,50 +597,18 @@ router.delete("/:title", async (req, res, next) => {
     }
     req.log.addAction("Community removed.");
 
-    if (!purgeData) {
-      // Add community in users removeCommunity list
-      req.log.addAction("Adding community to users removedCommunity lists.");
-      const users = await User.find({
-        "communities.community": community.title,
-      });
-      // eslint-disable-next-line no-restricted-syntax, guard-for-in
-      for (const userIndex in users) {
-        // eslint-disable-next-line no-await-in-loop
-        let indexOfCommunity = await User.aggregate([
-          { $match: { username: users[userIndex].username } },
-          {
-            $project: {
-              index: {
-                $indexOfArray: ["$communities.community", community.title],
-              },
-            },
-          },
-        ]);
-        indexOfCommunity = indexOfCommunity[0].index;
-        // eslint-disable-next-line no-await-in-loop
-        await User.updateOne(
-          { username: users[userIndex].username },
-          {
-            $push: {
-              removedCommunities: {
-                community:
-                  users[userIndex].communities[indexOfCommunity].community,
-                engagement:
-                  users[userIndex].communities[indexOfCommunity].engagement,
-              },
-            },
-          }
-        );
-      }
-      req.log.addAction("Community added to users removeCommunity lists.");
-    }
-
     // Remove reference to community from users
     req.log.addAction("Removing community from user community lists.");
-    await User.updateMany(
-      { "communities.community": community.title },
-      { $pull: { communities: { community: community.title } } }
-    ).exec();
+    if (purgeData) {
+      await User.deleteMany({
+        "communities.community": community.title,
+      }).exec();
+    } else {
+      await User.updateMany(
+        { communities: { $elemMatch: { community: community.title } } },
+        { "communities.$.removed": true }
+      ).exec();
+    }
     req.log.addAction("Community removed from user community lists.");
 
     // Remove posts from community

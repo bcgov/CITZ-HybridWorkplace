@@ -112,17 +112,9 @@
  *              engagement:
  *                type: number
  *                description: Engagement in the community based on posts, comments, votes.
- *        removedCommunities:
- *          type: array
- *          description: Communities User has joined.
- *          items:
- *            type: object
- *            properties:
- *              community:
- *                $ref: '#/components/schemas/Community/properties/title'
- *              engagement:
- *                type: number
- *                description: Engagement in the community based on posts, comments, votes.
+ *              removed:
+ *                type: boolean
+ *                description: If the community has been removed.
  *      required:
  *        - username
  *        - email
@@ -151,8 +143,7 @@ const User = new mongoose.Schema(
     },
     bio: { type: String },
     registeredOn: { type: String, required: true },
-    communities: [{ community: String, engagement: Number }],
-    removedCommunities: [{ community: String, engagement: Number }],
+    communities: [{ community: String, engagement: Number, removed: Boolean }],
     notificationFrequency: { type: String },
     isInMailingList: { type: Boolean },
     interests: [String],

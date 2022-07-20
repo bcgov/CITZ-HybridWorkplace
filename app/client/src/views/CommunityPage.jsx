@@ -55,15 +55,21 @@ import PostModal from "../components/modals/AddPostModal";
 import JoinButton from "../components/JoinButton";
 import { openEditCommunityModal } from "../redux/ducks/modalDuck";
 import EditCommunityModal from "../components/modals/EditCommunityModal";
-import { openAddPostModal } from "../redux/ducks/modalDuck";
+import EditModPermsModal from "../components/modals/EditModPermsModal";
+import {
+  openAddPostModal,
+  openEditModeratorPermissionsModal,
+} from "../redux/ducks/modalDuck";
 import {
   getCommunityPosts,
   getCommunity,
   joinCommunity,
   getUsersCommunities,
 } from "../redux/ducks/communityDuck";
+import MarkDownDisplay from "../components/MarkDownDisplay";
 import LoadingPage from "./LoadingPage";
 import CommunityNotFoundPage from "./CommunityNotFoundPage";
+import { isUserModerator } from "../helperFunctions/communityHelpers";
 
 const CommunityPage = (props) => {
   const navigate = useNavigate();
@@ -121,6 +127,25 @@ const CommunityPage = (props) => {
   const handleCommunityCreatorClick = (creator) => {
     if (creator) navigate(`/profile/${creator}`);
   };
+
+  const handleEditModeratorPermissionsClick = (username) => {
+    handleMenuClose();
+    let moderator = {};
+    Object.keys(props.community.moderators).forEach((key) => {
+      if (props.community.moderators[key].username === username) {
+        moderator = props.community.moderators[key];
+      }
+    });
+    props.openEditModeratorPermissionsModal(moderator);
+  };
+
+  let modPermissions = [];
+  if (props.community.moderators)
+    Object.keys(props.community.moderators).forEach((key) => {
+      if (props.community.moderators[key].userId === props.userId) {
+        modPermissions = props.community.moderators[key].permissions;
+      }
+    });
 
   const [showFlaggedPosts, setShowFlaggedPosts] = useState(false);
 
@@ -261,9 +286,7 @@ const CommunityPage = (props) => {
             }}
           >
             <Stack spacing={1} sx={{ pb: 3 }}>
-              <Typography sx={{ mt: 1 }}>
-                {props.community.description}
-              </Typography>
+              <MarkDownDisplay message={props.community.description} />
               <Typography
                 sx={{
                   fontStyle: "italic",
@@ -326,14 +349,26 @@ const CommunityPage = (props) => {
                                 anchorEl={anchorEl}
                               >
                                 <MenuList>
-                                  <MenuItem>
-                                    <ListItemIcon>
-                                      <EditAttributesIcon fontSize="small" />
-                                    </ListItemIcon>
-                                    <ListItemText>
-                                      Edit Permissions
-                                    </ListItemText>
-                                  </MenuItem>
+                                  {modPermissions &&
+                                    modPermissions.includes(
+                                      "set_permissions"
+                                    ) && (
+                                      <MenuItem
+                                        onClick={() =>
+                                          handleEditModeratorPermissionsClick(
+                                            props.community.moderators[key]
+                                              .username
+                                          )
+                                        }
+                                      >
+                                        <ListItemIcon>
+                                          <EditAttributesIcon fontSize="small" />
+                                        </ListItemIcon>
+                                        <ListItemText>
+                                          Edit Permissions
+                                        </ListItemText>
+                                      </MenuItem>
+                                    )}
                                   <MenuItem>
                                     <ListItemIcon>
                                       <PersonRemoveIcon fontSize="small" />
@@ -408,6 +443,7 @@ const CommunityPage = (props) => {
         </Grid>
       </Grid>
       <EditCommunityModal />
+      <EditModPermsModal community={props.community.title} />
     </Box>
   );
 };
@@ -432,6 +468,7 @@ const mapDispatchToProps = {
   getUsersCommunities,
   getCommunity,
   openEditCommunityModal,
+  openEditModeratorPermissionsModal,
   openAddPostModal,
   joinCommunity,
 };

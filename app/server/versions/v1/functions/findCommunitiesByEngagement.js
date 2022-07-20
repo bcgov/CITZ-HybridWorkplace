@@ -29,6 +29,7 @@ const Community = require("../models/community.model");
  */
 const findCommunitiesByEngagement = async (user) => {
   const communities = await Community.aggregate([
+    { $match: { removed: false } },
     {
       $lookup: {
         from: "user",
