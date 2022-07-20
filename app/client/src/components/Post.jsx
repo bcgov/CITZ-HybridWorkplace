@@ -240,23 +240,21 @@ const Post = (props) => {
                       <PushPinIcon />
                     </Tooltip>
                   )}
-                  {props.post.flags.length > 0 && (
+                  {props.post.flags.length > 0 && isModerator && (
                     <Tooltip
                       title={<Typography>Flagged Post</Typography>}
                       arrow
                     >
-                      {isModerator && (
-                        <IconButton
-                          onClick={handleFlagIconClick}
-                          sx={{ padding: 0 }}
-                        >
-                          <FlagRounded
-                            sx={{
-                              color: "#FF4500",
-                            }}
-                          />
-                        </IconButton>
-                      )}
+                      <IconButton
+                        onClick={handleFlagIconClick}
+                        sx={{ padding: 0 }}
+                      >
+                        <FlagRounded
+                          sx={{
+                            color: "#FF4500",
+                          }}
+                        />
+                      </IconButton>
                     </Tooltip>
                   )}
                   <Typography
