@@ -187,8 +187,8 @@ export const openEditCommunityModal = (community) => (dispatch) => {
 export const closeEditCommunityModal = () => (dispatch) =>
   dispatch({ type: CLOSE_EDIT_COMMUNITY_MODAL });
 
-export const openCommunityMembersModal = (community) => (dispatch) => {
-  dispatch({ type: OPEN_COMMUNITY_MEMBERS_MODAL, payload: community.members });
+export const openCommunityMembersModal = () => (dispatch) => {
+  dispatch({ type: OPEN_COMMUNITY_MEMBERS_MODAL });
 };
 
 export const closeCommunityMembersModal = () => (dispatch) =>

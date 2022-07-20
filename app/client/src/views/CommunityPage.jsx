@@ -69,6 +69,7 @@ import {
   getCommunity,
   joinCommunity,
   getUsersCommunities,
+  getCommunityMembers,
 } from "../redux/ducks/communityDuck";
 import MarkDownDisplay from "../components/MarkDownDisplay";
 import LoadingPage from "./LoadingPage";
@@ -305,9 +306,6 @@ const CommunityPage = (props) => {
           >
             <Stack spacing={1} sx={{ pb: 3 }}>
               <MarkDownDisplay message={props.community.description} />
-              <Typography sx={{ mt: 1 }}>
-                {props.community.description}
-              </Typography>
               <Button
                 variant="text"
                 disableRipple
@@ -489,7 +487,7 @@ const CommunityPage = (props) => {
       <PromoteUserModal />
       <CommunityMembersModal
         isUserModerator={userIsModerator}
-        members={props.community.members}
+        community={props.community}
       />
     </Box>
   );
@@ -521,6 +519,7 @@ const mapDispatchToProps = {
   joinCommunity,
   openDemoteUserModal,
   openPromoteUserModal,
+  getCommunityMembers,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CommunityPage);

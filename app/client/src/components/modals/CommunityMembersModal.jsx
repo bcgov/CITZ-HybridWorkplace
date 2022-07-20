@@ -42,9 +42,16 @@ import {
 
 import NoMeetingRoomRoundedIcon from "@mui/icons-material/NoMeetingRoomRounded";
 import { closeCommunityMembersModal } from "../../redux/ducks/modalDuck";
-import { kickCommunityMember } from "../../redux/ducks/communityDuck";
+import {
+  getCommunityMembers,
+  kickCommunityMember,
+} from "../../redux/ducks/communityDuck";
 
 const CommunityMembersModal = (props) => {
+  useEffect(() => {
+    props.getCommunityMembers(props.community.title);
+  }, [props.open, props.community.membersList]);
+
   return (
     <Dialog
       open={props.open}
@@ -56,8 +63,7 @@ const CommunityMembersModal = (props) => {
       <DialogContent>
         <Stack spacing={1}>
           <List>
-            {props.members.map((member) => {
-              console.log(member);
+            {props.community.membersList.map((member) => {
               return props.isUserModerator ? (
                 <ListItem
                   key={member._id}
@@ -67,11 +73,17 @@ const CommunityMembersModal = (props) => {
                     </IconButton>
                   }
                 >
-                  <ListItemText primary={member.firstName} />
+                  <ListItemText
+                    primary={
+                      member.lastName
+                        ? `${member.firstName} ${member.lastName}`
+                        : member.firstName
+                    }
+                  />
                 </ListItem>
               ) : (
                 <ListItem key={member._id} disablePadding>
-                  <ListItemText primary={member.firstName} />
+                  <ListItemText primary={member} />
                 </ListItem>
               );
             })}
@@ -98,20 +110,21 @@ const CommunityMembersModal = (props) => {
 };
 
 CommunityMembersModal.propTypes = {
-  communities: PropTypes.array.isRequired,
+  getCommunityMembers: PropTypes.func.isRequired,
+  members: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  communities: state.communities.communities.filter(
-    (comm) => comm.userIsInCommunity
-  ),
   auth: state.auth,
   open: state.modal.editCommunityMembers.open,
+  community:
+    state.communities.communities[state.communities.currentCommunityIndex],
 });
 
 const mapActionsToProps = {
   closeCommunityMembersModal,
   kickCommunityMember,
+  getCommunityMembers,
 };
 
 export default connect(

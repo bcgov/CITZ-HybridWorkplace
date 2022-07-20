@@ -665,7 +665,7 @@ export function communityReducer(state = initialState, action) {
           comm.title === action.payload.title
             ? {
                 ...comm,
-                members: action.payload.members,
+                membersList: action.payload.members,
                 memberCount: action.payload.members.length,
               }
             : comm
@@ -713,7 +713,6 @@ export function communityReducer(state = initialState, action) {
             ? {
                 ...comm,
                 memberCount: comm.memberCount - 1,
-                userIsInCommunity: false,
               }
             : comm;
         }),
