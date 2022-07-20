@@ -69,6 +69,10 @@ const OPEN_EDIT_COMMUNITY_MODAL =
   "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_EDIT_COMMUNITY_MODAL";
 const CLOSE_EDIT_COMMUNITY_MODAL =
   "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_EDIT_COMMUNITY_MODAL";
+const OPEN_COMMUNITY_MEMBERS_MODAL =
+  "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_COMMUNITY_MEMBERS_MODAL";
+const CLOSE_COMMUNITY_MEMBERS_MODAL =
+  "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_COMMUNITY_MEMBERS_MODAL";
 const OPEN_SETTINGS_MODAL = "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_SETTINGS_MODAL";
 const CLOSE_SETTINGS_MODAL = "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_SETTINGS_MODAL";
 const OPEN_EDIT_AVATAR_MODAL =
@@ -183,6 +187,13 @@ export const openEditCommunityModal = (community) => (dispatch) => {
 export const closeEditCommunityModal = () => (dispatch) =>
   dispatch({ type: CLOSE_EDIT_COMMUNITY_MODAL });
 
+export const openCommunityMembersModal = (community) => (dispatch) => {
+  dispatch({ type: OPEN_COMMUNITY_MEMBERS_MODAL, payload: community.members });
+};
+
+export const closeCommunityMembersModal = () => (dispatch) =>
+  dispatch({ type: CLOSE_COMMUNITY_MEMBERS_MODAL });
+
 export const openSettingsModal = (userSettings) => (dispatch) =>
   dispatch({ type: OPEN_SETTINGS_MODAL, payload: userSettings });
 
@@ -261,6 +272,7 @@ const initialState = {
   editUserInterests: { open: false, interests: {} },
   editSettings: { open: false, userSettings: {} },
   editModPermissions: { open: false, moderator: {} },
+  editCommunityMembers: { open: false, members: [] },
   // Add State
   addPost: { open: false },
   addCommunity: { open: false },
@@ -379,6 +391,9 @@ export function modalReducer(state = initialState, action) {
         editCommunity: { open: true, community: action.payload },
       };
 
+    case CLOSE_EDIT_COMMUNITY_MODAL:
+      return initialState;
+
     case OPEN_SETTINGS_MODAL:
       return {
         ...state,
@@ -409,9 +424,6 @@ export function modalReducer(state = initialState, action) {
         addCommunity: { open: false },
       };
 
-    case CLOSE_EDIT_COMMUNITY_MODAL:
-      return initialState;
-
     case CLOSE_EDIT_MODERATOR_PERMISSIONS_MODAL:
       return initialState;
 
@@ -438,6 +450,13 @@ export function modalReducer(state = initialState, action) {
       };
 
     case CLOSE_PROMOTE_USER_MODAL:
+    case OPEN_COMMUNITY_MEMBERS_MODAL:
+      return {
+        ...state,
+        editCommunityMembers: { open: true, members: action.payload },
+      };
+
+    case CLOSE_COMMUNITY_MEMBERS_MODAL:
       return initialState;
 
     default:

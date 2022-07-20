@@ -46,6 +46,9 @@ const GET_COMMUNITY_MEMBERS =
   "CITZ-HYBRIDWORKPLACE/COMMUNITY/GET_COMMUNITY_MEMBERS";
 const PROMOTE_USER = "CITZ-HYBRIDWORKPLACE/COMMUNITY/PROMOTE_USER";
 const DEMOTE_USER = "CITZ-HYBRIDWORKPLACE/COMMUNITY/DEMOTE_USER";
+const KICK_COMMUNITY_MEMBER =
+  "CITZ-HYBRIDWORKPLACE/COMMUNITY/KICK_COMMUNITY_MEMBER";
+
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
 const getUserTag = (post, userId) => {
@@ -508,6 +511,38 @@ export const demoteUser =
     }
   };
 
+export const kickCommunityMember =
+  (communityName) => async (dispatch, getState) => {
+    let successful = true;
+    try {
+      const authState = getState().auth;
+      const token = authState.accessToken;
+      if (!token) throw new Error(noTokenText);
+
+      const response = await hwp_axios.delete(
+        `/api/community/moderators/kick/${communityName}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          params: {
+            dispatch,
+          },
+        }
+      );
+
+      dispatch({
+        type: KICK_COMMUNITY_MEMBER,
+        payload: communityName,
+      });
+    } catch (err) {
+      console.error(err);
+      successful = false;
+    } finally {
+      return successful;
+    }
+  };
+
 const initialState = {
   currentCommunityIndex: -1,
   communities: [],
@@ -669,6 +704,19 @@ export function communityReducer(state = initialState, action) {
               }
             : comm
         ),
+      };
+    case KICK_COMMUNITY_MEMBER:
+      return {
+        ...state,
+        communities: state.communities.map((comm) => {
+          return comm.title === action.payload.communityTItle
+            ? {
+                ...comm,
+                memberCount: comm.memberCount - 1,
+                userIsInCommunity: false,
+              }
+            : comm;
+        }),
       };
     default:
       return state;

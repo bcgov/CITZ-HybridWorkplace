@@ -57,6 +57,7 @@ import EditCommunityModal from "../components/modals/EditCommunityModal";
 import EditModPermsModal from "../components/modals/EditModPermsModal";
 
 import {
+  openCommunityMembersModal,
   openAddPostModal,
   openEditCommunityModal,
   openEditModeratorPermissionsModal,
@@ -76,6 +77,7 @@ import { isUserModerator } from "../helperFunctions/communityHelpers";
 import DemoteUserModal from "../components/modals/DemoteUserModal";
 import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
 import PromoteUserModal from "../components/modals/PromoteUserModal";
+import CommunityMembersModal from "../components/modals/CommunityMembersModal";
 
 const CommunityPage = (props) => {
   const navigate = useNavigate();
@@ -303,14 +305,32 @@ const CommunityPage = (props) => {
           >
             <Stack spacing={1} sx={{ pb: 3 }}>
               <MarkDownDisplay message={props.community.description} />
-              <Typography
+              <Typography sx={{ mt: 1 }}>
+                {props.community.description}
+              </Typography>
+              <Button
+                variant="text"
+                disableRipple
+                onClick={props.openCommunityMembersModal}
                 sx={{
-                  fontStyle: "italic",
-                  color: "#898989",
+                  textTransform: "none",
+                  width: "max-content",
+                  alignSelf: "center",
+                  "&:hover": {
+                    background: "none",
+                  },
                 }}
               >
-                Members of this community: {props.community.memberCount || 0}
-              </Typography>
+                <Typography
+                  sx={{
+                    fontStyle: "italic",
+                    color: "#898989",
+                  }}
+                >
+                  Members of this community: {props.community.memberCount || 0}
+                </Typography>
+              </Button>
+
               {props.community.moderators &&
                 props.community.moderators.length > 0 && (
                   <>
@@ -467,6 +487,10 @@ const CommunityPage = (props) => {
       <EditModPermsModal community={props.community.title} />
       <DemoteUserModal />
       <PromoteUserModal />
+      <CommunityMembersModal
+        isUserModerator={userIsModerator}
+        members={props.community.members}
+      />
     </Box>
   );
 };
@@ -493,6 +517,7 @@ const mapDispatchToProps = {
   openEditCommunityModal,
   openEditModeratorPermissionsModal,
   openAddPostModal,
+  openCommunityMembersModal,
   joinCommunity,
   openDemoteUserModal,
   openPromoteUserModal,
