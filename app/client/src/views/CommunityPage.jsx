@@ -161,6 +161,12 @@ const CommunityPage = (props) => {
   const handlePromoteClick = () => {
     props.openPromoteUserModal();
   };
+  const handleDemoteClick = (key) => {
+    return () => {
+      handleMenuClose();
+      props.openDemoteUserModal(props.community.moderators[key].username);
+    };
+  };
 
   return loading ? (
     <LoadingPage />
@@ -380,13 +386,7 @@ const CommunityPage = (props) => {
                                         </ListItemText>
                                       </MenuItem>
                                     )}
-                                  <MenuItem
-                                    onClick={() =>
-                                      props.openDemoteUserModal(
-                                        props.community.moderators[key].username
-                                      )
-                                    }
-                                  >
+                                  <MenuItem onClick={handleDemoteClick(key)}>
                                     <ListItemIcon>
                                       <PersonRemoveIcon fontSize="small" />
                                     </ListItemIcon>
@@ -403,7 +403,7 @@ const CommunityPage = (props) => {
                 )}
               <Box>
                 <IconButton color="success" onClick={handlePromoteClick}>
-                  <AddCircleTwoToneIcon />
+                  <AddCircleTwoToneIcon fontSize="small" />
                 </IconButton>
               </Box>
               <Box>

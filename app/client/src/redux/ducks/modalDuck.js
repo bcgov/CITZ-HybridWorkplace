@@ -422,7 +422,6 @@ export function modalReducer(state = initialState, action) {
       };
 
     // Moderators
-
     case OPEN_DEMOTE_USER_MODAL:
       return {
         ...state,

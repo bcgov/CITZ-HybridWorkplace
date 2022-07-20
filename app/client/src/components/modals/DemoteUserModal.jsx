@@ -10,9 +10,18 @@ import {
 import React from "react";
 import { connect } from "react-redux";
 import { closeDemoteUserModal } from "../../redux/ducks/modalDuck";
+import { demoteUser } from "../../redux/ducks/communityDuck";
 
 export const DemoteUserModal = (props) => {
-  const handleDemoteClick = async () => {};
+  const handleDemoteClick = async () => {
+    const successful = await props.demoteUser(
+      props.username,
+      props.communityTitle
+    );
+    if (successful) {
+      props.closeDemoteUserModal();
+    }
+  };
   const handleCancelClick = () => {
     props.closeDemoteUserModal();
   };
@@ -40,8 +49,11 @@ export const DemoteUserModal = (props) => {
 const mapStateToProps = (state) => ({
   open: state.modal.demoteUser.open,
   username: state.modal.demoteUser.username,
+  communityTitle:
+    state.communities.communities[state.communities.currentCommunityIndex]
+      ?.title,
 });
 
-const mapDispatchToProps = { closeDemoteUserModal };
+const mapDispatchToProps = { closeDemoteUserModal, demoteUser };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DemoteUserModal);
