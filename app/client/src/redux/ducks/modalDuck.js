@@ -88,6 +88,16 @@ const CLOSE_ADD_POST_MODAL = "CITZ-HYBRIDWORKPLACE/ADD/CLOSE_ADD_POST_MODAL";
 const CLOSE_ADD_COMMUNITY_MODAL =
   "CITZ-HYBRIDWORKPLACE/ADD/CLOSE_ADD_COMMUNITY_MODAL";
 
+/**********************MODERATOR TYPES**********************/
+const OPEN_DEMOTE_USER_MODAL =
+  "CITZ-HYBRIDWORKPLACE/MODERATOR/OPEN_ADD_POST_MODAL";
+const CLOSE_DEMOTE_USER_MODAL =
+  "CITZ-HYBRIDWORKPLACE/MODERATOR/CLOSE_ADD_POST_MODAL";
+const OPEN_PROMOTE_USER_MODAL =
+  "CITZ-HYBRIDWORKPLACE/MODERATOR/OPEN_PROMOTE_USER_MODAL";
+const CLOSE_PROMOTE_USER_MODAL =
+  "CITZ-HYBRIDWORKPLACE/MODERATOR/CLOSE_PROMOTE_USER_MODAL";
+
 /*********************** DELETE ACTIONS***********************/
 export const openDeletePostModal = (post) => (dispatch) => {
   dispatch({ type: OPEN_DELETE_POST_MODAL, payload: post });
@@ -214,6 +224,24 @@ export const closeAddCommunityModal = () => (dispatch) => {
   dispatch({ type: CLOSE_ADD_COMMUNITY_MODAL });
 };
 
+/*********************** ADD MODAL ACTIONS***********************/
+
+export const openDemoteUserModal = (username) => (dispatch) => {
+  dispatch({ type: OPEN_DEMOTE_USER_MODAL, payload: username });
+};
+
+export const closeDemoteUserModal = () => (dispatch) => {
+  dispatch({ type: CLOSE_DEMOTE_USER_MODAL });
+};
+
+export const openPromoteUserModal = () => (dispatch) => {
+  dispatch({ type: OPEN_PROMOTE_USER_MODAL });
+};
+
+export const closePromoteUserModal = () => (dispatch) => {
+  dispatch({ type: CLOSE_PROMOTE_USER_MODAL });
+};
+
 /************************MODAL REDUCER************************/
 const initialState = {
   // Delete State
@@ -236,6 +264,9 @@ const initialState = {
   // Add State
   addPost: { open: false },
   addCommunity: { open: false },
+  // Moderator State
+  demoteUser: { open: false, username: "" },
+  promoteUser: { open: false },
 };
 
 export function modalReducer(state = initialState, action) {
@@ -389,6 +420,25 @@ export function modalReducer(state = initialState, action) {
         ...state,
         editModPermissions: { open: true, moderator: action.payload },
       };
+
+    // Moderators
+    case OPEN_DEMOTE_USER_MODAL:
+      return {
+        ...state,
+        demoteUser: { open: true, username: action.payload },
+      };
+
+    case CLOSE_DEMOTE_USER_MODAL:
+      return initialState;
+
+    case OPEN_PROMOTE_USER_MODAL:
+      return {
+        ...state,
+        promoteUser: { open: true },
+      };
+
+    case CLOSE_PROMOTE_USER_MODAL:
+      return initialState;
 
     default:
       return state;

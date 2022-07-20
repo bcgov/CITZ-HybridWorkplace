@@ -42,7 +42,10 @@ const GET_COMMUNITY_POSTS =
   "CITZ-HYBRIDWORKPLACE/COMMUNITY/GET_COMMUNITY_POSTS";
 const EDIT_COMMUNITY_MODERATOR_PERMISSIONS =
   "CITZ-HYBRIDWORKPLACE/COMMUNITY/EDIT_COMMUNITY_MODERATOR_PERMISSIONS";
-
+const GET_COMMUNITY_MEMBERS =
+  "CITZ-HYBRIDWORKPLACE/COMMUNITY/GET_COMMUNITY_MEMBERS";
+const PROMOTE_USER = "CITZ-HYBRIDWORKPLACE/COMMUNITY/PROMOTE_USER";
+const DEMOTE_USER = "CITZ-HYBRIDWORKPLACE/COMMUNITY/DEMOTE_USER";
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
 const getUserTag = (post, userId) => {
@@ -175,6 +178,35 @@ export const getCommunityPosts = (title) => async (dispatch, getState) => {
     dispatch({
       type: GET_POSTS,
       payload: posts,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
+export const getCommunityMembers = (title) => async (dispatch, getState) => {
+  let successful = true;
+
+  try {
+    const authState = getState().auth;
+    const token = authState.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await hwp_axios.get(`/api/community/members/${title}`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      params: {
+        dispatch,
+      },
+    });
+    dispatch({
+      type: GET_COMMUNITY_MEMBERS,
+      payload: { members: response.data, title },
     });
   } catch (err) {
     console.error(err);
@@ -395,6 +427,87 @@ export const editCommunityModeratorPermissions =
     }
   };
 
+export const promoteUser = (user) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const authState = getState().auth;
+    const token = authState.accessToken;
+    if (!token) throw new Error(noTokenText);
+
+    const response = await hwp_axios.patch(
+      `/api/community/moderators/add/${user.community}`,
+      {
+        username: user.username,
+        permissions: user.permissions,
+      },
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        params: {
+          dispatch,
+        },
+      }
+    );
+
+    dispatch({
+      type: PROMOTE_USER,
+      payload: user,
+    });
+  } catch (err) {
+    console.error(err);
+    switch (err.response.status) {
+      case 403:
+        createError("Cannot promote member, member is already a moderator")(
+          dispatch
+        );
+        break;
+      case 404:
+        createError("Cannot find member")(dispatch);
+      default:
+        break;
+    }
+    successful = false;
+  } finally {
+    return successful;
+  }
+};
+
+export const demoteUser =
+  (user, communityTitle) => async (dispatch, getState) => {
+    let successful = true;
+    try {
+      const authState = getState().auth;
+      const token = authState.accessToken;
+      if (!token) throw new Error(noTokenText);
+
+      const response = await hwp_axios.delete(
+        `/api/community/moderators/remove/${communityTitle}`,
+        {
+          data: {
+            username: user,
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          params: {
+            dispatch,
+          },
+        }
+      );
+
+      dispatch({
+        type: DEMOTE_USER,
+        payload: { communityTitle, user },
+      });
+    } catch (err) {
+      console.error(err);
+      successful = false;
+    } finally {
+      return successful;
+    }
+  };
+
 const initialState = {
   currentCommunityIndex: -1,
   communities: [],
@@ -510,6 +623,53 @@ export function communityReducer(state = initialState, action) {
 
         return newState;
       })();
+    case GET_COMMUNITY_MEMBERS:
+      return {
+        ...state,
+        communities: state.communities.map((comm) =>
+          comm.title === action.payload.title
+            ? {
+                ...comm,
+                members: action.payload.members,
+                memberCount: action.payload.members.length,
+              }
+            : comm
+        ),
+      };
+
+    case PROMOTE_USER:
+      return {
+        ...state,
+        communities: state.communities.map((comm) =>
+          comm.title === action.payload.community
+            ? {
+                ...comm,
+                moderators: [
+                  ...comm.moderators,
+                  {
+                    name: action.payload.username,
+                    username: action.payload.username,
+                    permissions: action.payload.permissions,
+                  },
+                ],
+              }
+            : comm
+        ),
+      };
+    case DEMOTE_USER:
+      return {
+        ...state,
+        communities: state.communities.map((comm) =>
+          comm.title === action.payload.communityTitle
+            ? {
+                ...comm,
+                moderators: comm.moderators.filter(
+                  (mod) => mod.name !== action.payload.user
+                ),
+              }
+            : comm
+        ),
+      };
     default:
       return state;
   }
