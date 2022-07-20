@@ -53,12 +53,15 @@ import PropTypes from "prop-types";
 import PostsList from "../components/PostsList";
 import PostModal from "../components/modals/AddPostModal";
 import JoinButton from "../components/JoinButton";
-import { openEditCommunityModal } from "../redux/ducks/modalDuck";
 import EditCommunityModal from "../components/modals/EditCommunityModal";
 import EditModPermsModal from "../components/modals/EditModPermsModal";
+
 import {
   openAddPostModal,
+  openEditCommunityModal,
   openEditModeratorPermissionsModal,
+  openDemoteUserModal,
+  openPromoteUserModal,
 } from "../redux/ducks/modalDuck";
 import ResolveFlagsModal from "../components/modals/ResolveFlagsModal";
 
@@ -68,9 +71,13 @@ import {
   joinCommunity,
   getUsersCommunities,
 } from "../redux/ducks/communityDuck";
+import MarkDownDisplay from "../components/MarkDownDisplay";
 import LoadingPage from "./LoadingPage";
 import CommunityNotFoundPage from "./CommunityNotFoundPage";
 import { isUserModerator } from "../helperFunctions/communityHelpers";
+import DemoteUserModal from "../components/modals/DemoteUserModal";
+import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
+import PromoteUserModal from "../components/modals/PromoteUserModal";
 
 const CommunityPage = (props) => {
   const navigate = useNavigate();
@@ -152,6 +159,16 @@ const CommunityPage = (props) => {
 
   const handleShowFlaggedPosts = () => {
     setShowFlaggedPosts(!showFlaggedPosts);
+  };
+
+  const handlePromoteClick = () => {
+    props.openPromoteUserModal();
+  };
+  const handleDemoteClick = (key) => {
+    return () => {
+      handleMenuClose();
+      props.openDemoteUserModal(props.community.moderators[key].username);
+    };
   };
 
   return loading ? (
@@ -287,9 +304,7 @@ const CommunityPage = (props) => {
             }}
           >
             <Stack spacing={1} sx={{ pb: 3 }}>
-              <Typography sx={{ mt: 1 }}>
-                {props.community.description}
-              </Typography>
+              <MarkDownDisplay message={props.community.description} />
               <Typography
                 sx={{
                   fontStyle: "italic",
@@ -372,7 +387,7 @@ const CommunityPage = (props) => {
                                         </ListItemText>
                                       </MenuItem>
                                     )}
-                                  <MenuItem>
+                                  <MenuItem onClick={handleDemoteClick(key)}>
                                     <ListItemIcon>
                                       <PersonRemoveIcon fontSize="small" />
                                     </ListItemIcon>
@@ -387,6 +402,11 @@ const CommunityPage = (props) => {
                     </Box>
                   </>
                 )}
+              <Box>
+                <IconButton color="success" onClick={handlePromoteClick}>
+                  <AddCircleTwoToneIcon fontSize="small" />
+                </IconButton>
+              </Box>
               <Box>
                 <JoinButton community={props.community} />
               </Box>
@@ -448,6 +468,8 @@ const CommunityPage = (props) => {
       <EditCommunityModal />
       <EditModPermsModal community={props.community.title} />
       <ResolveFlagsModal />
+      <DemoteUserModal />
+      <PromoteUserModal />
     </Box>
   );
 };
@@ -475,6 +497,8 @@ const mapDispatchToProps = {
   openEditModeratorPermissionsModal,
   openAddPostModal,
   joinCommunity,
+  openDemoteUserModal,
+  openPromoteUserModal,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CommunityPage);
