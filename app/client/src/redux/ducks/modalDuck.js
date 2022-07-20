@@ -245,8 +245,8 @@ export const closeDemoteUserModal = () => (dispatch) => {
   dispatch({ type: CLOSE_DEMOTE_USER_MODAL });
 };
 
-export const openPromoteUserModal = () => (dispatch) => {
-  dispatch({ type: OPEN_PROMOTE_USER_MODAL });
+export const openPromoteUserModal = (username) => (dispatch) => {
+  dispatch({ type: OPEN_PROMOTE_USER_MODAL, payload: username });
 };
 
 export const closePromoteUserModal = () => (dispatch) => {
@@ -278,7 +278,7 @@ const initialState = {
   addCommunity: { open: false },
   // Moderator State
   demoteUser: { open: false, username: "" },
-  promoteUser: { open: false },
+  promoteUser: { open: false, username: "" },
 };
 
 export function modalReducer(state = initialState, action) {
@@ -446,7 +446,7 @@ export function modalReducer(state = initialState, action) {
     case OPEN_PROMOTE_USER_MODAL:
       return {
         ...state,
-        promoteUser: { open: true },
+        promoteUser: { open: true, username: action.payload },
       };
 
     case CLOSE_PROMOTE_USER_MODAL:

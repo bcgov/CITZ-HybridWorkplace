@@ -159,9 +159,6 @@ const CommunityPage = (props) => {
     setShowFlaggedPosts(!showFlaggedPosts);
   };
 
-  const handlePromoteClick = () => {
-    props.openPromoteUserModal();
-  };
   const handleDemoteClick = (key) => {
     return () => {
       handleMenuClose();

@@ -59,8 +59,8 @@ const CommunityMembersModal = (props) => {
     props.getCommunityMembers(props.community.title);
   }, [props.open]);
 
-  const handlePromoteClick = () => {
-    props.openPromoteUserModal();
+  const handlePromoteClick = (username) => {
+    props.openPromoteUserModal(username);
   };
 
   const handleUserClick = (username) => {
@@ -88,7 +88,10 @@ const CommunityMembersModal = (props) => {
                       direction="row"
                       sx={{ display: "flex", alignItems: "center" }}
                     >
-                      <IconButton color="success" onClick={handlePromoteClick}>
+                      <IconButton
+                        color="success"
+                        onClick={() => handlePromoteClick(member.username)}
+                      >
                         <AddCircleTwoToneIcon fontSize="small" />
                       </IconButton>
                       <IconButton edge="end" aria-label="kick user">
@@ -132,7 +135,6 @@ const CommunityMembersModal = (props) => {
                             ? `${member.firstName} ${member.lastName}`
                             : member.firstName ?? member.username}
                         </Typography>
-                        <PromoteUserModal username={member.username} />
                       </Stack>
                     }
                   />
@@ -174,7 +176,6 @@ const CommunityMembersModal = (props) => {
                             ? `${member.firstName} ${member.lastName}`
                             : member.firstName ?? member.username}
                         </Typography>
-                        <PromoteUserModal username={member.username} />
                       </Stack>
                     }
                   />
@@ -182,6 +183,7 @@ const CommunityMembersModal = (props) => {
               );
             })}
           </List>
+          <PromoteUserModal />
           <DialogActions
             sx={{
               m: 0,
