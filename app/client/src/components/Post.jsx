@@ -239,7 +239,11 @@ const Post = (props) => {
                       title={<Typography>Flagged Post</Typography>}
                       arrow
                     >
-                      <FlagRounded />
+                      <FlagRounded
+                        sx={{
+                          color: "#FF4500",
+                        }}
+                      />
                     </Tooltip>
                   )}
                   <Typography
