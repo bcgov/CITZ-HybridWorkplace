@@ -57,10 +57,10 @@ const CommunityMembersModal = (props) => {
         <Stack spacing={1}>
           <List>
             {props.members.map((member) => {
-              console.log(member.name);
+              console.log(member);
               return props.isUserModerator ? (
                 <ListItem
-                  key={member.userId}
+                  key={member._id}
                   secondaryAction={
                     <IconButton edge="end" aria-label="kick user">
                       <NoMeetingRoomRoundedIcon />
@@ -70,7 +70,7 @@ const CommunityMembersModal = (props) => {
                   <ListItemText primary={member.firstName} />
                 </ListItem>
               ) : (
-                <ListItem key={member.userId} disablePadding>
+                <ListItem key={member._id} disablePadding>
                   <ListItemText primary={member.firstName} />
                 </ListItem>
               );
