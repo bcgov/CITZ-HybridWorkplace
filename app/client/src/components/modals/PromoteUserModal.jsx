@@ -81,11 +81,11 @@ export const PromoteUserModal = (props) => {
       <DialogContent>
         <Stack alignItems="center" spacing={2}>
           <TextField
-            placeholder="IDIR/Username"
+            placeholder="IDIR\Username"
             value={usernameInput}
             onChange={onUsernameInputChange}
             fullWidth
-            helperText="Enter the IDIR/Username of the member you wish to promote to moderator."
+            helperText="Enter the IDIR\Username of the member you wish to promote to moderator."
           />
           <Stack spacing={1}>
             <Stack

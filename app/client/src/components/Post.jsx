@@ -245,17 +245,18 @@ const Post = (props) => {
                       title={<Typography>Flagged Post</Typography>}
                       arrow
                     >
-                      <IconButton
-                        onClick={handleFlagIconClick}
-                        sx={{ padding: 0 }}
-                      >
-                      <FlagRounded
-                        sx={{
-                          color: "#FF4500",
-                        }}
-                      />
-                      </IconButton>
-
+                      {isModerator && (
+                        <IconButton
+                          onClick={handleFlagIconClick}
+                          sx={{ padding: 0 }}
+                        >
+                          <FlagRounded
+                            sx={{
+                              color: "#FF4500",
+                            }}
+                          />
+                        </IconButton>
+                      )}
                     </Tooltip>
                   )}
                   <Typography
