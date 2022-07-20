@@ -63,6 +63,8 @@ import {
   openEditModeratorPermissionsModal,
   openDemoteUserModal,
 } from "../redux/ducks/modalDuck";
+import ResolveFlagsModal from "../components/modals/ResolveFlagsModal";
+
 import {
   getCommunityPosts,
   getCommunity,
@@ -472,6 +474,7 @@ const CommunityPage = (props) => {
       </Grid>
       <EditCommunityModal />
       <EditModPermsModal community={props.community.title} />
+      <ResolveFlagsModal />
       <DemoteUserModal />
       <CommunityMembersModal
         isUserModerator={userIsModerator}
