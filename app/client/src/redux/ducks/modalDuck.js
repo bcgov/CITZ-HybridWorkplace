@@ -49,6 +49,10 @@ const OPEN_FLAG_COMMENT_MODAL =
   "CITZ-HYBRIDWORKPLACE/FLAG/OPEN_FLAG_COMMENT_MODAL";
 const CLOSE_FLAG_COMMENT_MODAL =
   "CITZ-HYBRIDWORKPLACE/FLAG/CLOSE_FLAG_COMMENT_MODAL";
+const OPEN_RESOLVE_FLAGS_MODAL =
+  "CITZ-HYBRIDWORKPLACE/ADD/OPEN_RESOLVE_FLAGS_MODAL";
+const CLOSE_RESOLVE_FLAGS_MODAL =
+  "CITZ-HYBRIDWORKPLACE/FLAG/CLOSE_RESOLVE_FLAGS_MODAL";
 
 /************************EDIT TYPES************************/
 const OPEN_EDIT_POST_MODAL = "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_EDIT_POST_MODAL";
@@ -145,6 +149,14 @@ export const openFlagCommentModal = (comment) => (dispatch) => {
 
 export const closeFlagCommentModal = () => (dispatch) => {
   dispatch({ type: CLOSE_FLAG_COMMENT_MODAL });
+};
+
+export const openResolveFlagsModal = (post) => (dispatch) => {
+  dispatch({ type: OPEN_RESOLVE_FLAGS_MODAL, payload: post });
+};
+
+export const closeResolveFlagsModal = () => (dispatch) => {
+  dispatch({ type: CLOSE_RESOLVE_FLAGS_MODAL });
 };
 
 /*********************** EDIT MODAL ACTIONS***********************/
@@ -252,6 +264,8 @@ const initialState = {
   flagPost: { open: false, post: {} },
   flagCommunity: { open: false, community: {} },
   flagComment: { open: false, comment: {} },
+  resolveFlags: { open: false, post: {} },
+
   // Edit State
   editPost: { open: false, post: {} },
   editCommunity: { open: false, community: {} },
@@ -334,6 +348,15 @@ export function modalReducer(state = initialState, action) {
       };
 
     case CLOSE_FLAG_COMMENT_MODAL:
+      return initialState;
+
+    case OPEN_RESOLVE_FLAGS_MODAL:
+      return {
+        ...state,
+        resolveFlags: { open: true, post: action.payload },
+      };
+
+    case CLOSE_RESOLVE_FLAGS_MODAL:
       return initialState;
 
     //Edits

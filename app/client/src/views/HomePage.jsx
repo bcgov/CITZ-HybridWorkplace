@@ -36,6 +36,7 @@ import {
   openAddCommunityModal,
 } from "../redux/ducks/modalDuck";
 import LoadingPage from "./LoadingPage";
+import ResolveFlagsModal from "../components/modals/ResolveFlagsModal";
 
 const HomePage = (props) => {
   const [loading, setLoading] = useState(true);
@@ -83,8 +84,6 @@ const HomePage = (props) => {
                 </Button>
               </Grid>
             </Grid>
-
-            <PostModal />
           </Box>
           {props.posts.length > 0 ? (
             <PostsList posts={props.posts} />
@@ -150,13 +149,15 @@ const HomePage = (props) => {
                 >
                   <AddIcon sx={{ color: "white", pl: 4 }} />
                 </Button>
-                <AddCommunityModal />
               </Grid>
             </Grid>
           </Box>
           <UsersCommunitiesList />
         </Grid>
       </Grid>
+      <AddCommunityModal />
+      <PostModal />
+      <ResolveFlagsModal />
     </Box>
   );
 };

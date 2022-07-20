@@ -23,15 +23,16 @@ import {
   openFlagPostModal,
   openDeletePostModal,
   openEditPostModal,
+  openResolveFlagsModal,
 } from "../redux/ducks/modalDuck";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import TagsList from "./TagsList";
 import { useParams } from "react-router-dom";
-import { getPost } from "../redux/ducks/postDuck";
+import { getCommunity } from "../redux/ducks/communityDuck";
 import { useNavigate } from "react-router-dom";
 import CommentIcon from "@mui/icons-material/Comment";
 import moment from "moment";
@@ -41,6 +42,11 @@ import { editPost } from "../redux/ducks/postDuck";
 import { FlagRounded } from "@mui/icons-material";
 
 const Post = (props) => {
+  useEffect(() => {
+    (async () => {
+      await props.getCommunity(props.post.community);
+    })();
+  }, []);
   const maxTitleLength = 45;
   const maxCommunityTitleLength = 16;
   const maxMessageLines = 5;
@@ -48,10 +54,9 @@ const Post = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [darkModePreference] = useState(getDarkModePreference());
 
-  let { id } = useParams();
-
-  // TODO: Get if user is moderator
-  const isModerator = false;
+  const isModerator = props.communities.find(
+    (comm) => comm.title === props.post.community
+  )?.userIsModerator;
 
   const navigate = useNavigate();
 
@@ -108,6 +113,7 @@ const Post = (props) => {
   const handlePostCreatorClick = (creator) => {
     if (creator) navigate(`/profile/${creator}`);
   };
+  const handleFlagIconClick = () => props.openResolveFlagsModal(post);
 
   // Create preview if post message has more than maxMessageLines lines
   let message = post.message;
@@ -160,7 +166,7 @@ const Post = (props) => {
             py: 1,
           }}
           action={
-            <>
+            <Box>
               <IconButton aria-label="settings" onClick={handleMenuOpen}>
                 <MoreVertIcon sx={{ color: "white" }} />
               </IconButton>
@@ -193,7 +199,7 @@ const Post = (props) => {
                     </MenuItem>
                   )}
                   {isModerator && (
-                    <>
+                    <Box>
                       <MenuItem onClick={() => editPost("hidden")}>
                         <ListItemIcon>
                           <VisibilityOffIcon fontSize="small" />
@@ -210,11 +216,11 @@ const Post = (props) => {
                           {props.post.pinned ? "Unpin" : "Pin"}
                         </ListItemText>
                       </MenuItem>
-                    </>
+                    </Box>
                   )}
                 </MenuList>
               </Menu>
-            </>
+            </Box>
           }
           title={
             <Grid container spacing={2}>
@@ -239,7 +245,12 @@ const Post = (props) => {
                       title={<Typography>Flagged Post</Typography>}
                       arrow
                     >
-                      <FlagRounded />
+                      <IconButton
+                        onClick={handleFlagIconClick}
+                        sx={{ padding: 0 }}
+                      >
+                        <FlagRounded />
+                      </IconButton>
                     </Tooltip>
                   )}
                   <Typography
@@ -342,19 +353,21 @@ Post.propTypes = {
   openFlagPostModal: PropTypes.func.isRequired,
   openDeletePostModal: PropTypes.func.isRequired,
   openEditPostModal: PropTypes.func.isRequired,
-  getPost: PropTypes.func.isRequired,
+  getCommunity: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   userId: state.auth.user.id,
+  communities: state.communities.communities,
 });
 
 const mapActionsToProps = {
   openFlagPostModal,
   openDeletePostModal,
   openEditPostModal,
-  getPost,
+  getCommunity,
   editPost,
+  openResolveFlagsModal,
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(Post);

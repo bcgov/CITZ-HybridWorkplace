@@ -13,6 +13,7 @@ import EditCommunityModal from "../components/modals/EditCommunityModal";
 import EditPostModal from "../components/modals/EditPostModal";
 import DeletePostModal from "../components/modals/DeletePostModal";
 import FlagPostModal from "../components/modals/FlagPostModal";
+import ResolveFlagsModal from "../components/modals/ResolveFlagsModal";
 
 const SingularPost = (props) => {
   const navigate = useNavigate();
@@ -48,6 +49,7 @@ const SingularPost = (props) => {
       <EditPostModal />
       <DeletePostModal sideEffect={deletePostSideEffect} />
       <FlagPostModal />
+      <ResolveFlagsModal />
     </>
   );
 };
