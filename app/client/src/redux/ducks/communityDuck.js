@@ -451,11 +451,7 @@ export const promoteUser = (user) => async (dispatch, getState) => {
 
     dispatch({
       type: PROMOTE_USER,
-      payload: {
-        communityTitle: user.community,
-        user: user.username,
-        permissions: [...user.permissions],
-      },
+      payload: user,
     });
   } catch (err) {
     console.error(err);
@@ -644,13 +640,13 @@ export function communityReducer(state = initialState, action) {
       return {
         ...state,
         communities: state.communities.map((comm) =>
-          comm.title === action.payload.communityTitle
+          comm.title === action.payload.community
             ? {
                 ...comm,
                 moderators: [
                   ...comm.moderators,
                   {
-                    name: action.payload.name,
+                    username: action.payload.username,
                     permissions: action.payload.permissions,
                   },
                 ],
