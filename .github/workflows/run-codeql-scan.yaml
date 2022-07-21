@@ -1,4 +1,4 @@
-name: codeql-analysis
+name: CodeQL Analysis
 on:
   workflow_dispatch:
   pull_request:
@@ -30,7 +30,7 @@ jobs:
           upload: false # disable the upload here - we will upload in a different action
           output: sarif-results
 
-      - name: filter-sarif
+      - name: Filter SARIF
         uses: dbarkowsky/filter-sarif@main
         with:
           patterns: |
