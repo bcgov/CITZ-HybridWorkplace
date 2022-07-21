@@ -56,8 +56,8 @@ class UserActions {
     await this.page.waitForNavigation({ waitUntil: "domcontentloaded" });
 
     // Enter info into fields
-    await this.page.type("#user", this.idir);
-    await this.page.type("#password", this.password);
+    await this.page.type('input[name="user"]', this.idir);
+    await this.page.type('input[name="password"]', this.password);
 
     // Click Continue Button
     await this.page.click(`[value="Continue"]`);
@@ -67,9 +67,10 @@ class UserActions {
   }
 
   // Component Actions
-  async openSideMenu() {}
+  async openSideMenu() {
+    this.page.click('button[aria-label="open drawer"]')
+  }
 
-  async leaveCommunity(community) {}
 
   async goToCommunity(community) {
     // Find community title link and click it
@@ -84,7 +85,32 @@ class UserActions {
     await this.page.waitForSelector(".css-9mgnpw"); // Community name on community page
   }
 
-  async createCommunity(community) {}
+
+  async createCommunity(community) {
+    await this.page.waitForSelector('div[class="css-4xkoi8"]'); 
+    await this.page.click('div[class="css-4xkoi8"]'); // clicks the + button on the communities board
+
+    await this.page.waitForSelector('div[placeholder="Title"}'); // wait for field to appear
+
+    await this.page.type('div[placeholder="Title"}', `${community}`); // type in title field
+    await this.page.type('div[placeholder="Description"}', `${community}`); // type in description field
+    
+    await this.page.click("div[contains('Set Rules')]");
+
+    await this.page.waitForSelector('div[placeholder="New Rule"}'); // wait for field to appear
+
+    await this.page.type('div[placeholder="New Rule"}', `${community}`); // type in title field
+    await this.page.type('div[placeholder="Add a description"}', `${community}`); // type in description field
+  }
+
+
+  async leaveCommunity(community) {
+    this.goToCommunity(community);
+
+    this.page.waitForSelector('data-testid="LogoutOutlinedIcon"');
+    this.page.click('data-testid="LogoutOutlinedIcon"');
+  }
+
 
   async createPost(title, body, community = "") {
     await this.page.waitForSelector("button.css-rxr26v"); // try to get first + button
@@ -114,9 +140,22 @@ class UserActions {
     await this.page.waitForSelector(`p.css-kyzvea`);
   }
 
-  async goToPost() {}
+  async goToPost(post) {
+    const [postTitle] = await this.page.$x(
+      `//p/b[contains(., '${post}')]`
+    );
+    if (postTitle) {
+      await postTitle.click();
+    }
 
-  async flagPost() {}
+    // Wait until Community page
+    await this.page.waitForSelector(".css-9mgnpw"); // Community name on community page
+  }
+
+
+  async flagPost() {
+
+  }
 
   async goToPostersProfile() {}
 
@@ -128,7 +167,8 @@ class UserActions {
 
   async upvoteComment() {}
 
-  async downvoteComment() {}
+  async downvoteComment() {
+  }
 
   async replyToComment() {}
 
@@ -150,7 +190,9 @@ class UserActions {
     await this.page.waitForXPath(`//h5[contains(., 'Top Posts')]`);
   }
 
-  async goToProfileByAvatar() {}
+  async goToProfileByAvatar() {
+    await this.page.click('button[aria-label="account of current user"]');
+  }
 }
 
 module.exports = { UserActions };
