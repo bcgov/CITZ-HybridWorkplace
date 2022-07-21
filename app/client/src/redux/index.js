@@ -30,7 +30,7 @@ import { profileReducer } from "./ducks/profileDuck";
 import { userReducer } from "./ducks/userDuck";
 import { alertReducer } from "./ducks/alertDuck";
 import { modalReducer } from "./ducks/modalDuck";
-
+import { moderatorReducer } from "./ducks/moderatorDuck";
 export default combineReducers({
   communities: communityReducer,
   posts: postReducer,
@@ -39,4 +39,5 @@ export default combineReducers({
   self: userReducer,
   alerts: alertReducer,
   modal: modalReducer,
+  moderator: moderatorReducer,
 });

@@ -126,9 +126,7 @@ const EditAvatarModal = (props) => {
       sx={{ zIndex: 500, mb: 5 }}
       fullWidth
     >
-      <DialogTitle sx={{ fontWeight: 600 }}>
-          Edit Avatar
-      </DialogTitle>
+      <DialogTitle sx={{ fontWeight: 600 }}>Edit Avatar</DialogTitle>
       <DialogContent data-color-mode="light">
         <Stack spacing={1}>
           <AvatarIcon
@@ -255,7 +253,11 @@ const EditAvatarModal = (props) => {
               <Button variant="contained" onClick={updateAvatar}>
                 Save
               </Button>
-              <Button variant="contained" onClick={props.closeEditAvatarModal} color="button">
+              <Button
+                variant="text"
+                onClick={props.closeEditAvatarModal}
+                color="button"
+              >
                 Cancel
               </Button>
             </Stack>

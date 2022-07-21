@@ -53,23 +53,31 @@ import PropTypes from "prop-types";
 import PostsList from "../components/PostsList";
 import PostModal from "../components/modals/AddPostModal";
 import JoinButton from "../components/JoinButton";
-import { openEditCommunityModal } from "../redux/ducks/modalDuck";
 import EditCommunityModal from "../components/modals/EditCommunityModal";
 import EditModPermsModal from "../components/modals/EditModPermsModal";
+
 import {
+  openCommunityMembersModal,
   openAddPostModal,
+  openEditCommunityModal,
   openEditModeratorPermissionsModal,
+  openDemoteUserModal,
 } from "../redux/ducks/modalDuck";
+import ResolveFlagsModal from "../components/modals/ResolveFlagsModal";
+
 import {
   getCommunityPosts,
   getCommunity,
   joinCommunity,
   getUsersCommunities,
+  getCommunityMembers,
 } from "../redux/ducks/communityDuck";
 import MarkDownDisplay from "../components/MarkDownDisplay";
 import LoadingPage from "./LoadingPage";
 import CommunityNotFoundPage from "./CommunityNotFoundPage";
 import { isUserModerator } from "../helperFunctions/communityHelpers";
+import DemoteUserModal from "../components/modals/DemoteUserModal";
+import CommunityMembersModal from "../components/modals/CommunityMembersModal";
 
 const CommunityPage = (props) => {
   const navigate = useNavigate();
@@ -151,6 +159,13 @@ const CommunityPage = (props) => {
 
   const handleShowFlaggedPosts = () => {
     setShowFlaggedPosts(!showFlaggedPosts);
+  };
+
+  const handleDemoteClick = (key) => {
+    return () => {
+      handleMenuClose();
+      props.openDemoteUserModal(props.community.moderators[key].username);
+    };
   };
 
   return loading ? (
@@ -287,14 +302,29 @@ const CommunityPage = (props) => {
           >
             <Stack spacing={1} sx={{ pb: 3 }}>
               <MarkDownDisplay message={props.community.description} />
-              <Typography
+              <Button
+                variant="text"
+                disableRipple
+                onClick={props.openCommunityMembersModal}
                 sx={{
-                  fontStyle: "italic",
-                  color: "#898989",
+                  textTransform: "none",
+                  width: "max-content",
+                  alignSelf: "center",
+                  "&:hover": {
+                    background: "none",
+                  },
                 }}
               >
-                Members of this community: {props.community.memberCount || 0}
-              </Typography>
+                <Typography
+                  sx={{
+                    fontStyle: "italic",
+                    color: "#898989",
+                  }}
+                >
+                  Members of this community: {props.community.memberCount || 0}
+                </Typography>
+              </Button>
+
               {props.community.moderators &&
                 props.community.moderators.length > 0 && (
                   <>
@@ -369,7 +399,7 @@ const CommunityPage = (props) => {
                                         </ListItemText>
                                       </MenuItem>
                                     )}
-                                  <MenuItem>
+                                  <MenuItem onClick={handleDemoteClick(key)}>
                                     <ListItemIcon>
                                       <PersonRemoveIcon fontSize="small" />
                                     </ListItemIcon>
@@ -444,6 +474,12 @@ const CommunityPage = (props) => {
       </Grid>
       <EditCommunityModal />
       <EditModPermsModal community={props.community.title} />
+      <ResolveFlagsModal />
+      <DemoteUserModal />
+      <CommunityMembersModal
+        isUserModerator={userIsModerator}
+        community={props.community}
+      />
     </Box>
   );
 };
@@ -470,7 +506,10 @@ const mapDispatchToProps = {
   openEditCommunityModal,
   openEditModeratorPermissionsModal,
   openAddPostModal,
+  openCommunityMembersModal,
   joinCommunity,
+  openDemoteUserModal,
+  getCommunityMembers,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CommunityPage);
