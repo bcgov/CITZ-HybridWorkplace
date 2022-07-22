@@ -65,8 +65,6 @@ const {
  *                  $ref: '#/components/schemas/Community/properties/title'
  *                description:
  *                  $ref: '#/components/schemas/Community/properties/description'
- *                rules:
- *                  $ref: '#/components/schemas/Community/properties/rules'
  *      responses:
  *        '404':
  *          description: User not found.
@@ -158,6 +156,7 @@ router.post("/", async (req, res, next) => {
       creatorName: getFullName(user) || user.username,
       creatorUsername: user.username,
       memberCount: 1,
+      removed: false,
       members: [user.id],
       rules: req.body.rules,
       tags: req.body.tags,
@@ -222,24 +221,12 @@ router.post("/", async (req, res, next) => {
         {
           $project: {
             _id: 0,
-            row: [
-              "$email",
-              "$name",
-              community.title,
-              community.description,
-              frontendURI,
-            ],
+            row: ["$email", "$name", community.title, frontendURI],
           },
         },
       ]);
       notifyUsers = notifyUsers.map(({ row }) => row);
-      notifyUsers.unshift([
-        "email address",
-        "name",
-        "community",
-        "communityDescription",
-        "url",
-      ]);
+      notifyUsers.unshift(["email address", "name", "community", "url"]);
       if (notifyUsers.length > 1) {
         bulkNotify(
           notifyUsers,
@@ -249,7 +236,7 @@ router.post("/", async (req, res, next) => {
       req.log.addAction("Users have been notified with gcNotify (immediate).");
     }
 
-    req.log.setResponse(201, "Success", null);
+    req.log.setResponse(201, "Success");
     return res.status(201).json(community);
   } catch (err) {
     res.locals.err = err;
@@ -304,23 +291,27 @@ router.get("/", async (req, res, next) => {
     if (req.query.orderBy === "lastJoined") {
       // Ordered by last joined
       req.log.addAction("Ordering by last joined. Finding communities.");
-      communities = await Community.find({ members: user.id }, "", {
-        sort: { _id: -1 },
-      }).exec();
+      communities = await Community.find(
+        { members: user.id, removed: false },
+        "",
+        { sort: { _id: -1 } }
+      ).exec();
     } else if (req.query.orderBy === "engagement") {
       // Order by engagment (posts, comments, votes)
       req.log.addAction("Ordering by engagement. Finding communities.");
-      communities = findCommunitiesByEngagement(user);
+      communities = await findCommunitiesByEngagement(user);
     } else if (req.query.orderBy === "latestActivity") {
       // Order by latestActivity, only communities user is a member of.
       req.log.addAction("Ordering by latestActivity. Finding communities.");
-      communities = await Community.find({ members: user.id }, "", {
-        sort: { latestActivity: -1 },
-      }).exec();
+      communities = await Community.find(
+        { members: user.id, removed: false },
+        "",
+        { sort: { latestActivity: -1 } }
+      ).exec();
     } else {
       // Ordered by last created
       req.log.addAction("Ordering by last created. Finding communities.");
-      communities = await Community.find({}, "", {
+      communities = await Community.find({ removed: false }, "", {
         sort: { _id: -1 },
       }).exec();
     }
@@ -328,7 +319,7 @@ router.get("/", async (req, res, next) => {
     if (!communities) throw new ResponseError(404, "Communities not found.");
     req.log.addAction("Communities found.");
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json(communities);
   } catch (err) {
     res.locals.err = err;
@@ -374,7 +365,7 @@ router.get("/:title", async (req, res, next) => {
     });
     req.log.addAction("Community found.");
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json(community);
   } catch (err) {
     res.locals.err = err;
@@ -478,6 +469,7 @@ router.patch("/:title", async (req, res, next) => {
       "memberCount",
       "latestActivity",
       "moderators",
+      "removed",
     ]);
     req.log.addAction("Edit query has been cleaned.");
 
@@ -487,6 +479,28 @@ router.patch("/:title", async (req, res, next) => {
       req.log.addAction(
         "Changes does not include title, adding title to changes object."
       );
+    }
+
+    // When removed is set to false (undoing the removal of the community)
+    if (query.removed && query.removed === false) {
+      // Add community back to users community lists
+      req.log.addAction("Adding community to users community lists.");
+      await User.updateMany(
+        { communities: { $elemMatch: { community: community.title } } },
+        { "communities.$.removed": false }
+      ).exec();
+
+      // Bring back posts
+      await Post.updateMany(
+        { community: community.title },
+        { removed: false }
+      ).exec();
+
+      // Bring back comments
+      await Comment.updateMany(
+        { community: community.title },
+        { removed: false }
+      ).exec();
     }
 
     req.log.addAction("Updating community.");
@@ -507,7 +521,7 @@ router.patch("/:title", async (req, res, next) => {
     ).exec();
     req.log.addAction("User community lists updated.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;
@@ -567,32 +581,61 @@ router.delete("/:title", async (req, res, next) => {
       );
     req.log.addAction("User is moderator of community.");
 
+    // TODO: Only allow admins to do this
+    // Permanently delete data
+    const purgeData = req.query.purge === "true";
+
     // Remove community
     req.log.addAction("Removing community.");
-    await Community.deleteOne({
-      title: req.params.title,
-    }).exec();
+    if (purgeData) {
+      await Community.deleteOne({ title: req.params.title }).exec();
+    } else {
+      await Community.updateOne(
+        { title: req.params.title },
+        { removed: true }
+      ).exec();
+    }
     req.log.addAction("Community removed.");
 
     // Remove reference to community from users
     req.log.addAction("Removing community from user community lists.");
-    await User.updateMany(
-      { "communities.community": community.title },
-      { $pull: { communities: { community: community.title } } }
-    ).exec();
+    if (purgeData) {
+      await User.deleteMany({
+        "communities.community": community.title,
+      }).exec();
+    } else {
+      await User.updateMany(
+        { communities: { $elemMatch: { community: community.title } } },
+        { "communities.$.removed": true }
+      ).exec();
+    }
     req.log.addAction("Community removed from user community lists.");
 
     // Remove posts from community
     req.log.addAction("Removing posts from community.");
-    await Post.deleteMany({ community: community.title }).exec();
+    if (purgeData) {
+      await Post.deleteMany({ community: community.title }).exec();
+    } else {
+      await Post.updateMany(
+        { community: community.title },
+        { removed: true }
+      ).exec();
+    }
     req.log.addAction("Posts removed from community.");
 
     // Remove comments from posts in community
     req.log.addAction("Removing comments from community.");
-    await Comment.deleteMany({ community: community.title }).exec();
+    if (purgeData) {
+      await Comment.deleteMany({ community: community.title }).exec();
+    } else {
+      await Comment.updateMany(
+        { community: community.title },
+        { removed: true }
+      ).exec();
+    }
     req.log.addAction("Comments removed from community.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;

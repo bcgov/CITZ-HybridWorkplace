@@ -92,7 +92,7 @@ router.get("/:title", async (req, res, next) => {
       },
     ]);
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(200).json(members);
   } catch (err) {
     res.locals.err = err;
@@ -179,7 +179,7 @@ router.patch("/join/:title", async (req, res, next) => {
     );
     req.log.addAction("User community list updated.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;
@@ -286,32 +286,40 @@ no moderators have any permissions.`
       req.log.addAction("Community moderators updated.");
     }
     req.log.addAction("Checked if user is moderator.");
+
     req.log.addAction("Checking if user is last community member.");
-    if (community.memberCount === 1) {
+    if (community.memberCount === 1 && community.title !== "Welcome") {
       req.log.addAction("User is last community member.");
       // Remove community
       req.log.addAction("Removing community.");
-      await Community.deleteOne({
-        title: req.params.title,
-      }).exec();
+      await Community.updateOne(
+        { title: req.params.title },
+        { removed: true }
+      ).exec();
       req.log.addAction("Community removed.");
 
       // Remove reference to community from users
       req.log.addAction("Removing community from user community lists.");
       await User.updateMany(
-        { "communities.community": community.title },
-        { $pull: { communities: { community: community.title } } }
+        { communities: { $elemMatch: { community: community.title } } },
+        { "communities.$.removed": true }
       ).exec();
       req.log.addAction("Community removed from user community lists.");
 
       // Remove posts from community
       req.log.addAction("Removing posts from community.");
-      await Post.deleteMany({ community: community.title }).exec();
+      await Post.updateMany(
+        { community: community.title },
+        { removed: true }
+      ).exec();
       req.log.addAction("Posts removed from community.");
 
       // Remove comments from posts in community
       req.log.addAction("Removing comments from community.");
-      await Comment.deleteMany({ community: community.title }).exec();
+      await Comment.updateMany(
+        { community: community.title },
+        { removed: true }
+      ).exec();
       req.log.addAction("Comments removed from community.");
     } else {
       // Remove user from community

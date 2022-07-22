@@ -60,9 +60,14 @@ const mongoStartUp = async (db, collections) => {
         createdOn: timeStamp,
         latestActivity: timeStamp,
         members: [],
+        removed: false,
       });
       console.log(color.yellow("Welcome community created."));
     }
+
+    // Add hidden and removed fields to communities that don't have them
+    await Community.updateMany({ removed: null }, { removed: false });
+    await Community.updateMany({ hidden: null }, { hidden: false });
   }
 };
 

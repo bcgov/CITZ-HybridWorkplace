@@ -55,6 +55,9 @@
  *          description: Post will be hidden if true.
  *        createdOn:
  *          type: string
+ *        removed:
+ *          type: boolean
+ *          description: Post will be effectively removed in the view of a user if true.
  *        commentCount:
  *          type: number
  *        availableTags:
@@ -113,6 +116,7 @@ const Post = new mongoose.Schema(
     commentCount: { type: Number },
     availableTags: [String],
     hidden: { type: Boolean },
+    removed: { type: Boolean },
     tags: [
       {
         tag: String,

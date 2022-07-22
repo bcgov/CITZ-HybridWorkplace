@@ -82,7 +82,7 @@ router.get("/", async (req, res, next) => {
     });
     req.log.addAction("User found.");
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json({
       username: user.username,
       email: user.email,
@@ -96,6 +96,7 @@ router.get("/", async (req, res, next) => {
       postCount: user.postCount,
       notificationFrequency: user.notificationFrequency,
       interests: user.interests,
+      communities: user.communities,
     });
   } catch (err) {
     res.locals.err = err;
@@ -330,7 +331,7 @@ router.patch("/", async (req, res, next) => {
     await User.updateOne({ _id: user.id }, query).exec();
     req.log.addAction("User updated.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;
@@ -395,7 +396,7 @@ router.get("/:username", async (req, res, next) => {
     });
     req.log.addAction("User found.");
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json({
       username: user.username,
       email: user.email,
@@ -409,6 +410,7 @@ router.get("/:username", async (req, res, next) => {
       postCount: user.postCount,
       notificationFrequency: user.notificationFrequency,
       interests: user.interests,
+      communities: user.communities,
     });
   } catch (err) {
     res.locals.err = err;
@@ -465,7 +467,7 @@ router.delete("/:username", async (req, res, next) => {
     // TODO: Remove user's posts and communities
     // TODO: What happens if user is the only moderator of a community when user is deleted
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;

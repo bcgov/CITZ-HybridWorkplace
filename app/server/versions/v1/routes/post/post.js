@@ -159,6 +159,8 @@ router.post("/", async (req, res, next) => {
       creatorUsername: user.username,
       community: req.body.community,
       pinned: req.body.pinned || false,
+      removed: false,
+      hidden: false,
       availableTags,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
@@ -187,7 +189,7 @@ router.post("/", async (req, res, next) => {
     await User.updateOne({ _id: user.id }, { $inc: { postCount: 1 } });
     req.log.addAction("User post count updated.");
 
-    req.log.setResponse(201, "Success", null);
+    req.log.setResponse(201, "Success");
     return res.status(201).json(post);
   } catch (err) {
     res.locals.err = err;
@@ -252,10 +254,12 @@ router.get("/", async (req, res, next) => {
       ? {
           community: { $in: communities },
           creator: queryUser.id,
+          removed: false,
           $or: [{ hidden: false }, { hidden: null }],
         }
       : {
           community: { $in: communities },
+          removed: false,
           $or: [{ hidden: false }, { hidden: null }],
         };
 
@@ -267,7 +271,7 @@ router.get("/", async (req, res, next) => {
     if (!posts) throw new ResponseError(404, "Posts not found.");
     req.log.addAction("Posts found.");
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json(posts);
   } catch (err) {
     res.locals.err = err;
@@ -314,7 +318,7 @@ router.get("/:id", async (req, res, next) => {
     });
     req.log.addAction("Post found.");
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json(post);
   } catch (err) {
     res.locals.err = err;
@@ -387,11 +391,13 @@ router.get("/community/:title", async (req, res, next) => {
       matchQuery = isModerator
         ? {
             community: community.title,
+            removed: false,
             "tags.tag": req.query.tag,
           }
         : {
             community: community.title,
             "tags.tag": req.query.tag,
+            removed: false,
             $or: [{ hidden: false }, { hidden: null }],
           };
 
@@ -403,9 +409,10 @@ router.get("/community/:title", async (req, res, next) => {
       req.log.addAction("Finding posts in community.");
 
       matchQuery = isModerator
-        ? { community: community.title }
+        ? { community: community.title, removed: false }
         : {
             community: community.title,
+            removed: false,
             $or: [{ hidden: false }, { hidden: null }],
           };
 
@@ -417,7 +424,7 @@ router.get("/community/:title", async (req, res, next) => {
     if (!posts) throw new ResponseError(404, "Posts not found.");
     req.log.addAction("Posts found.");
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json(posts);
   } catch (err) {
     res.locals.err = err;
@@ -532,6 +539,7 @@ router.patch("/:id", async (req, res, next) => {
           "availableTags",
           "tags",
           "flags",
+          "removed",
           "commentCount",
         ]
       : [
@@ -542,6 +550,7 @@ router.patch("/:id", async (req, res, next) => {
           "createdOn",
           "availableTags",
           "hidden",
+          "removed",
           "pinned",
           "tags",
           "flags",
@@ -556,7 +565,7 @@ router.patch("/:id", async (req, res, next) => {
     await Post.updateOne({ _id: post.id }, query).exec();
     req.log.addAction("Post updated.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;
@@ -611,16 +620,26 @@ router.delete("/:id", async (req, res, next) => {
       throw new ResponseError(403, "Must be creator of post to delete post.");
     req.log.addAction("User is creator of post.");
 
+    // TODO: Only allow admins to do this
+    // Permanently delete data
+    const purgeData = req.query.purge === "true";
+
     // Remove the comments on post
     req.log.addAction("Removing comments on post.");
-    await Comment.deleteMany({ post: post.id }).exec();
+    if (purgeData) {
+      await Comment.deleteMany({ post: post.id }).exec();
+    } else {
+      await Comment.updateMany({ post: post.id }, { removed: true }).exec();
+    }
     req.log.addAction("Comments removed from post.");
 
     // Remove post
     req.log.addAction("Removing post.");
-    await Post.deleteOne({
-      _id: post.id,
-    }).exec();
+    if (purgeData) {
+      await Post.deleteOne({ _id: post.id }).exec();
+    } else {
+      await Post.updateOne({ _id: post.id }, { removed: true }).exec();
+    }
     req.log.addAction("Post removed.");
 
     req.log.addAction("Updating community engagement.");
@@ -635,7 +654,7 @@ router.delete("/:id", async (req, res, next) => {
     await User.updateOne({ _id: user.id }, { $inc: { postCount: -1 } });
     req.log.addAction("User post count updated.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;
