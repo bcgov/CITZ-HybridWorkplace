@@ -63,6 +63,7 @@ router.get("/", async (req, res, next) => {
       user = await User.create({
         username: decoded.idir_username,
         email: decoded.email,
+        role: "user",
         registeredOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
         postCount: 0,
         notificationFrequency: "none",
@@ -140,21 +141,17 @@ router.get("/", async (req, res, next) => {
       sameSite: "None",
     });
 
-    req.log.setResponse(201, "Success", null);
+    req.log.setResponse(201, "Success");
     return res.redirect(frontendURI);
   } catch (err) {
     // Explicitly thrown error
-    if (res.locals.err instanceof ResponseError) {
-      req.log.setResponse(
-        res.locals.err.status,
-        "ResponseError",
-        res.locals.err.message
-      );
-      return res.status(res.locals.err.status).send(res.locals.err.message);
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
+      return res.status(err.status).send(err.message);
     }
     // Bad Request
-    req.log.setResponse(400, "Error", res.locals.err);
-    return res.status(400).send(`Bad Request: ${res.locals.err}`);
+    req.log.setResponse(400, "Error", err);
+    return res.status(400).send(`Bad Request: ${err}`);
   } finally {
     req.log.print();
   }

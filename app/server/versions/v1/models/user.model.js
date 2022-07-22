@@ -43,6 +43,8 @@
  *          description: User's password.
  *          example: VerySecure123
  *          minimum: 8
+ *        role:
+ *          type: string
  *        postCount:
  *          type: number
  *          description: Number of posts user has created.
@@ -130,6 +132,7 @@ const User = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String },
     refreshToken: { type: String },
+    role: { type: String },
     postCount: { type: Number },
     firstName: { type: String },
     lastName: { type: String },

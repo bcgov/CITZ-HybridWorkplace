@@ -78,16 +78,19 @@ const { agenda } = require("../../../../db");
 router.get("/:title", async (req, res, next) => {
   try {
     req.log.addAction("Finding community.");
-    const { community } = await findSingleDocuments({
-      community: req.params.title,
-    });
+    const { community } = await findSingleDocuments(
+      {
+        community: req.params.title,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("Community found.");
 
     req.log.addAction("Checking count query.");
     if (req.query.count === "true")
       return res.status(200).json({ count: community.moderators.length || 0 });
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(200).json(community.moderators);
   } catch (err) {
     res.locals.err = err;
@@ -141,23 +144,28 @@ router.get("/:title", async (req, res, next) => {
 router.patch("/add/:title", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and community.");
-    const { user, community } = await findSingleDocuments({
-      user: req.user.username,
-      community: req.params.title,
-    });
+    const { user, community } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        community: req.params.title,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and community found.");
 
     req.log.addAction(
       "Checking user is moderator of community and has right permissions."
     );
     if (
-      !(await communityAuthorization.isCommunityModerator(
-        user.username,
-        community.title,
-        req.body.permissions && req.body.permissions.length > 0
-          ? ["set_moderators", "set_permissions"]
-          : ["set_moderators"]
-      ))
+      !(
+        (await communityAuthorization.isCommunityModerator(
+          user.username,
+          community.title,
+          req.body.permissions && req.body.permissions.length > 0
+            ? ["set_moderators", "set_permissions"]
+            : ["set_moderators"]
+        )) || user.role === "admin"
+      )
     )
       throw new ResponseError(
         403,
@@ -171,7 +179,7 @@ router.patch("/add/:title", async (req, res, next) => {
     const moderator = await User.findOne({ username: req.body.username });
     if (!moderator)
       throw new ResponseError(404, "Moderator username not found.");
-    await checkUserIsMemberOfCommunity(moderator.username, community.title);
+    await checkUserIsMemberOfCommunity(moderator, community.title);
     req.log.addAction("Moderator user data found.");
 
     req.log.addAction("Checking if user is already a moderator.");
@@ -200,7 +208,7 @@ router.patch("/add/:title", async (req, res, next) => {
     );
     req.log.addAction("Community moderators updated.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;
@@ -250,21 +258,26 @@ router.patch("/add/:title", async (req, res, next) => {
 router.delete("/remove/:title", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and community.");
-    const { user, community } = await findSingleDocuments({
-      user: req.user.username,
-      community: req.params.title,
-    });
+    const { user, community } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        community: req.params.title,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and community found.");
 
     req.log.addAction(
       "Checking user is moderator of community and has right permissions."
     );
     if (
-      !(await communityAuthorization.isCommunityModerator(
-        user.username,
-        community.title,
-        ["set_moderators"]
-      ))
+      !(
+        (await communityAuthorization.isCommunityModerator(
+          user.username,
+          community.title,
+          ["set_moderators"]
+        )) || user.role === "admin"
+      )
     )
       throw new ResponseError(
         403,
@@ -331,7 +344,7 @@ no moderators have any permissions.`
     );
     req.log.addAction("Community moderators updated.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;
@@ -385,21 +398,26 @@ no moderators have any permissions.`
 router.patch("/permissions/:title", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and community.");
-    const { user, community } = await findSingleDocuments({
-      user: req.user.username,
-      community: req.params.title,
-    });
+    const { user, community } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        community: req.params.title,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and community found.");
 
     req.log.addAction(
       "Checking user is moderator of community and has right permissions."
     );
     if (
-      !(await communityAuthorization.isCommunityModerator(
-        user.username,
-        community.title,
-        ["set_permissions"]
-      ))
+      !(
+        (await communityAuthorization.isCommunityModerator(
+          user.username,
+          community.title,
+          ["set_permissions"]
+        )) || user.role === "admin"
+      )
     )
       throw new ResponseError(
         403,
@@ -469,7 +487,7 @@ no moderators have any permissions.`
     );
     req.log.addAction("Community moderators updated.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;
@@ -521,18 +539,23 @@ no moderators have any permissions.`
 router.post("/kick/:title", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and community.");
-    const { user, community } = await findSingleDocuments({
-      user: req.user.username,
-      community: req.params.title,
-    });
+    const { user, community } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        community: req.params.title,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and community found.");
 
     req.log.addAction("Checking user is moderator of community.");
     if (
-      !(await communityAuthorization.isCommunityModerator(
-        user.username,
-        community.title
-      ))
+      !(
+        (await communityAuthorization.isCommunityModerator(
+          user.username,
+          community.title
+        )) || user.role === "admin"
+      )
     )
       throw new ResponseError(403, "Only moderators can kick members.");
     req.log.addAction("User is moderator of community.");
@@ -632,7 +655,7 @@ router.post("/kick/:title", async (req, res, next) => {
     );
     req.log.addAction("Community removed from user's community list.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;

@@ -63,10 +63,13 @@ const Comment = require("../../models/comment.model");
 router.patch("/:id", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and comment.");
-    const { user, comment } = await findSingleDocuments({
-      user: req.user.username,
-      comment: req.params.id,
-    });
+    const { user, comment } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        comment: req.params.id,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and comment found.");
 
     req.log.addAction("Checking vote query field exists.");
@@ -74,7 +77,7 @@ router.patch("/:id", async (req, res, next) => {
       throw new ResponseError(404, "Vote not found in query.");
 
     req.log.addAction("Checking user is member of community.");
-    await checkUserIsMemberOfCommunity(user.username, comment.community);
+    await checkUserIsMemberOfCommunity(user, comment.community);
     req.log.addAction("User is member of community.");
 
     let query;
@@ -152,6 +155,7 @@ router.patch("/:id", async (req, res, next) => {
     if (query) await Comment.updateOne({ _id: comment.id }, query).exec();
     req.log.addAction("Comment updated.");
 
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;

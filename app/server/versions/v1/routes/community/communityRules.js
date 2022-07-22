@@ -73,10 +73,13 @@ const {
 router.put("/:title", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and community.");
-    const { user, community } = await findSingleDocuments({
-      user: req.user.username,
-      community: req.params.title,
-    });
+    const { user, community } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        community: req.params.title,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and community found.");
 
     req.log.addAction("Finding options.");
@@ -90,10 +93,12 @@ router.put("/:title", async (req, res, next) => {
 
     req.log.addAction("Checking user is moderator of community.");
     if (
-      !(await communityAuthorization.isCommunityModerator(
-        user.username,
-        community.title
-      ))
+      !(
+        (await communityAuthorization.isCommunityModerator(
+          user.username,
+          community.title
+        )) || user.role === "admin"
+      )
     )
       throw new ResponseError(
         403,
@@ -146,7 +151,7 @@ router.put("/:title", async (req, res, next) => {
     ).exec();
     req.log.addAction("Community rules updated.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;
@@ -187,12 +192,15 @@ router.put("/:title", async (req, res, next) => {
 router.get("/:title", async (req, res, next) => {
   try {
     req.log.addAction("Finding community.");
-    const { community } = await findSingleDocuments({
-      community: req.params.title,
-    });
+    const { community } = await findSingleDocuments(
+      {
+        community: req.params.title,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("Community found.");
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json(community.rules);
   } catch (err) {
     res.locals.err = err;

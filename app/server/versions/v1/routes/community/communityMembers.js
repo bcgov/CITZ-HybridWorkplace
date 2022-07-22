@@ -72,10 +72,13 @@ const User = require("../../models/user.model");
 router.get("/:title", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and community.");
-    const { community } = await findSingleDocuments({
-      user: req.user.username,
-      community: req.params.title,
-    });
+    const { community } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        community: req.params.title,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and community found.");
 
     req.log.addAction("Checking count query.");
@@ -132,10 +135,13 @@ router.get("/:title", async (req, res, next) => {
 router.patch("/join/:title", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and community.");
-    const { user, community } = await findSingleDocuments({
-      user: req.user.username,
-      community: req.params.title,
-    });
+    const { user, community } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        community: req.params.title,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and community found.");
 
     req.log.addAction("Checking if user is member of community.");
@@ -219,10 +225,13 @@ router.patch("/join/:title", async (req, res, next) => {
 router.delete("/leave/:title", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and community.");
-    const { user, community } = await findSingleDocuments({
-      user: req.user.username,
-      community: req.params.title,
-    });
+    const { user, community } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        community: req.params.title,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and community found.");
 
     // Check if user is community moderator
