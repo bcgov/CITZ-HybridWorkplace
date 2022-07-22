@@ -4,6 +4,8 @@ import puppeteer from "puppeteer";
 
 jest.setTimeout(30000);
 
+const idir = process.env.IDIR 
+const password = process.env.PASSWORD
 
 describe("Given that user is on login page", () => {
   let browser;

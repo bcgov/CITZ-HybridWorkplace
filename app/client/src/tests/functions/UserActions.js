@@ -87,8 +87,8 @@ class UserActions {
 
 
   async createCommunity(community) {
-    await this.page.waitForSelector('div[class="css-4xkoi8"]'); 
-    await this.page.click('div[class="css-4xkoi8"]'); // clicks the + button on the communities board
+    await this.page.waitForSelector("button.css-rxr26v"); // try to get first + button
+    await this.page.click("button.css-rxr26v"); // clicks the + button on the communities board
 
     await this.page.waitForSelector('div[placeholder="Title"}'); // wait for field to appear
 
