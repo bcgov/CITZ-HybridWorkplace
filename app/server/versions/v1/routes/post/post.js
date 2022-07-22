@@ -281,7 +281,7 @@ router.get("/", async (req, res, next) => {
 
     req.log.addAction("Communities found. Finding posts from communities.");
     const posts = await Post.find(matchQuery, "", {
-      sort: { pinned: -1, _id: -1 },
+      sort: { _id: -1 },
     }).exec();
 
     if (!posts) throw new ResponseError(404, "Posts not found.");
