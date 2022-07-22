@@ -1,0 +1,83 @@
+import { UserActions } from "../functions/UserActions";
+import puppeteer from "puppeteer";
+
+jest.setTimeout(30000);
+
+const idir = process.env.IDIR;
+const password = process.env.PASSWORD;
+const headless = process.env.HEADLESS === "true";
+const slowmo = parseInt(process.env.SLOWMO);
+
+describe("Given that user is on login page", () => {
+  let browser;
+  let page;
+  beforeAll(async () => {
+    browser = await puppeteer.launch({
+      headless: headless,
+      slowMo: slowmo,
+      args: [`--window-size=1366,768`],
+    });
+    page = await browser.newPage();
+    await page.setViewport({
+      width: 1366,
+      height: 768,
+      deviceScaleFactor: 1,
+    });
+    await page.goto("http://localhost:8080");
+  });
+
+  afterAll(async () => {
+    browser.close();
+  });
+
+  describe("When user logs in", () => {
+    beforeAll(async () => {
+      const user = new UserActions(idir, password, page);
+      await user.login();
+    });
+
+    test("Then they should be brought to the main page", async () => {
+      // Checking if avatar is visible
+      let atHomePage = false;
+      try {
+        await page.waitForXPath(
+          `//button[@aria-label="account of current user"]`,
+          { timeout: 2000 }
+        );
+        atHomePage = true;
+      } catch (e) {
+        atHomePage = false;
+      }
+      expect(atHomePage).toBeTruthy();
+    });
+  });
+
+  describe("Go to Welcome Community", () => {
+    beforeAll(async () => {
+      const user = new UserActions(idir, password, page);
+      await user.openSideMenu();
+      await user.goToCommunitiesPage();
+      await user.goToCommunity("Welcome");
+    });
+
+    test("They should be brought to the Welcome Community", async () => {
+        const post = await page.evaluate(el => el.innerText, await page.$x('//*[contains(text(), "HWP Team")]'))
+        expect(post).toBe("hello");
+    });
+  });
+
+  describe("Join Welcome Community", () => {
+    beforeAll(async () => {
+      const user = new UserActions(idir, password, page);
+      await user.joinCommunityFromPage();
+    });
+
+    test("They should be brought to the Welcome Community", async () => {
+        const post = await page.evaluate(el => el.innerText, await page.$x('//*[contains(text(), "HWP Team")]'))
+        expect(post).not.toBe("hello");
+    });
+  });
+
+
+
+});

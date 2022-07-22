@@ -83,6 +83,15 @@ class UserActions {
     await this.page.waitForSelector(`div[role="presentation"]`, {
       timeout: 2000,
     });
+
+    setTimeout('',2000);
+  }
+
+  async goToCommunitiesPage(){
+    const [button] = await this.page.$x(`//div[@value="/communities"]`);
+    if (button) {
+      await button.click();
+    }
   }
 
   async leaveCommunity(community) {}
@@ -90,7 +99,7 @@ class UserActions {
   async goToCommunity(community) {
     // Find community title link and click it
     const [communityTitle] = await this.page.$x(
-      `//p/b[contains(., '${community}')]`
+      `//h5/b[contains(., '${community}')]`
     );
     if (communityTitle) {
       await communityTitle.click();
@@ -100,7 +109,31 @@ class UserActions {
     await this.page.waitForXPath(`//h5[contains(., '${community}')]`); // Community name on community page
   }
 
-  async createCommunity(community) {}
+  async joinCommunityFromPage(){
+    const [button] = await this.page.$x(`//div[@value="/communities"]`);
+    if (button) {
+      await button.click();
+    }
+  }
+
+
+    
+  async createCommunity(community) {
+    await this.page.waitForSelector("button.css-rxr26v"); // try to get first + button
+    await this.page.click("button.css-rxr26v"); // clicks the + button on the communities board
+
+    await this.page.waitForSelector('div[placeholder="Title"}'); // wait for field to appear
+
+    await this.page.type('div[placeholder="Title"}', `${community}`); // type in title field
+    await this.page.type('div[placeholder="Description"}', `${community}`); // type in description field
+    
+    await this.page.click("div[contains('Set Rules')]");
+
+    await this.page.waitForSelector('div[placeholder="New Rule"}'); // wait for field to appear
+
+    await this.page.type('div[placeholder="New Rule"}', `${community}`); // type in title field
+    await this.page.type('div[placeholder="Add a description"}', `${community}`); // type in description field
+  }
 
   async createPost(title, body, community = "") {
     await this.page.waitForXPath(
