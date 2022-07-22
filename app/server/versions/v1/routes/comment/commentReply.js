@@ -237,6 +237,10 @@ router.post("/:id", async (req, res, next) => {
       community: comment.community,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
       replyTo: comment.id,
+      "upvotes.count": 0,
+      "downvotes.count": 0,
+      removed: false,
+      hidden: false,
     });
     req.log.addAction("Reply created.");
 

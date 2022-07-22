@@ -22,6 +22,8 @@ const moment = require("moment");
 const color = require("ansi-colors");
 
 const Community = require("../models/community.model");
+const Post = require("../models/post.model");
+const Comment = require("../models/comment.model");
 const Options = require("../models/options.model");
 
 const optionsCollection = require("./init/optionsCollection");
@@ -68,6 +70,13 @@ const mongoStartUp = async (db, collections) => {
     // Add hidden and removed fields to communities that don't have them
     await Community.updateMany({ removed: null }, { removed: false });
     await Community.updateMany({ hidden: null }, { hidden: false });
+
+    // Fix comment reply voting
+    await Comment.updateMany({ "upvotes.count": null }, { "upvotes.count": 0 });
+    await Comment.updateMany(
+      { "downvotes.count": null },
+      { "downvotes.count": 0 }
+    );
   }
 };
 
