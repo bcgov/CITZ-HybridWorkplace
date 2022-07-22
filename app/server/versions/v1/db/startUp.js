@@ -67,9 +67,12 @@ const mongoStartUp = async (db, collections) => {
       console.log(color.yellow("Welcome community created."));
     }
 
-    // Add hidden and removed fields to communities that don't have them
+    // Add hidden and removed fields to documents that don't have them
     await Community.updateMany({ removed: null }, { removed: false });
-    await Community.updateMany({ hidden: null }, { hidden: false });
+    await Post.updateMany({ removed: null }, { removed: false });
+    await Post.updateMany({ hidden: null }, { hidden: false });
+    await Comment.updateMany({ removed: null }, { removed: false });
+    await Comment.updateMany({ hidden: null }, { hidden: false });
 
     // Fix comment reply voting
     await Comment.updateMany({ "upvotes.count": null }, { "upvotes.count": 0 });
