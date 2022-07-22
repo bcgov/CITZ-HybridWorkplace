@@ -66,15 +66,14 @@ const EditUserInterestsModal = (props) => {
 
   const handleTagSubmit = (e) => {
     e.preventDefault();
-    const input = e.target.TagInput.value
+    const input = e.target.TagInput.value;
     if (input.length < 3) {
-      setInputError(true)
-      return
-    } 
+      setInputError(true);
+      return;
+    }
     setInterests((prev) => [...prev, e.target.TagInput.value]);
     setInterestInput("");
-    setInputError(false)
-    console.log(e.target.TagInput.value);
+    setInputError(false);
   };
   return (
     <Dialog
@@ -87,9 +86,11 @@ const EditUserInterestsModal = (props) => {
       <DialogContent data-color-mode="light">
         <Stack spacing={1}>
           <form onSubmit={handleTagSubmit}>
-            <InputLabel htmlFor="tag-input" error={inputError}>Interests</InputLabel>
+            <InputLabel htmlFor="tag-input" error={inputError}>
+              Interests
+            </InputLabel>
             <TextField
-            sx={{pt: 0}}
+              sx={{ pt: 0 }}
               name="TagInput"
               id="tag-input"
               error={inputError}
@@ -121,7 +122,10 @@ const EditUserInterestsModal = (props) => {
               <Button variant="contained" onClick={saveEdits}>
                 Save
               </Button>
-              <Button onClick={props.closeEditUserInterestsModal} color="button">
+              <Button
+                onClick={props.closeEditUserInterestsModal}
+                color="button"
+              >
                 Cancel
               </Button>
             </Stack>

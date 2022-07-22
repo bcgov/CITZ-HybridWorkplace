@@ -368,7 +368,6 @@ const initialState = {
 };
 
 export function postReducer(state = initialState, action) {
-  console.log(state);
   switch (action.type) {
     case GET_POSTS:
       return {
@@ -531,16 +530,27 @@ export function postReducer(state = initialState, action) {
                 ...post,
                 comments: post.comments.map((comment) =>
                   comment._id === action.payload.commentId
-                    ? {
+                    ? // If comment._id is the id of the comment we're upvoting, do the following logic
+                      {
                         ...comment,
-                        upvotes: {
-                          ...comment.upvotes,
-                          users: [
-                            ...comment.upvotes.users,
-                            action.payload.userId,
-                          ],
-                        },
-                        votes: comment.votes + 1,
+                        /* 
+                  The upvote/downvote button work as a switch.
+                  If upvote is already clicked and you click it again, it will unclick upvote,
+                  and same with downvote.
+                  */
+                        userVote:
+                          comment.userVote === "down" || !comment.userVote
+                            ? "up"
+                            : null,
+                        votes: (() => {
+                          if (comment.userVote === "down") {
+                            return comment.votes + 2;
+                          }
+                          if (comment.userVote === "up") {
+                            return comment.votes - 1;
+                          }
+                          return comment.votes + 1;
+                        })(),
                       }
                     : comment
                 ),
@@ -551,58 +561,39 @@ export function postReducer(state = initialState, action) {
     case DOWNVOTE_COMMENT:
       return {
         ...state,
-        item: {
-          ...state.item,
-          comments: state.item.comments.map((comment) =>
-            comment._id === action.payload.commentId
-              ? {
-                  ...comment,
-                  downvotes: {
-                    ...comment.downvotes,
-                    users: [...comment.downvotes.users, action.payload.userId],
-                  },
-                  votes: comment.votes - 1,
-                }
-              : comment
-          ),
-        },
-      };
-    case REMOVE_COMMENT_VOTE:
-      return {
-        ...state,
-        item: {
-          ...state.item,
-          comments: state.item.comments.map((comment) =>
-            comment._id === action.payload.commentId
-              ? {
-                  ...comment,
-                  downvotes: {
-                    ...comment.downvotes,
-                    users: comment.downvotes.users.filter(
-                      (user) => user !== action.payload.userId
-                    ),
-                  },
-                  upvotes: {
-                    ...comment.upvotes,
-                    users: comment.upvotes.users.filter(
-                      (user) => user !== action.payload.userId
-                    ),
-                  },
-                  votes: (() => {
-                    if (comment.upvotes.users.includes(action.payload.userId)) {
-                      return comment.votes - 1;
-                    } else if (
-                      comment.downvotes.users.includes(action.payload.userId)
-                    ) {
-                      return comment.votes + 1;
-                    } else {
-                      return comment.votes;
-                    }
-                  })(),
-                }
-              : comment
-          ),
-        },
+        items: state.items.map((post, index) =>
+          index === state.currentPostIndex
+            ? {
+                ...post,
+                comments: post.comments.map((comment) =>
+                  comment._id === action.payload.commentId
+                    ? // If comment._id is the id of the comment we're upvoting, do the following logic
+                      {
+                        ...comment,
+                        /* 
+                  The upvote/downvote button work as a switch.
+                  If upvote is already clicked and you click it again, it will unclick upvote,
+                  and same with downvote.
+                  */
+                        userVote:
+                          comment.userVote === "up" || !comment.userVote
+                            ? "down"
+                            : null,
+                        votes: (() => {
+                          if (comment.userVote === "up") {
+                            return comment.votes - 2;
+                          }
+                          if (comment.userVote === "down") {
+                            return comment.votes + 1;
+                          }
+                          return comment.votes - 1;
+                        })(),
+                      }
+                    : comment
+                ),
+              }
+            : post
+        ),
       };
     default:
       return state;

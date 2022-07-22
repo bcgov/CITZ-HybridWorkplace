@@ -24,6 +24,7 @@
 
 import { createSuccess, createError } from "./alertDuck";
 import hwp_axios from "../../axiosInstance";
+import { reshapeCommentsForFrontend } from "../../helperFunctions/commentHelpers";
 
 export const SET_COMMENTS = "CITZ-HYBRIDWORKPLACE/COMMENT/SET_COMMENTS";
 export const ADD_COMMENT = "CITZ-HYBRIDWORKPLACE/COMMENT/ADD_COMMENT";
@@ -55,10 +56,14 @@ export const getComments = (postId) => async (dispatch, getState) => {
       },
     });
 
-    console.log(response.data);
+    const comments = reshapeCommentsForFrontend(
+      response.data,
+      authState.user.id
+    );
+
     dispatch({
       type: SET_COMMENTS,
-      payload: { comments: response.data },
+      payload: { comments },
     });
   } catch (err) {
     console.error(err);
@@ -304,46 +309,6 @@ export const downvoteComment = (commentId) => async (dispatch, getState) => {
     return successful;
   }
 };
-
-export const removeCommentVote =
-  (commentId, callAPI = false) =>
-  async (dispatch, getState) => {
-    let successful = true;
-    try {
-      const authState = getState().auth;
-      const token = authState.accessToken;
-      const userId = authState.user.id;
-
-      if (!token) throw new Error(noTokenText);
-
-      if (callAPI) {
-        await hwp_axios.patch(
-          `/api/comment/vote/${commentId}`,
-          {
-            id: commentId,
-          },
-          {
-            headers: {
-              authorization: `Bearer ${token}`,
-            },
-            params: {
-              dispatch,
-            },
-          }
-        );
-      }
-
-      dispatch({
-        type: REMOVE_COMMENT_VOTE,
-        payload: { commentId, userId },
-      });
-    } catch (err) {
-      console.error(err);
-      successful = false;
-    } finally {
-      return successful;
-    }
-  };
 
 const initialState = {};
 
