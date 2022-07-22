@@ -36,7 +36,7 @@ import {
   upvoteComment,
   downvoteComment,
   removeCommentVote,
-} from "../redux/ducks/postDuck";
+} from "../redux/ducks/commentDuck";
 import { useNavigate } from "react-router-dom";
 import AvatarIcon from "./AvatarIcon";
 

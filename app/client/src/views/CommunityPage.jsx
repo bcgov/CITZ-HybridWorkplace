@@ -495,7 +495,12 @@ const mapStateToProps = (state) => ({
   community:
     state.communities.communities[state.communities.currentCommunityIndex] ??
     {},
-  posts: state.posts.items,
+  posts: state.posts.items.filter(
+    (post) =>
+      post.community ===
+      state.communities.communities[state.communities.currentCommunityIndex]
+        ?.title
+  ),
   userId: state.auth.user.id,
 });
 

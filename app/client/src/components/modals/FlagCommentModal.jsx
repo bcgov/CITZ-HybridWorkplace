@@ -34,7 +34,7 @@ import {
 } from "@mui/material";
 import { connect } from "react-redux";
 import { closeFlagCommentModal } from "../../redux/ducks/modalDuck";
-import { flagComment } from "../../redux/ducks/postDuck";
+import { flagComment } from "../../redux/ducks/commentDuck";
 import PropTypes from "prop-types";
 import { useState } from "react";
 
@@ -95,7 +95,9 @@ const FlagCommentModal = (props) => {
               >
                 Flag
               </Button>
-              <Button onClick={props.closeFlagCommentModal} color="button">Cancel</Button>
+              <Button onClick={props.closeFlagCommentModal} color="button">
+                Cancel
+              </Button>
             </Stack>
           </DialogActions>
         </Stack>

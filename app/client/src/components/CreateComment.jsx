@@ -1,7 +1,7 @@
 import { Button, Grid, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { createComment } from "../redux/ducks/postDuck";
+import { createComment } from "../redux/ducks/commentDuck";
 import AvatarIcon from "../components/AvatarIcon";
 import { getUser } from "../redux/ducks/userDuck";
 
