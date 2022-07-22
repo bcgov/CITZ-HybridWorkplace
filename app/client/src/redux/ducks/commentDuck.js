@@ -24,7 +24,10 @@
 
 import { createSuccess, createError } from "./alertDuck";
 import hwp_axios from "../../axiosInstance";
-import { reshapeCommentsForFrontend } from "../../helperFunctions/commentHelpers";
+import {
+  reshapeCommentForFrontend,
+  reshapeCommentsForFrontend,
+} from "../../helperFunctions/commentHelpers";
 
 export const SET_COMMENTS = "CITZ-HYBRIDWORKPLACE/COMMENT/SET_COMMENTS";
 export const ADD_COMMENT = "CITZ-HYBRIDWORKPLACE/COMMENT/ADD_COMMENT";
@@ -57,8 +60,8 @@ export const getComments = (postId) => async (dispatch, getState) => {
     });
 
     const comments = reshapeCommentsForFrontend(
-      response.data,
-      authState.user.id
+      authState.user.id,
+      response.data
     );
 
     dispatch({
@@ -97,9 +100,11 @@ export const createComment = (post, comment) => async (dispatch, getState) => {
       }
     );
 
+    const comment = reshapeCommentForFrontend(authState.user.id, response.data);
+
     dispatch({
       type: ADD_COMMENT,
-      payload: response.data,
+      payload: comment,
     });
   } catch (err) {
     console.error(err);

@@ -6,7 +6,7 @@
  * @returns {string} String that represents what vote the user has voted on the post
  *
  */
-export const getUserVote = (comment, userId) => {
+export const getUserVote = (userId, comment) => {
   if (comment.upvotes.users.includes(userId)) {
     return "up";
   }
@@ -18,13 +18,10 @@ export const getUserVote = (comment, userId) => {
   return null;
 };
 
-export const reshapeCommentForFrontend = (comment, userId) => ({
+export const reshapeCommentForFrontend = (userId, comment) => ({
   ...comment,
-  userVote: getUserVote(comment, userId),
+  userVote: getUserVote(userId, comment),
 });
 
-export const reshapeCommentsForFrontend = (comments, userId) =>
-  comments.map((comment) => ({
-    ...comment,
-    userVote: getUserVote(comment, userId),
-  }));
+export const reshapeCommentsForFrontend = (userId, comments) =>
+  comments.map((comment) => reshapeCommentForFrontend(userId, comment));

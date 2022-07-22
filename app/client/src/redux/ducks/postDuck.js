@@ -32,6 +32,10 @@ import {
   SET_COMMENT_REPLIES,
   UPVOTE_COMMENT,
 } from "./commentDuck";
+import {
+  reshapePostForFrontend,
+  reshapePostsForFrontend,
+} from "../../helperFunctions/postHelpers";
 
 export const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_POSTS";
 const SET_USER_POSTS = "CITZ-HYBRIDWORKPLACE/POST/SET_USER_POSTS";
@@ -43,15 +47,6 @@ const TAG_POST = "CITZ-HYBRIDWORKPLACE/POST/TAG_POST";
 const UNTAG_POST = "CITZ-HYBRIDWORKPLACE/POST/UNTAG_POST";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
-
-const getUserTag = (post, userId) => {
-  try {
-    return post.tags.find((tag) => tag.taggedBy.find((user) => user === userId))
-      ?.tag;
-  } catch (err) {
-    console.error(err);
-  }
-};
 
 export const getPosts = () => async (dispatch, getState) => {
   let successful = true;
@@ -72,10 +67,7 @@ export const getPosts = () => async (dispatch, getState) => {
     });
 
     //Modifies each post and adds a userTag field which shows the tag the user has given it
-    const posts = response.data.map((post) => ({
-      ...post,
-      userTag: getUserTag(post, authState.user.id),
-    }));
+    const posts = reshapePostsForFrontend(authState.user.id, response.data);
 
     dispatch({
       type: GET_POSTS,
@@ -92,7 +84,8 @@ export const getPosts = () => async (dispatch, getState) => {
 export const getUserPosts = (postCreator) => async (dispatch, getState) => {
   let successful = true;
   try {
-    const token = getState().auth.accessToken;
+    const authState = getState().auth;
+    const token = authState.accessToken;
     if (!token) throw new Error(noTokenText);
 
     const response = await hwp_axios.get(`/api/post?username=${postCreator}`, {
@@ -103,9 +96,12 @@ export const getUserPosts = (postCreator) => async (dispatch, getState) => {
         dispatch,
       },
     });
+
+    const posts = reshapePostsForFrontend(authState.user.id, response.data);
+
     dispatch({
       type: SET_USER_POSTS,
-      payload: response.data,
+      payload: posts,
     });
   } catch (err) {
     console.error(err);
@@ -134,11 +130,7 @@ export const getPost = (postId) => async (dispatch, getState) => {
     });
 
     //Modifies each post and adds a userTag field which shows the tag the user has given it
-    const post = {
-      ...response.data,
-      userTag: getUserTag(response.data, authState.user.id),
-    };
-
+    const post = reshapePostForFrontend(authState.user.id, response.data);
     dispatch({
       type: GET_POST,
       payload: post,
@@ -177,9 +169,11 @@ export const createPost = (postData) => async (dispatch, getState) => {
       }
     );
 
+    const post = reshapePostForFrontend(authState.user.id, response.data);
+
     dispatch({
       type: ADD_POST,
-      payload: response.data,
+      payload: post,
     });
   } catch (err) {
     console.error(err);

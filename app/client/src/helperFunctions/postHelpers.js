@@ -8,6 +8,11 @@ export const isUserPostCreator = (userId, post) => {
   return post.creator === userId;
 };
 
+const getUserTag = (userId, post) => {
+  return post.tags.find((tag) => tag.taggedBy.find((user) => user === userId))
+    ?.tag;
+};
+
 /**
  *
  * @param {String} userId
@@ -19,6 +24,7 @@ export const reshapePostForFrontend = (userId, post) => {
   return {
     ...post,
     userIsCreator: isUserPostCreator(userId, post),
+    userTag: getUserTag(userId, post),
   };
 };
 
@@ -31,8 +37,5 @@ export const reshapePostForFrontend = (userId, post) => {
  *
  */
 export const reshapePostsForFrontend = (userId, posts) => {
-  return posts.map((post) => ({
-    ...post,
-    userIsCreator: isUserPostCreator(userId, post),
-  }));
+  return posts.map((post) => reshapePostForFrontend(userId, post));
 };
