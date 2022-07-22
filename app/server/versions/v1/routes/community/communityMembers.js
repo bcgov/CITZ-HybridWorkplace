@@ -288,7 +288,7 @@ no moderators have any permissions.`
     req.log.addAction("Checked if user is moderator.");
 
     req.log.addAction("Checking if user is last community member.");
-    if (community.memberCount === 1) {
+    if (community.memberCount === 1 && community.title !== "Welcome") {
       req.log.addAction("User is last community member.");
       // Remove community
       req.log.addAction("Removing community.");
