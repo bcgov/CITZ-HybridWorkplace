@@ -22,6 +22,7 @@
 
 import { createSuccess, createError } from "./alertDuck";
 import hwp_axios from "../../axiosInstance";
+import { reshapeCommentsForFrontend } from "../../helperFunctions/commentHelpers";
 
 export const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_POSTS";
 const SET_USER_POSTS = "CITZ-HYBRIDWORKPLACE/POST/SET_USER_POSTS";
@@ -376,10 +377,13 @@ export const getComments = (postId) => async (dispatch, getState) => {
         dispatch,
       },
     });
-
+    const comments = reshapeCommentsForFrontend(
+      response.data,
+      authState.user.id
+    );
     dispatch({
       type: SET_COMMENTS,
-      payload: { comments: response.data },
+      payload: { comments },
     });
   } catch (err) {
     console.error(err);
@@ -514,9 +518,14 @@ export const getCommentReplies = (commentId) => async (dispatch, getState) => {
       },
     });
 
+    const comments = reshapeCommentsForFrontend(
+      response.data,
+      authState.user.id
+    );
+
     dispatch({
       type: SET_COMMENT_REPLIES,
-      payload: { commentId, comments: response.data },
+      payload: { commentId, comments },
     });
   } catch (err) {
     console.error(err);
@@ -794,13 +803,32 @@ export function postReducer(state = initialState, action) {
           ...state.item,
           comments: state.item.comments.map((comment) =>
             comment._id === action.payload.commentId
-              ? {
+              ? // If comment._id is the id of the comment we're upvoting, do the following logic
+                {
                   ...comment,
+                  // Appending the user id to the upvotes
                   upvotes: {
                     ...comment.upvotes,
                     users: [...comment.upvotes.users, action.payload.userId],
                   },
-                  votes: comment.votes + 1,
+                  /* 
+                  The upvote/downvote button work as a switch.
+                  If upvote is already clicked and you click it again, it will unclick upvote,
+                  and same with downvote.
+                  */
+                  userVote:
+                    comment.userVote === "down" || !comment.userVote
+                      ? "up"
+                      : null,
+                  votes: (() => {
+                    if (comment.userVote === "down") {
+                      return comment.votes + 2;
+                    }
+                    if (comment.userVote === "up") {
+                      return comment.votes - 1;
+                    }
+                    return comment.votes + 1;
+                  })(),
                 }
               : comment
           ),
@@ -813,13 +841,32 @@ export function postReducer(state = initialState, action) {
           ...state.item,
           comments: state.item.comments.map((comment) =>
             comment._id === action.payload.commentId
-              ? {
+              ? // If comment._id is the id of the comment we're upvoting, do the following logic
+                {
                   ...comment,
+                  // Appending the user id to the downVotes
                   downvotes: {
                     ...comment.downvotes,
                     users: [...comment.downvotes.users, action.payload.userId],
                   },
-                  votes: comment.votes - 1,
+                  /* 
+                  The upvote/downvote button work as a switch.
+                  If upvote is already clicked and you click it again, it will unclick upvote,
+                  and same with downvote.
+                  */
+                  userVote:
+                    comment.userVote === "up" || !comment.userVote
+                      ? "down"
+                      : null,
+                  votes: (() => {
+                    if (comment.userVote === "down") {
+                      return comment.votes + 1;
+                    }
+                    if (comment.userVote === "up") {
+                      return comment.votes - 2;
+                    }
+                    return comment.votes - 1;
+                  })(),
                 }
               : comment
           ),
