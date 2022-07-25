@@ -40,6 +40,7 @@ const findCommunitiesByEngagement = async (user) => {
           },
           {
             $match: {
+              username: user.username,
               $expr: {
                 $and: [
                   { $eq: ["$communities.community", "$$community_title"] },
@@ -63,7 +64,6 @@ const findCommunitiesByEngagement = async (user) => {
         userData: 0,
       },
     },
-    { $unwind: "$members" },
     {
       $match: {
         members: new ObjectId(user.id),
