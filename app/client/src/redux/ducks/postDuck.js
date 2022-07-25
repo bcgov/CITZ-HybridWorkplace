@@ -28,7 +28,7 @@ const SET_USER_POSTS = "CITZ-HYBRIDWORKPLACE/POST/SET_USER_POSTS";
 const GET_POST = "CITZ-HYBRIDWORKPLACE/POST/GET_POST";
 const ADD_POST = "CITZ-HYBRIDWORKPLACE/POST/ADD_POST";
 const REMOVE_POST = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_POST";
-const EDIT_POST = "CITZ-HYBRIDWORKPLACE/POST/EDIT_POST";
+export const EDIT_POST = "CITZ-HYBRIDWORKPLACE/POST/EDIT_POST";
 const TAG_POST = "CITZ-HYBRIDWORKPLACE/POST/TAG_POST";
 const UNTAG_POST = "CITZ-HYBRIDWORKPLACE/POST/UNTAG_POST";
 const SET_COMMENTS = "CITZ-HYBRIDWORKPLACE/POST/SET_COMMENTS";
@@ -706,9 +706,7 @@ export function postReducer(state = initialState, action) {
           post._id === action.payload.id
             ? {
                 ...post,
-                title: action.payload.title,
-                message: action.payload.message,
-                pinned: action.payload.pinned,
+                ...action.payload,
               }
             : post
         ),

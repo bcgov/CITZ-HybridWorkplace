@@ -4,7 +4,7 @@
   "rules": {
     "max-lines": [
       "warn",
-      { "max": 350, "skipComments": true, "skipBlankLines": true }
+      { "max": 450, "skipComments": true, "skipBlankLines": true }
     ],
     "no-unused-vars": "warn",
     "func-names": "warn",

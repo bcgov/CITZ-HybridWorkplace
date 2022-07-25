@@ -24,16 +24,16 @@
  * @returns The firstName of a user if only firstName is set,
  * or returns the firstname and lastName if both are set, or null.
  */
-const getCreatorName = (user) => {
+const getFullName = (user) => {
   const { firstName, lastName } = user;
-  let creatorName;
+  let fullName;
 
   if (firstName && firstName !== "") {
     // If lastName, set full name, else just firstName
-    creatorName =
+    fullName =
       lastName && lastName !== "" ? `${firstName} ${lastName}` : firstName;
   }
-  return creatorName;
+  return fullName;
 };
 
-module.exports = getCreatorName;
+module.exports = getFullName;

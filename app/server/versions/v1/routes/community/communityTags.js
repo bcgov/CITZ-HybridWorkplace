@@ -32,7 +32,7 @@ const Community = require("../../models/community.model");
 const Post = require("../../models/post.model");
 const {
   communityAuthorization,
-} = require("../../authorization/communityAuthorization");
+} = require("../../functions/auth/communityAuthorization");
 
 /**
  * @swagger
@@ -171,8 +171,7 @@ router.post("/:title", async (req, res, next) => {
     req.log.addAction("Checking user is moderator of community.");
     if (
       !(await communityAuthorization.isCommunityModerator(
-        // eslint-disable-next-line no-underscore-dangle
-        user._id,
+        user.username,
         community.title
       ))
     )
@@ -282,8 +281,7 @@ router.delete("/:title", async (req, res, next) => {
     req.log.addAction("Checking user is moderator of community.");
     if (
       !(await communityAuthorization.isCommunityModerator(
-        // eslint-disable-next-line no-underscore-dangle
-        user._id,
+        user.id,
         community.title
       ))
     )

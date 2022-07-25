@@ -39,7 +39,7 @@ import {
 
 import { editPost } from "../../redux/ducks/postDuck";
 import { closeEditPostModal } from "../../redux/ducks/modalDuck";
-import MDEditor from "@uiw/react-md-editor";
+import MarkDownEditor from "../MarkDownEditor";
 
 const EditPostModal = (props) => {
   const minTitleLength = 3;
@@ -82,6 +82,7 @@ const EditPostModal = (props) => {
       title: title || props.post.title,
       message: message || props.post.message,
       pinned: props.post.pinned,
+      hidden: props.post.hidden,
     };
 
     const successful = await props.editPost(post);
@@ -98,7 +99,7 @@ const EditPostModal = (props) => {
       fullWidth
     >
       <DialogTitle fontWeight={600}>Edit Post</DialogTitle>
-      <DialogContent data-color-mode="light">
+      <DialogContent>
         <Stack spacing={1}>
           <Stack spacing={0.5}>
             <InputLabel htmlFor="edit-post-title">Title</InputLabel>
@@ -114,31 +115,13 @@ const EditPostModal = (props) => {
               fullWidth
             />
           </Stack>
-          <Box>
-            <Stack
-              spacing={0.5}
-              sx={{
-                border: 3,
-                borderColor: messageError ? "red" : "transparent",
-                color: messageError ? "red" : "-moz-initial",
-              }}
-            >
-              <InputLabel
-                htmlFor="message-input"
-                sx={{
-                  color: messageError ? "red" : "-moz-initial",
-                }}
-              >
-                Message
-              </InputLabel>
-              <MDEditor
-                id="message-input"
-                value={message}
-                onChange={setMessageAndSetErrors}
-                preview="edit"
-              />
-            </Stack>
-          </Box>
+          <MarkDownEditor
+            label="Message"
+            error={messageError}
+            id="message-input"
+            value={message}
+            onChange={setMessageAndSetErrors}
+          />
           <DialogActions
             sx={{
               m: 0,
@@ -151,11 +134,9 @@ const EditPostModal = (props) => {
                 onClick={registerPost}
                 disabled={messageError || titleError}
               >
-                Submit
+                Edit
               </Button>
-              <Button variant="contained" onClick={props.closeEditPostModal}>
-                Cancel
-              </Button>
+              <Button onClick={props.closeEditPostModal} color="button">Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>

@@ -22,6 +22,8 @@ const moment = require("moment");
 const color = require("ansi-colors");
 
 const Community = require("../models/community.model");
+const Post = require("../models/post.model");
+const Comment = require("../models/comment.model");
 const Options = require("../models/options.model");
 
 const optionsCollection = require("./init/optionsCollection");
@@ -60,9 +62,17 @@ const mongoStartUp = async (db, collections) => {
         createdOn: timeStamp,
         latestActivity: timeStamp,
         members: [],
+        removed: false,
       });
       console.log(color.yellow("Welcome community created."));
     }
+
+    // Add hidden and removed fields to documents that don't have them
+    await Community.updateMany({ removed: null }, { removed: false });
+    await Post.updateMany({ removed: null }, { removed: false });
+    await Post.updateMany({ hidden: null }, { hidden: false });
+    await Comment.updateMany({ removed: null }, { removed: false });
+    await Comment.updateMany({ hidden: null }, { hidden: false });
   }
 };
 

@@ -56,6 +56,9 @@
  *            - $ref: '#/components/schemas/User'
  *        createdOn:
  *          type: string
+ *        removed:
+ *          type: boolean
+ *          description: Community will be effectively removed in the view of a user if true.
  *        rules:
  *          type: array
  *          description: Community rules set by moderators.
@@ -96,17 +99,36 @@
  *                type: array
  *                description: Users that have flagged the community.
  *                items:
- *                  - $ref: '#/components/schemas/User'
+ *                  type: string
  *        moderators:
  *          type: array
- *          description: List of moderator's IDs.
+ *          description: List of moderators.
  *          items:
  *            type: object
  *            properties:
- *              user:
+ *              userId:
  *                type: string
- *                items:
- *                  - $ref: '#/components/schemas/User'
+ *              username:
+ *                type: string
+ *              name:
+ *                type: string
+ *                description: Full name.
+ *              permissions:
+ *                type: array
+ *        kicked:
+ *          type: array
+ *          description: List of users who have been kicked from the community.
+ *          items:
+ *            type: object
+ *            properties:
+ *              userId:
+ *                type: string
+ *              period:
+ *                type: string
+ *                description: How long the user is kicked for (hour, day, week, forever).
+ *              periodEnd:
+ *                type: string
+ *                description: When the user will be un-kicked.
  *      required:
  *        - title
  *        - description
@@ -125,6 +147,7 @@ const Community = new mongoose.Schema(
     creatorUsername: { type: String },
     createdOn: { type: String, required: true },
     latestActivity: { type: String },
+    removed: { type: Boolean },
     memberCount: { type: Number },
     members: [
       {
@@ -139,16 +162,24 @@ const Community = new mongoose.Schema(
         flag: String,
         flaggedBy: [
           {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+            type: String,
           },
         ],
       },
     ],
     moderators: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        userId: String,
+        name: String,
+        username: String,
+        permissions: [String],
+      },
+    ],
+    kicked: [
+      {
+        userId: String,
+        period: String,
+        periodEnd: String,
       },
     ],
   },

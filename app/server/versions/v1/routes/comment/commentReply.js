@@ -19,14 +19,13 @@
 
 const express = require("express");
 const moment = require("moment");
-const { ObjectId } = require("mongodb");
 const ResponseError = require("../../classes/responseError");
 
 const findSingleDocuments = require("../../functions/findSingleDocuments");
 const checkUserIsMemberOfCommunity = require("../../functions/checkUserIsMemberOfCommunity");
 const updateCommunityEngagement = require("../../functions/updateCommunityEngagement");
 const getOptions = require("../../functions/getOptions");
-const getCreatorName = require("../../functions/getCreatorName");
+const getFullName = require("../../functions/getFullName");
 
 const router = express.Router();
 
@@ -71,13 +70,15 @@ router.get("/:id", async (req, res, next) => {
 
     req.log.addAction("Finding replies.");
     const replies = await Comment.aggregate([
-      { $match: { replyTo: comment.id } },
+      { $match: { replyTo: comment.id, removed: false } },
       {
         $lookup: {
           from: "user",
-          let: { objIdCreator: { $toObjectId: "$creator" } },
+          let: { commentUsername: "$creatorUsername" },
           pipeline: [
-            { $match: { $expr: { $eq: ["$_id", "$$objIdCreator"] } } },
+            {
+              $match: { $expr: { $eq: ["$username", "$$commentUsername"] } },
+            },
           ],
           as: "userData",
         },
@@ -125,6 +126,7 @@ router.get("/:id", async (req, res, next) => {
     ]).exec();
     req.log.addAction("Replies found.");
 
+    req.log.setResponse(200, "Success");
     return res.status(200).json(replies);
   } catch (err) {
     res.locals.err = err;
@@ -217,15 +219,12 @@ router.post("/:id", async (req, res, next) => {
     await Comment.updateOne({ _id: comment.id }, { hasReplies: true }).exec();
     req.log.addAction("hasReplies updated.");
 
-    req.log.addAction("Getting creator name.");
-    const creatorName = getCreatorName(user);
-
     // Create reply
     req.log.addAction("Creating reply.");
     const reply = await Comment.create({
       message: req.body.message,
       creator: user.id,
-      creatorName: creatorName || user.username,
+      creatorName: getFullName(user) || user.username,
       creatorUsername: user.username,
       post: comment.post,
       community: comment.community,
@@ -242,6 +241,7 @@ router.post("/:id", async (req, res, next) => {
     );
     req.log.addAction("Community engagement updated.");
 
+    req.log.setResponse(201, "Success");
     return res.status(201).json(reply);
   } catch (err) {
     res.locals.err = err;

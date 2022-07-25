@@ -28,7 +28,10 @@ const updateCommunityEngagement = require("../../functions/updateCommunityEngage
 const getOptions = require("../../functions/getOptions");
 const trimExtraSpaces = require("../../functions/trimExtraSpaces");
 const validatePostInputs = require("../../functions/validatePostInputs");
-const getCreatorName = require("../../functions/getCreatorName");
+const getFullName = require("../../functions/getFullName");
+const {
+  communityAuthorization,
+} = require("../../functions/auth/communityAuthorization");
 
 const router = express.Router();
 
@@ -64,7 +67,7 @@ const User = require("../../models/user.model");
  *        '404':
  *          description: User not found. **||** <br>Community not found.
  *        '403':
- *          description: Community can't have more than 3 pinned posts. **||** <br>User must be a part of community.
+ *          description: Community can't have more than 3 pinned posts. **||** <br>User must be a part of community. **||** <br>Only community moderators can set 'pinned' posts.
  *        '201':
  *          description: Post successfully created.
  *          content:
@@ -99,9 +102,9 @@ router.post("/", async (req, res, next) => {
 
     // Trim extra spaces
     req.log.addAction("Trimming extra spaces from inputs in request body.");
-    req.body.title = trimExtraSpaces(req.body.title);
+    if (req.body.title) req.body.title = trimExtraSpaces(req.body.title);
     req.log.addAction(`title trimmed: ${req.body.title}`);
-    req.body.message = req.body.message.trim();
+    if (req.body.message) req.body.message = req.body.message.trim();
     req.log.addAction(`description trimmed: ${req.body.description}`);
 
     req.log.addAction("Validating inputs.");
@@ -121,6 +124,18 @@ router.post("/", async (req, res, next) => {
 
     req.log.addAction("Checking if pinned field is set in req body.");
     if (
+      req.body.pinned &&
+      !(await communityAuthorization.isCommunityModerator(
+        user.username,
+        community.title
+      ))
+    )
+      throw new ResponseError(
+        403,
+        "Only community moderators can set 'pinned' posts."
+      );
+
+    if (
       req.body.pinned === true &&
       (await Post.count({
         community: community.title,
@@ -135,18 +150,17 @@ router.post("/", async (req, res, next) => {
     req.log.addAction("Getting available tags from community.");
     const availableTags = community.tags.map((tag) => tag.tag);
 
-    req.log.addAction("Getting creator name.");
-    const creatorName = getCreatorName(user);
-
     req.log.addAction("Creating post.");
     const post = await Post.create({
       title: req.body.title,
       message: req.body.message,
       creator: user.id,
-      creatorName: creatorName || user.username,
+      creatorName: getFullName(user) || user.username,
       creatorUsername: user.username,
       community: req.body.community,
       pinned: req.body.pinned || false,
+      removed: false,
+      hidden: false,
       availableTags,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
@@ -175,7 +189,7 @@ router.post("/", async (req, res, next) => {
     await User.updateOne({ _id: user.id }, { $inc: { postCount: 1 } });
     req.log.addAction("User post count updated.");
 
-    req.log.setResponse(201, "Success", null);
+    req.log.setResponse(201, "Success");
     return res.status(201).json(post);
   } catch (err) {
     res.locals.err = err;
@@ -237,8 +251,17 @@ router.get("/", async (req, res, next) => {
 
     // If query param username is set, return only posts username has created
     const matchQuery = queryUser
-      ? { community: { $in: communities }, creator: queryUser.id }
-      : { community: { $in: communities } };
+      ? {
+          community: { $in: communities },
+          creator: queryUser.id,
+          removed: false,
+          $or: [{ hidden: false }, { hidden: null }],
+        }
+      : {
+          community: { $in: communities },
+          removed: false,
+          $or: [{ hidden: false }, { hidden: null }],
+        };
 
     req.log.addAction("Communities found. Finding posts from communities.");
     const posts = await Post.find(matchQuery, "", {
@@ -248,7 +271,7 @@ router.get("/", async (req, res, next) => {
     if (!posts) throw new ResponseError(404, "Posts not found.");
     req.log.addAction("Posts found.");
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json(posts);
   } catch (err) {
     res.locals.err = err;
@@ -295,7 +318,7 @@ router.get("/:id", async (req, res, next) => {
     });
     req.log.addAction("Post found.");
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json(post);
   } catch (err) {
     res.locals.err = err;
@@ -343,28 +366,57 @@ router.get("/:id", async (req, res, next) => {
 router.get("/community/:title", async (req, res, next) => {
   try {
     req.log.addAction("Finding community.");
-    const { community } = await findSingleDocuments({
+    const { user, community } = await findSingleDocuments({
+      user: req.user.username,
       community: req.params.title,
     });
     req.log.addAction("Community found.");
 
+    req.log.addAction(
+      `Checking if user is moderator of community (${community.title}).`
+    );
+    const isModerator = await communityAuthorization.isCommunityModerator(
+      user.username,
+      community.title
+    );
+
+    let matchQuery = {};
     let posts;
 
     req.log.addAction("Checking tag query.");
     if (req.query.tag) {
       // Return community posts by tag set in query
       req.log.addAction("Finding posts in community with tag.");
-      posts = await Post.find(
-        { community: community.title, "tags.tag": req.query.tag },
-        "",
-        {
-          sort: { pinned: -1, _id: -1 },
-        }
-      ).exec();
+
+      matchQuery = isModerator
+        ? {
+            community: community.title,
+            removed: false,
+            "tags.tag": req.query.tag,
+          }
+        : {
+            community: community.title,
+            "tags.tag": req.query.tag,
+            removed: false,
+            $or: [{ hidden: false }, { hidden: null }],
+          };
+
+      posts = await Post.find(matchQuery, "", {
+        sort: { pinned: -1, _id: -1 },
+      }).exec();
     } else {
       // Return all community posts
       req.log.addAction("Finding posts in community.");
-      posts = await Post.find({ community: community.title }, "", {
+
+      matchQuery = isModerator
+        ? { community: community.title, removed: false }
+        : {
+            community: community.title,
+            removed: false,
+            $or: [{ hidden: false }, { hidden: null }],
+          };
+
+      posts = await Post.find(matchQuery, "", {
         sort: { pinned: -1, _id: -1 },
       }).exec();
     }
@@ -372,7 +424,7 @@ router.get("/community/:title", async (req, res, next) => {
     if (!posts) throw new ResponseError(404, "Posts not found.");
     req.log.addAction("Posts found.");
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json(posts);
   } catch (err) {
     res.locals.err = err;
@@ -423,7 +475,6 @@ router.get("/community/:title", async (req, res, next) => {
 // Edit post by id
 router.patch("/:id", async (req, res, next) => {
   try {
-    // TODO: MODERATORS CAN EDIT POST TOO
     req.log.addAction("Finding user and post.");
     const { user, post } = await findSingleDocuments({
       user: req.user.username,
@@ -437,19 +488,14 @@ router.patch("/:id", async (req, res, next) => {
 
     // Trim extra spaces
     req.log.addAction("Trimming extra spaces from inputs in request body.");
-    req.body.title = trimExtraSpaces(req.body.title);
+    if (req.body.title) req.body.title = trimExtraSpaces(req.body.title);
     req.log.addAction(`title trimmed: ${req.body.title}`);
-    req.body.message = req.body.message.trim();
+    if (req.body.message) req.body.message = req.body.message.trim();
     req.log.addAction(`description trimmed: ${req.body.message}`);
 
     req.log.addAction("Validating inputs.");
-    validatePostInputs(req.body, options);
+    validatePostInputs(req.body, options, true);
     req.log.addAction("Inputs valid.");
-
-    req.log.addAction("Checking user is creator of post.");
-    if (post.creator !== user.id)
-      throw new ResponseError(403, "Only creator of post can edit post.");
-    req.log.addAction("User is creator of post.");
 
     req.log.addAction("Checking if pinned field set in req body.");
     if (req.body.pinned === true) {
@@ -467,25 +513,59 @@ router.patch("/:id", async (req, res, next) => {
         );
     }
 
+    req.log.addAction(
+      `Checking if user is moderator of community (${post.community}).`
+    );
+    const isModerator = await communityAuthorization.isCommunityModerator(
+      user.username,
+      post.community
+    );
+
+    req.log.addAction("Checking user is creator of post or a moderator.");
+    if (!(isModerator || post.creator === user.id))
+      throw new ResponseError(
+        403,
+        "Only creator of post or a moderator can edit post."
+      );
+    req.log.addAction("User is creator of post or a moderator.");
+
+    const disallowedFields = isModerator
+      ? [
+          "creator",
+          "creatorName",
+          "creatorUsername",
+          "community",
+          "createdOn",
+          "availableTags",
+          "tags",
+          "flags",
+          "removed",
+          "commentCount",
+        ]
+      : [
+          "creator",
+          "creatorName",
+          "creatorUsername",
+          "community",
+          "createdOn",
+          "availableTags",
+          "hidden",
+          "removed",
+          "pinned",
+          "tags",
+          "flags",
+          "commentCount",
+        ];
+
     req.log.addAction("Checking edit query.");
-    const query = checkPatchQuery(req.body, post, [
-      "creator",
-      "creatorName",
-      "creatorUsername",
-      "community",
-      "createdOn",
-      "availableTags",
-      "tags",
-      "flags",
-      "commentCount",
-    ]);
+    const query = checkPatchQuery(req.body, post, disallowedFields);
     req.log.addAction("Edit query has been cleaned.");
 
     req.log.addAction("Updating post with query.");
     await Post.updateOne({ _id: post.id }, query).exec();
     req.log.addAction("Post updated.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;
@@ -524,7 +604,6 @@ router.patch("/:id", async (req, res, next) => {
 // Remove post by id
 router.delete("/:id", async (req, res, next) => {
   try {
-    // TODO: MODERATORS CAN DELETE POST TOO
     req.log.addAction("Finding user and post.");
     const { user, post } = await findSingleDocuments({
       user: req.user.username,
@@ -541,16 +620,26 @@ router.delete("/:id", async (req, res, next) => {
       throw new ResponseError(403, "Must be creator of post to delete post.");
     req.log.addAction("User is creator of post.");
 
+    // TODO: Only allow admins to do this
+    // Permanently delete data
+    const purgeData = req.query.purge === "true";
+
     // Remove the comments on post
     req.log.addAction("Removing comments on post.");
-    await Comment.deleteMany({ post: post.id }).exec();
+    if (purgeData) {
+      await Comment.deleteMany({ post: post.id }).exec();
+    } else {
+      await Comment.updateMany({ post: post.id }, { removed: true }).exec();
+    }
     req.log.addAction("Comments removed from post.");
 
     // Remove post
     req.log.addAction("Removing post.");
-    await Post.deleteOne({
-      _id: post.id,
-    }).exec();
+    if (purgeData) {
+      await Post.deleteOne({ _id: post.id }).exec();
+    } else {
+      await Post.updateOne({ _id: post.id }, { removed: true }).exec();
+    }
     req.log.addAction("Post removed.");
 
     req.log.addAction("Updating community engagement.");
@@ -565,7 +654,7 @@ router.delete("/:id", async (req, res, next) => {
     await User.updateOne({ _id: user.id }, { $inc: { postCount: -1 } });
     req.log.addAction("User post count updated.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;

@@ -22,14 +22,12 @@
 
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import PropTypes from "prop-types";
 import { closeEditUserBioModal } from "../../redux/ducks/modalDuck";
 import { editUserBio } from "../../redux/ducks/profileDuck";
 import {
   TextField,
   Dialog,
   DialogTitle,
-  Typography,
   DialogContent,
   Stack,
   InputLabel,
@@ -42,14 +40,12 @@ const EditUserBioModal = (props) => {
   const [bio, setBio] = useState(props.bio);
 
   useEffect(() => {
-    setBio(props.bio ?? "");
-  }, [props.bio]);
+    setBio(props.userBio ?? "");
+  }, [props.userBio]);
 
   const saveEdits = async () => {
     const userChanges = {
       bio,
-      title: props.profile.title,
-      ministry: props.profile.ministry,
     };
 
     const successful = await props.editUserBio(userChanges);
@@ -72,7 +68,7 @@ const EditUserBioModal = (props) => {
             <InputLabel htmlFor="user-bio">Bio</InputLabel>
             <TextField
               id="user-bio"
-              value={props.profile.bio}
+              value={bio}
               onChange={(e) => setBio(e.target.value)}
               type="text"
               multiline
@@ -85,9 +81,7 @@ const EditUserBioModal = (props) => {
               <Button variant="contained" onClick={saveEdits}>
                 Save
               </Button>
-              <Button variant="contained" onClick={props.closeEditUserBioModal}>
-                Cancel
-              </Button>
+              <Button onClick={props.closeEditUserBioModal} color="button">Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>
@@ -95,8 +89,6 @@ const EditUserBioModal = (props) => {
     </Dialog>
   );
 };
-
-EditUserBioModal.propTypes = {};
 
 const mapStateToProps = (state) => ({
   auth: state.auth,

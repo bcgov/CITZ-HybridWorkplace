@@ -20,23 +20,28 @@
  * @module
  */
 
-const findSingleDocuments = require("../functions/findSingleDocuments");
+const Community = require("../models/community.model");
 
-// Returns a boolean reflecting if the user is authorized to edit the inputted community
-const isCommunityModerator = async (userId, communityTitle) => {
-  const { community } = await findSingleDocuments({
-    community: communityTitle,
+/**
+ * @description Defines the job that removes user's from the kicked array on Community.
+ * @param agenda Job scheduler, defined in connection.js
+ */
+const communityUnKick = async (agenda, community, userId, username) => {
+  agenda.define(`communityUnKick-${userId}`, async () => {
+    await Community.updateOne(
+      { title: community },
+      {
+        $pull: {
+          kicked: {
+            userId,
+          },
+        },
+      }
+    );
+    console.log(
+      `Agenda removed ${username} from kicked array of ${community}.`
+    );
   });
-
-  if (community.moderators.includes(userId)) {
-    return true;
-  }
-
-  return false;
 };
 
-const authorization = {
-  isCommunityModerator,
-};
-
-exports.communityAuthorization = authorization;
+module.exports = communityUnKick;

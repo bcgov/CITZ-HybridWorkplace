@@ -1,6 +1,6 @@
 import { createTheme } from "@mui/material";
 
-const getDarkModePreference = () => {
+export const getDarkModePreference = () => {
   let darkModePref = localStorage.getItem("hwp-darkmode");
   if (darkModePref === "system") {
     darkModePref = getSystemDarkModePreference();
@@ -12,6 +12,47 @@ const getSystemDarkModePreference = () => {
   return window.matchMedia("(prefers-color-scheme:dark)").matches
     ? "dark"
     : "light";
+};
+
+const lightModeColors = {
+  primary: {
+    main: "#003366",
+  },
+  secondary: {
+    main: "#FDB913",
+  },
+  neutral: {
+    main: "#313132",
+  },
+  banner: {
+    main: "#395988",
+  },
+  button: {
+    main: "#003366",
+  },
+  card: {
+    main: "#ffffff",
+  },
+};
+const darkModeColors = {
+  primary: {
+    main: "#014587",
+  },
+  secondary: {
+    main: "#FDB913",
+  },
+  neutral: {
+    main: "#fff",
+  },
+  banner: {
+    main: "#395988",
+  },
+  button: {
+    main: "#057ff5",
+  },
+  card: {
+    main: "#121212",
+  },
 };
 
 export const theme = createTheme({
@@ -26,35 +67,9 @@ export const theme = createTheme({
   },
   palette: {
     mode: getDarkModePreference(),
-    ...(getDarkModePreference() === "light"
-      ? {
-          primary: {
-            main: "#003366",
-          },
-          secondary: {
-            main: "#FDB913",
-          },
-          neutral: {
-            main: "#313132",
-          },
-          banner: {
-            main: "#395988",
-          },
-        }
-      : {
-          primary: {
-            main: "#003366",
-          },
-          secondary: {
-            main: "#FDB913",
-          },
-          neutral: {
-            main: "#313132",
-          },
-          banner: {
-            main: "#395988",
-          },
-        }),
+    ...(getDarkModePreference() === "light" ? lightModeColors : darkModeColors),
+    BCBlue: { main: "#003366" },
+    BCYellow: { main: "#e3a82b" },
   },
   typography: {
     fontFamily: "BCSans",

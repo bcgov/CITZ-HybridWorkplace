@@ -50,8 +50,14 @@
  *        pinned:
  *          type: boolean
  *          description: Pinned posts show at the top of the feed. Limit 3 per community.
+ *        hidden:
+ *          type: boolean
+ *          description: Post will be hidden if true.
  *        createdOn:
  *          type: string
+ *        removed:
+ *          type: boolean
+ *          description: Post will be effectively removed in the view of a user if true.
  *        commentCount:
  *          type: number
  *        availableTags:
@@ -86,7 +92,7 @@
  *                type: array
  *                description: Users that have flagged the post.
  *                items:
- *                  - $ref: '#/components/schemas/User'
+ *                  type: string
  *      required:
  *        - title
  *        - message
@@ -109,6 +115,8 @@ const Post = new mongoose.Schema(
     createdOn: { type: String, required: true },
     commentCount: { type: Number },
     availableTags: [String],
+    hidden: { type: Boolean },
+    removed: { type: Boolean },
     tags: [
       {
         tag: String,
@@ -125,8 +133,7 @@ const Post = new mongoose.Schema(
         flag: String,
         flaggedBy: [
           {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+            type: String,
           },
         ],
       },

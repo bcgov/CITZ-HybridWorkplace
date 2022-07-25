@@ -5,14 +5,16 @@ jest.setTimeout(30000);
 
 const idir = process.env.IDIR;
 const password = process.env.PASSWORD;
+const headless = process.env.HEADLESS === "true";
+const slowmo = parseInt(process.env.SLOWMO);
 
 describe("Given that user is on login page", () => {
   let browser;
   let page;
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: false,
-      slowMo: 10,
+      headless: headless,
+      slowMo: slowmo,
       args: [`--window-size=1366,768`],
     });
     page = await browser.newPage();
@@ -38,7 +40,10 @@ describe("Given that user is on login page", () => {
       // Checking if avatar is visible
       let atHomePage = false;
       try {
-        await page.waitForSelector("p.css-kyzvea", { timeout: 2000 });
+        await page.waitForXPath(
+          `//button[@aria-label="account of current user"]`,
+          { timeout: 2000 }
+        );
         atHomePage = true;
       } catch (e) {
         atHomePage = false;

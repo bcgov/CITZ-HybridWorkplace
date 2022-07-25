@@ -49,6 +49,10 @@ const OPEN_FLAG_COMMENT_MODAL =
   "CITZ-HYBRIDWORKPLACE/FLAG/OPEN_FLAG_COMMENT_MODAL";
 const CLOSE_FLAG_COMMENT_MODAL =
   "CITZ-HYBRIDWORKPLACE/FLAG/CLOSE_FLAG_COMMENT_MODAL";
+const OPEN_RESOLVE_FLAGS_MODAL =
+  "CITZ-HYBRIDWORKPLACE/ADD/OPEN_RESOLVE_FLAGS_MODAL";
+const CLOSE_RESOLVE_FLAGS_MODAL =
+  "CITZ-HYBRIDWORKPLACE/FLAG/CLOSE_RESOLVE_FLAGS_MODAL";
 
 /************************EDIT TYPES************************/
 const OPEN_EDIT_POST_MODAL = "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_EDIT_POST_MODAL";
@@ -69,12 +73,20 @@ const OPEN_EDIT_COMMUNITY_MODAL =
   "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_EDIT_COMMUNITY_MODAL";
 const CLOSE_EDIT_COMMUNITY_MODAL =
   "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_EDIT_COMMUNITY_MODAL";
+const OPEN_COMMUNITY_MEMBERS_MODAL =
+  "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_COMMUNITY_MEMBERS_MODAL";
+const CLOSE_COMMUNITY_MEMBERS_MODAL =
+  "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_COMMUNITY_MEMBERS_MODAL";
 const OPEN_SETTINGS_MODAL = "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_SETTINGS_MODAL";
 const CLOSE_SETTINGS_MODAL = "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_SETTINGS_MODAL";
 const OPEN_EDIT_AVATAR_MODAL =
   "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_EDIT_AVATAR_MODAL";
 const CLOSE_EDIT_AVATAR_MODAL =
   "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_EDIT_AVATAR_MODAL";
+const OPEN_EDIT_MODERATOR_PERMISSIONS_MODAL =
+  "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_EDIT_MODERATOR_PERMISSIONS_MODAL";
+const CLOSE_EDIT_MODERATOR_PERMISSIONS_MODAL =
+  "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_EDIT_MODERATOR_PERMISSIONS_MODAL";
 
 /*************************ADD TYPES*************************/
 const OPEN_ADD_POST_MODAL = "CITZ-HYBRIDWORKPLACE/ADD/OPEN_ADD_POST_MODAL";
@@ -83,6 +95,16 @@ const OPEN_ADD_COMMUNITY_MODAL =
 const CLOSE_ADD_POST_MODAL = "CITZ-HYBRIDWORKPLACE/ADD/CLOSE_ADD_POST_MODAL";
 const CLOSE_ADD_COMMUNITY_MODAL =
   "CITZ-HYBRIDWORKPLACE/ADD/CLOSE_ADD_COMMUNITY_MODAL";
+
+/**********************MODERATOR TYPES**********************/
+const OPEN_DEMOTE_USER_MODAL =
+  "CITZ-HYBRIDWORKPLACE/MODERATOR/OPEN_ADD_POST_MODAL";
+const CLOSE_DEMOTE_USER_MODAL =
+  "CITZ-HYBRIDWORKPLACE/MODERATOR/CLOSE_ADD_POST_MODAL";
+const OPEN_PROMOTE_USER_MODAL =
+  "CITZ-HYBRIDWORKPLACE/MODERATOR/OPEN_PROMOTE_USER_MODAL";
+const CLOSE_PROMOTE_USER_MODAL =
+  "CITZ-HYBRIDWORKPLACE/MODERATOR/CLOSE_PROMOTE_USER_MODAL";
 
 /*********************** DELETE ACTIONS***********************/
 export const openDeletePostModal = (post) => (dispatch) => {
@@ -133,6 +155,14 @@ export const closeFlagCommentModal = () => (dispatch) => {
   dispatch({ type: CLOSE_FLAG_COMMENT_MODAL });
 };
 
+export const openResolveFlagsModal = (post) => (dispatch) => {
+  dispatch({ type: OPEN_RESOLVE_FLAGS_MODAL, payload: post });
+};
+
+export const closeResolveFlagsModal = () => (dispatch) => {
+  dispatch({ type: CLOSE_RESOLVE_FLAGS_MODAL });
+};
+
 /*********************** EDIT MODAL ACTIONS***********************/
 export const openEditPostModal = (post) => (dispatch) => {
   dispatch({ type: OPEN_EDIT_POST_MODAL, payload: post });
@@ -169,6 +199,13 @@ export const openEditCommunityModal = (community) => (dispatch) => {
 export const closeEditCommunityModal = () => (dispatch) =>
   dispatch({ type: CLOSE_EDIT_COMMUNITY_MODAL });
 
+export const openCommunityMembersModal = () => (dispatch) => {
+  dispatch({ type: OPEN_COMMUNITY_MEMBERS_MODAL });
+};
+
+export const closeCommunityMembersModal = () => (dispatch) =>
+  dispatch({ type: CLOSE_COMMUNITY_MEMBERS_MODAL });
+
 export const openSettingsModal = (userSettings) => (dispatch) =>
   dispatch({ type: OPEN_SETTINGS_MODAL, payload: userSettings });
 
@@ -181,6 +218,16 @@ export const openEditAvatarModal = (avatar) => (dispatch) => {
 
 export const closeEditAvatarModal = () => (dispatch) =>
   dispatch({ type: CLOSE_EDIT_AVATAR_MODAL });
+
+export const openEditModeratorPermissionsModal = (moderator) => (dispatch) => {
+  dispatch({
+    type: OPEN_EDIT_MODERATOR_PERMISSIONS_MODAL,
+    payload: moderator,
+  });
+};
+
+export const closeEditModeratorPermissionsModal = () => (dispatch) =>
+  dispatch({ type: CLOSE_EDIT_MODERATOR_PERMISSIONS_MODAL });
 
 /*********************** ADD MODAL ACTIONS***********************/
 
@@ -200,6 +247,24 @@ export const closeAddCommunityModal = () => (dispatch) => {
   dispatch({ type: CLOSE_ADD_COMMUNITY_MODAL });
 };
 
+/*********************** ADD MODAL ACTIONS***********************/
+
+export const openDemoteUserModal = (username) => (dispatch) => {
+  dispatch({ type: OPEN_DEMOTE_USER_MODAL, payload: username });
+};
+
+export const closeDemoteUserModal = () => (dispatch) => {
+  dispatch({ type: CLOSE_DEMOTE_USER_MODAL });
+};
+
+export const openPromoteUserModal = (username) => (dispatch) => {
+  dispatch({ type: OPEN_PROMOTE_USER_MODAL, payload: username });
+};
+
+export const closePromoteUserModal = () => (dispatch) => {
+  dispatch({ type: CLOSE_PROMOTE_USER_MODAL });
+};
+
 /************************MODAL REDUCER************************/
 const initialState = {
   // Delete State
@@ -210,17 +275,24 @@ const initialState = {
   flagPost: { open: false, post: {} },
   flagCommunity: { open: false, community: {} },
   flagComment: { open: false, comment: {} },
+  resolveFlags: { open: false, post: {} },
+
   // Edit State
   editPost: { open: false, post: {} },
   editCommunity: { open: false, community: {} },
   editUserInfo: { open: false, userInfo: {} },
-  editUserBio: { open: false, userBio: {} },
+  editUserBio: { open: false, userBio: "" },
   editAvatar: { open: false, avatar: {} },
   editUserInterests: { open: false, interests: {} },
   editSettings: { open: false, userSettings: {} },
+  editModPermissions: { open: false, moderator: {} },
+  editCommunityMembers: { open: false, members: [] },
   // Add State
   addPost: { open: false },
   addCommunity: { open: false },
+  // Moderator State
+  demoteUser: { open: false, username: "" },
+  promoteUser: { open: false, username: "" },
 };
 
 export function modalReducer(state = initialState, action) {
@@ -290,6 +362,15 @@ export function modalReducer(state = initialState, action) {
     case CLOSE_FLAG_COMMENT_MODAL:
       return initialState;
 
+    case OPEN_RESOLVE_FLAGS_MODAL:
+      return {
+        ...state,
+        resolveFlags: { open: true, post: action.payload },
+      };
+
+    case CLOSE_RESOLVE_FLAGS_MODAL:
+      return initialState;
+
     //Edits
     case OPEN_EDIT_POST_MODAL:
       return {
@@ -333,6 +414,9 @@ export function modalReducer(state = initialState, action) {
         editCommunity: { open: true, community: action.payload },
       };
 
+    case CLOSE_EDIT_COMMUNITY_MODAL:
+      return initialState;
+
     case OPEN_SETTINGS_MODAL:
       return {
         ...state,
@@ -363,7 +447,39 @@ export function modalReducer(state = initialState, action) {
         addCommunity: { open: false },
       };
 
-    case CLOSE_EDIT_COMMUNITY_MODAL:
+    case CLOSE_EDIT_MODERATOR_PERMISSIONS_MODAL:
+      return initialState;
+
+    case OPEN_EDIT_MODERATOR_PERMISSIONS_MODAL:
+      return {
+        ...state,
+        editModPermissions: { open: true, moderator: action.payload },
+      };
+
+    // Moderators
+    case OPEN_DEMOTE_USER_MODAL:
+      return {
+        ...state,
+        demoteUser: { open: true, username: action.payload },
+      };
+
+    case CLOSE_DEMOTE_USER_MODAL:
+      return initialState;
+
+    case OPEN_PROMOTE_USER_MODAL:
+      return {
+        ...state,
+        promoteUser: { open: true, username: action.payload },
+      };
+
+    case CLOSE_PROMOTE_USER_MODAL:
+    case OPEN_COMMUNITY_MEMBERS_MODAL:
+      return {
+        ...state,
+        editCommunityMembers: { open: true, members: action.payload },
+      };
+
+    case CLOSE_COMMUNITY_MEMBERS_MODAL:
       return initialState;
 
     default:

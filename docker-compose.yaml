@@ -4,8 +4,9 @@ services:
   ###                                     MONGO DB                                          ###
   #############################################################################################
   mongodb:
-    image: "mongo:4"
+    image: "mongo:3.6"
     container_name: "mongodb"
+    tty: true
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
@@ -31,6 +32,7 @@ services:
   hwp-frontend:
     container_name: hwp-frontend
     profiles: ["prod"]
+    tty: true
     build:
       context: .
       dockerfile: ./app/client/docker/prod/Dockerfile
@@ -79,7 +81,7 @@ services:
       context: .
       dockerfile: ./app/server/docker/dev/Dockerfile
     env_file:
-      - .env
+      - ${ENV_FILE:-.env-template}
     networks:
       - hwp-network
     ports:
@@ -105,13 +107,14 @@ services:
   hwp-frontend-dev:
     container_name: hwp-frontend-dev
     profiles: ["dev"]
+    tty: true
     build:
       context: .
       dockerfile: ./app/client/docker/dev/Dockerfile
     environment:
       WATCHPACK_POLLING: "true"
     env_file:
-      - .env
+      - ${ENV_FILE:-.env-template}
     command: >
       npm run start-mac
     networks:

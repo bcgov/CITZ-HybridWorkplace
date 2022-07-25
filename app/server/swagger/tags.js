@@ -47,6 +47,10 @@ const tags = [
     description: "View, set, and unset community flags.",
   },
   {
+    name: "Community Moderators",
+    description: "View, set, and unset community moderators.",
+  },
+  {
     name: "Post",
     description: "View, create, edit, and delete posts.",
   },

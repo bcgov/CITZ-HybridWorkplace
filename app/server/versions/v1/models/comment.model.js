@@ -44,6 +44,12 @@
  *          $ref: '#/components/schemas/Post/properties/id'
  *        createdOn:
  *          type: string
+ *        hidden:
+ *          type: boolean
+ *          description: Comment will be hidden if true.
+ *        removed:
+ *          type: boolean
+ *          description: Comment will be effectively removed in the view of a user if true.
  *        replyTo:
  *          type: string
  *          description: The id of the comment that is being replied to.
@@ -98,7 +104,7 @@
  *                type: array
  *                description: Users that have flagged the comment.
  *                items:
- *                  - $ref: '#/components/schemas/User'
+ *                  type: string
  *      required:
  *        - message
  *        - creator
@@ -117,6 +123,8 @@ const Comment = new mongoose.Schema(
     post: { type: String, required: true },
     community: { type: String, required: true },
     createdOn: { type: String, required: true },
+    hidden: { type: Boolean },
+    removed: { type: Boolean },
     replyTo: { type: String },
     hasReplies: { type: Boolean },
     edits: [{ precursor: String, timeStamp: String }],
@@ -143,8 +151,7 @@ const Comment = new mongoose.Schema(
         flag: String,
         flaggedBy: [
           {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+            type: String,
           },
         ],
       },

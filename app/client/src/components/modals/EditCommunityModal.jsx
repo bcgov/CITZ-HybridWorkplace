@@ -29,17 +29,16 @@ import {
   InputLabel,
   Stack,
   TextField,
-  Typography,
 } from "@mui/material";
 import { closeEditCommunityModal } from "../../redux/ducks/modalDuck";
 import { createError } from "../../redux/ducks/alertDuck";
 import { editCommunity } from "../../redux/ducks/communityDuck";
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import MarkDownEditor from "../MarkDownEditor";
+import InputRuleList from "../InputRuleList";
 
 const EditCommunityModal = (props) => {
-  const navigate = useNavigate();
   const [title, setTitle] = useState(props.community.title);
   const [description, setDescription] = useState(props.community.description);
   const [rules, setRules] = useState(props.community.rules);
@@ -58,14 +57,6 @@ const EditCommunityModal = (props) => {
 
   const onTitleChange = (e) => {
     setTitle(e.target.value);
-  };
-
-  const onDescriptionChange = (e) => {
-    setDescription(e.target.value);
-  };
-
-  const onRulesChange = (e) => {
-    setRules(e.target.value);
   };
 
   const makeChangesObject = (commTitle, commDescription, commRules) => {
@@ -92,7 +83,8 @@ const EditCommunityModal = (props) => {
     }
     const successful = await props.editCommunity(changes);
     if (successful) {
-      navigate(`/community/${changes.title || changes.oldTitle}`);
+      // To be uncommented when backend supports community title change
+      //navigate(`/community/${newComm.title || props.community.title}`);
       document.location.reload();
     }
   };
@@ -101,12 +93,13 @@ const EditCommunityModal = (props) => {
     <Dialog
       onClose={props.closeEditCommunityModal}
       open={props.open}
+      maxWidth="md"
       fullWidth
       sx={{ zIndex: 500, mb: 5 }}
     >
       <DialogTitle fontWeight={600}>Edit Community</DialogTitle>
       <DialogContent sx={{ pt: 5 }}>
-        <Stack spacing={3}>
+        <Stack spacing={2}>
           <InputLabel htmlFor="community-title-input">Title</InputLabel>
           <TextField
             id="community-title-input"
@@ -116,69 +109,46 @@ const EditCommunityModal = (props) => {
             value={title}
             size="small"
             error={
-              title &&
-              (title === "" || (title.length >= 3 && title.length <= 25))
+              !title ||
+              (title === "" || (title.length >= 3 && title.length <= 25)
                 ? false
-                : true
+                : true)
             }
             helperText="Title must be 3-25 characters in length."
             required
           />
-          <InputLabel htmlFor="community-description-input">Title</InputLabel>
-          <TextField
-            id="community-description-input"
-            onChange={onDescriptionChange}
-            name="description"
-            placeholder="Description"
-            multiline
-            value={description}
-            size="small"
-            minRows={4}
+          <MarkDownEditor
+            label="Description"
             error={
-              description &&
-              description.length >= 0 &&
-              description.length <= 300
+              !description ||
+              (description === "" ||
+              (description.length >= 3 && description.length <= 300)
                 ? false
-                : true
+                : true)
             }
-            helperText="Description must be between 1-300 characters in length."
+            id="description-input"
+            value={description}
+            onChange={setDescription}
           />
-          <InputLabel htmlFor="community-rules-input">Title</InputLabel>
-          <TextField
-            id="community-rules-input"
-            onChange={onRulesChange}
-            name="rules"
-            placeholder="Rules"
-            multiline
-            value={rules?.toString() /*TODO: Fix rules editing */}
-            label="Rules"
-            size="small"
-            minRows={4}
-            error={false}
-            helperText="Rules is required."
-            required
-          />
+          <InputLabel htmlFor="community-rules-input">Rules</InputLabel>
+          <InputRuleList rules={rules} setRules={setRules} />
           <DialogActions sx={{ m: 0, pb: 0 }}>
             <Stack spacing={1} direction="row-reverse" justifyContent="end">
               <Button
                 variant="contained"
                 disabled={
-                  (title &&
-                    description &&
-                    rules &&
-                    (title.length < 3 ||
-                      title.length > 25 ||
-                      description.length > 300)) ||
-                  !rules
+                  title &&
+                  description &&
+                  (title.length < 3 ||
+                    title.length > 25 ||
+                    description.length < 3 ||
+                    description.length > 300)
                 }
                 onClick={onSubmit}
               >
-                Edit Community
+                Edit
               </Button>
-              <Button
-                variant="contained"
-                onClick={props.closeEditCommunityModal}
-              >
+              <Button onClick={props.closeEditCommunityModal} color="button">
                 Cancel
               </Button>
             </Stack>

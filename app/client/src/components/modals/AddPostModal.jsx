@@ -42,7 +42,7 @@ import {
 import { getCommunities } from "../../redux/ducks/communityDuck";
 import { createPost } from "../../redux/ducks/postDuck";
 import { closeAddPostModal } from "../../redux/ducks/modalDuck";
-import MDEditor from "@uiw/react-md-editor";
+import MarkDownEditor from "../MarkDownEditor";
 
 const AddPostModal = (props) => {
   // TODO: Grab length options from API
@@ -83,11 +83,17 @@ const AddPostModal = (props) => {
 
     const successful = await props.createPost(post);
     if (successful === true) {
-      setTitle("");
-      setMessage("");
-      setCommunity("");
       props.closeAddPostModal();
+      resetInput();
     }
+  };
+
+  const resetInput = () => {
+    setTitle("");
+    setMessage("");
+    setCommunity(props.communityName ?? "");
+    setTitleError(false);
+    setMessageError(false);
   };
 
   const onTitleChange = (event) => {
@@ -110,54 +116,34 @@ const AddPostModal = (props) => {
       fullWidth
     >
       <DialogTitle sx={{ fontWeight: 600 }}>Add Post</DialogTitle>
-      <DialogContent data-color-mode="light">
+      <DialogContent>
         <Stack spacing={1}>
           <Stack spacing={0.5}>
-            <InputLabel htmlFor="add-post-title">Title</InputLabel>
+            <InputLabel htmlFor="add-post-title" error={titleError}>
+              Title
+            </InputLabel>
             <TextField
               id="add-post-title"
               onChange={onTitleChange}
               name="title"
               placeholder="Title"
               value={title}
-              error={
-                title === "" || (title.length >= 3 && title.length <= 50)
-                  ? false
-                  : true
-              }
+              error={titleError}
               helperText="Title must be 3-50 characters in length."
               required
               fullWidth
             />
           </Stack>
-          <Box>
-            <Stack
-              spacing={0.5}
-              sx={{
-                border: 3,
-                borderColor: messageError ? "red" : "transparent",
-                color: messageError ? "red" : "-moz-initial",
-              }}
-            >
-              <InputLabel
-                htmlFor="message-input"
-                sx={{
-                  color: messageError ? "red" : "-moz-initial",
-                }}
-              >
-                Message
-              </InputLabel>
-              <MDEditor
-                id="message-input"
-                value={message}
-                onChange={setMessageAndSetErrors}
-                preview="edit"
-              />
-            </Stack>
-          </Box>
+          <MarkDownEditor
+            label="Message"
+            error={messageError}
+            id="message-input"
+            value={message}
+            onChange={setMessageAndSetErrors}
+          />
           {!props.communityName && (
             <Box>
-              <Typography>Choose a Community:</Typography>
+              <InputLabel>Choose a Community:</InputLabel>
               <Select
                 value={community}
                 onChange={handleCommunityChange}
@@ -181,19 +167,17 @@ const AddPostModal = (props) => {
               <Button
                 variant="contained"
                 disabled={
-                  title.length < 3 ||
-                  title.length > 50 ||
-                  message.length < 3 ||
-                  message.length > 40000 ||
-                  !community
+                  titleError ||
+                  messageError ||
+                  !community ||
+                  title === "" ||
+                  message === ""
                 }
                 onClick={registerPost}
               >
-                Submit
+                Post
               </Button>
-              <Button variant="contained" onClick={props.closeAddPostModal}>
-                Cancel
-              </Button>
+              <Button onClick={props.closeAddPostModal} color="button">Cancel</Button>
             </Stack>
           </DialogActions>
         </Stack>
@@ -208,7 +192,9 @@ AddPostModal.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  communities: state.communities.usersCommunities,
+  communities: state.communities.communities.filter(
+    (comm) => comm.userIsInCommunity
+  ),
   auth: state.auth,
   open: state.modal.addPost.open,
 });
