@@ -138,7 +138,7 @@ app.use("/api/login", initLogger, loginRouter, requestFinally);
 app.use("/api/logout", initLogger, logoutRouter, requestFinally);
 app.use("/api/token", initLogger, tokenRouter, requestFinally);
 
-app.use("/api/search", initLogger, searchRouter, requestFinally);
+app.use("/api/search", initLogger, authenticateToken, searchRouter, requestFinally);
 
 app.use(
   "/api/community/moderators",
