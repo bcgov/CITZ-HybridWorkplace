@@ -27,6 +27,10 @@ const tags = [
     description: "Login, logout, register, and refresh access token.",
   },
   {
+    name: "Search",
+    description: "Search for users, communities, posts, and comments.",
+  },
+  {
     name: "Community",
     description: "View, create, edit, and delete communities.",
   },

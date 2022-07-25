@@ -62,6 +62,7 @@ const {
   logoutRouter,
   healthCheckRouter,
   tokenRouter,
+  searchRouter,
 } = require(`./versions/v${process.env.API_VERSION}/routes/routeImports`);
 
 const keycloakRouter = require(`./versions/v${process.env.API_VERSION}/routes/keycloakLogin`);
@@ -136,6 +137,8 @@ app.use("/api/register", initLogger, registerRouter, requestFinally);
 app.use("/api/login", initLogger, loginRouter, requestFinally);
 app.use("/api/logout", initLogger, logoutRouter, requestFinally);
 app.use("/api/token", initLogger, tokenRouter, requestFinally);
+
+app.use("/api/search", initLogger, authenticateToken, searchRouter, requestFinally);
 
 app.use(
   "/api/community/moderators",
