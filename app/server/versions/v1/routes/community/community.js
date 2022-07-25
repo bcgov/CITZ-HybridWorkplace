@@ -102,6 +102,8 @@ router.post("/", async (req, res, next) => {
       titleDisallowedStrings,
       descriptionMinLength,
       descriptionMaxLength,
+      resourcesMinLength,
+      resourcesMaxLength,
       tagMinLength,
       tagMaxLength,
       tagDescriptionMinLength,
@@ -131,6 +133,8 @@ router.post("/", async (req, res, next) => {
       titleDisallowedStrings,
       descriptionMinLength,
       descriptionMaxLength,
+      resourcesMinLength,
+      resourcesMaxLength,
       tagMinLength,
       tagMaxLength,
       tagDescriptionMinLength,
@@ -151,7 +155,8 @@ router.post("/", async (req, res, next) => {
     req.log.addAction("Creating community.");
     const community = await Community.create({
       title: req.body.title,
-      description: req.body.description,
+      description: req.body.description || "",
+      resources: req.body.resources || "",
       creator: user.id,
       creatorName: getFullName(user) || user.username,
       creatorUsername: user.username,

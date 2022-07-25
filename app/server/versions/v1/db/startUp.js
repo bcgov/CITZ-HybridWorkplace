@@ -73,6 +73,9 @@ const mongoStartUp = async (db, collections) => {
     await Post.updateMany({ hidden: null }, { hidden: false });
     await Comment.updateMany({ removed: null }, { removed: false });
     await Comment.updateMany({ hidden: null }, { hidden: false });
+
+    // Add resources field to existing communities
+    await Community.updateMany({ resources: null }, { resources: "" });
   }
 };
 
