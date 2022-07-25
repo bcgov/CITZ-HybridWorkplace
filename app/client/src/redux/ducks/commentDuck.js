@@ -87,7 +87,7 @@ export const createComment = (post, comment) => async (dispatch, getState) => {
     const response = await hwp_axios.post(
       `/api/comment`,
       {
-        post,
+        post: post._id,
         message: comment,
       },
       {
@@ -100,11 +100,14 @@ export const createComment = (post, comment) => async (dispatch, getState) => {
       }
     );
 
-    const comment = reshapeCommentForFrontend(authState.user.id, response.data);
+    const returnedComment = reshapeCommentForFrontend(
+      authState.user.id,
+      response.data
+    );
 
     dispatch({
       type: ADD_COMMENT,
-      payload: comment,
+      payload: returnedComment,
     });
   } catch (err) {
     console.error(err);
