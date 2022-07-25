@@ -123,6 +123,7 @@ router.get("/", async (req, res, next) => {
           engagement: 1,
           members: 1,
           memberCount: 1,
+          description: 1,
         },
       },
       {
@@ -488,6 +489,7 @@ router.get("/:username", async (req, res, next) => {
           engagement: 1,
           members: 1,
           memberCount: 1,
+          description: 1,
         },
       },
       {
