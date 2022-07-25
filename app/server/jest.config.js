@@ -4,6 +4,6 @@ module.exports = {
   collectCoverage: false,
   coverageDirectory: "./tests/coverage",
   rootDir: "./",
-  testTimeout: 10000,
+  testTimeout: 2000,
   setupFiles: ["dotenv/config"],
 };
