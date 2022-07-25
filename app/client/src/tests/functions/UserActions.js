@@ -83,8 +83,6 @@ class UserActions {
     await this.page.waitForSelector(`div[role="presentation"]`, {
       timeout: 2000,
     });
-
-    setTimeout('',2000);
   }
 
   async goToCommunitiesPage(){
