@@ -4,6 +4,8 @@
 FROM node:17.9.0-alpine3.14 as build
 WORKDIR /usr/src/app/client
 
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+
 COPY app/client/package*.json ./
 RUN npm ci
 COPY app/client/. .
