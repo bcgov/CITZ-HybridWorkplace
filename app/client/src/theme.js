@@ -33,6 +33,9 @@ const lightModeColors = {
   card: {
     main: "#ffffff",
   },
+  backgroundSecondary: {
+    main: "rgba(220, 220, 220, .3)",
+  },
 };
 const darkModeColors = {
   primary: {
@@ -52,6 +55,9 @@ const darkModeColors = {
   },
   card: {
     main: "#121212",
+  },
+  backgroundSecondary: {
+    main: "rgba(220, 220, 220, .1)",
   },
 };
 
