@@ -42,11 +42,9 @@ import NoMeetingRoomRoundedIcon from "@mui/icons-material/NoMeetingRoomRounded";
 import {
   closeCommunityMembersModal,
   openPromoteUserModal,
+  openKickUserModal,
 } from "../../redux/ducks/modalDuck";
-import {
-  getCommunityMembers,
-  kickCommunityMember,
-} from "../../redux/ducks/communityDuck";
+import { getCommunityMembers } from "../../redux/ducks/communityDuck";
 import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
 import PromoteUserModal from "./PromoteUserModal";
 import AvatarIcon from "../AvatarIcon";
@@ -62,6 +60,8 @@ const CommunityMembersModal = (props) => {
   const handlePromoteClick = (username) => {
     props.openPromoteUserModal(username);
   };
+
+  const handleKickUserClick = (username) => props.openKickUserModal(username);
 
   const handleUserClick = (username) => {
     if (username) navigate(`/profile/${username}`);
@@ -94,7 +94,12 @@ const CommunityMembersModal = (props) => {
                       >
                         <AddCircleTwoToneIcon fontSize="small" />
                       </IconButton>
-                      <IconButton edge="end" aria-label="kick user">
+                      <IconButton
+                        edge="end"
+                        aria-label="kick user"
+                        color="error"
+                        onClick={() => props.openKickUserModal(member.username)}
+                      >
                         <NoMeetingRoomRoundedIcon />
                       </IconButton>
                     </Stack>
@@ -218,9 +223,9 @@ const mapStateToProps = (state) => ({
 
 const mapActionsToProps = {
   closeCommunityMembersModal,
-  kickCommunityMember,
   getCommunityMembers,
   openPromoteUserModal,
+  openKickUserModal,
 };
 
 export default connect(

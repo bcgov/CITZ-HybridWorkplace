@@ -77,6 +77,8 @@ const OPEN_COMMUNITY_MEMBERS_MODAL =
   "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_COMMUNITY_MEMBERS_MODAL";
 const CLOSE_COMMUNITY_MEMBERS_MODAL =
   "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_COMMUNITY_MEMBERS_MODAL";
+const OPEN_KICK_USER_MODAL = "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_KICK_USER_MODAL";
+const CLOSE_KICK_USER_MODAL = "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_KICK_USER_MODAL";
 const OPEN_SETTINGS_MODAL = "CITZ-HYBRIDWORKPLACE/EDIT/OPEN_SETTINGS_MODAL";
 const CLOSE_SETTINGS_MODAL = "CITZ-HYBRIDWORKPLACE/EDIT/CLOSE_SETTINGS_MODAL";
 const OPEN_EDIT_AVATAR_MODAL =
@@ -206,6 +208,13 @@ export const openCommunityMembersModal = () => (dispatch) => {
 export const closeCommunityMembersModal = () => (dispatch) =>
   dispatch({ type: CLOSE_COMMUNITY_MEMBERS_MODAL });
 
+export const openKickUserModal = (username) => (dispatch) => {
+  dispatch({ type: OPEN_KICK_USER_MODAL, payload: username });
+};
+
+export const closeKickUserModal = () => (dispatch) =>
+  dispatch({ type: CLOSE_KICK_USER_MODAL });
+
 export const openSettingsModal = (userSettings) => (dispatch) =>
   dispatch({ type: OPEN_SETTINGS_MODAL, payload: userSettings });
 
@@ -287,6 +296,7 @@ const initialState = {
   editSettings: { open: false, userSettings: {} },
   editModPermissions: { open: false, moderator: {} },
   editCommunityMembers: { open: false, members: [] },
+  editUserKick: { open: false, user: "" },
   // Add State
   addPost: { open: false },
   addCommunity: { open: false },
@@ -480,6 +490,15 @@ export function modalReducer(state = initialState, action) {
       };
 
     case CLOSE_COMMUNITY_MEMBERS_MODAL:
+      return initialState;
+
+    case OPEN_KICK_USER_MODAL:
+      return {
+        ...state,
+        editUserKick: { open: true, username: action.payload },
+      };
+
+    case CLOSE_KICK_USER_MODAL:
       return initialState;
 
     default:
