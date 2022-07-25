@@ -40,6 +40,7 @@ import { getDarkModePreference } from "../theme";
 import MarkDownDisplay from "./MarkDownDisplay";
 import { editPost } from "../redux/ducks/postDuck";
 import { FlagRounded } from "@mui/icons-material";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 
 const Post = (props) => {
   useEffect(() => {
@@ -161,7 +162,11 @@ const Post = (props) => {
       >
         <CardHeader
           sx={{
-            backgroundColor: props.post.hidden ? "#9C9C9C" : "banner.main",
+            backgroundColor: props.post.removed
+              ? "#5E2F2F"
+              : props.post.hidden
+              ? "#9C9C9C"
+              : "banner.main",
             color: "white",
             py: 1,
           }}
@@ -230,6 +235,14 @@ const Post = (props) => {
                   spacing={0.5}
                   sx={{ alignItems: "center" }}
                 >
+                  {props.post.removed && (
+                    <Tooltip
+                      title={<Typography>Removed Post</Typography>}
+                      arrow
+                    >
+                      <RemoveCircleIcon />
+                    </Tooltip>
+                  )}
                   {props.post.hidden && (
                     <Tooltip title={<Typography>Hidden Post</Typography>} arrow>
                       <VisibilityOffIcon />
