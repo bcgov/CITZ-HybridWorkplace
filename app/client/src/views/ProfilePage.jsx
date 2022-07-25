@@ -260,8 +260,12 @@ const ProfilePage = (props) => {
               fullHeightHover={false}
               sx={{ borderRadius: "10px" }}
             >
-              {props.communities.slice(0, 4).map((element) => (
-                <Community community={element} key={element._id} />
+              {props.profile.communities?.slice(0, 4).map((element) => (
+                <Community
+                  community={element}
+                  key={element._id}
+                  hideJoinButton
+                />
               ))}
             </Carousel>
             <Divider sx={{ my: 2 }} />
@@ -309,7 +313,7 @@ const mapStateToProps = (state) => ({
     (comm) => comm.userIsInCommunity
   ),
   posts: state.posts.items.filter(
-    (post) => post.creator === state.auth.user.id
+    (post) => post.creatorUsername === state.profile.user.username
   ),
 });
 

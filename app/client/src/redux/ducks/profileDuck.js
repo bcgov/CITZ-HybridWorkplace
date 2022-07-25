@@ -46,7 +46,6 @@ export const getProfile = (username) => async (dispatch, getState) => {
         dispatch,
       },
     });
-    console.log(response.data);
 
     dispatch({
       type: SET_USER,
