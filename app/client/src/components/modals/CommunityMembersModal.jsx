@@ -62,7 +62,7 @@ const CommunityMembersModal = (props) => {
     props.openPromoteUserModal(username);
   };
 
-  const handleKickUserClick = (username) => props.openKickUserModal(username);
+  const handleKickUserClick = (user) => props.openKickUserModal(user);
 
   const handleUserClick = (username) => {
     if (username) navigate(`/profile/${username}`);
