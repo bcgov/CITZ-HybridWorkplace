@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import Comment from "./Comment";
-import { getComments } from "../redux/ducks/postDuck";
+import { getComments } from "../redux/ducks/commentDuck";
 import DeleteCommentModal from "./modals/DeleteCommentModal";
 import FlagCommentModal from "./modals/FlagCommentModal";
 export const CommentsList = (props) => {
   useEffect(() => {
-    props.comments || props.getComments(props.postId);
+    props.comments?.length || props.getComments(props.postId);
   }, []);
   return (
     <>
@@ -20,8 +20,8 @@ export const CommentsList = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  comments: state.posts.item.comments,
-  postId: state.posts.item._id,
+  comments: state.posts.items[state.posts.currentPostIndex]?.comments ?? [],
+  postId: state.posts.items[state.posts.currentPostIndex]?._id ?? "",
 });
 
 const mapDispatchToProps = { getComments };

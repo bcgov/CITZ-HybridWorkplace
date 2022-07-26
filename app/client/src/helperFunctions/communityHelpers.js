@@ -41,9 +41,5 @@ export const reshapeCommunityForFrontend = (userId, community) => {
  * @todo //TODO: Add more simplified fields in the community object to aid in use of data
  */
 export const reshapeCommunitiesForFrontend = (userId, communities) => {
-  return communities.map((comm) => ({
-    ...comm,
-    userIsInCommunity: isUserInCommunity(userId, comm),
-    userIsModerator: isUserModerator(userId, comm),
-  }));
+  return communities.map((comm) => reshapeCommunityForFrontend(userId, comm));
 };

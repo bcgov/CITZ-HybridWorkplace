@@ -21,7 +21,7 @@ import UpIcon from "@mui/icons-material/KeyboardArrowUp";
 import DownIcon from "@mui/icons-material/KeyboardArrowDown";
 import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   openDeleteCommentModal,
   openFlagCommentModal,
@@ -32,27 +32,14 @@ import { connect } from "react-redux";
 import moment from "moment";
 import CommentReply from "./CommentReply";
 import CommentRepliesList from "./CommentRepliesList";
-import {
-  upvoteComment,
-  downvoteComment,
-  removeCommentVote,
-} from "../redux/ducks/postDuck";
+import { upvoteComment, downvoteComment } from "../redux/ducks/commentDuck";
 import { useNavigate } from "react-router-dom";
 import AvatarIcon from "./AvatarIcon";
 
 export const Comment = (props) => {
-  const getUserVote = () => {
-    return (
-      (props.comment.upvotes.users.includes(props.userId) && "up") ||
-      (props.comment.downvotes.users.includes(props.userId) && "down") ||
-      undefined
-    );
-  };
-
   const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = useState(null);
-  const [userVote, setUserVote] = useState(getUserVote());
 
   const handleDeleteCommentClick = () => {
     props.openDeleteCommentModal(props.comment);
@@ -112,39 +99,11 @@ export const Comment = (props) => {
   };
 
   const handleUpVote = async () => {
-    const commentId = props.comment._id;
-    if (!userVote) {
-      await props.upvoteComment(commentId);
-      setUserVote("up");
-      return;
-    }
-
-    if (userVote === "up") {
-      await props.removeCommentVote(commentId);
-      setUserVote(undefined);
-    } else if (userVote === "down") {
-      await props.removeCommentVote(commentId);
-      await props.upvoteComment(commentId);
-      setUserVote("up");
-    }
+    props.upvoteComment(props.comment._id);
   };
 
   const handleDownVote = async () => {
-    const commentId = props.comment._id;
-    if (!userVote) {
-      await props.downvoteComment(commentId);
-      setUserVote("down");
-      return;
-    }
-
-    if (userVote === "down") {
-      await props.removeCommentVote(commentId);
-      setUserVote(undefined);
-    } else if (userVote === "up") {
-      await props.removeCommentVote(commentId);
-      await props.downvoteComment(commentId);
-      setUserVote("down");
-    }
+    props.downvoteComment(props.comment._id);
   };
 
   return (
@@ -163,18 +122,18 @@ export const Comment = (props) => {
                 aria-label="upvote"
                 sx={{ padding: 0 }}
                 onClick={handleUpVote}
-                color={userVote === "up" ? "success" : "default"}
+                color={props.comment.userVote === "up" ? "success" : "default"}
               >
                 <UpIcon fontSize="large" />
               </IconButton>
               <Typography fontSize="1.5em" sx={{ textAlign: "center" }}>
-                {props.comment.votes || 0}
+                {props.comment.votes}
               </Typography>
               <IconButton
                 aria-label="downvote"
                 sx={{ padding: 0 }}
                 onClick={handleDownVote}
-                color={userVote === "down" ? "error" : "default"}
+                color={props.comment.userVote === "down" ? "error" : "default"}
               >
                 <DownIcon fontSize="large" />
               </IconButton>
@@ -277,7 +236,7 @@ export const Comment = (props) => {
                 backgroundColor: "card.main",
               }}
             >
-              {props.comment.edits.length > 0 && (
+              {props.comment.edits?.length > 0 && (
                 <Typography variant="caption" color="#898989">
                   Edited: {editDate}
                 </Typography>
@@ -315,7 +274,6 @@ const mapDispatchToProps = {
   openFlagCommentModal,
   upvoteComment,
   downvoteComment,
-  removeCommentVote,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Comment);

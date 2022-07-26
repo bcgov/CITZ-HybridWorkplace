@@ -275,7 +275,9 @@ const mapStateToProps = (state) => ({
   communities: state.communities.communities.filter(
     (comm) => comm.userIsInCommunity
   ),
-  posts: state.posts.userPosts,
+  posts: state.posts.items.filter(
+    (post) => post.creator === state.auth.user.id
+  ),
 });
 
 const mapActionsToProps = {
