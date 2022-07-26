@@ -523,7 +523,7 @@ export const kickCommunityMember =
       const response = await hwp_axios.post(
         `/api/community/moderators/kick/${user.community}`,
         {
-          username: user,
+          username: user.username,
           period: time,
         },
         {

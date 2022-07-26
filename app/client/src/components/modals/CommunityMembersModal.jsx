@@ -49,6 +49,7 @@ import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
 import PromoteUserModal from "./PromoteUserModal";
 import AvatarIcon from "../AvatarIcon";
 import { useNavigate } from "react-router-dom";
+import KickUserModal from "./KickUserModal";
 
 const CommunityMembersModal = (props) => {
   const navigate = useNavigate();
@@ -98,7 +99,13 @@ const CommunityMembersModal = (props) => {
                         edge="end"
                         aria-label="kick user"
                         color="error"
-                        onClick={() => props.openKickUserModal(member.username)}
+                        onClick={() =>
+                          handleKickUserClick(
+                            member.lastName !== undefined
+                              ? `${member.firstName} ${member.lastName}`
+                              : member.username
+                          )
+                        }
                       >
                         <NoMeetingRoomRoundedIcon />
                       </IconButton>
@@ -189,6 +196,7 @@ const CommunityMembersModal = (props) => {
             })}
           </List>
           <PromoteUserModal />
+          <KickUserModal />
           <DialogActions
             sx={{
               m: 0,

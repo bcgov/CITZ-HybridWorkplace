@@ -495,7 +495,7 @@ export function modalReducer(state = initialState, action) {
     case OPEN_KICK_USER_MODAL:
       return {
         ...state,
-        editUserKick: { open: true, username: action.payload },
+        editUserKick: { open: true, user: action.payload },
       };
 
     case CLOSE_KICK_USER_MODAL:

@@ -1,6 +1,5 @@
 import {
   Button,
-  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
@@ -10,7 +9,6 @@ import {
   Select,
   Stack,
   TextField,
-  Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
@@ -19,15 +17,15 @@ import {
   closeCommunityMembersModal,
 } from "../../redux/ducks/modalDuck";
 import { kickCommunityMember } from "../../redux/ducks/communityDuck";
-import WarningIcon from "@mui/icons-material/Warning";
 
 export const KickUserModal = (props) => {
+  console.log(props);
   useEffect(() => {
     setUsernameInput(props.username);
   }, [props.username]);
 
   const [usernameInput, setUsernameInput] = useState(props.username ?? "");
-  const [kickPeriod, setKickPeriod] = useState("");
+  const [kickPeriod, setKickPeriod] = useState("hour");
 
   const onUsernameInputChange = (e) => {
     setUsernameInput(e.target.value);
@@ -37,7 +35,7 @@ export const KickUserModal = (props) => {
 
   const handleCancelClick = () => {
     props.closeCommunityMembersModal();
-    props.closePromoteUserModal();
+    props.closeKickUserModal();
   };
 
   const handleKickClick = async () => {
@@ -63,44 +61,47 @@ export const KickUserModal = (props) => {
       sx={{ zIndex: 500 }}
     >
       <DialogTitle fontWeight={600}>Kick User</DialogTitle>
-      {/* TODO: Use the autocomplete component to display a list of users */}
       <DialogContent>
-        <Stack alignItems="center" spacing={2}>
-          <TextField
-            placeholder="IDIR/Username"
-            value={usernameInput}
-            onChange={onUsernameInputChange}
-            fullWidth
-            helperText="Enter the IDIR/Username of the member you wish to promote to moderator."
-          />
-          <InputLabel id="kick-period-select-label">Kick Period</InputLabel>
-          <Select
-            labelId="kick-period-select-label"
-            id="kick-period-select"
-            value={kickPeriod}
-            label="Kick Period"
-            onChange={handlePeriodSelect}
-          >
-            <MenuItem value="test">Test</MenuItem>
-            <MenuItem value="hour">Hour</MenuItem>
-            <MenuItem value="day">Day</MenuItem>
-            <MenuItem value="week">Week</MenuItem>
-            <MenuItem value="forever">Forever</MenuItem>
-          </Select>
+        <Stack alignItems="start" spacing={1}>
+          <Stack width={1} spacing={1}>
+            <InputLabel id="idir-username-textfield-label">
+              IDIR\Username
+            </InputLabel>
+            <TextField
+              labelId="idir-username-textfield-label"
+              placeholder="IDIR\Username"
+              value={usernameInput}
+              onChange={onUsernameInputChange}
+              fullWidth
+              helperText="Enter the IDIR\Username of the member you wish to promote to moderator."
+            />
+          </Stack>
+          <Stack width={1} spacing={1}>
+            <InputLabel id="kick-period-select-label">Kick Period</InputLabel>
+            <Select
+              labelId="kick-period-select-label"
+              id="kick-period-select"
+              value={kickPeriod}
+              fullWidth
+              onChange={handlePeriodSelect}
+            >
+              <MenuItem value="test">Test</MenuItem>
+              <MenuItem value="hour">Hour</MenuItem>
+              <MenuItem value="day">Day</MenuItem>
+              <MenuItem value="week">Week</MenuItem>
+              <MenuItem value="forever">Forever</MenuItem>
+            </Select>
+          </Stack>
         </Stack>
+        <DialogActions spacing={1} sx={{ mt: 1, pr: 0 }}>
+          <Button color="button" variant="text" onClick={handleCancelClick}>
+            Cancel
+          </Button>
+          <Button variant="contained" color="error" onClick={handleKickClick}>
+            Kick
+          </Button>
+        </DialogActions>
       </DialogContent>
-      <DialogActions>
-        <Button color="button" variant="text" onClick={handleCancelClick}>
-          Cancel
-        </Button>
-        <Button
-          variant="contained"
-          color="error.main"
-          onClick={handleKickClick}
-        >
-          Kick
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 };
