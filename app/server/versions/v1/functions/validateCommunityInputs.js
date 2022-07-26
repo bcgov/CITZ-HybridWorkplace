@@ -48,16 +48,23 @@ const validateCommunityInputs = (reqBody, options, patch) => {
   } = options;
 
   if (!patch || (patch && reqBody.title)) {
-    // Validate title
-    const titleRegexStr = `(?!.*[${titleDisallowedCharacters}]).{${titleMinLength},${titleMaxLength}}`;
-    const titlePattern = new RegExp(titleRegexStr, "g");
+    // Validate title length
+    const titleLengthRegexStr = `.{${titleMinLength},${titleMaxLength}}`;
+    const titleLengthPattern = new RegExp(titleLengthRegexStr, "g");
+    // Validate title disallowed characters
+    const titleCharsRegexStr = `[${titleDisallowedCharacters}]`;
+    const titleCharsPattern = new RegExp(titleCharsRegexStr, "g");
+    // Create a user-readable string to display disallowed characters
     const titleDisallowedCharactersReplace = titleDisallowedCharacters
       .replace(/^\\/g, "x")
       .replaceAll("\\", "")
       .replace("x", "\\");
-    const titleError = `title does not meet requirements: length ${titleMinLength}-${titleMaxLength}, must not contain characters (${titleDisallowedCharactersReplace}).`;
-    if (!titlePattern.test(reqBody.title))
-      throw new ResponseError(403, titleError);
+    const titleLengthError = `title does not meet requirements: length ${titleMinLength}-${titleMaxLength}.`;
+    const titleCharsError = `title does not meet requirements: must not contain characters (${titleDisallowedCharactersReplace}).`;
+    if (!titleLengthPattern.test(reqBody.title))
+      throw new ResponseError(403, titleLengthError);
+    if (titleCharsPattern.test(reqBody.title))
+      throw new ResponseError(403, titleCharsError);
 
     titleDisallowedStrings.some((str) => {
       const pattern = new RegExp(str, "g");
@@ -102,6 +109,12 @@ const validateCommunityInputs = (reqBody, options, patch) => {
           throw new ResponseError(
             403,
             `Tags (${reqBody.tags[tagObject].tag}) must have a length of ${tagMinLength}-${tagMaxLength}`
+          );
+
+        if (reqBody.tags[tagObject].tag.contains("#"))
+          throw new ResponseError(
+            403,
+            `Tag (${reqBody.tags[tagObject].tag}) must not contain the character '#'.`
           );
 
         // Validate tag description length
