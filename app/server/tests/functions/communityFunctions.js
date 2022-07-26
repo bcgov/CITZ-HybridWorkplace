@@ -273,15 +273,78 @@ class CommunityFunctions {
       .query(`flag=${flag}`);
   }
 
-  getModerators(title, token, count = false) {}
+  /**
+   * @description             Gets a list of moderators from a chosen community.
+   * @param {String}  title   Community title.
+   * @param {String}  token   JWT that authenticates the user.
+   * @param {boolean} count   Whether it should return only a count of moderators, not the list.
+   * @returns                 Response containing list of users.
+   */
+  getModerators(title, token, count = false) {
+    return request
+      .get(`/community/moderators/${title}`)
+      .set({ authorization: `Bearer ${token}` })
+      .query(`count=${count}`);
+  }
 
-  addModerator(title, name, permissions, token) {}
+  /**
+   * @description                   Adds user to moderator list.
+   * @param {String}  title         Community title.
+   * @param {String}  username      Username of targeted user.
+   * @param {Array}   permissions   Array of strings that correspond to permissions.
+   * @param {String}  token         JWT that authenticates the user.
+   * @returns                       Response from API.
+   */
+  addModerator(title, username, permissions, token) {
+    return request
+      .patch(`/community/moderators/add/${title}`)
+      .set({ authorization: `Bearer ${token}` })
+      .send({ username, permissions });
+  }
 
-  removeModerator(title, name, token) {}
+  /**
+   * @description               Removes user from moderator list.
+   * @param {String} title      Community title.
+   * @param {String} username   Username of targeted user.
+   * @param {String} token      JWT that authenticates the user.
+   * @returns                   Response from API.
+   */
+  removeModerator(title, username, token) {
+    return request
+      .delete(`/community/moderators/remove/${title}`)
+      .set({ authorization: `Bearer ${token}` })
+      .send({ username });
+  }
 
-  setModPermissions(title, name, permissions, token) {}
+  /**
+   * @description                   Edits existing moderator's permissions.
+   * @param {String}  title         Community title.
+   * @param {String}  username      Username of targeted user.
+   * @param {Array}   permissions   Array of strings that correspond to permissions.
+   * @param {String}  token         JWT that authenticates the user.
+   * @returns                       Response from API.
+   */
+  setModPermissions(title, username, permissions, token) {
+    return request
+      .patch(`/community/moderators/permissions/${title}`)
+      .set({ authorization: `Bearer ${token}` })
+      .send({ username, permissions });
+  }
 
-  kickUser(title, name, period, token) {}
+  /**
+   * @description               Kicks user from community, preventing them from rejoining.
+   * @param {String} title      Community title.
+   * @param {String} username   Username of targeted user.
+   * @param {String} period     Period of time user is kicked for (hour, day, week, forever, test)
+   * @param {String} token      JWT that authenticates the user.
+   * @returns                   Response from API.
+   */
+  kickUser(title, username, period, token) {
+    return request
+      .post(`/community/moderators/kick/${title}`)
+      .set({ authorization: `Bearer ${token}` })
+      .send({ username, period });
+  }
 }
 
 module.exports = { CommunityFunctions };
