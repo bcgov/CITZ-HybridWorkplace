@@ -54,7 +54,7 @@ class CommunityFunctions {
    * @param {String}  token       JWT that authenticates the user.
    * @returns                     Response from API. Body contains object with community info.
    */
-  createCommunity(title, description, rules, tags, token) {
+  createCommunity(title, description, token) {
     this.communityList.push({
       community: {
         name: title,
@@ -68,8 +68,8 @@ class CommunityFunctions {
       .send({
         title,
         description,
-        rules,
-        tags,
+        // rules,
+        // tags,
       });
   }
 
@@ -272,6 +272,8 @@ class CommunityFunctions {
       .set({ authorization: `Bearer ${token}` })
       .query(`flag=${flag}`);
   }
+
+  /* ***************** Community Moderation Functions ************** */
 
   /**
    * @description             Gets a list of moderators from a chosen community.
