@@ -28,8 +28,9 @@ const Community = require("../models/community.model");
  * @returns Array of communities ordered by user's engagment (posts, comments, votes).
  */
 const findCommunitiesByEngagement = async (user) => {
+  const matchQuery = user.role === "admin" ? {} : { removed: false };
   const communities = await Community.aggregate([
-    { $match: { removed: false } },
+    { $match: matchQuery },
     {
       $lookup: {
         from: "user",

@@ -30,7 +30,7 @@ const Comment = require("../models/comment.model");
  * Check if multiple documents exist. If they all exist, return the found documents.
  * If at least one document doesn't exist throw an error.
  */
-const findSingleDocuments = async (input) => {
+const findSingleDocuments = async (input, isAdmin) => {
   let user;
   let community;
   let post;
@@ -44,20 +44,21 @@ const findSingleDocuments = async (input) => {
   if (input.community) {
     community = await Community.findOne({ title: input.community });
     if (!community) throw new ResponseError(404, "Community not found.");
-    if (community.removed)
+    if (community.removed && !isAdmin)
       throw new ResponseError(403, "Community has been removed.");
   }
 
   if (input.post) {
     post = await Post.findOne({ _id: input.post });
     if (!post) throw new ResponseError(404, "Post not found.");
-    if (post.removed) throw new ResponseError(403, "Post has been removed.");
+    if (post.removed && !isAdmin)
+      throw new ResponseError(403, "Post has been removed.");
   }
 
   if (input.comment) {
     comment = await Comment.findOne({ _id: input.comment });
     if (!comment) throw new ResponseError(404, "Comment not found.");
-    if (comment.removed)
+    if (comment.removed && !isAdmin)
       throw new ResponseError(403, "Comment has been removed.");
   }
 

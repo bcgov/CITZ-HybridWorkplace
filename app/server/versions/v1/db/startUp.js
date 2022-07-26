@@ -73,6 +73,13 @@ const mongoStartUp = async (db, collections) => {
     await Post.updateMany({ hidden: null }, { hidden: false });
     await Comment.updateMany({ removed: null }, { removed: false });
     await Comment.updateMany({ hidden: null }, { hidden: false });
+
+    // Fix comment reply voting
+    await Comment.updateMany({ "upvotes.count": null }, { "upvotes.count": 0 });
+    await Comment.updateMany(
+      { "downvotes.count": null },
+      { "downvotes.count": 0 }
+    );
   }
 };
 

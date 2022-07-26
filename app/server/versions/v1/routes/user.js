@@ -139,6 +139,7 @@ router.get("/", async (req, res, next) => {
     return res.status(200).json({
       username: user.username,
       email: user.email,
+      role: user.role,
       firstName: user.firstName,
       lastName: user.lastName,
       bio: user.bio,
@@ -335,15 +336,19 @@ router.patch("/", async (req, res, next) => {
 
     // Check patch query for disallowed fields
     req.log.addAction("Checking edit query.");
-    const query = checkPatchQuery(req.body, user, [
-      "username",
-      "password",
-      "refreshToken",
-      "registeredOn",
-      "communities",
-      "postCount",
-      "isInMailingList",
-    ]);
+    const query =
+      user.role === "admin"
+        ? req.body
+        : checkPatchQuery(req.body, user, [
+            "username",
+            "password",
+            "refreshToken",
+            "registeredOn",
+            "communities",
+            "postCount",
+            "isInMailingList",
+            "role",
+          ]);
     req.log.addAction("Edit query has been cleaned.");
 
     // Set fullName
@@ -505,6 +510,7 @@ router.get("/:username", async (req, res, next) => {
     return res.status(200).json({
       username: user.username,
       email: user.email,
+      role: user.role,
       firstName: user.firstName,
       lastName: user.lastName,
       bio: user.bio,
@@ -561,7 +567,7 @@ router.delete("/:username", async (req, res, next) => {
     req.log.addAction("User found.");
 
     req.log.addAction("Checking user is account owner.");
-    if (user.username !== req.user.username)
+    if (!(user.username === req.user.username || user.role === "admin"))
       throw new ResponseError(403, "Must be account owner to remove user.");
     req.log.addAction("User is account owner.");
 

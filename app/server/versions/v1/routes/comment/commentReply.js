@@ -19,6 +19,7 @@
 
 const express = require("express");
 const moment = require("moment");
+const { ObjectId } = require("mongodb");
 const ResponseError = require("../../classes/responseError");
 
 const findSingleDocuments = require("../../functions/findSingleDocuments");
@@ -63,9 +64,12 @@ const Comment = require("../../models/comment.model");
 router.get("/:id", async (req, res, next) => {
   try {
     req.log.addAction("Finding comment.");
-    const { comment } = await findSingleDocuments({
-      comment: req.params.id,
-    });
+    const { comment } = await findSingleDocuments(
+      {
+        comment: req.params.id,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("Comment found.");
 
     req.log.addAction("Finding replies.");
@@ -178,10 +182,13 @@ router.get("/:id", async (req, res, next) => {
 router.post("/:id", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and comment.");
-    const { user, comment } = await findSingleDocuments({
-      user: req.user.username,
-      comment: req.params.id,
-    });
+    const { user, comment } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        comment: req.params.id,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and comment found.");
 
     req.log.addAction("Finding options.");
@@ -208,7 +215,7 @@ router.post("/:id", async (req, res, next) => {
     req.log.addAction("replyTo comment is not a reply.");
 
     req.log.addAction("Checking user is member of community.");
-    await checkUserIsMemberOfCommunity(user.username, comment.community);
+    await checkUserIsMemberOfCommunity(user, comment.community);
     req.log.addAction("User is member of community.");
 
     req.log.addAction("Checking message in req body.");
@@ -230,6 +237,10 @@ router.post("/:id", async (req, res, next) => {
       community: comment.community,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
       replyTo: comment.id,
+      "upvotes.count": 0,
+      "downvotes.count": 0,
+      removed: false,
+      hidden: false,
     });
     req.log.addAction("Reply created.");
 
@@ -241,8 +252,63 @@ router.post("/:id", async (req, res, next) => {
     );
     req.log.addAction("Community engagement updated.");
 
+    const returnReply = await Comment.aggregate([
+      { $match: { _id: new ObjectId(reply.id) } },
+      {
+        $lookup: {
+          from: "user",
+          pipeline: [
+            {
+              $match: { _id: new ObjectId(user.id) },
+            },
+          ],
+          as: "userData",
+        },
+      },
+      {
+        $addFields: {
+          votes: {
+            $ifNull: [{ $subtract: ["$upvotes.count", "$downvotes.count"] }, 0],
+          },
+          avatar: { $arrayElemAt: ["$userData.avatar", 0] },
+          creatorInitials: {
+            $cond: {
+              if: { $arrayElemAt: ["$userData.lastName", 0] },
+              then: {
+                $concat: [
+                  {
+                    $substr: [
+                      { $arrayElemAt: ["$userData.firstName", 0] },
+                      0,
+                      1,
+                    ],
+                  },
+                  {
+                    $substr: [
+                      { $arrayElemAt: ["$userData.lastName", 0] },
+                      0,
+                      1,
+                    ],
+                  },
+                ],
+              },
+              else: {
+                $substr: [{ $arrayElemAt: ["$userData.firstName", 0] }, 0, 1],
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          userData: 0,
+        },
+      },
+      { $sort: { votes: -1, _id: 1 } },
+    ]).exec();
+
     req.log.setResponse(201, "Success");
-    return res.status(201).json(reply);
+    return res.status(201).json(returnReply[0]);
   } catch (err) {
     res.locals.err = err;
   } finally {
