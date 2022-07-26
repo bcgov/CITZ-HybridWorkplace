@@ -73,7 +73,7 @@ export const KickUserModal = (props) => {
               value={usernameInput}
               onChange={onUsernameInputChange}
               fullWidth
-              helperText="Enter the IDIR\Username of the member you wish to promote to moderator."
+              helperText="Enter the IDIR\Username of the member you wish to kick/suspend from the community."
             />
           </Stack>
           <Stack width={1} spacing={1}>
