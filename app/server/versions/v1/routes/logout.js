@@ -45,7 +45,7 @@ const User = require("../models/user.model");
  *          description: Invalid token.
  *        '204':
  *          description: Success. No content to return.
- *        '400':
+ *        '400': 
  *          description: Bad Request.
  */
 
