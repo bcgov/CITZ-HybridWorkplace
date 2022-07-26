@@ -272,6 +272,16 @@ class CommunityFunctions {
       .set({ authorization: `Bearer ${token}` })
       .query(`flag=${flag}`);
   }
+
+  getModerators(title, token, count = false) {}
+
+  addModerator(title, name, permissions, token) {}
+
+  removeModerator(title, name, token) {}
+
+  setModPermissions(title, name, permissions, token) {}
+
+  kickUser(title, name, period, token) {}
 }
 
 module.exports = { CommunityFunctions };
