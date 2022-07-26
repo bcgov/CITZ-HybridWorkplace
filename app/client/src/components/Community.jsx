@@ -211,7 +211,7 @@ const Community = (props) => {
                 {community.postCount || 0}
               </Typography>
             </Stack>
-            <JoinButton community={community} />
+            {props.hideJoinButton || <JoinButton community={community} />}
             <Typography color="#898989">
               Latest Activity: {latestActivity}
             </Typography>
