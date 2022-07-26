@@ -133,9 +133,8 @@ router.get("/:query", async (req, res, next) => {
         $match: {
           $and: [
             postFilter,
-            {
-              $or: [{ removed: false }, { hidden: false }],
-            },
+            { removed: false },
+            { hidden: false },
             {
               $or: [
                 { title: { $regex: query, $options: "i" } },
