@@ -42,15 +42,14 @@ import NoMeetingRoomRoundedIcon from "@mui/icons-material/NoMeetingRoomRounded";
 import {
   closeCommunityMembersModal,
   openPromoteUserModal,
+  openKickUserModal,
 } from "../../redux/ducks/modalDuck";
-import {
-  getCommunityMembers,
-  kickCommunityMember,
-} from "../../redux/ducks/communityDuck";
+import { getCommunityMembers } from "../../redux/ducks/communityDuck";
 import AddCircleTwoToneIcon from "@mui/icons-material/AddCircleTwoTone";
 import PromoteUserModal from "./PromoteUserModal";
 import AvatarIcon from "../AvatarIcon";
 import { useNavigate } from "react-router-dom";
+import KickUserModal from "./KickUserModal";
 
 const CommunityMembersModal = (props) => {
   const navigate = useNavigate();
@@ -62,6 +61,8 @@ const CommunityMembersModal = (props) => {
   const handlePromoteClick = (username) => {
     props.openPromoteUserModal(username);
   };
+
+  const handleKickUserClick = (user) => props.openKickUserModal(user);
 
   const handleUserClick = (username) => {
     if (username) navigate(`/profile/${username}`);
@@ -94,7 +95,12 @@ const CommunityMembersModal = (props) => {
                       >
                         <AddCircleTwoToneIcon fontSize="small" />
                       </IconButton>
-                      <IconButton edge="end" aria-label="kick user">
+                      <IconButton
+                        edge="end"
+                        aria-label="kick user"
+                        color="error"
+                        onClick={() => handleKickUserClick(member)}
+                      >
                         <NoMeetingRoomRoundedIcon />
                       </IconButton>
                     </Stack>
@@ -184,6 +190,7 @@ const CommunityMembersModal = (props) => {
             })}
           </List>
           <PromoteUserModal />
+          <KickUserModal />
           <DialogActions
             sx={{
               m: 0,
@@ -218,9 +225,9 @@ const mapStateToProps = (state) => ({
 
 const mapActionsToProps = {
   closeCommunityMembersModal,
-  kickCommunityMember,
   getCommunityMembers,
   openPromoteUserModal,
+  openKickUserModal,
 };
 
 export default connect(

@@ -9,6 +9,8 @@ RUN apk add --update nodejs && apk add npm
 # Create app directory
 WORKDIR /usr/src/app/client
 
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+
 # Install dependencies
 COPY app/client/package*.json ./
 RUN npm ci
