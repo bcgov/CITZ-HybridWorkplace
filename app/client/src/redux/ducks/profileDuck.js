@@ -51,7 +51,6 @@ export const getProfile = (username) => async (dispatch, getState) => {
       type: SET_USER,
       payload: response.data,
     });
-    console.log(response.data);
   } catch (err) {
     console.error(err);
     successful = false;

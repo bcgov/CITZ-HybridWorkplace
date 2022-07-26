@@ -34,7 +34,7 @@ const lightModeColors = {
     main: "#ffffff",
   },
   backgroundSecondary: {
-    main: "rgba(220, 220, 220, .3)",
+    main: "rgba(220, 220, 220, .5)",
   },
 };
 const darkModeColors = {

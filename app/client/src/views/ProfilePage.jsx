@@ -47,8 +47,6 @@ import {
   IconButton,
   Button,
   Divider,
-  Card,
-  CardContent,
 } from "@mui/material";
 
 import { default as BackArrow } from "@mui/icons-material/ArrowBackIosNewRounded";
@@ -77,7 +75,6 @@ const ProfilePage = (props) => {
 
   useEffect(() => {
     props.getProfile(username);
-    props.getUsersCommunities();
     props.getUserPosts(username);
   }, [username]);
 
@@ -115,6 +112,9 @@ const ProfilePage = (props) => {
 
   const handleEditAvatarClick = (userSettings) =>
     props.openEditAvatarModal(userSettings);
+
+  const userHasPosts = props.posts?.length > 0;
+  const userHasCommunities = props.profile?.communities?.length > 0;
 
   return (
     <Box
@@ -238,54 +238,66 @@ const ProfilePage = (props) => {
               {props.profile.bio}
             </Typography>
           </Box>
+          {(userHasPosts || userHasCommunities) && (
+            <div>
+              <Divider sx={{ my: 2 }} />
+              <Box
+                sx={{
+                  backgroundColor: "backgroundSecondary.main",
+                  borderRadius: "7.5px",
+                  width: "100%",
+                  padding: 3,
+                }}
+              >
+                {userHasCommunities && (
+                  <div>
+                    <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
+                      My Communities
+                    </Typography>
+                    <Carousel
+                      NextIcon={<ForwardArrow />}
+                      PrevIcon={<BackArrow />}
+                      autoPlay={false}
+                      animation="slide"
+                      duration={500}
+                      fullHeightHover={false}
+                      sx={{ borderRadius: "10px" }}
+                    >
+                      {props.profile.communities?.slice(0, 4).map((element) => (
+                        <Community
+                          community={element}
+                          key={element._id}
+                          hideJoinButton
+                        />
+                      ))}
+                    </Carousel>
+                  </div>
+                )}
 
-          <Divider sx={{ my: 2 }} />
-          <Box
-            sx={{
-              backgroundColor: "backgroundSecondary.main",
-              borderRadius: "15px",
-              width: "100%",
-              padding: 3,
-            }}
-          >
-            <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
-              My Communities
-            </Typography>
-            <Carousel
-              NextIcon={<ForwardArrow />}
-              PrevIcon={<BackArrow />}
-              autoPlay={false}
-              animation="slide"
-              duration={500}
-              fullHeightHover={false}
-              sx={{ borderRadius: "10px" }}
-            >
-              {props.profile.communities?.slice(0, 4).map((element) => (
-                <Community
-                  community={element}
-                  key={element._id}
-                  hideJoinButton
-                />
-              ))}
-            </Carousel>
-            <Divider sx={{ my: 2 }} />
-            <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
-              My Recent Posts
-            </Typography>
-            <Carousel
-              NextIcon={<ForwardArrow />}
-              PrevIcon={<BackArrow />}
-              autoPlay={false}
-              animation="slide"
-              duration={500}
-              fullHeightHover={false}
-              sx={{ borderRadius: "10px" }}
-            >
-              {props.posts.slice(0, 4).map((post) => (
-                <Post post={post} key={post._id} />
-              ))}
-            </Carousel>
-          </Box>
+                {userHasPosts && (
+                  <div>
+                    <Divider sx={{ my: 2 }} />
+                    <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
+                      My Recent Posts
+                    </Typography>
+                    <Carousel
+                      NextIcon={<ForwardArrow />}
+                      PrevIcon={<BackArrow />}
+                      autoPlay={false}
+                      animation="slide"
+                      duration={500}
+                      fullHeightHover={false}
+                      sx={{ borderRadius: "10px" }}
+                    >
+                      {props.posts.slice(0, 4).map((post) => (
+                        <Post post={post} key={post._id} />
+                      ))}
+                    </Carousel>
+                  </div>
+                )}
+              </Box>
+            </div>
+          )}
         </Grid>
       </Grid>
       <EditPostModal />
@@ -302,16 +314,17 @@ const ProfilePage = (props) => {
 ProfilePage.propTypes = {
   getProfile: PropTypes.func.isRequired,
   profile: PropTypes.object.isRequired,
-  communities: PropTypes.array.isRequired,
   posts: PropTypes.array.isRequired,
+  username: PropTypes.string.isRequired,
+  openSettingsModal: PropTypes.func.isRequired,
+  openEditUserBioModal: PropTypes.func.isRequired,
+  openEditUserInterestsModal: PropTypes.func.isRequired,
+  openEditAvatarModal: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   username: state.auth.user.username,
   profile: state.profile.user,
-  communities: state.communities.communities.filter(
-    (comm) => comm.userIsInCommunity
-  ),
   posts: state.posts.items.filter(
     (post) => post.creatorUsername === state.profile.user.username
   ),
@@ -320,7 +333,6 @@ const mapStateToProps = (state) => ({
 const mapActionsToProps = {
   getProfile,
   getUserPosts,
-  getUsersCommunities,
   openSettingsModal,
   openEditUserBioModal,
   openEditUserInterestsModal,
