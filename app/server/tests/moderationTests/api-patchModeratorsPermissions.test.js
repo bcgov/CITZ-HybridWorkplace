@@ -45,14 +45,6 @@ describe("Testing PATCH /community/moderators/add/{title} endpoint", () => {
 
       // User2 joins community
       await community.joinCommunity(communityName, loginResponse2.body.token);
-
-      // User1 promotes User2 to mod
-      await community.addModerator(
-        communityName,
-        username2,
-        [],
-        loginResponse1.body.token
-      );
     });
 
     afterAll(async () => {
@@ -60,92 +52,72 @@ describe("Testing PATCH /community/moderators/add/{title} endpoint", () => {
       await auth.deleteUsers();
     });
 
-    test("Moderator with no permissions cannot remove other mods", async () => {
-      // User2 tries to remove User1
-      response = await community.removeModerator(
+    test("User cannot edit mod permissions if not a mod", async () => {
+      // User2 tries to change User1 permissions
+      response = await community.setModPermissions(
         communityName,
         username1,
+        [],
         loginResponse2.body.token
       );
 
       expect(response.status).toBe(403);
-
-      // Moderator list should still be 2 long.
-      response = await community.getModerators(
-        communityName,
-        loginResponse2.body.token,
-        true
-      );
-
-      expect(response.body.count).toBe(2);
     });
 
-    test("Moderator with full permissions can remove other mod", async () => {
-      // User1 tries to remove User2
-      response = await community.removeModerator(
-        communityName,
-        username2,
-        loginResponse1.body.token
-      );
-
-      expect(response.status).toBe(204);
-
-      // Moderator list should now be 1 long.
-      response = await community.getModerators(
-        communityName,
-        loginResponse2.body.token,
-        true
-      );
-
-      expect(response.body.count).toBe(1);
-    });
-
-    test("Moderator cannot demote themselves if they are the last mod with permissions", async () => {
-      // User1 tries to remove User1
-      response = await community.removeModerator(
+    test("Moderator cannot remove their permissions if they only have those permissions", async () => {
+      // User1 tries to change User1 permissions
+      response = await community.setModPermissions(
         communityName,
         username1,
-        loginResponse1.body.token
+        [],
+        loginResponse2.body.token
       );
 
       expect(response.status).toBe(403);
-
-      // Moderator list should still be 1 long.
-      response = await community.getModerators(
-        communityName,
-        loginResponse2.body.token,
-        true
-      );
-
-      expect(response.body.count).toBe(1);
     });
 
-    test("Moderator can demote themself if another user has permissions", async () => {
-      // User1 promotes User2 with full permissions
+    test("Moderator with no permissions cannot change permissions of other mods", async () => {
+      // User1 promotes User2 to mod
       await community.addModerator(
+        communityName,
+        username2,
+        [],
+        loginResponse1.body.token
+      );
+
+      // User2 tries to remove User1's permissions
+      response = await community.setModPermissions(
+        communityName,
+        username1,
+        [],
+        loginResponse2.body.token
+      );
+
+      expect(response.status).toBe(403);
+    });
+
+    test("Moderator with full permissions can add permissions to other mod", async () => {
+      // User1 adds permissions to User2
+      response = await community.setModPermissions(
         communityName,
         username2,
         ["set_moderators", "set_permissions", "remove_community"],
         loginResponse1.body.token
       );
 
-      // User1 tries to remove User1
-      response = await community.removeModerator(
+      expect(response.status).toBe(204);
+    });
+
+    test("Moderator can remove their permissions if another mod has them as well", async () => {
+      // User1 removes permissions from self
+      response = await community.setModPermissions(
         communityName,
         username1,
+        [],
         loginResponse1.body.token
       );
 
       expect(response.status).toBe(204);
-
-      // Moderator list should still be 1 long.
-      response = await community.getModerators(
-        communityName,
-        loginResponse2.body.token,
-        true
-      );
-
-      expect(response.body.count).toBe(1);
     });
   });
 });
