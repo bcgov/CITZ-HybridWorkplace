@@ -20,7 +20,7 @@
  * @module
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
@@ -36,6 +36,8 @@ import {
   ListItemText,
   IconButton,
   Typography,
+  TextField,
+  Tooltip,
 } from "@mui/material";
 
 import NoMeetingRoomRoundedIcon from "@mui/icons-material/NoMeetingRoomRounded";
@@ -53,6 +55,7 @@ import KickUserModal from "./KickUserModal";
 
 const CommunityMembersModal = (props) => {
   const navigate = useNavigate();
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     props.getCommunityMembers(props.community.title);
@@ -60,6 +63,21 @@ const CommunityMembersModal = (props) => {
 
   const handlePromoteClick = (username) => {
     props.openPromoteUserModal(username);
+  };
+
+  const search = (members) => {
+    return members?.filter((member) => {
+      const username = member.username?.toLowerCase();
+      const firstName = member.firstName?.toLowerCase();
+      const lastName = member.lastName?.toLowerCase();
+      const fullName = `${member.firstName?.toLowerCase()} ${member.lastName?.toLowerCase()}`;
+      return (
+        username?.includes(query?.toLowerCase()) ||
+        firstName?.includes(query?.toLowerCase()) ||
+        lastName?.includes(query?.toLowerCase()) ||
+        fullName?.includes(query?.toLowerCase())
+      );
+    });
   };
 
   const handleKickUserClick = (user) => props.openKickUserModal(user);
@@ -78,9 +96,14 @@ const CommunityMembersModal = (props) => {
     >
       <DialogTitle sx={{ fontWeight: 600 }}>Community Members</DialogTitle>
       <DialogContent>
+        <TextField
+          sx={{ width: "100%" }}
+          placeholder="Search..."
+          onChange={(e) => setQuery(e.target.value)}
+        />
         <Stack spacing={1}>
           <List>
-            {props.community.membersList?.map((member) => {
+            {search(props.community?.membersList)?.map((member) => {
               return props.isUserModerator ? (
                 <ListItem
                   key={member._id}
@@ -89,20 +112,24 @@ const CommunityMembersModal = (props) => {
                       direction="row"
                       sx={{ display: "flex", alignItems: "center" }}
                     >
-                      <IconButton
-                        color="success"
-                        onClick={() => handlePromoteClick(member.username)}
-                      >
-                        <AddCircleTwoToneIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        edge="end"
-                        aria-label="kick user"
-                        color="error"
-                        onClick={() => handleKickUserClick(member)}
-                      >
-                        <NoMeetingRoomRoundedIcon />
-                      </IconButton>
+                      <Tooltip title={<Typography>Promote</Typography>} arrow>
+                        <IconButton
+                          color="success"
+                          onClick={() => handlePromoteClick(member.username)}
+                        >
+                          <AddCircleTwoToneIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title={<Typography>Kick</Typography>} arrow>
+                        <IconButton
+                          edge="end"
+                          aria-label="kick user"
+                          color="error"
+                          onClick={() => handleKickUserClick(member)}
+                        >
+                          <NoMeetingRoomRoundedIcon />
+                        </IconButton>
+                      </Tooltip>
                     </Stack>
                   }
                 >
