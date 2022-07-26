@@ -46,7 +46,7 @@ const options = [
     component: "community",
     options: {
       titleMinLength: 3,
-      titleMaxLength: 25,
+      titleMaxLength: 200,
       titleDisallowedCharacters: "\\\\/@\\*\\^_\\+\\-=`~\\]\\[{}:;<>",
       titleDisallowedStrings: [
         "www.",

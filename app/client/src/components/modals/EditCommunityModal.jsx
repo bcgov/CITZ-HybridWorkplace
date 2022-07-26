@@ -81,7 +81,10 @@ const EditCommunityModal = (props) => {
       props.createError("Modifying a community requires at least one change.");
       return;
     }
-    const successful = await props.editCommunity(changes);
+    const successful = await props.editCommunity(
+      props.community.title,
+      changes
+    );
     if (successful) {
       // To be uncommented when backend supports community title change
       //navigate(`/community/${newComm.title || props.community.title}`);
@@ -110,11 +113,11 @@ const EditCommunityModal = (props) => {
             size="small"
             error={
               !title ||
-              (title === "" || (title.length >= 3 && title.length <= 25)
+              (title === "" || (title.length >= 3 && title.length <= 200)
                 ? false
                 : true)
             }
-            helperText="Title must be 3-25 characters in length."
+            helperText="Title must be 3-200 characters in length."
             required
           />
           <MarkDownEditor
@@ -140,7 +143,7 @@ const EditCommunityModal = (props) => {
                   title &&
                   description &&
                   (title.length < 3 ||
-                    title.length > 25 ||
+                    title.length > 200 ||
                     description.length < 3 ||
                     description.length > 300)
                 }

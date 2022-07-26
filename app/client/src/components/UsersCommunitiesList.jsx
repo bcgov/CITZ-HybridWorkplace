@@ -25,14 +25,24 @@ import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 
-import { Paper, Box, Grid, Stack, Typography } from "@mui/material";
+import {
+  Paper,
+  Box,
+  Grid,
+  Stack,
+  Typography,
+  Tooltip,
+  IconButton,
+} from "@mui/material";
 import GroupsIcon from "@mui/icons-material/Groups";
+import FeedIcon from "@mui/icons-material/Feed";
 
 import { getUsersCommunities } from "../redux/ducks/communityDuck";
 import JoinButton from "./JoinButton";
 
 const UsersCommunitiesList = (props) => {
   const navigate = useNavigate();
+  const maxDisplayedTitleLength = 65;
 
   useEffect(() => {
     props.getUsersCommunities();
@@ -70,14 +80,40 @@ const UsersCommunitiesList = (props) => {
               <Grid container>
                 <Grid item xs={12}>
                   <Typography p={1.5} variant="h7" component="p">
-                    <b>{community.title}</b>
+                    <b>
+                      {community.title.length >= maxDisplayedTitleLength
+                        ? community.title.substring(
+                            0,
+                            maxDisplayedTitleLength
+                          ) + "..."
+                        : community.title}
+                    </b>
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sx={{ pt: 0, pb: "10px" }}>
-                  <Stack direction="row" spacing={1} sx={{ ml: "15px" }}>
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ ml: "15px", alignItems: "center" }}
+                  >
                     <GroupsIcon sx={{ color: "#898989" }} />
                     <Typography color="#898989">
                       {community.memberCount || 0}
+                    </Typography>
+                    <Tooltip
+                      title={<Typography>Community Posts</Typography>}
+                      arrow
+                    >
+                      <IconButton
+                        disableRipple
+                        onClick={handleCommunityClick}
+                        sx={{ pr: 0 }}
+                      >
+                        <FeedIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                    <Typography color="#898989">
+                      {community.postCount || 0}
                     </Typography>
                   </Stack>
                 </Grid>

@@ -300,7 +300,7 @@ const CommunityPage = (props) => {
               border: 0,
             }}
           >
-            <Stack spacing={1} sx={{ pb: 3 }}>
+            <Stack spacing={1} sx={{ pb: 3, pt: 1.5 }}>
               <MarkDownDisplay message={props.community.description} />
               <Button
                 variant="text"

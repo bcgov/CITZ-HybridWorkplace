@@ -19,6 +19,7 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
 import GroupsIcon from "@mui/icons-material/Groups";
+import FeedIcon from "@mui/icons-material/Feed";
 
 import { useState, useMemo } from "react";
 import { connect } from "react-redux";
@@ -36,6 +37,7 @@ const Community = (props) => {
   const navigate = useNavigate();
 
   const { community } = props;
+  const maxDisplayedTitleLength = 65;
 
   function useQuery() {
     const { search } = useLocation();
@@ -167,14 +169,19 @@ const Community = (props) => {
             )
           }
           title={
-            <Stack direction="row" spacing={3}>
-              <Typography variant="h5">
-                <b>{community.title}</b>
-              </Typography>
-              <Typography size="small" sx={{ pt: "5px" }}>
-                Created {createdOn || "Unknown"}
-              </Typography>
-            </Stack>
+            <Typography variant="h5">
+              <b>
+                {community.title.length >= maxDisplayedTitleLength
+                  ? community.title.substring(0, maxDisplayedTitleLength) +
+                    "..."
+                  : community.title}
+              </b>
+            </Typography>
+          }
+          subheader={
+            <Typography size="small" sx={{ pt: "5px" }}>
+              Created {createdOn || "Unknown"}
+            </Typography>
           }
         />
         <CardContent>
@@ -183,9 +190,25 @@ const Community = (props) => {
         <CardActions>
           <Stack direction="row" spacing={1} width="0.95" alignItems="center">
             <Stack direction="row" spacing={1} sx={{ ml: "5px" }}>
-              <GroupsIcon sx={{ color: "#898989" }} />
+              <Tooltip title={<Typography>Community Members</Typography>} arrow>
+                <GroupsIcon sx={{ color: "#898989" }} />
+              </Tooltip>
               <Typography color="#898989">
                 {community.memberCount || 0}
+              </Typography>
+            </Stack>
+            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+              <Tooltip title={<Typography>Community Posts</Typography>} arrow>
+                <IconButton
+                  disableRipple
+                  onClick={handleCommunityClick}
+                  sx={{ pr: 0 }}
+                >
+                  <FeedIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+              <Typography color="#898989">
+                {community.postCount || 0}
               </Typography>
             </Stack>
             <JoinButton community={community} />

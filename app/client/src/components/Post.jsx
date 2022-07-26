@@ -48,7 +48,7 @@ const Post = (props) => {
       await props.getCommunity(props.post.community);
     })();
   }, []);
-  const maxTitleLength = 45;
+  const maxTitleLength = 58;
   const maxCommunityTitleLength = 16;
   const maxMessageLines = 5;
 
