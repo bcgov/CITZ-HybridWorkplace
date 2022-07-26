@@ -21,10 +21,12 @@ import { kickCommunityMember } from "../../redux/ducks/communityDuck";
 export const KickUserModal = (props) => {
   console.log(props);
   useEffect(() => {
-    setUsernameInput(props.username);
+    setUsernameInput(props.username.username);
   }, [props.username]);
 
-  const [usernameInput, setUsernameInput] = useState(props.username ?? "");
+  const [usernameInput, setUsernameInput] = useState(
+    props.username.username ?? ""
+  );
   const [kickPeriod, setKickPeriod] = useState("hour");
 
   const onUsernameInputChange = (e) => {

@@ -56,6 +56,7 @@ const getUserTag = (post, userId) => {
     return post.tags.find((tag) => tag.taggedBy.find((user) => user === userId))
       ?.tag;
   } catch (err) {
+    createError(err.response.data);
     console.error(err);
   }
 };
@@ -85,6 +86,7 @@ export const getCommunity = (title) => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
+    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -117,6 +119,7 @@ export const getCommunities = () => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
+    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -148,6 +151,7 @@ export const getUsersCommunities = () => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
+    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -184,6 +188,7 @@ export const getCommunityPosts = (title) => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
+    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -213,6 +218,7 @@ export const getCommunityMembers = (title) => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
+    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -291,6 +297,7 @@ export const joinCommunity = (communityName) => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
+    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -322,6 +329,7 @@ export const leaveCommunity = (communityName) => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
+    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -424,6 +432,7 @@ export const editCommunityModeratorPermissions =
       });
     } catch (err) {
       console.error(err);
+      createError(err.response.data)(dispatch);
       successful = false;
     } finally {
       return successful;
@@ -459,18 +468,7 @@ export const promoteUser = (user) => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
-    switch (err.response.status) {
-      case 403:
-        createError("Cannot promote member, member is already a moderator")(
-          dispatch
-        );
-        break;
-      case 404:
-        createError("Cannot find member")(dispatch);
-        break;
-      default:
-        break;
-    }
+    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -506,6 +504,7 @@ export const demoteUser =
       });
     } catch (err) {
       console.error(err);
+      createError(err.response.data)(dispatch);
       successful = false;
     } finally {
       return successful;
@@ -542,23 +541,7 @@ export const kickCommunityMember =
       });
     } catch (err) {
       console.error(err);
-      switch (err.response.status) {
-        case 400:
-          createError("Bad request.")(dispatch);
-          break;
-        case 403:
-          createError(
-            `Either you are not a moderator, or the 'period' field was left empty.`
-          )(dispatch);
-          break;
-        case 404:
-          createError(`There is no member by the name of ${user.username}.`)(
-            dispatch
-          );
-          break;
-        default:
-          break;
-      }
+      createError(err.response.data)(dispatch);
       successful = false;
     } finally {
       return successful;

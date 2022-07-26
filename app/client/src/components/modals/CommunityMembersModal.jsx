@@ -99,13 +99,7 @@ const CommunityMembersModal = (props) => {
                         edge="end"
                         aria-label="kick user"
                         color="error"
-                        onClick={() =>
-                          handleKickUserClick(
-                            member.lastName !== undefined
-                              ? `${member.firstName} ${member.lastName}`
-                              : member.username
-                          )
-                        }
+                        onClick={() => handleKickUserClick(member)}
                       >
                         <NoMeetingRoomRoundedIcon />
                       </IconButton>
