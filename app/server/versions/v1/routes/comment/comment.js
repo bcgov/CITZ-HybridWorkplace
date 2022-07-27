@@ -693,7 +693,7 @@ router.delete("/:id", async (req, res, next) => {
     req.log.addAction("Checking if replyTo comment has no more replies.");
     if (
       comment.replyTo &&
-      !(await Comment.exists({ replyTo: comment.replyTo }))
+      !(await Comment.exists({ replyTo: comment.replyTo, removed: false }))
     ) {
       req.log.addAction("Setting hasReplies on replyTo comment to false.");
       await Comment.updateOne(
@@ -711,9 +711,14 @@ router.delete("/:id", async (req, res, next) => {
     );
     req.log.addAction("Community engagement updated.");
 
-    req.log.addAction("Updating post's comment count.");
-    await Post.updateOne({ _id: comment.post }, { $inc: { commentCount: -1 } });
-    req.log.addAction("Post's comment count updated.");
+    if (comment.replyTo === null) {
+      req.log.addAction("Updating post's comment count.");
+      await Post.updateOne(
+        { _id: comment.post },
+        { $inc: { commentCount: -1 } }
+      );
+      req.log.addAction("Post's comment count updated.");
+    }
 
     req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
