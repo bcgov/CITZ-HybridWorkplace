@@ -115,11 +115,11 @@ const AddCommunityModal = (props) => {
               type="text"
               placeholder="Title"
               error={
-                title === "" || (title.length >= 3 && title.length <= 25)
+                title === "" || (title.length >= 3 && title.length <= 200)
                   ? false
                   : true
               }
-              helperText="Title must be 3-25 characters in length."
+              helperText="Title must be 3-200 characters in length."
               required
             />
           </Stack>
@@ -238,7 +238,7 @@ const AddCommunityModal = (props) => {
                 loading={createCommunityLoading}
                 disabled={
                   title.length < 3 ||
-                  title.length > 25 ||
+                  title.length > 200 ||
                   description.length < 3 ||
                   description.length > 300
                 }
