@@ -334,7 +334,9 @@ const CommunityPage = (props) => {
                 {title}
               </Typography>
               <MarkDownDisplay message={props.community.description} />
-              <JoinButton community={props.community} />
+              <Box>
+                <JoinButton community={props.community} />
+              </Box>
             </Stack>
           </Box>
           <Box
