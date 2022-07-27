@@ -35,6 +35,9 @@
  *          type: string
  *          description: Description of the community.
  *          example: Welcome to TheNeighbourhood
+ *        resources:
+ *          type: string
+ *          description: Resources for members of the community.
  *        creator:
  *          $ref: '#/components/schemas/User/properties/id'
  *        creatorName:
@@ -145,6 +148,7 @@ const Community = new mongoose.Schema(
   {
     title: { type: String, required: true, unique: true },
     description: { type: String, required: true },
+    resources: { type: String },
     creator: { type: String, required: true },
     creatorName: { type: String },
     creatorUsername: { type: String },

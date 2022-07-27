@@ -1,0 +1,45 @@
+name: CodeQL Analysis
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    types:
+      - opened
+      - synchronize
+    paths:
+      - "**/run-codeql-scan.yaml"
+jobs:
+  codeql-analysis:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ["javascript"]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          upload: false # disable the upload here - we will upload in a different action
+          output: sarif-results
+
+      - name: Filter SARIF
+        uses: dbarkowsky/filter-sarif@main
+        with:
+          patterns: |
+            -**/*test*.js:js/hardcoded-credentials
+            -**/*.js:js/missing-rate-limiting
+          input: sarif-results/${{ matrix.language }}.sarif
+          output: sarif-results/${{ matrix.language }}.sarif
+
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: sarif-results/${{ matrix.language }}.sarif

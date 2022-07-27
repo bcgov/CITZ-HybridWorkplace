@@ -57,7 +57,7 @@ const SingularPost = (props) => {
 SingularPost.propTypes = {};
 
 const mapStateToProps = (state) => ({
-  post: state.posts.item,
+  post: state.posts.items[state.posts.currentPostIndex],
 });
 
 const mapActionsToProps = {

@@ -61,6 +61,8 @@ const options = [
       ],
       descriptionMinLength: 0,
       descriptionMaxLength: 300,
+      resourcesMinLength: 0,
+      resourcesMaxLength: 500,
       tagMinLength: 3,
       tagMaxLength: 16,
       tagDescriptionMinLength: 0,

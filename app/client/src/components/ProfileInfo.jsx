@@ -31,16 +31,12 @@ import { openEditUserInfoModal } from "../redux/ducks/modalDuck";
 import EditUserInfoModal from "./modals/EditUserInfoModal";
 
 const ProfileInfo = (props) => {
-  let { username } = useParams();
   const body2TextColor = "#999";
-  useEffect(() => {
-    props.getProfile(props.username);
-  }, []);
 
   const registeredOn = props.profile.registeredOn || "";
   const registrationDate = registeredOn.split(",")[0];
 
-  let name = props.profile.firstName || username;
+  let name = props.profile.firstName || props.profile.username;
   if (props.profile.firstName && props.profile.lastName)
     name += ` ${props.profile.lastName}`;
 
@@ -57,7 +53,7 @@ const ProfileInfo = (props) => {
           >
             {name || "No name to display."}
           </Typography>
-          {props.username === username && (
+          {props.username === props.profile.username && (
             <IconButton onClick={() => handleEditUserInfoClick(props.profile)}>
               <EditRoundedIcon fontSize="small" />
             </IconButton>
@@ -106,7 +102,6 @@ const ProfileInfo = (props) => {
 
 ProfileInfo.propTypes = {
   getProfile: PropTypes.func.isRequired,
-  profile: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({

@@ -37,6 +37,8 @@ const validateCommunityInputs = (reqBody, options, patch) => {
     titleDisallowedStrings,
     descriptionMinLength,
     descriptionMaxLength,
+    resourcesMinLength,
+    resourcesMaxLength,
     tagMinLength,
     tagMaxLength,
     tagDescriptionMinLength,
@@ -78,11 +80,22 @@ const validateCommunityInputs = (reqBody, options, patch) => {
     // Validate description
     const descriptionError = `description does not meet requirements: length ${descriptionMinLength}-${descriptionMaxLength}.`;
     if (
-      !reqBody.description ||
-      reqBody.description.length < descriptionMinLength ||
-      reqBody.description.length > descriptionMaxLength
+      reqBody.description &&
+      (reqBody.description.length < descriptionMinLength ||
+        reqBody.description.length > descriptionMaxLength)
     )
       throw new ResponseError(403, descriptionError);
+  }
+
+  if (!patch || (patch && reqBody.resources)) {
+    // Validate resources
+    const resourcesError = `resources does not meet requirements: length ${resourcesMinLength}-${resourcesMaxLength}.`;
+    if (
+      reqBody.resources &&
+      (reqBody.resources.length < resourcesMinLength ||
+        reqBody.resources.length > resourcesMaxLength)
+    )
+      throw new ResponseError(403, resourcesError);
   }
 
   if (!patch || (patch && reqBody.tags)) {
