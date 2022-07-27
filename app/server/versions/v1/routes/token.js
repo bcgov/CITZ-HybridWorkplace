@@ -99,7 +99,7 @@ router.get("/", async (req, res, next) => {
     const token = generateToken(user);
     req.log.addAction("Access token generated.");
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json({ token });
   } catch (err) {
     res.locals.err = err;

@@ -28,6 +28,7 @@ function generateToken(user) {
       id: user.id,
       username: user.username,
       email: user.email,
+      role: user.role,
       firstName: user.firstName,
       lastName: user.lastName,
       title: user.title,

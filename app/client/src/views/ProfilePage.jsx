@@ -69,12 +69,12 @@ import DeletePostModal from "../components/modals/DeletePostModal";
 const ProfilePage = (props) => {
   let { username } = useParams();
   const bioWidth = "90ch";
+  const body2TextColor = "#999";
 
   const interestsWidth = 200;
 
   useEffect(() => {
     props.getProfile(username);
-    props.getUsersCommunities();
     props.getUserPosts(username);
   }, [username]);
 
@@ -113,6 +113,9 @@ const ProfilePage = (props) => {
   const handleEditAvatarClick = (userSettings) =>
     props.openEditAvatarModal(userSettings);
 
+  const userHasPosts = props.posts?.length > 0;
+  const userHasCommunities = props.profile?.communities?.length > 0;
+
   return (
     <Box
       sx={{
@@ -129,13 +132,14 @@ const ProfilePage = (props) => {
         alignItems="start"
         gap={1}
       >
-        <Grid item xs={2} mr={5}>
+        <Grid item xs={2} mr={5} mt={2} pb={3}>
           <Button
             sx={{
-              borderRadius: "155px",
+              borderRadius: "50%",
               height: "155px",
               width: "155px",
               pl: 0,
+              mr: 1,
               ml: 0,
               mb: 1,
             }}
@@ -153,7 +157,7 @@ const ProfilePage = (props) => {
               size={150}
             />
           </Button>
-          <ProfileInfo username={username} />
+          <ProfileInfo profile={props.profile} />
           <Stack direction="column" spacing={1} width="20vw">
             <Stack direction="row" spacing={0.5} alignItems="center">
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
@@ -186,6 +190,25 @@ const ProfilePage = (props) => {
               ))}
             </Box>
           </Stack>
+          <Stack direction="column" spacing={1} width="20vw">
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+              Contact
+            </Typography>
+
+            <Box>
+              <a href={`mailto:${props.profile.email}`}>
+                <Typography
+                  fontWeight={600}
+                  sx={{
+                    color: body2TextColor,
+                    textDecoration: "inherit",
+                  }}
+                >
+                  {props.profile.email}
+                </Typography>
+              </a>
+            </Box>
+          </Stack>
           {props.username === username && (
             <Stack direction="row" alignItems="center" my={2} p={0}>
               <Typography variant="h6" fontWeight={600}>
@@ -212,43 +235,69 @@ const ProfilePage = (props) => {
               )}
             </Stack>
             <Typography maxWidth={bioWidth} variant="body1">
-              {props.profile.bio || "No bio to display"}
+              {props.profile.bio}
             </Typography>
           </Box>
-          <Divider sx={{ my: 2 }} />
-          <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
-            My Communities
-          </Typography>
-          <Carousel
-            NextIcon={<ForwardArrow />}
-            PrevIcon={<BackArrow />}
-            autoPlay={false}
-            animation="slide"
-            duration={500}
-            fullHeightHover={false}
-            sx={{ borderRadius: "10px" }}
-          >
-            {props.communities.slice(0, 4).map((element) => (
-              <Community community={element} key={element._id} />
-            ))}
-          </Carousel>
-          <Divider sx={{ my: 2 }} />
-          <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
-            My Recent Posts
-          </Typography>
-          <Carousel
-            NextIcon={<ForwardArrow />}
-            PrevIcon={<BackArrow />}
-            autoPlay={false}
-            animation="slide"
-            duration={500}
-            fullHeightHover={false}
-            sx={{ borderRadius: "10px" }}
-          >
-            {props.posts.slice(0, 4).map((post) => (
-              <Post post={post} key={post._id} />
-            ))}
-          </Carousel>
+          {(userHasPosts || userHasCommunities) && (
+            <div>
+              <Divider sx={{ my: 2 }} />
+              <Box
+                sx={{
+                  backgroundColor: "backgroundSecondary.main",
+                  borderRadius: "7.5px",
+                  width: "100%",
+                  padding: 3,
+                }}
+              >
+                {userHasCommunities && (
+                  <div>
+                    <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
+                      My Communities
+                    </Typography>
+                    <Carousel
+                      NextIcon={<ForwardArrow />}
+                      PrevIcon={<BackArrow />}
+                      autoPlay={false}
+                      animation="slide"
+                      duration={500}
+                      fullHeightHover={false}
+                      sx={{ borderRadius: "10px" }}
+                    >
+                      {props.profile.communities?.slice(0, 4).map((element) => (
+                        <Community
+                          community={element}
+                          key={element._id}
+                          hideJoinButton
+                        />
+                      ))}
+                    </Carousel>
+                  </div>
+                )}
+
+                {userHasPosts && (
+                  <div>
+                    <Divider sx={{ my: 2 }} />
+                    <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
+                      My Recent Posts
+                    </Typography>
+                    <Carousel
+                      NextIcon={<ForwardArrow />}
+                      PrevIcon={<BackArrow />}
+                      autoPlay={false}
+                      animation="slide"
+                      duration={500}
+                      fullHeightHover={false}
+                      sx={{ borderRadius: "10px" }}
+                    >
+                      {props.posts.slice(0, 4).map((post) => (
+                        <Post post={post} key={post._id} />
+                      ))}
+                    </Carousel>
+                  </div>
+                )}
+              </Box>
+            </div>
+          )}
         </Grid>
       </Grid>
       <EditPostModal />
@@ -265,23 +314,25 @@ const ProfilePage = (props) => {
 ProfilePage.propTypes = {
   getProfile: PropTypes.func.isRequired,
   profile: PropTypes.object.isRequired,
-  communities: PropTypes.array.isRequired,
   posts: PropTypes.array.isRequired,
+  username: PropTypes.string.isRequired,
+  openSettingsModal: PropTypes.func.isRequired,
+  openEditUserBioModal: PropTypes.func.isRequired,
+  openEditUserInterestsModal: PropTypes.func.isRequired,
+  openEditAvatarModal: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   username: state.auth.user.username,
   profile: state.profile.user,
-  communities: state.communities.communities.filter(
-    (comm) => comm.userIsInCommunity
+  posts: state.posts.items.filter(
+    (post) => post.creatorUsername === state.profile.user.username
   ),
-  posts: state.posts.userPosts,
 });
 
 const mapActionsToProps = {
   getProfile,
   getUserPosts,
-  getUsersCommunities,
   openSettingsModal,
   openEditUserBioModal,
   openEditUserInterestsModal,

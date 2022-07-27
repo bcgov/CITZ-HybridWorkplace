@@ -68,7 +68,7 @@ router.get("/:id", async (req, res, next) => {
     });
     req.log.addAction("Comment found.");
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json(comment.flags);
   } catch (err) {
     res.locals.err = err;
@@ -113,10 +113,13 @@ router.get("/:id", async (req, res, next) => {
 router.post("/:id", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and comment.");
-    const { user, comment } = await findSingleDocuments({
-      user: req.user.username,
-      comment: req.params.id,
-    });
+    const { user, comment } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        comment: req.params.id,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and comment found.");
 
     req.log.addAction("Finding flags in options.");
@@ -157,7 +160,7 @@ router.post("/:id", async (req, res, next) => {
       );
     }
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;
@@ -202,10 +205,13 @@ router.post("/:id", async (req, res, next) => {
 router.delete("/:id", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and comment.");
-    const { user, comment } = await findSingleDocuments({
-      user: req.user.username,
-      comment: req.params.id,
-    });
+    const { user, comment } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        comment: req.params.id,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and comment found.");
 
     req.log.addAction("Checking flag query.");
@@ -238,7 +244,7 @@ router.delete("/:id", async (req, res, next) => {
     );
     req.log.addAction("User removed from flaggedBy.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;
@@ -282,10 +288,13 @@ router.delete("/:id", async (req, res, next) => {
 router.delete("/resolve/:id", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and comment.");
-    const { user, comment } = await findSingleDocuments({
-      user: req.user.username,
-      comment: req.params.id,
-    });
+    const { user, comment } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        comment: req.params.id,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and comment found.");
 
     req.log.addAction(
@@ -296,7 +305,7 @@ router.delete("/resolve/:id", async (req, res, next) => {
       comment.community
     );
 
-    if (!isModerator)
+    if (!(isModerator || user.role === "admin"))
       throw new ResponseError(
         403,
         `Not allowed to resolve flags unless you are a moderator of ${comment.community} community.`

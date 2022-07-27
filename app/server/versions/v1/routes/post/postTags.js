@@ -60,12 +60,15 @@ const Community = require("../../models/community.model");
 router.get("/:id", async (req, res, next) => {
   try {
     req.log.addAction("Finding post.");
-    const { post } = await findSingleDocuments({
-      post: req.params.id,
-    });
+    const { post } = await findSingleDocuments(
+      {
+        post: req.params.id,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("Post found.");
 
-    req.log.setResponse(200, "Success", null);
+    req.log.setResponse(200, "Success");
     return res.status(200).json(post.tags);
   } catch (err) {
     res.locals.err = err;
@@ -110,10 +113,13 @@ router.get("/:id", async (req, res, next) => {
 router.post("/:id", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and post.");
-    const { user, post } = await findSingleDocuments({
-      user: req.user.username,
-      post: req.params.id,
-    });
+    const { user, post } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        post: req.params.id,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and post found.");
 
     req.log.addAction("checking tag query.");
@@ -121,7 +127,7 @@ router.post("/:id", async (req, res, next) => {
       throw new ResponseError(404, "Tag not found in query.");
 
     req.log.addAction("Checking user is member of community.");
-    await checkUserIsMemberOfCommunity(user.username, post.community);
+    await checkUserIsMemberOfCommunity(user, post.community);
     req.log.addAction("User is member of community.");
 
     // Check community has tag
@@ -188,7 +194,7 @@ router.post("/:id", async (req, res, next) => {
     );
     req.log.addAction("Tag count incremented.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;
@@ -228,10 +234,13 @@ router.post("/:id", async (req, res, next) => {
 router.delete("/:id", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and post.");
-    const { user, post } = await findSingleDocuments({
-      user: req.user.username,
-      post: req.params.id,
-    });
+    const { user, post } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        post: req.params.id,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and post found.");
 
     // Check user has tagged post
@@ -291,7 +300,7 @@ router.delete("/:id", async (req, res, next) => {
     );
     req.log.addAction("Tag count decremented.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;

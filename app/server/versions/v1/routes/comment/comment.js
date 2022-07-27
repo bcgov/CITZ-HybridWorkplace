@@ -78,10 +78,13 @@ const Community = require("../../models/community.model");
 router.post("/", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and post.");
-    const { user, post } = await findSingleDocuments({
-      user: req.user.username,
-      post: req.body.post,
-    });
+    const { user, post } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        post: req.body.post,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and post found.");
 
     req.log.addAction("Finding options.");
@@ -107,7 +110,7 @@ router.post("/", async (req, res, next) => {
     req.log.addAction("message is valid.");
 
     req.log.addAction("Checking user is member of community.");
-    await checkUserIsMemberOfCommunity(user.username, post.community);
+    await checkUserIsMemberOfCommunity(user, post.community);
     req.log.addAction("User is member of community.");
 
     req.log.addAction("Checking message in req body.");
@@ -248,10 +251,13 @@ router.post("/", async (req, res, next) => {
 router.get("/post/:id", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and post.");
-    const { user, post } = await findSingleDocuments({
-      user: req.user.username,
-      post: req.params.id,
-    });
+    const { user, post } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        post: req.params.id,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and post found.");
 
     req.log.addAction(
@@ -262,7 +268,7 @@ router.get("/post/:id", async (req, res, next) => {
       post.community
     );
 
-    const matchQuery = isModerator
+    let matchQuery = isModerator
       ? {
           post: post.id,
           replyTo: null,
@@ -274,6 +280,9 @@ router.get("/post/:id", async (req, res, next) => {
           removed: false,
           $or: [{ hidden: false }, { hidden: null }],
         };
+
+    // Admin can see removed and hidden comments
+    if (user.role === "admin") matchQuery = { post: post.id, replyTo: null };
 
     req.log.addAction("Finding comments on post.");
     const comments = await Comment.aggregate([
@@ -379,9 +388,12 @@ router.get("/post/:id", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   try {
     req.log.addAction("Finding comment.");
-    const { comment } = await findSingleDocuments({
-      comment: req.params.id,
-    });
+    const { comment } = await findSingleDocuments(
+      {
+        comment: req.params.id,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("Comment found.");
 
     const returnComment = await Comment.aggregate([
@@ -441,7 +453,7 @@ router.get("/:id", async (req, res, next) => {
     ]).exec();
 
     req.log.setResponse(200, "Success");
-    return res.status(200).json(returnComment);
+    return res.status(200).json(returnComment[0]);
   } catch (err) {
     res.locals.err = err;
   } finally {
@@ -488,10 +500,13 @@ router.get("/:id", async (req, res, next) => {
 router.patch("/:id", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and comment.");
-    const { user, comment } = await findSingleDocuments({
-      user: req.user.username,
-      comment: req.params.id,
-    });
+    const { user, comment } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        comment: req.params.id,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and comment found.");
 
     req.log.addAction("Finding options.");
@@ -525,7 +540,7 @@ router.patch("/:id", async (req, res, next) => {
     );
 
     req.log.addAction("Checking user is creator of comment or a moderator.");
-    if (!(isModerator || comment.creator === user.id))
+    if (!(isModerator || comment.creator === user.id || user.role === "admin"))
       throw new ResponseError(
         403,
         "Only creator of comment or moderator can edit comment."
@@ -564,8 +579,12 @@ router.patch("/:id", async (req, res, next) => {
         ];
 
     req.log.addAction("Checking edit query.");
-    const query = checkPatchQuery(req.body, comment, disallowedFields);
+    const query =
+      user.role === "admin"
+        ? req.body
+        : checkPatchQuery(req.body, comment, disallowedFields);
     req.log.addAction("Edit query has been cleaned.");
+    req.log.addPatchQuery(query);
 
     // Edit history
     req.log.addAction("Updating edit history.");
@@ -627,10 +646,13 @@ router.patch("/:id", async (req, res, next) => {
 router.delete("/:id", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and comment.");
-    const { user, comment } = await findSingleDocuments({
-      user: req.user.username,
-      comment: req.params.id,
-    });
+    const { user, comment } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        comment: req.params.id,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and comment found.");
 
     req.log.addAction("Finding options.");
@@ -638,16 +660,16 @@ router.delete("/:id", async (req, res, next) => {
     req.log.addAction("Options found.");
 
     req.log.addAction("Checking user is creator of comment.");
-    if (comment.creator !== user.id)
+    if (!(comment.creator === user.id || user.role === "admin"))
       throw new ResponseError(
         403,
         "Must be creator of comment to delete comment."
       );
     req.log.addAction("User is creator of comment.");
 
-    // TODO: Only allow admins to do this
     // Permanently delete data
-    const purgeData = req.query.purge === "true";
+    const purgeData =
+      user.role === "admin" ? req.query.purge === "true" : false;
 
     // Remove the replies to comment, then comment
     req.log.addAction("Removing replies to comment.");

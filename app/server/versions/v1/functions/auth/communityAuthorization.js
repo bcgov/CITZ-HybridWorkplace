@@ -28,12 +28,12 @@ const isCommunityModerator = async (username, communityTitle, permissions) => {
   let isModWPermissions = false;
   const community = await Community.findOne({
     title: communityTitle,
-    moderators: { $elemMatch: { username } },
+    "moderators.username": username,
   });
   if (community) isModWPermissions = true;
 
   // Check permissions
-  if (permissions && permissions.length > 0) {
+  if (isModWPermissions && permissions && permissions.length > 0) {
     Object.keys(community.moderators).forEach((key) => {
       // Find moderator in array of moderators
       if (community.moderators[key].username === username) {

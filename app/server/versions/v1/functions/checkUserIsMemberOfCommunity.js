@@ -24,12 +24,14 @@ const ResponseError = require("../classes/responseError");
 const User = require("../models/user.model");
 
 // Throws error if user is not a member of community.
-const checkUserIsMemberOfCommunity = async (username, community) => {
+const checkUserIsMemberOfCommunity = async (user, community) => {
   if (
-    !(await User.findOne({
-      username,
-      "communities.community": community,
-    }))
+    !(
+      (await User.findOne({
+        username: user.username,
+        "communities.community": community,
+      })) || user.role === "admin"
+    )
   )
     throw new ResponseError(
       403,

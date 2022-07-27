@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@bcgov/bc-sans": "^1.0.1",
-    "@emotion/react": "^11.8.2",
+    "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.8.1",
     "@mui/icons-material": "^5.5.1",
     "@mui/lab": "^5.0.0-alpha.86",
@@ -67,7 +67,7 @@
     "@babel/preset-env": "^7.17.10",
     "babel-jest": "^28.1.0",
     "jest": "^28.1.0",
-    "jsdom": "^19.0.0",
+    "jsdom": "^20.0.0",
     "puppeteer": "^15.3.2"
   }
 }

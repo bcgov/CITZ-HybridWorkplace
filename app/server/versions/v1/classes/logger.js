@@ -85,6 +85,10 @@ class Logger {
     this.actions.push(action);
   }
 
+  addPatchQuery(query) {
+    this.patchQuery = mask(query);
+  }
+
   getCurrentTime() {
     // Check if Daylight savings time is in effect
     const date = new Date();
@@ -159,6 +163,10 @@ class Logger {
       }
     });
     msg += "]";
+
+    // Patch query
+    if (this.patchQuery)
+      msg += `, ${c.bold(`Patch Query`)}: ${JSON.stringify(this.patchQuery)}`;
 
     this.message = msg;
   }
