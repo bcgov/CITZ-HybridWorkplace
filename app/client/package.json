@@ -34,7 +34,7 @@
     "redux-thunk": "^2.4.1",
     "styled-components": "^5.3.5",
     "web-vitals": "^1.0.1",
-    "webpack": "^5.69.1"
+    "webpack": "^5.74.0"
   },
   "scripts": {
     "start": "react-scripts start",
