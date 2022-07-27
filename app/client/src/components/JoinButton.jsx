@@ -48,7 +48,12 @@ const JoinButton = (props) => {
   return (
     <>
       {isInCommunity && (
-        <IconButton variant="contained" color={"error"} onClick={handleLeave}>
+        <IconButton
+          variant="contained"
+          disableRipple
+          color={"error"}
+          onClick={handleLeave}
+        >
           <LogoutOutlinedIcon />
         </IconButton>
       )}
