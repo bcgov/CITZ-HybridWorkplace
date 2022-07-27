@@ -437,6 +437,7 @@ export function postReducer(state = initialState, action) {
       };
     // COMMENTS
     case SET_COMMENTS:
+      console.log(action.payload.comments);
       return {
         ...state,
         items: state.items.map((post, index) =>
@@ -461,19 +462,39 @@ export function postReducer(state = initialState, action) {
         ),
       };
     case REMOVE_COMMENT:
-      return {
-        ...state,
-        items: state.items.map((post, index) =>
-          index === state.currentPostIndex
-            ? {
-                ...post,
-                comments: post.comments.filter(
-                  (comment) => comment._id !== action.payload
-                ),
-              }
-            : post
-        ),
-      };
+      return (() => {
+        const newState = { ...state };
+        if (
+          newState.items[newState.currentPostIndex].comments.find(
+            (comment) => comment._id === action.payload
+          )
+        ) {
+          newState.items[newState.currentPostIndex].comments = newState.items[
+            newState.currentPostIndex
+          ].comments.filter((comment) => comment._id !== action.payload);
+          return newState;
+        }
+
+        newState.items[newState.currentPostIndex].comments = newState.items[
+          newState.currentPostIndex
+        ].comments.map((comment) => ({
+          ...comment,
+          replies: (() => {
+            if (!comment.replies?.length) {
+              return comment.replies;
+            }
+            const newReplies = [...comment.replies];
+            const found = newReplies.findIndex(
+              (reply) => reply._id === action.payload
+            );
+            if (found !== -1) {
+              newReplies.splice(found, 1);
+            }
+            return newReplies;
+          })(),
+        }));
+        return newState;
+      })();
     case REPLY_TO_COMMENT:
       return {
         ...state,
@@ -546,7 +567,29 @@ export function postReducer(state = initialState, action) {
                           return comment.votes + 1;
                         })(),
                       }
-                    : comment
+                    : {
+                        ...comment,
+                        replies: comment.replies?.map((reply) =>
+                          reply._id === action.payload.commentId
+                            ? {
+                                ...reply,
+                                userVote:
+                                  reply.userVote === "down" || !reply.userVote
+                                    ? "up"
+                                    : null,
+                                votes: (() => {
+                                  if (reply.userVote === "down") {
+                                    return reply.votes + 2;
+                                  }
+                                  if (reply.userVote === "up") {
+                                    return reply.votes - 1;
+                                  }
+                                  return reply.votes + 1;
+                                })(),
+                              }
+                            : reply
+                        ),
+                      }
                 ),
               }
             : post
@@ -583,7 +626,29 @@ export function postReducer(state = initialState, action) {
                           return comment.votes - 1;
                         })(),
                       }
-                    : comment
+                    : {
+                        ...comment,
+                        replies: comment.replies?.map((reply) =>
+                          reply._id === action.payload.commentId
+                            ? {
+                                ...reply,
+                                userVote:
+                                  reply.userVote === "up" || !reply.userVote
+                                    ? "down"
+                                    : null,
+                                votes: (() => {
+                                  if (reply.userVote === "up") {
+                                    return reply.votes - 2;
+                                  }
+                                  if (reply.userVote === "down") {
+                                    return reply.votes + 1;
+                                  }
+                                  return reply.votes - 1;
+                                })(),
+                              }
+                            : reply
+                        ),
+                      }
                 ),
               }
             : post
