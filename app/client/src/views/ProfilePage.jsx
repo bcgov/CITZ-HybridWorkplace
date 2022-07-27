@@ -132,7 +132,7 @@ const ProfilePage = (props) => {
         alignItems="start"
         gap={1}
       >
-        <Grid item xs={2} mr={5} mt={2} pb={3}>
+        <Grid item xs={2} mr={8} mt={2} pb={3}>
           <Button
             sx={{
               borderRadius: "50%",
@@ -240,7 +240,6 @@ const ProfilePage = (props) => {
           </Box>
           {(userHasPosts || userHasCommunities) && (
             <div>
-              <Divider sx={{ my: 2 }} />
               <Box
                 sx={{
                   backgroundColor: "backgroundSecondary.main",
