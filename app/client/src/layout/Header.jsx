@@ -20,7 +20,7 @@
  * @module
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled, alpha } from "@mui/material/styles";
 import {
@@ -51,7 +51,7 @@ import "./header.css";
 import BCLogo from "./icons/BCLogo.svg";
 import { connect } from "react-redux";
 import { useTheme } from "@emotion/react";
-
+import { search } from "../redux/ducks/searchDuck";
 import { getUser } from "../redux/ducks/userDuck";
 import AvatarIcon from "../components/AvatarIcon";
 
@@ -117,7 +117,14 @@ const menuId = "account-avatar";
 // <SideMenu darkMode={darkMode} setDarkMode={setDarkMode}/>
 const Header = (props) => {
   const theme = useTheme();
-  const [menuOpen, setMenuOpen] = React.useState({ right: false });
+  const [menuOpen, setMenuOpen] = useState({ right: false });
+  const [searchValue, setSearchValue] = useState("");
+  useEffect(() => {
+    (async () => {
+      await props.search(searchValue);
+      console.log(props.searchData);
+    })();
+  }, [searchValue]);
 
   const navigate = useNavigate();
 
@@ -301,6 +308,9 @@ const Header = (props) => {
               <StyledInputBase
                 placeholder="Search…"
                 inputProps={{ "aria-label": "search" }}
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                inputRef={(input) => input && input.focus()}
               />
             </Search>
             <Box
@@ -363,8 +373,9 @@ const Header = (props) => {
 const mapStateToProps = (state) => ({
   user: state.self.user,
   auth: state.auth,
+  searchData: state.search,
 });
 
-const mapDispatchToProps = { getUser };
+const mapDispatchToProps = { getUser, search };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);
