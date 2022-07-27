@@ -169,13 +169,11 @@ const Community = (props) => {
             )
           }
           title={
-            <Typography variant="h5">
-              <b>
+            <Typography variant="h5" sx={{ fontWeight: 600 }} >
                 {community.title.length >= maxDisplayedTitleLength
                   ? community.title.substring(0, maxDisplayedTitleLength) +
                     "..."
                   : community.title}
-              </b>
             </Typography>
           }
           subheader={
