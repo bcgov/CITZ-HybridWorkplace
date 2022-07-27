@@ -158,7 +158,7 @@ const RuleInput = (props) => {
                   rule.length > 50 ||
                   description > 200
                 }
-                sx={{ color: "white" }}
+                sx={{ color: "white", ml: 1.5 }}
                 onClick={onSaveRule}
               >
                 Save Rule
