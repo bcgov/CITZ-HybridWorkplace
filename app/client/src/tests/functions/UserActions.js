@@ -97,7 +97,7 @@ class UserActions {
   async goToCommunity(community) {
     // Find community title link and click it
     const [communityTitle] = await this.page.$x(
-      `//h5/b[contains(., '${community}')]`
+      `//b[contains(., '${community}')]`
     );
     if (communityTitle) {
       await communityTitle.click();
@@ -159,17 +159,11 @@ class UserActions {
     await this.page.waitForTimeout(1000); // needs a second for button not to be disabled
 
     // Try and get button, then click it.
-    const [button] = await this.page.$x(
-      "//button[contains(., 'Submit')][not(@disabled)]"
-    );
+    const [button] = await this.page.$x(`//button[contains(., 'Post')]`);
     if (button) {
       await button.click();
     }
 
-    // Wait for Avatar to appear
-    await this.page.waitForXPath(
-      '//button[@aria-label="account of current user"]'
-    );
   }
 
   async goToPost() {}
