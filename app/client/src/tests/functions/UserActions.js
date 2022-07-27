@@ -101,20 +101,35 @@ class UserActions {
 
 
   async createCommunity(community) {
-    await this.page.waitForSelector("button.css-rxr26v"); // try to get first + button
-    await this.page.click("button.css-rxr26v"); // clicks the + button on the communities board
+    await this.page.waitForXPath(
+      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[2]/div[1]/div/div[2]/button`
+    ); // try to get second + button
 
-    await this.page.waitForSelector('div[placeholder="Title"}'); // wait for field to appear
+    // try to click second + button
+    const [plus] = await this.page.$x(
+      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[2]/div[1]/div/div[2]/button`
+    );
+    if (plus) {
+      await plus.click();
+    }
 
-    await this.page.type('div[placeholder="Title"}', `${community}`); // type in title field
-    await this.page.type('div[placeholder="Description"}', `${community}`); // type in description field
+    await this.page.waitForSelector('input[placeholder="Title"]'); // wait for field to appear
+
+    await this.page.type('input[placeholder="Title"]', `${community}`); // type in title field
+    await this.page.type("textarea.w-md-editor-text-input", `${community}`); // type in body field
     
-    await this.page.click("div[contains('Set Rules')]");
+    // add rules button
+    const [rules] = await this.page.$x(
+      `/html/body/div[2]/div[3]/div/div/div/div[3]/div/div/button`
+    );
+    if (rules) {
+      await rules.click();
+    }
 
-    await this.page.waitForSelector('div[placeholder="New Rule"}'); // wait for field to appear
+    await this.page.waitForXPath(`/html/body/div[2]/div[3]/div/div/div/div[3]/div/div/div/div/div/div[1]/p`); // wait for field to appear
 
-    await this.page.type('div[placeholder="New Rule"}', `${community}`); // type in title field
-    await this.page.type('div[placeholder="Add a description"}', `${community}`); // type in description field
+    await this.page.type(`input#mui-11`, `${community}`); // type in title field
+    await this.page.type(`input#mui-12`, `${community}`); // type in description field
   }
 
 

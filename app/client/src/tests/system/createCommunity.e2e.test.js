@@ -10,6 +10,8 @@ const password = process.env.PASSWORD
 describe("Given that user is on login page", () => {
   let browser;
   let page;
+  let user;
+
   beforeAll(async () => {
     browser = await puppeteer.launch({
       headless: false,
@@ -23,37 +25,19 @@ describe("Given that user is on login page", () => {
       deviceScaleFactor: 1,
     });
     await page.goto("http://localhost:8080");
+
+    user = new UserActions(idir, password, page);
+    await user.login();
   });
 
-
-  describe("When user logs in", () => {
+  describe("when the user tries to create a community", () => {
     beforeAll(async () => {
-      const user = new UserActions(idir, password, page);
-      await user.login();
+        await user.createCommunity("matts amazing community");
     });
-
+    
     test("Then they should be brought to the main page", async () => {
-      // Checking if avatar is visible
-      let atHomePage = false;
-      try {
-        await page.waitForSelector("p.css-kyzvea", { timeout: 2000 });
-        atHomePage = true;
-      } catch (e) {
-        atHomePage = false;
-      }
-      expect(atHomePage).toBeTruthy();
+
     });
   });
 });
 
-
-
-describe("when the user tries to create a community", () => {
-beforeAll(async () => {
-    const user = new UserActions(idir, password);
-    await user.createCommunity("matts amazing community");
-});
-
-test("Then they should be brought to the main page", async () => {
-    });
-});
