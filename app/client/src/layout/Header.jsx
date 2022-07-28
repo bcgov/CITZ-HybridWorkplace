@@ -113,17 +113,10 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 const menuId = "account-avatar";
-// props: {darkMode, setDarkMode}
-// <SideMenu darkMode={darkMode} setDarkMode={setDarkMode}/>
+
 const Header = (props) => {
   const theme = useTheme();
   const [menuOpen, setMenuOpen] = useState({ right: false });
-  const [searchValue, setSearchValue] = useState("");
-  useEffect(() => {
-    (async () => {
-      await props.search(searchValue);
-    })();
-  }, [searchValue]);
 
   const navigate = useNavigate();
 
