@@ -122,7 +122,6 @@ const Header = (props) => {
   useEffect(() => {
     (async () => {
       await props.search(searchValue);
-      console.log(props.searchData);
     })();
   }, [searchValue]);
 
@@ -175,6 +174,9 @@ const Header = (props) => {
       width: "100%",
       [theme.breakpoints.up("md")]: {
         width: "20ch",
+        "&:focus": {
+          width: "30ch",
+        },
       },
     },
   }));
@@ -259,6 +261,12 @@ const Header = (props) => {
     ? `${props.user.firstName?.charAt(0)}${props.user.lastName?.charAt(0)}`
     : props.user.firstName?.charAt(0);
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const search = e.target.elements.searchBar.value;
+    if (!search) return;
+    navigate(`/search?query=${search}`);
+  };
   return (
     <AppBar
       sx={{
@@ -305,13 +313,14 @@ const Header = (props) => {
               <SearchIconWrapper>
                 <SearchIcon />
               </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ "aria-label": "search" }}
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                inputRef={(input) => input && input.focus()}
-              />
+              <form onSubmit={handleSearch}>
+                <StyledInputBase
+                  placeholder="Search…"
+                  inputProps={{ "aria-label": "search" }}
+                  id="searchBar"
+                  name="searchBar"
+                />
+              </form>
             </Search>
             <Box
               sx={{
