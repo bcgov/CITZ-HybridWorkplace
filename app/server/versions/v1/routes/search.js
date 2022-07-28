@@ -149,6 +149,7 @@ router.get("/:query", async (req, res, next) => {
           _id: 1,
           title: 1,
           message: 1,
+          community: 1,
           creatorName: 1,
           creatorUsername: 1,
           createdOn: 1,

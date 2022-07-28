@@ -29,6 +29,7 @@ const bcrypt = require("bcryptjs"); // hashing
 const ResponseError = require("../classes/responseError");
 
 const User = require("../models/user.model");
+const { agenda } = require("../../../db");
 
 /**
  * @swagger
@@ -45,7 +46,7 @@ const User = require("../models/user.model");
  *          description: Invalid token.
  *        '204':
  *          description: Success. No content to return.
- *        '400': 
+ *        '400':
  *          description: Bad Request.
  */
 
@@ -88,6 +89,11 @@ router.get("/", async (req, res, next) => {
     req.log.addAction("Refresh token updated for user. Clearing jwt cookie.");
     res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "None" });
     req.log.addAction("jwt cookie set to clear.");
+
+    // Set offline status
+    await User.updateOne({ _id: user.id }, { online: false });
+    // Cancel offline status job
+    await agenda.cancel({ name: `offlineStatus-${user.id}` });
 
     req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
