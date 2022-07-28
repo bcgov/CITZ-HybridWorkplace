@@ -51,13 +51,15 @@ class AuthFunctions {
   // Commenting out for now to speed up API tests.
   // Should not affect test runners, as collections are cleared each run.
   async deleteUsers() {
-    // for (let i = 0; i < this.registerList.length; i++) {
-    //   await this.delete(
-    //     this.registerList[i].user.name,
-    //     this.registerList[i].user.password
-    //   );
-    // }
-    // this.registerList = [];
+    if (process.env.CLEANUP === "true") {
+      for (let i = 0; i < this.registerList.length; i++) {
+        await this.delete(
+          this.registerList[i].user.name,
+          this.registerList[i].user.password
+        );
+      }
+      this.registerList = [];
+    }
   }
 
   /**

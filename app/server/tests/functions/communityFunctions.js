@@ -90,14 +90,16 @@ class CommunityFunctions {
    * @returns                 nothing.
    */
   deleteAllCommunities() {
-    for (let i = 0; i < this.communityList.length; i++) {
-      this.deleteCommunity(
-        this.communityList[i].community.name,
-        this.communityList[i].community.creator
-      );
-    }
+    if (process.env.CLEANUP === "true") {
+      for (let i = 0; i < this.communityList.length; i++) {
+        this.deleteCommunity(
+          this.communityList[i].community.name,
+          this.communityList[i].community.creator
+        );
+      }
 
-    return this.communityList;
+      return this.communityList;
+    }
   }
 
   /**
