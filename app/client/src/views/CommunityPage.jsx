@@ -212,7 +212,7 @@ const CommunityPage = (props) => {
                 </Typography>
               </Grid>
               <Grid item xs={1.35}>
-                {props.community.userIsModerator && (
+                {(userIsModerator || props.role === "admin") && (
                   <Tooltip
                     title={
                       showFlaggedPosts
@@ -234,7 +234,7 @@ const CommunityPage = (props) => {
                   <AddIcon
                     sx={{
                       color: "white",
-                      pl: !props.community.userIsModerator && 4,
+                      pl: !(userIsModerator || props.role === "admin") && 4,
                     }}
                   />
                 </IconButton>
@@ -287,7 +287,7 @@ const CommunityPage = (props) => {
             }}
           >
             <Stack direction="row">
-              {props.community.creator === props.userId ? (
+              {userIsModerator || props.role === "admin" ? (
                 <>
                   <Typography
                     variant="h6"
@@ -397,7 +397,7 @@ const CommunityPage = (props) => {
                       sx={{
                         justifyContent: "center",
                         alignItems: "center",
-                        pl: userIsModerator ? 1.5 : 0,
+                        pl: userIsModerator || props.role === "admin" ? 1.5 : 0,
                         py: 0.2,
                       }}
                     >
@@ -417,7 +417,7 @@ const CommunityPage = (props) => {
                       >
                         {moderators[key].name ?? moderators[key].username}
                       </Typography>
-                      {userIsModerator && (
+                      {(userIsModerator || props.role === "admin") && (
                         <>
                           <IconButton
                             aria-label="settings"
@@ -432,23 +432,22 @@ const CommunityPage = (props) => {
                             anchorEl={anchorEl}
                           >
                             <MenuList>
-                              {modPermissions &&
-                                modPermissions.includes("set_permissions") && (
-                                  <MenuItem
-                                    onClick={() =>
-                                      handleEditModeratorPermissionsClick(
-                                        moderators[key].username
-                                      )
-                                    }
-                                  >
-                                    <ListItemIcon>
-                                      <EditAttributesIcon fontSize="small" />
-                                    </ListItemIcon>
-                                    <ListItemText>
-                                      Edit Permissions
-                                    </ListItemText>
-                                  </MenuItem>
-                                )}
+                              {((modPermissions &&
+                                modPermissions.includes("set_permissions")) ||
+                                props.role === "admin") && (
+                                <MenuItem
+                                  onClick={() =>
+                                    handleEditModeratorPermissionsClick(
+                                      moderators[key].username
+                                    )
+                                  }
+                                >
+                                  <ListItemIcon>
+                                    <EditAttributesIcon fontSize="small" />
+                                  </ListItemIcon>
+                                  <ListItemText>Edit Permissions</ListItemText>
+                                </MenuItem>
+                              )}
                               <MenuItem onClick={handleDemoteClick(key)}>
                                 <ListItemIcon>
                                   <PersonRemoveIcon fontSize="small" />
@@ -578,6 +577,7 @@ const mapStateToProps = (state) => ({
         ?.title
   ),
   userId: state.auth.user.id,
+  role: state.auth.user.role,
 });
 
 const mapDispatchToProps = {

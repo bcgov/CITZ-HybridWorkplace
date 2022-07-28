@@ -15,24 +15,30 @@ import {
   Button,
   Box,
   Tooltip,
+  TextField,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import UpIcon from "@mui/icons-material/KeyboardArrowUp";
 import DownIcon from "@mui/icons-material/KeyboardArrowDown";
 import DeleteForeverTwoToneIcon from "@mui/icons-material/DeleteForeverTwoTone";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   openDeleteCommentModal,
   openFlagCommentModal,
 } from "../redux/ducks/modalDuck";
 import FlagTwoToneIcon from "@mui/icons-material/FlagTwoTone";
+import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 
 import { connect } from "react-redux";
 import moment from "moment";
 import CommentReply from "./CommentReply";
 import CommentRepliesList from "./CommentRepliesList";
-import { upvoteComment, downvoteComment } from "../redux/ducks/commentDuck";
+import {
+  upvoteComment,
+  downvoteComment,
+  editComment,
+} from "../redux/ducks/commentDuck";
 import { useNavigate } from "react-router-dom";
 import AvatarIcon from "./AvatarIcon";
 
@@ -40,6 +46,10 @@ export const Comment = (props) => {
   const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = useState(null);
+  const [showInput, setShowInput] = useState(false);
+  const [editedComment, setEditedComment] = useState(
+    props.comment.message ?? ""
+  );
 
   const handleDeleteCommentClick = () => {
     props.openDeleteCommentModal(props.comment);
@@ -56,6 +66,10 @@ export const Comment = (props) => {
 
   const today = moment().format("MMMM Do YYYY");
   const yesterday = moment().subtract(1, "days").format("MMMM Do YYYY");
+
+  const isModerator = props.communities.find(
+    (comm) => comm.title === props.comment.community
+  )?.userIsModerator;
 
   // Convert to local time
   const editTimeStamp = props.comment.edits[0]
@@ -106,6 +120,21 @@ export const Comment = (props) => {
     props.downvoteComment(props.comment._id);
   };
 
+  const handleEditedCommentTextChange = (event) => {
+    setEditedComment(event.target.value);
+  };
+
+  const handleEditComment = async () => {
+    const comment = {
+      id: props.comment._id,
+      message: editedComment,
+    };
+
+    if (editedComment !== props.comment.message)
+      await props.editComment(comment);
+    setShowInput(false);
+  };
+
   return (
     <Grid container justifyContent="flex-end">
       <Grid item xs={12}>
@@ -153,14 +182,15 @@ export const Comment = (props) => {
                   direction="row"
                   sx={{ alignItems: "center" }}
                 >
-                  {props.comment.hidden && (
-                    <Tooltip
-                      title={<Typography>Hidden Comment</Typography>}
-                      arrow
-                    >
-                      <VisibilityOffIcon />
-                    </Tooltip>
-                  )}
+                  {props.comment.hidden &&
+                    (isModerator || props.role === "admin") && (
+                      <Tooltip
+                        title={<Typography>Hidden Comment</Typography>}
+                        arrow
+                      >
+                        <VisibilityOffIcon />
+                      </Tooltip>
+                    )}
                   <Typography
                     variant="h5"
                     sx={{
@@ -201,7 +231,8 @@ export const Comment = (props) => {
                 </Box>
               }
               action={
-                props.userId === props.comment.creator && (
+                (props.userId === props.comment.creator ||
+                  props.role === "admin") && (
                   <>
                     <IconButton aria-label="settings" onClick={handleMenuOpen}>
                       <MoreVertIcon />
@@ -212,12 +243,30 @@ export const Comment = (props) => {
                       anchorEl={anchorEl}
                     >
                       <MenuList>
-                        <MenuItem onClick={handleDeleteCommentClick}>
-                          <ListItemIcon>
-                            <DeleteForeverTwoToneIcon fontSize="small" />
-                          </ListItemIcon>
-                          <ListItemText>Delete</ListItemText>
-                        </MenuItem>
+                        {(props.userId === props.comment.creator ||
+                          props.role === "admin") && (
+                          <MenuItem onClick={handleDeleteCommentClick}>
+                            <ListItemIcon>
+                              <DeleteForeverTwoToneIcon fontSize="small" />
+                            </ListItemIcon>
+                            <ListItemText>Delete</ListItemText>
+                          </MenuItem>
+                        )}
+                        {(props.userId === props.comment.creator ||
+                          isModerator ||
+                          props.role === "admin") && (
+                          <MenuItem
+                            onClick={() => {
+                              setShowInput(true);
+                              handleMenuClose();
+                            }}
+                          >
+                            <ListItemIcon>
+                              <EditTwoToneIcon fontSize="small" />
+                            </ListItemIcon>
+                            <ListItemText>Edit</ListItemText>
+                          </MenuItem>
+                        )}
                         <MenuItem onClick={handleFlagCommentClick}>
                           <ListItemIcon>
                             <FlagTwoToneIcon fontSize="small" />
@@ -241,7 +290,41 @@ export const Comment = (props) => {
                   Edited: {editDate}
                 </Typography>
               )}
-              <Typography variant="body2">{props.comment.message}</Typography>
+              {showInput ? (
+                <Stack direction="row" spacing={1} sx={{ pt: 1 }}>
+                  <TextField
+                    value={editedComment}
+                    onChange={handleEditedCommentTextChange}
+                    size="small"
+                    label="Edit comment"
+                    multiline
+                    sx={{ width: "85%" }}
+                    error={
+                      !editedComment ||
+                      (editedComment.length >= 3 &&
+                        editedComment.length <= 1000)
+                        ? false
+                        : true
+                    }
+                    helperText="Comment must be 3-1000 characters in length."
+                  />
+                  <Button
+                    variant="contained"
+                    onClick={handleEditComment}
+                    sx={{ height: 38 }}
+                    disabled={
+                      !(
+                        editedComment.length >= 3 &&
+                        editedComment.length <= 1000
+                      )
+                    }
+                  >
+                    Save Changes
+                  </Button>
+                </Stack>
+              ) : (
+                <Typography variant="body2">{props.comment.message}</Typography>
+              )}
             </CardContent>
             <CardActions sx={{ backgroundColor: "card.main" }}>
               {!props.hideReply && (
@@ -267,6 +350,8 @@ export const Comment = (props) => {
 
 const mapStateToProps = (state) => ({
   userId: state.auth.user.id,
+  role: state.auth.user.role,
+  communities: state.communities.communities,
 });
 
 const mapDispatchToProps = {
@@ -274,6 +359,7 @@ const mapDispatchToProps = {
   openFlagCommentModal,
   upvoteComment,
   downvoteComment,
+  editComment,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Comment);

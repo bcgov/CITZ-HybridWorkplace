@@ -187,7 +187,8 @@ const Post = (props) => {
                     </ListItemIcon>
                     <ListItemText>Flag</ListItemText>
                   </MenuItem>
-                  {(props.userId === post.creator || isModerator) && (
+                  {(props.userId === post.creator ||
+                    props.role === "admin") && (
                     <MenuItem onClick={handleDeletePostClick}>
                       <ListItemIcon>
                         <DeleteForeverTwoToneIcon fontSize="small" />
@@ -195,7 +196,9 @@ const Post = (props) => {
                       <ListItemText>Delete</ListItemText>
                     </MenuItem>
                   )}
-                  {props.userId === post.creator && (
+                  {(props.userId === post.creator ||
+                    isModerator ||
+                    props.role === "admin") && (
                     <MenuItem onClick={handleEditPostClick}>
                       <ListItemIcon>
                         <EditTwoToneIcon fontSize="small" />
@@ -203,7 +206,7 @@ const Post = (props) => {
                       <ListItemText>Edit</ListItemText>
                     </MenuItem>
                   )}
-                  {isModerator && (
+                  {(isModerator || props.role === "admin") && (
                     <Box>
                       <MenuItem onClick={() => editPost("hidden")}>
                         <ListItemIcon>
@@ -253,23 +256,24 @@ const Post = (props) => {
                       <PushPinIcon />
                     </Tooltip>
                   )}
-                  {props.post.flags.length > 0 && isModerator && (
-                    <Tooltip
-                      title={<Typography>Flagged Post</Typography>}
-                      arrow
-                    >
-                      <IconButton
-                        onClick={handleFlagIconClick}
-                        sx={{ padding: 0 }}
+                  {props.post.flags.length > 0 &&
+                    (isModerator || props.role === "admin") && (
+                      <Tooltip
+                        title={<Typography>Flagged Post</Typography>}
+                        arrow
                       >
-                        <FlagRounded
-                          sx={{
-                            color: "#FF4500",
-                          }}
-                        />
-                      </IconButton>
-                    </Tooltip>
-                  )}
+                        <IconButton
+                          onClick={handleFlagIconClick}
+                          sx={{ padding: 0 }}
+                        >
+                          <FlagRounded
+                            sx={{
+                              color: "#FF4500",
+                            }}
+                          />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                   <Typography
                     variant="h6"
                     onClick={handlePostClick}
@@ -375,6 +379,7 @@ Post.propTypes = {
 
 const mapStateToProps = (state) => ({
   userId: state.auth.user.id,
+  role: state.auth.user.role,
   communities: state.communities.communities,
 });
 
