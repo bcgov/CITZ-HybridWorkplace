@@ -33,15 +33,11 @@ describe("Testing GET /post endpoint", () => {
       await community.createCommunity(
         `GET Posts 1`,
         "Meow",
-        "Always feeding time",
-        [],
         loginResponse.body.token
       );
       await community.createCommunity(
         `GET Posts 2`,
         "What?",
-        "No He-man",
-        [],
         loginResponse.body.token
       );
       // Join communities
@@ -146,15 +142,11 @@ describe("Testing GET /post endpoint", () => {
       await community.createCommunity(
         `GET Posts 1`,
         "Meow",
-        "Always feeding time",
-        [],
         loginResponse.body.token
       );
       await community.createCommunity(
         `GET Posts 2`,
         "What?",
-        "No He-man",
-        [],
         loginResponse.body.token
       );
       // Join communities

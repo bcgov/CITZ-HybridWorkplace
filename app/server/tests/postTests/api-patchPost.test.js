@@ -36,8 +36,6 @@ describe("Testing PATCH /post endpoint", () => {
       await community.createCommunity(
         "PATCH Posts",
         "Posts",
-        "Tests for PATCH posts",
-        [],
         loginResponse.body.token
       );
       // Join communities
@@ -126,8 +124,6 @@ describe("Testing PATCH /post endpoint", () => {
       await community.createCommunity(
         "PATCH Posts",
         "Posts",
-        "Tests for PATCH posts",
-        [],
         loginResponse.body.token
       );
       // Join communities
@@ -302,8 +298,6 @@ describe("Testing PATCH /post endpoint", () => {
       await community.createCommunity(
         "PATCH Posts",
         "Posts",
-        "Tests for PATCH posts",
-        [],
         loginResponse.body.token
       );
       // Join communities

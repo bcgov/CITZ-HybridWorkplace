@@ -39,9 +39,9 @@ describe("Testing DELETE /post/tags endpoint", () => {
       await community.createCommunity(
         communityName,
         randomText,
-        randomText,
-        [{ tag: tag1, count: 1 }],
-        loginResponse.body.token
+        loginResponse.body.token,
+        [],
+        [{ tag: tag1, count: 1 }]
       );
 
       // Join communities
@@ -146,9 +146,9 @@ describe("Testing DELETE /post/tags endpoint", () => {
       await community.createCommunity(
         communityName,
         randomText,
-        randomText,
-        [{ tag: tag1, count: 1 }],
-        loginResponse.body.token
+        loginResponse.body.token,
+        [],
+        [{ tag: tag1, count: 1 }]
       );
 
       // Join communities

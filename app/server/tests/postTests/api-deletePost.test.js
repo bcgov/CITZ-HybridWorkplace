@@ -36,8 +36,6 @@ describe("Testing DELETE /post endpoint", () => {
       await community.createCommunity(
         communityName,
         "Meow",
-        "Always feeding time",
-        [],
         loginResponse.body.token
       );
       // Join communities
@@ -154,8 +152,6 @@ describe("Testing DELETE /post endpoint", () => {
       await community.createCommunity(
         communityName,
         "Meow",
-        "Always feeding time",
-        [],
         loginResponse.body.token
       );
       // Join communities

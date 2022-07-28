@@ -51,9 +51,9 @@ describe("Delete Communities - After Login", () => {
     await community.createCommunity(
       newComTitle,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
     response = await community.deleteCommunity(newComTitle, token);
   });

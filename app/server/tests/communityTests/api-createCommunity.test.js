@@ -16,7 +16,7 @@ const userEmail = email.gen();
 
 const welComTitle = "Welcome";
 const welComDescript = "Welcome to theNeighbourhood";
-const welComRules = "string";
+const welComRules = [];
 
 const newComTitle = "Create community";
 const newComDescript = "world";
@@ -87,9 +87,9 @@ describe("Create Community - With login", () => {
     response = await community.createCommunity(
       newComTitle,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
   });
 
@@ -110,9 +110,9 @@ describe("Create Community - With login, but community already exists", () => {
     response = await community.createCommunity(
       welComTitle,
       welComDescript,
+      token,
       welComRules,
-      "",
-      token
+      []
     );
   });
 
@@ -130,9 +130,9 @@ describe("Create Communities by Title - After Login, with token, but title is an
     response = await community.createCommunity(
       arrayCom,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
   });
 
@@ -152,9 +152,9 @@ describe("Create Communities by Title - After Login, with token, but title is an
     response = await community.createCommunity(
       arrayCom2,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
   });
 
@@ -174,9 +174,9 @@ describe("Create Communities by Title - After Login, with token, but getting an 
     response = await community.createCommunity(
       intCom,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
   });
 
@@ -196,9 +196,9 @@ describe("Create Communities by Title - After Login, with token, but getting an 
     response = await community.createCommunity(
       boolCom,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
   });
 
@@ -218,9 +218,9 @@ describe("Create Communities by Title - After Login, with token, but getting an 
     response = await community.createCommunity(
       community,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
   });
 
@@ -240,9 +240,9 @@ describe("Create Communities by Title - After Login, with token, but getting a j
     response = await community.createCommunity(
       jsonCom,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
   });
 
@@ -262,9 +262,9 @@ describe("Create Communities by Title - After Login, with token, but getting a l
     response = await community.createCommunity(
       linkCom,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
   });
 
@@ -282,9 +282,9 @@ describe("Create Communities by Title - After Login, with token, but getting spe
     response = await community.createCommunity(
       specialCom,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
   });
 
@@ -304,9 +304,9 @@ describe("Create Communities by Title - After Login, with token, but getting htm
     response = await community.createCommunity(
       entityCodeComs,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
   });
 
@@ -326,9 +326,9 @@ describe("Create Communities by Title - After Login, with token, but getting htm
     response = await community.createCommunity(
       htmlComs,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
   });
 

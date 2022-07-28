@@ -54,7 +54,7 @@ class CommunityFunctions {
    * @param {String}  token       JWT that authenticates the user.
    * @returns                     Response from API. Body contains object with community info.
    */
-  createCommunity(title, description, token) {
+  createCommunity(title, description, token, rules = [], tags = []) {
     this.communityList.push({
       community: {
         name: title,
@@ -68,8 +68,8 @@ class CommunityFunctions {
       .send({
         title,
         description,
-        // rules,
-        // tags,
+        rules,
+        tags,
       });
   }
 

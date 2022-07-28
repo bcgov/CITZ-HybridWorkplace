@@ -47,8 +47,6 @@ describe("Testing DELETE /post/flags endpoint", () => {
       await community.createCommunity(
         communityName,
         randomText,
-        randomText,
-        [],
         loginResponse.body.token
       );
 
@@ -214,8 +212,6 @@ describe("Testing DELETE /post/flags endpoint", () => {
       await community.createCommunity(
         communityName,
         randomText,
-        randomText,
-        [],
         loginResponse.body.token
       );
 
@@ -387,8 +383,6 @@ describe("Testing DELETE /post/flags endpoint", () => {
       await community.createCommunity(
         communityName,
         randomText,
-        randomText,
-        [],
         loginResponse.body.token
       );
 
