@@ -141,7 +141,7 @@ const RuleInput = (props) => {
                   name="description"
                   onChange={onDescriptionChange}
                   helperText="Rule description must be less than 200 characters in length."
-                  error={description.length >= 200}
+                  error={description?.length >= 200}
                 ></TextField>
               </Stack>
             </Grid>

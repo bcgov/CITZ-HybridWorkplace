@@ -45,7 +45,7 @@ const User = require("../models/user.model");
  *          description: Invalid token.
  *        '204':
  *          description: Success. No content to return.
- *        '400':
+ *        '400': 
  *          description: Bad Request.
  */
 
@@ -89,7 +89,7 @@ router.get("/", async (req, res, next) => {
     res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "None" });
     req.log.addAction("jwt cookie set to clear.");
 
-    req.log.setResponse(204, "Success", null);
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;

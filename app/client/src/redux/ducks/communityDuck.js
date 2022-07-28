@@ -56,6 +56,7 @@ const getUserTag = (post, userId) => {
     return post.tags.find((tag) => tag.taggedBy.find((user) => user === userId))
       ?.tag;
   } catch (err) {
+    createError(err.response.data);
     console.error(err);
   }
 };
@@ -85,6 +86,7 @@ export const getCommunity = (title) => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
+    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -117,6 +119,7 @@ export const getCommunities = () => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
+    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -148,6 +151,7 @@ export const getUsersCommunities = () => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
+    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -184,6 +188,7 @@ export const getCommunityPosts = (title) => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
+    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -213,6 +218,7 @@ export const getCommunityMembers = (title) => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
+    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -291,6 +297,7 @@ export const joinCommunity = (communityName) => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
+    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -322,6 +329,7 @@ export const leaveCommunity = (communityName) => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
+    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -424,6 +432,7 @@ export const editCommunityModeratorPermissions =
       });
     } catch (err) {
       console.error(err);
+      createError(err.response.data)(dispatch);
       successful = false;
     } finally {
       return successful;
@@ -459,17 +468,7 @@ export const promoteUser = (user) => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
-    switch (err.response.status) {
-      case 403:
-        createError("Cannot promote member, member is already a moderator")(
-          dispatch
-        );
-        break;
-      case 404:
-        createError("Cannot find member")(dispatch);
-      default:
-        break;
-    }
+    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -505,6 +504,7 @@ export const demoteUser =
       });
     } catch (err) {
       console.error(err);
+      createError(err.response.data)(dispatch);
       successful = false;
     } finally {
       return successful;
@@ -512,15 +512,19 @@ export const demoteUser =
   };
 
 export const kickCommunityMember =
-  (communityName) => async (dispatch, getState) => {
+  (user, time) => async (dispatch, getState) => {
     let successful = true;
     try {
       const authState = getState().auth;
       const token = authState.accessToken;
       if (!token) throw new Error(noTokenText);
 
-      const response = await hwp_axios.delete(
-        `/api/community/moderators/kick/${communityName}`,
+      const response = await hwp_axios.post(
+        `/api/community/moderators/kick/${user.community}`,
+        {
+          username: user.username,
+          period: time,
+        },
         {
           headers: {
             authorization: `Bearer ${token}`,
@@ -533,10 +537,11 @@ export const kickCommunityMember =
 
       dispatch({
         type: KICK_COMMUNITY_MEMBER,
-        payload: communityName,
+        payload: { user, time },
       });
     } catch (err) {
       console.error(err);
+      createError(err.response.data)(dispatch);
       successful = false;
     } finally {
       return successful;
@@ -712,6 +717,9 @@ export function communityReducer(state = initialState, action) {
           return comm.title === action.payload.communityTItle
             ? {
                 ...comm,
+                members: comm.members.filter(
+                  (member) => member.name !== action.payload.user
+                ),
                 memberCount: comm.memberCount - 1,
               }
             : comm;

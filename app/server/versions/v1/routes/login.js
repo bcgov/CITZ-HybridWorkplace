@@ -114,7 +114,7 @@ router.post("/", async (req, res, next) => {
       req.log.addAction("jwt cookie created.");
 
       // Send JWT
-      req.log.setResponse(201, "Success", null);
+      req.log.setResponse(201, "Success");
       return res.status(201).json({ token });
     }
     throw new ResponseError(401, "Invalid username or password.");

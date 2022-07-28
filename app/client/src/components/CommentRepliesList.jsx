@@ -1,7 +1,7 @@
 import { Button, Grid } from "@mui/material";
 import { useState } from "react";
 import { connect } from "react-redux";
-import { getCommentReplies } from "../redux/ducks/postDuck";
+import { getCommentReplies } from "../redux/ducks/commentDuck";
 import Comment from "./Comment";
 import ArrowDropDownTwoToneIcon from "@mui/icons-material/ArrowDropDownTwoTone";
 import ArrowDropUpTwoToneIcon from "@mui/icons-material/ArrowDropUpTwoTone";

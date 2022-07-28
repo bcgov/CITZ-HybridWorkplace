@@ -43,7 +43,7 @@ import MarkDownEditor from "../MarkDownEditor";
 
 const EditPostModal = (props) => {
   const minTitleLength = 3;
-  const maxTitleLength = 50;
+  const maxTitleLength = 200;
   const minMessageLength = 3;
   const maxMessageLength = 40000;
 
@@ -81,8 +81,6 @@ const EditPostModal = (props) => {
       id: props.post._id,
       title: title || props.post.title,
       message: message || props.post.message,
-      pinned: props.post.pinned,
-      hidden: props.post.hidden,
     };
 
     const successful = await props.editPost(post);
@@ -136,7 +134,9 @@ const EditPostModal = (props) => {
               >
                 Edit
               </Button>
-              <Button onClick={props.closeEditPostModal} color="button">Cancel</Button>
+              <Button onClick={props.closeEditPostModal} color="button">
+                Cancel
+              </Button>
             </Stack>
           </DialogActions>
         </Stack>

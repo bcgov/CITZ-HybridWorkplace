@@ -102,6 +102,8 @@ router.post("/", async (req, res, next) => {
       titleDisallowedStrings,
       descriptionMinLength,
       descriptionMaxLength,
+      resourcesMinLength,
+      resourcesMaxLength,
       tagMinLength,
       tagMaxLength,
       tagDescriptionMinLength,
@@ -131,6 +133,8 @@ router.post("/", async (req, res, next) => {
       titleDisallowedStrings,
       descriptionMinLength,
       descriptionMaxLength,
+      resourcesMinLength,
+      resourcesMaxLength,
       tagMinLength,
       tagMaxLength,
       tagDescriptionMinLength,
@@ -151,7 +155,8 @@ router.post("/", async (req, res, next) => {
     req.log.addAction("Creating community.");
     const community = await Community.create({
       title: req.body.title,
-      description: req.body.description,
+      description: req.body.description || "",
+      resources: req.body.resources || "",
       creator: user.id,
       creatorName: getFullName(user) || user.username,
       creatorUsername: user.username,
@@ -288,14 +293,16 @@ router.get("/", async (req, res, next) => {
     let communities;
 
     req.log.addAction("Checking orderBy query.");
+    let matchQuery =
+      user.role === "admin"
+        ? { members: user.id }
+        : { members: user.id, removed: false };
     if (req.query.orderBy === "lastJoined") {
       // Ordered by last joined
       req.log.addAction("Ordering by last joined. Finding communities.");
-      communities = await Community.find(
-        { members: user.id, removed: false },
-        "",
-        { sort: { _id: -1 } }
-      ).exec();
+      communities = await Community.find(matchQuery, "", {
+        sort: { _id: -1 },
+      }).exec();
     } else if (req.query.orderBy === "engagement") {
       // Order by engagment (posts, comments, votes)
       req.log.addAction("Ordering by engagement. Finding communities.");
@@ -303,14 +310,13 @@ router.get("/", async (req, res, next) => {
     } else if (req.query.orderBy === "latestActivity") {
       // Order by latestActivity, only communities user is a member of.
       req.log.addAction("Ordering by latestActivity. Finding communities.");
-      communities = await Community.find(
-        { members: user.id, removed: false },
-        "",
-        { sort: { latestActivity: -1 } }
-      ).exec();
+      communities = await Community.find(matchQuery, "", {
+        sort: { latestActivity: -1 },
+      }).exec();
     } else {
       // Ordered by last created
       req.log.addAction("Ordering by last created. Finding communities.");
+      matchQuery = user.role === "admin" ? {} : { removed: false };
       communities = await Community.find({ removed: false }, "", {
         sort: { _id: -1 },
       }).exec();
@@ -360,9 +366,12 @@ router.get("/", async (req, res, next) => {
 router.get("/:title", async (req, res, next) => {
   try {
     req.log.addAction("Finding community.");
-    const { community } = await findSingleDocuments({
-      community: req.params.title,
-    });
+    const { community } = await findSingleDocuments(
+      {
+        community: req.params.title,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("Community found.");
 
     req.log.setResponse(200, "Success");
@@ -416,10 +425,13 @@ router.get("/:title", async (req, res, next) => {
 router.patch("/:title", async (req, res, next) => {
   try {
     req.log.addAction("Finding user and community.");
-    const { user, community } = await findSingleDocuments({
-      user: req.user.username,
-      community: req.params.title,
-    });
+    const { user, community } = await findSingleDocuments(
+      {
+        user: req.user.username,
+        community: req.params.title,
+      },
+      req.user.role === "admin"
+    );
     req.log.addAction("User and community found.");
 
     req.log.addAction("Finding options.");
@@ -441,10 +453,12 @@ router.patch("/:title", async (req, res, next) => {
 
     req.log.addAction("Checking user is moderator of community.");
     if (
-      !(await communityAuthorization.isCommunityModerator(
-        user.username,
-        community.title
-      ))
+      !(
+        (await communityAuthorization.isCommunityModerator(
+          user.username,
+          community.title
+        )) || user.role === "admin"
+      )
     )
       throw new ResponseError(
         403,
@@ -458,31 +472,27 @@ router.patch("/:title", async (req, res, next) => {
     req.log.addAction("Community title does not already exist.");
 
     req.log.addAction("Checking edit query.");
-    const query = checkPatchQuery(req.body, community, [
-      "tags",
-      "flags",
-      "createdOn",
-      "members",
-      "creator",
-      "creatorName",
-      "creatorUsername",
-      "memberCount",
-      "latestActivity",
-      "moderators",
-      "removed",
-    ]);
+    const query =
+      user.role === "admin"
+        ? req.body
+        : checkPatchQuery(req.body, community, [
+            "tags",
+            "flags",
+            "createdOn",
+            "members",
+            "creator",
+            "creatorName",
+            "creatorUsername",
+            "memberCount",
+            "latestActivity",
+            "moderators",
+            "removed",
+          ]);
     req.log.addAction("Edit query has been cleaned.");
-
-    req.log.addAction("Checking if changes includes title.");
-    if (!query.title) {
-      query.title = req.params.title;
-      req.log.addAction(
-        "Changes does not include title, adding title to changes object."
-      );
-    }
+    req.log.addPatchQuery(query);
 
     // When removed is set to false (undoing the removal of the community)
-    if (query.removed && query.removed === false) {
+    if (query.removed && query.removed === false && user.role === "admin") {
       // Add community back to users community lists
       req.log.addAction("Adding community to users community lists.");
       await User.updateMany(
@@ -504,22 +514,24 @@ router.patch("/:title", async (req, res, next) => {
     }
 
     req.log.addAction("Updating community.");
-    await Community.updateOne({ title: community.title }, query.$set).exec();
+    await Community.updateOne({ title: community.title }, query).exec();
     req.log.addAction("Community updated.");
 
-    req.log.addAction("Updating posts in community.");
-    await Post.updateMany(
-      { community: community.title },
-      { $set: { community: query.$set.title } }
-    ).exec();
-    req.log.addAction("Community posts updated.");
+    if (req.body.title) {
+      req.log.addAction("Updating posts in community.");
+      await Post.updateMany(
+        { community: community.title },
+        { $set: { community: query.title } }
+      ).exec();
+      req.log.addAction("Community posts updated.");
 
-    req.log.addAction("Updating user community lists.");
-    await User.updateMany(
-      { communities: { $elemMatch: { community: community.title } } },
-      { $set: { "communities.$.community": query.$set.title } }
-    ).exec();
-    req.log.addAction("User community lists updated.");
+      req.log.addAction("Updating user community lists.");
+      await User.updateMany(
+        { communities: { $elemMatch: { community: community.title } } },
+        { $set: { "communities.$.community": query.title } }
+      ).exec();
+      req.log.addAction("User community lists updated.");
+    }
 
     req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
@@ -569,11 +581,13 @@ router.delete("/:title", async (req, res, next) => {
 
     req.log.addAction("Checking user is moderator of community.");
     if (
-      !(await communityAuthorization.isCommunityModerator(
-        user.username,
-        community.title,
-        ["remove_community"]
-      ))
+      !(
+        (await communityAuthorization.isCommunityModerator(
+          user.username,
+          community.title,
+          ["remove_community"]
+        )) || user.role === "admin"
+      )
     )
       throw new ResponseError(
         403,
@@ -581,9 +595,9 @@ router.delete("/:title", async (req, res, next) => {
       );
     req.log.addAction("User is moderator of community.");
 
-    // TODO: Only allow admins to do this
     // Permanently delete data
-    const purgeData = req.query.purge === "true";
+    const purgeData =
+      user.role === "admin" ? req.query.purge === "true" : false;
 
     // Remove community
     req.log.addAction("Removing community.");
