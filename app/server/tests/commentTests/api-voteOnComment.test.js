@@ -19,7 +19,7 @@ let token = "";
 let commentResponse;
 let postResponse;
 
-const newComTitle = "vote on comments";
+const newComTitle = `vote on comments - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {
@@ -104,7 +104,7 @@ describe("Vote on comment - upvote", () => {
       "up",
       token
     );
-    expect(`${response.status}`).toContain(204);
+    expect(response.status).toBe(204);
   });
 });
 
@@ -114,7 +114,7 @@ describe("Get comment votes - on the created comment", () => {
       postResponse.body._id,
       token
     );
-    expect(`${response.text}`).toContain("upvote101");
+    expect(response.body[0].votes).toBe(1);
   });
 });
 
@@ -122,10 +122,10 @@ describe("Vote on comment - downvote", () => {
   test("API returns a successful response - code 204", async () => {
     const response = await comment.setCommentVote(
       commentResponse.body._id,
-      "up",
+      "down",
       token
     );
-    expect(`${response.status}`).toContain(204);
+    expect(response.status).toBe(204);
   });
 });
 
@@ -135,7 +135,7 @@ describe("Get comment votes - on the created comment", () => {
       postResponse.body._id,
       token
     );
-    expect(`${response.text}`).toContain("upvote101");
+    expect(response.body[0].votes).toBe(-1);
   });
 });
 

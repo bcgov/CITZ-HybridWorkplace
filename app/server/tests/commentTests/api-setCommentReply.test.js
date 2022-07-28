@@ -19,7 +19,7 @@ let token = "";
 let commentResponse;
 let postResponse;
 
-const newComTitle = "set comment replies";
+const newComTitle = `set comment replies - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {

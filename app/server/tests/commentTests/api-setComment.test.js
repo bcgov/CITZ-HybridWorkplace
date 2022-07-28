@@ -18,7 +18,7 @@ let token = "";
 
 let postResponse;
 
-const newComTitle = "set comments";
+const newComTitle = `set comments - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {

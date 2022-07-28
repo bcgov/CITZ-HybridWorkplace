@@ -20,7 +20,7 @@ let commentResponse;
 let postResponse;
 let replyResponse;
 
-const newComTitle = "get comment replies";
+const newComTitle = `get comment replies - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {
@@ -115,13 +115,13 @@ describe("Get Comment Reply - on the created comment", () => {
 });
 
 describe("Delete Comment Reply - on the created comment", () => {
-  test("API returns a successful response - code 201", async () => {
+  test("API returns a successful response - code 204", async () => {
     const response = await comment.deleteComment(
       replyResponse.body._id,
       newComment3,
       token
     );
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(204);
   });
 });
 

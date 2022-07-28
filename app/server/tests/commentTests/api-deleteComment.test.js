@@ -19,7 +19,7 @@ let token = "";
 let commentResponse;
 let postResponse;
 
-const newComTitle = "delete Comments";
+const newComTitle = `delete Comments - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {
@@ -97,7 +97,7 @@ describe("Delete Comment - on the created post", () => {
   });
 
   test("API returns a successful response - code 204", () => {
-    expect(response.text).toBe(204);
+    expect(response.status).toBe(204);
   });
 });
 
