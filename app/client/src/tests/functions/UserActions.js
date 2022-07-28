@@ -59,8 +59,8 @@ class UserActions {
     await this.page.waitForSelector("#user");
 
     // Enter info into fields
-    await this.page.type('input[name="user"]', this.idir);
-    await this.page.type('input[name="password"]', this.password);
+    await this.page.type('#user', this.idir);
+    await this.page.type('#password', this.password);
 
     // Click Continue Button
     await this.page.click(`[value="Continue"]`);
@@ -100,7 +100,7 @@ class UserActions {
   }
 
 
-  async createCommunity(community) {
+  async createCommunity(community, description) {
     await this.page.waitForXPath(
       `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[2]/div[1]/div/div[2]/button`
     ); // try to get second + button
@@ -116,7 +116,7 @@ class UserActions {
     await this.page.waitForSelector('input[placeholder="Title"]'); // wait for field to appear
 
     await this.page.type('input[placeholder="Title"]', `${community}`); // type in title field
-    await this.page.type("textarea.w-md-editor-text-input", `${community}`); // type in body field
+    await this.page.type("textarea.w-md-editor-text-input", `${description}`); // type in body field
     
     // add rules button
     const [rules] = await this.page.$x(
@@ -189,12 +189,11 @@ class UserActions {
     }
 
     // Wait until Community page
-    await this.page.waitForSelector(".css-9mgnpw"); // Community name on community page
+    await this.page.waitForSelector(`//*[contains(., 'Top Communities')]`); // Community name on community page
   }
 
 
   async flagPost() {
-
   }
 
   async goToPostersProfile() {}
@@ -230,10 +229,6 @@ class UserActions {
     // Wait for Top Post bar to appear
     await this.page.waitForXPath(`//h5[contains(., "Top Posts")]`);
   }
-
-  async goToProfileByAvatar() {
-    await this.page.click('button[aria-label="account of current user"]');
-  };
 
   async goToHomeByFooter() {
     // Try and get button, then click it.

@@ -4,8 +4,10 @@ import puppeteer from "puppeteer";
 
 jest.setTimeout(30000);
 
-const idir = process.env.IDIR 
-const password = process.env.PASSWORD
+const idir = process.env.IDIR;
+const password = process.env.PASSWORD;
+const slowmo = process.env.SLOWMO;
+const headless = process.env.HEADLESS;
 
 describe("Given that user is on login page", () => {
   let browser;
@@ -14,8 +16,8 @@ describe("Given that user is on login page", () => {
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
-      headless: false,
-      slowMo: 10,
+      headless: headless,
+      slowMo: slowmo,
       args: [`--window-size=1366,768`],
     });
     page = await browser.newPage();
@@ -31,12 +33,25 @@ describe("Given that user is on login page", () => {
   });
 
   describe("when the user tries to create a community", () => {
+    const communityName = "matts amazing community";
+    const communityDescript = "the best community you can find";
+
     beforeAll(async () => {
-        await user.createCommunity("matts amazing community");
+        await user.createCommunity(communityName, communityDescript);
     });
     
-    test("Then they should be brought to the main page", async () => {
+    test("They should see the community on the main page", async () => {
+      let postIsVisible;
+      try {
+        await page.waitForXPath(`//*[contains(., "${communityName}")]`, {
+          timeout: 2000,
+        });
+        postIsVisible = true;
+      } catch (e) {
+        postIsVisible = false;
+      }
 
+      expect(postIsVisible).toBeTruthy();
     });
   });
 });
