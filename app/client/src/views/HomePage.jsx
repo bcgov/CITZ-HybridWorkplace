@@ -37,6 +37,7 @@ import {
 } from "../redux/ducks/modalDuck";
 import LoadingPage from "./LoadingPage";
 import ResolveFlagsModal from "../components/modals/ResolveFlagsModal";
+import Croutons from "../components/Croutons";
 
 const HomePage = (props) => {
   const [loading, setLoading] = useState(true);
@@ -51,6 +52,7 @@ const HomePage = (props) => {
     <LoadingPage />
   ) : (
     <Box sx={{ pb: 20 }}>
+      <Croutons />
       <Grid container spacing={2}>
         <Grid item xs={8}>
           <Box

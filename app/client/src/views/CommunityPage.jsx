@@ -82,6 +82,7 @@ import CommunityNotFoundPage from "./CommunityNotFoundPage";
 import { isUserModerator } from "../helperFunctions/communityHelpers";
 import DemoteUserModal from "../components/modals/DemoteUserModal";
 import CommunityMembersModal from "../components/modals/CommunityMembersModal";
+import Croutons from "../components/Croutons";
 
 const CommunityPage = (props) => {
   const navigate = useNavigate();
@@ -181,6 +182,7 @@ const CommunityPage = (props) => {
     <CommunityNotFoundPage title={title} />
   ) : (
     <Box sx={{ pb: 20 }}>
+      <Croutons firstCrumb={props.community.title} />
       <Grid container spacing={2}>
         <Grid item xs={8}>
           <Box
