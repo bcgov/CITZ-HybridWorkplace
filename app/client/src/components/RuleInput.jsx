@@ -68,7 +68,7 @@ const RuleInput = (props) => {
   };
 
   return (
-    <Card sx={{ padding: 2, mt: 2 }}>
+    <Card sx={{ padding: 2, m: 2 }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Typography variant="body1">{`Rule ${props.index + 1}.`}</Typography>
         <IconButton onClick={deleteRule}>
