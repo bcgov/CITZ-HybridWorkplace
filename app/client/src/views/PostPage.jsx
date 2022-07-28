@@ -14,6 +14,7 @@ import EditPostModal from "../components/modals/EditPostModal";
 import DeletePostModal from "../components/modals/DeletePostModal";
 import FlagPostModal from "../components/modals/FlagPostModal";
 import ResolveFlagsModal from "../components/modals/ResolveFlagsModal";
+import Croutons from "../components/Croutons";
 
 const SingularPost = (props) => {
   const navigate = useNavigate();
@@ -37,6 +38,10 @@ const SingularPost = (props) => {
         <LoadingPage />
       ) : (
         <Box key={props.post._id} sx={{ pb: 20 }}>
+          <Croutons
+            firstCrumb={props.post.community}
+            secondCrumb={props.post.title}
+          />
           <Post post={props?.post} isPostPage />
           <Typography variant="h6" sx={{ marginTop: 3 }}>
             Comments
