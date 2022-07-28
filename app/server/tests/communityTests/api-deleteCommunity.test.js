@@ -14,7 +14,7 @@ const userName = name.gen();
 const userPassword = "Tester123!";
 const userEmail = email.gen();
 
-const newComTitle = "delete Community";
+const newComTitle = `delete Community - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {
@@ -27,81 +27,76 @@ const newComTags = [
     tag: "Informative",
   },
 ];
-
-describe("Registering a test user", () => {
-  test("API returns a successful response - code 201", async () => {
-    const response = await auth.register(userName, userEmail, userPassword);
-    token = response.body.token;
-    expect(response.status).toBe(201);
+describe("Testing DELETE /community endpoint", () => {
+  afterAll(async () => {
+    await community.deleteAllCommunities();
+    await auth.deleteUsers();
   });
-});
-
-describe("Logging in the test user", () => {
-  test("API returns a successful response - code 201", async () => {
-    const response = await auth.login(userName, userPassword);
-    token = response.body.token;
-    expect(response.status).toBe(201);
-  });
-});
-
-describe("Delete Communities - After Login", () => {
-  let response = "";
-
-  beforeAll(async () => {
-    await community.createCommunity(
-      newComTitle,
-      newComDescript,
-      token,
-      newComRules,
-      newComTags
-    );
-    response = await community.deleteCommunity(newComTitle, token);
+  describe("Registering a test user", () => {
+    test("API returns a successful response - code 201", async () => {
+      const response = await auth.register(userName, userEmail, userPassword);
+      token = response.body.token;
+      expect(response.status).toBe(201);
+    });
   });
 
-  test("API returns a successful response - code 204", () => {
-    expect(response.status).toBe(204);
+  describe("Logging in the test user", () => {
+    test("API returns a successful response - code 201", async () => {
+      const response = await auth.login(userName, userPassword);
+      token = response.body.token;
+      expect(response.status).toBe(201);
+    });
   });
 
-  test('API returns description - "Community removed."', () => {
-    expect(response.text).toBe("Community removed.");
-  });
-});
+  describe("Delete Communities - After Login", () => {
+    let response = "";
 
-describe("Get Community by Title - With Login, testing with new Community after the deletion", () => {
-  let response = "";
+    beforeAll(async () => {
+      response = await community.createCommunity(
+        newComTitle,
+        newComDescript,
+        token,
+        newComRules,
+        newComTags
+      );
+      console.log(response.status);
+      response = await community.deleteCommunity(newComTitle, token);
+    });
 
-  beforeAll(async () => {
-    response = await community.getCommunitybyTitle(newComTitle, token);
-  });
-
-  test("API returns a unsuccessful response - code 404", () => {
-    expect(response.status).toBe(404);
-  });
-
-  test('API returns description -  "Community not found."', () => {
-    expect(response.text).toBe("Community not found.");
-  });
-});
-
-describe("Delete Communities - After Login, community does not exist", () => {
-  let response = "";
-
-  beforeAll(async () => {
-    response = await community.deleteCommunity(newComTitle, token);
+    test("API returns a successful response - code 204", () => {
+      expect(response.status).toBe(204);
+    });
   });
 
-  test("API returns a successful response - code 404", () => {
-    expect(response.status).toBe(404);
+  describe("Get Community by Title - With Login, testing with new Community after the deletion", () => {
+    let response = "";
+
+    beforeAll(async () => {
+      response = await community.getCommunitybyTitle(newComTitle, token);
+    });
+
+    test("API returns a unsuccessful response - code 404", () => {
+      expect(response.status).toBe(403);
+    });
+
+    test('API returns description -  "Community has been removed."', () => {
+      expect(response.text).toBe("Community has been removed.");
+    });
   });
 
-  test('API returns description - "Community not found."', () => {
-    expect(response.text).toBe("Community not found.");
-  });
-});
+  describe("Delete Communities - After Login, community does not exist", () => {
+    let response = "";
 
-describe("Deleting a test user", () => {
-  test("API returns a successful response - code 204", async () => {
-    const response = await user.deleteUserByName(token, userName);
-    expect(response.status).toBe(204);
+    beforeAll(async () => {
+      response = await community.deleteCommunity(newComTitle, token);
+    });
+
+    test("API returns a successful response - code 404", () => {
+      expect(response.status).toBe(403);
+    });
+
+    test('API returns description - "Community has been removed."', () => {
+      expect(response.text).toBe("Community has been removed.");
+    });
   });
 });

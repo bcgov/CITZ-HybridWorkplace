@@ -216,7 +216,7 @@ class CommunityFunctions {
     return request
       .post(`/community/tags/${title}`)
       .set({ authorization: `Bearer ${token}` })
-      .query(`tag=${tag}`);
+      .send(tag);
   }
 
   /**

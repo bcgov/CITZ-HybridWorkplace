@@ -14,7 +14,7 @@ const userName = name.gen();
 const userPassword = "Tester123!";
 const userEmail = email.gen();
 
-const newComTitle = "delete Community Flags";
+const newComTitle = `delete Community Flags - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {
@@ -89,10 +89,6 @@ describe("Delete Communities Flags  - delete valid flag", () => {
 
   test("API returns a successful response - code 204", () => {
     expect(response.status).toBe(204);
-  });
-
-  test('API returns a unsuccessful response message - "Success"', () => {
-    expect(` ${response.text} `).toContain("Success");
   });
 });
 

@@ -14,7 +14,7 @@ const userName = name.gen();
 const userPassword = "Tester123!";
 const userEmail = email.gen();
 
-const newComTitle = "set Community Flags";
+const newComTitle = `set Community Flags - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {

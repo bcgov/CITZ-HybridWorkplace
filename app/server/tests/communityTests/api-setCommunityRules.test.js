@@ -14,7 +14,7 @@ const userName = name.gen();
 const userPassword = "Tester123!";
 const userEmail = email.gen();
 
-const newComTitle = "set Community Rules";
+const newComTitle = `set Community Rules - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {
@@ -28,7 +28,12 @@ const newComTags = [
   },
 ];
 
-const updatedComRules = "2. have fun!!";
+const updatedComRules = [
+  {
+    rule: "Be mean",
+    description: "be the worst person you can be!",
+  },
+];
 
 describe("Registering a test user", () => {
   test("API returns a successful response - code 201", async () => {
@@ -99,7 +104,7 @@ describe("Set Community Rules - With Login, not a member", () => {
   });
 
   test('API returns description - "not part of Community."', () => {
-    expect(`${response.text}`).toContain("Not part of Community.");
+    expect(`${response.text}`).toContain("Community has been removed.");
   });
 });
 
@@ -121,12 +126,12 @@ describe("Set Community Rules - With Login, but community does not exist", () =>
     );
   });
 
-  test("API returns a unsuccessful response - code 404", () => {
-    expect(response.status).toBe(404);
+  test("API returns a unsuccessful response - code 403", () => {
+    expect(response.status).toBe(403);
   });
 
   test('API returns description - "Community not found."', () => {
-    expect(`${response.text}`).toContain("Community not found.");
+    expect(`${response.text}`).toContain("Community has been removed.");
   });
 });
 

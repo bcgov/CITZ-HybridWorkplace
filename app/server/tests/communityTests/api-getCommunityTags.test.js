@@ -15,7 +15,7 @@ const userEmail = email.gen();
 
 const welComTitle = "Welcome";
 
-const newComTitle = "get Community Tags";
+const newComTitle = `get Community Tags - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {
@@ -87,7 +87,7 @@ describe("Get Community Tags - After Login on new community", () => {
   });
 
   test("API returns the new community tags its response body", () => {
-    expect(` ${response.text} `).toContain(`${newComTags}`);
+    expect(response.body.tag).toBe(newComTags.tag);
   });
 });
 

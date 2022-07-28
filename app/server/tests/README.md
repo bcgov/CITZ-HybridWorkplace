@@ -50,3 +50,4 @@ This file contains the the following
 | Key     | Description                         | Example            |
 | ------- | ----------------------------------- | ------------------ |
 | API_REF | Target API URL that precedes routes | localhost:8080/api |
+| CLEANUP | Perform test cleanup                | true\|\|false      |

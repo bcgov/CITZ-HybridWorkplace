@@ -17,7 +17,7 @@ const userEmail = email.gen();
 const welComTitle = "Welcome";
 const welComDescript = "The Neighbourhood";
 
-const newComTitle = "get Communities by Title";
+const newComTitle = `get Communities by Title - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {
@@ -110,9 +110,9 @@ describe("Get Community by Title - With Login, testing with new Community", () =
 });
 
 describe("Deleting new Community - (1)", () => {
-  test("API returns a successful response - code 200", async () => {
+  test("API returns a successful response - code 204", async () => {
     const response = await community.deleteCommunity(newComTitle, token);
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(204);
   });
 });
 
@@ -127,12 +127,12 @@ describe("Get Community by Title - With Login, testing with new Community after 
     response = await community.deleteCommunity(newComTitle, token);
   });
 
-  test("API returns a unsuccessful response - code 404", () => {
-    expect(response.status).toBe(404);
+  test("API returns a unsuccessful response - code 403", () => {
+    expect(response.status).toBe(403);
   });
 
   test('API returns description -  "Invalid token."', () => {
-    expect(response.text).toBe("Community not found.");
+    expect(response.text).toBe("Community has been removed.");
   });
 });
 
@@ -156,8 +156,8 @@ describe('Get Community by Title - With Login, testing with new " " Community', 
     response = await community.getCommunitybyTitle(" ", token);
   });
 
-  test("API returns a successful response - code 204", () => {
-    expect(response.status).toBe(204);
+  test("API returns a successful response - code 404", () => {
+    expect(response.status).toBe(404);
   });
 
   test("API returns description -  includes new community Title", () => {

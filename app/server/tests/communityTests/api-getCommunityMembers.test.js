@@ -14,7 +14,7 @@ const userName = name.gen();
 const userPassword = "Tester123!";
 const userEmail = email.gen();
 
-const newComTitle = "get members";
+const newComTitle = `get members - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {
@@ -99,9 +99,9 @@ describe("Leaving new Community", () => {
 });
 
 describe("Deleting new Community", () => {
-  test("API returns a successful response - code 200", async () => {
+  test("API returns a successful response - code 204", async () => {
     response = await community.deleteCommunity(newComTitle, token);
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(204);
   });
 });
 
@@ -112,12 +112,12 @@ describe("Get Community Members - With Login, but community does not exist", () 
     response = await community.getCommunityMembers(newComTitle, false, token);
   });
 
-  test("API returns a unsuccessful response - code 404", () => {
-    expect(response.status).toBe(404);
+  test("API returns a unsuccessful response - code 403", () => {
+    expect(response.status).toBe(403);
   });
 
   test('API returns description - "Community already exists."', () => {
-    expect(`${response.text}`).toContain("Community not found.");
+    expect(`${response.text}`).toContain("Community has been removed.");
   });
 });
 
