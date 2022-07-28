@@ -253,7 +253,7 @@ const Post = (props) => {
                       <PushPinIcon />
                     </Tooltip>
                   )}
-                  {props.post.flags.length > 0 && isModerator && (
+                  {props.post.flags?.length > 0 && isModerator && (
                     <Tooltip
                       title={<Typography>Flagged Post</Typography>}
                       arrow
@@ -296,7 +296,7 @@ const Post = (props) => {
                   }}
                   align="right"
                 >
-                  {post.community.length > maxCommunityTitleLength
+                  {post.community?.length > maxCommunityTitleLength
                     ? post.community.substring(0, maxCommunityTitleLength) +
                       "..."
                     : post.community}
