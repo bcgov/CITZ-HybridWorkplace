@@ -61,8 +61,8 @@ describe("Given that user is on login page", () => {
     });
 
     test("They should be brought to the Welcome Community", async () => {
-        const post = await page.evaluate(el => el.innerText, await page.$x('//*[contains(text(), "Welcome")]'))
-        expect(post).toBe(true);
+        const post = await page.evaluate(el => el.innerText, await page.$x('//*[contains(text(), "Top Communities")]'))
+        expect(post).toBe("hello");
     });
   });
 
@@ -74,10 +74,7 @@ describe("Given that user is on login page", () => {
 
     test("They should be brought to the Welcome Community", async () => {
         const post = await page.evaluate(el => el.innerText, await page.$x('//*[contains(text(), "Welcome")]'))
-        expect(post).not.toBe(true);
+        expect(post).not.toBe("hello");
     });
   });
-
-
-
 });

@@ -116,14 +116,14 @@ class UserActions {
 
 
     
-  async createCommunity(community) {
+  async createCommunity(community, description) {
     await this.page.waitForSelector("button.css-rxr26v"); // try to get first + button
     await this.page.click("button.css-rxr26v"); // clicks the + button on the communities board
 
     await this.page.waitForSelector('div[placeholder="Title"}'); // wait for field to appear
 
     await this.page.type('div[placeholder="Title"}', `${community}`); // type in title field
-    await this.page.type('div[placeholder="Description"}', `${community}`); // type in description field
+    await this.page.type('div[placeholder="Description"}', `${description}`); // type in description field
     
     await this.page.click("div[contains('Set Rules')]");
 
