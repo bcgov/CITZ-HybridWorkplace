@@ -91,7 +91,14 @@ router.get("/:title", async (req, res, next) => {
         $match: { "communities.community": community.title },
       },
       {
-        $project: { _id: 1, username: 1, firstName: 1, lastName: 1, avatar: 1 },
+        $project: {
+          _id: 1,
+          username: 1,
+          firstName: 1,
+          lastName: 1,
+          avatar: 1,
+          online: 1,
+        },
       },
     ]);
 

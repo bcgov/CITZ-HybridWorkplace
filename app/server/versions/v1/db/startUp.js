@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* 
  Copyright © 2022 Province of British Columbia
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,6 +23,7 @@ const color = require("ansi-colors");
 const Community = require("../models/community.model");
 const Post = require("../models/post.model");
 const Comment = require("../models/comment.model");
+const User = require("../models/user.model");
 const Options = require("../models/options.model");
 
 const optionsCollection = require("./init/optionsCollection");
@@ -70,6 +70,11 @@ const mongoStartUp = async (db, collections) => {
     // Add postCount to communities
     await Community.updateMany({ postCount: null }, { postCount: 0 });
     // TODO: ADMIN will have to manually set postCount for existing communities
+  }
+
+  if (collections.includes("user")) {
+    // Set offline status
+    await User.updateMany({ online: true }, { online: false });
   }
 };
 
