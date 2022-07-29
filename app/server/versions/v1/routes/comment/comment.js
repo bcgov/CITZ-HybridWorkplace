@@ -341,10 +341,26 @@ router.get("/post/:id", async (req, res, next) => {
         },
       },
       { $sort: { votes: -1, _id: 1 } },
-    ]).exec();
+    ]);
 
     if (!comments) throw new ResponseError(404, "Comments not found.");
     req.log.addAction("Comments found.");
+
+    const postCommunity = await Community.findOne({
+      title: post.community,
+    });
+
+    req.log.addAction("Getting list of moderator usernames.");
+    const modUsernames = [];
+    Object.keys(postCommunity.moderators).forEach((mod) => {
+      modUsernames.push(postCommunity.moderators[mod].username);
+    });
+
+    req.log.addAction("Assigning creatorIsModerator in comments.");
+    Object.keys(comments).forEach((comment) => {
+      if (modUsernames.includes(comments[comment].creatorUsername))
+        comments[comment].creatorIsModerator = true;
+    });
 
     req.log.setResponse(200, "Success");
     return res.status(200).json(comments);
@@ -450,7 +466,21 @@ router.get("/:id", async (req, res, next) => {
         },
       },
       { $sort: { votes: -1, _id: 1 } },
-    ]).exec();
+    ]);
+
+    const commentCommunity = await Community.findOne({
+      title: comment.community,
+    });
+
+    req.log.addAction("Getting list of moderator usernames.");
+    const modUsernames = [];
+    Object.keys(commentCommunity.moderators).forEach((mod) => {
+      modUsernames.push(commentCommunity.moderators[mod].username);
+    });
+
+    req.log.addAction("Checking if creatorIsModerator on comment.");
+    if (modUsernames.includes(comment.creatorUsername))
+      returnComment[0].creatorIsModerator = true;
 
     req.log.setResponse(200, "Success");
     return res.status(200).json(returnComment[0]);
