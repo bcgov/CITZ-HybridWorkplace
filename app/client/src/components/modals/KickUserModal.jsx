@@ -19,7 +19,6 @@ import {
 import { kickCommunityMember } from "../../redux/ducks/communityDuck";
 
 export const KickUserModal = (props) => {
-  console.log(props);
   useEffect(() => {
     setUsernameInput(props.user.username);
   }, [props.user]);
