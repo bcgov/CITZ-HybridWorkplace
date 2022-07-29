@@ -118,7 +118,7 @@ const AddCommunityModal = (props) => {
   const page1 = () => {
     return (
       <>
-        <Box sx={{ height: "60vh" }}>
+        <Box sx={{ height: "45vh" }}>
           <Stack spacing={0.5} sx={{ mb: 4 }}>
             <InputLabel htmlFor="create-community-title">Title</InputLabel>
             <TextField
@@ -143,11 +143,17 @@ const AddCommunityModal = (props) => {
             onChange={setDescription}
           />
         </Box>
-        <DialogActions sx={{ alignSelf: "end" }}>
-          <Stack spacing={1} direction="row-reverse" justifyContent="end">
+        <Stack
+          justifyContent="space-between"
+          alignItems="center"
+          direction="row"
+        >
+          <Typography variant="body1">Page {page}/4</Typography>
+
+          <Stack spacing={1} direction="row-reverse">
             <Button
               onClick={() => setPage(2)}
-              color="button"
+              variant="contained"
               disabled={
                 title.length < minTitleLength ||
                 title.length > maxTitleLength ||
@@ -160,7 +166,7 @@ const AddCommunityModal = (props) => {
               Cancel
             </Button>
           </Stack>
-        </DialogActions>
+        </Stack>
       </>
     );
   };
@@ -168,7 +174,7 @@ const AddCommunityModal = (props) => {
   const page2 = () => {
     return (
       <>
-        <Box sx={{ height: "60vh" }}>
+        <Box sx={{ height: "45vh" }}>
           <Stack sx={{ mb: 2 }}>
             <Typography variant="h6" sx={{ my: 1 }}>
               Community Rules
@@ -180,16 +186,23 @@ const AddCommunityModal = (props) => {
             <InputRuleList rules={rules} setRules={setRules} />
           </Stack>
         </Box>
-        <DialogActions>
+
+        <Stack
+          justifyContent="space-between"
+          alignItems="center"
+          direction="row"
+        >
+          <Typography variant="body1">Page {page}/4</Typography>
+
           <Stack spacing={1} direction="row-reverse" justifyContent="end">
-            <Button onClick={() => setPage(3)} color="button">
+            <Button onClick={() => setPage(3)} variant="contained">
               Next
             </Button>
             <Button onClick={() => setPage(1)} color="button">
               Prev
             </Button>
           </Stack>
-        </DialogActions>
+        </Stack>
       </>
     );
   };
@@ -197,7 +210,7 @@ const AddCommunityModal = (props) => {
   const page3 = () => {
     return (
       <>
-        <Box sx={{ height: "60vh" }}>
+        <Box sx={{ height: "45vh" }}>
           <Stack sx={{ mb: 2 }}>
             <Typography variant="h6" sx={{ my: 1 }}>
               Community Tags
@@ -288,16 +301,21 @@ const AddCommunityModal = (props) => {
             </Accordion>
           </Stack>
         </Box>
-        <DialogActions>
+        <Stack
+          justifyContent="space-between"
+          alignItems="center"
+          direction="row"
+        >
+          <Typography variant="body1">Page {page}/4</Typography>
           <Stack spacing={1} direction="row-reverse" justifyContent="end">
-            <Button onClick={() => setPage(4)} color="button">
+            <Button onClick={() => setPage(4)} variant="contained">
               Next
             </Button>
             <Button onClick={() => setPage(2)} color="button">
               Prev
             </Button>
           </Stack>
-        </DialogActions>
+        </Stack>
       </>
     );
   };
@@ -305,7 +323,7 @@ const AddCommunityModal = (props) => {
   const page4 = () => {
     return (
       <>
-        <Box sx={{ height: "60vh" }}>
+        <Box sx={{ height: "45vh" }}>
           <Typography variant="h6" sx={{ my: 1 }}>
             Community Resources
           </Typography>
@@ -320,7 +338,12 @@ const AddCommunityModal = (props) => {
             onChange={setResources}
           />
         </Box>
-        <DialogActions>
+        <Stack
+          justifyContent="space-between"
+          alignItems="center"
+          direction="row"
+        >
+          <Typography variant="body1">Page {page}/4</Typography>
           <Stack spacing={1} direction="row-reverse" justifyContent="end">
             <LoadingButton
               variant="contained"
@@ -338,7 +361,7 @@ const AddCommunityModal = (props) => {
               Prev
             </Button>
           </Stack>
-        </DialogActions>
+        </Stack>
       </>
     );
   };

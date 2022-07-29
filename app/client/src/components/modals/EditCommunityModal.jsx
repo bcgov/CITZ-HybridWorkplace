@@ -39,6 +39,7 @@ import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import MarkDownEditor from "../MarkDownEditor";
 import InputRuleList from "../InputRuleList";
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 const EditCommunityModal = (props) => {
   const [title, setTitle] = useState(props.community.title ?? "");
@@ -115,7 +116,7 @@ const EditCommunityModal = (props) => {
   const page1 = () => {
     return (
       <>
-        <Box sx={{ height: "60vh" }}>
+        <Box sx={{ height: "40vh" }}>
           <Stack spacing={0.5} sx={{ mb: 4 }}>
             <InputLabel htmlFor="create-community-title">Title</InputLabel>
             <TextField
@@ -140,16 +141,21 @@ const EditCommunityModal = (props) => {
             onChange={setDescription}
           />
         </Box>
-        <DialogActions sx={{ alignSelf: "end" }}>
+                <Stack
+          justifyContent="space-between"
+          alignItems="center"
+          direction="row"
+        >
+          <Typography variant="body1">Page {page}/3</Typography>
           <Stack spacing={1} direction="row-reverse" justifyContent="end">
             <Button
               onClick={() => setPage(2)}
-              color="button"
               disabled={
                 title.length < minTitleLength ||
                 title.length > maxTitleLength ||
                 description.length > maxDescriptionLength
               }
+              variant="contained"
             >
               Next
             </Button>
@@ -157,7 +163,7 @@ const EditCommunityModal = (props) => {
               Cancel
             </Button>
           </Stack>
-        </DialogActions>
+        </Stack>
       </>
     );
   };
@@ -165,7 +171,7 @@ const EditCommunityModal = (props) => {
   const page2 = () => {
     return (
       <>
-        <Box sx={{ height: "60vh" }}>
+        <Box sx={{ height: "40vh" }}>
           <Stack sx={{ mb: 2 }}>
             <Typography variant="h6" sx={{ my: 1 }}>
               Community Rules
@@ -177,16 +183,21 @@ const EditCommunityModal = (props) => {
             <InputRuleList rules={rules} setRules={setRules} />
           </Stack>
         </Box>
-        <DialogActions>
+        <Stack
+          justifyContent="space-between"
+          alignItems="center"
+          direction="row"
+        >
+          <Typography variant="body1">Page {page}/3</Typography>
           <Stack spacing={1} direction="row-reverse" justifyContent="end">
-            <Button onClick={() => setPage(3)} color="button">
+            <Button onClick={() => setPage(3)} variant="contained">
               Next
             </Button>
             <Button onClick={() => setPage(1)} color="button">
               Prev
             </Button>
           </Stack>
-        </DialogActions>
+        </Stack>
       </>
     );
   };
@@ -194,7 +205,7 @@ const EditCommunityModal = (props) => {
   const page3 = () => {
     return (
       <>
-        <Box sx={{ height: "60vh" }}>
+        <Box sx={{ height: "40vh" }}>
           <Typography variant="h6" sx={{ my: 1 }}>
             Community Resources
           </Typography>
@@ -209,7 +220,12 @@ const EditCommunityModal = (props) => {
             onChange={setResources}
           />
         </Box>
-        <DialogActions>
+        <Stack
+          justifyContent="space-between"
+          alignItems="center"
+          direction="row"
+        >
+          <Typography variant="body1">Page {page}/3</Typography>
           <Stack spacing={1} direction="row-reverse" justifyContent="end">
             <Button
               variant="contained"
@@ -226,7 +242,7 @@ const EditCommunityModal = (props) => {
               Prev
             </Button>
           </Stack>
-        </DialogActions>
+        </Stack>
       </>
     );
   };
