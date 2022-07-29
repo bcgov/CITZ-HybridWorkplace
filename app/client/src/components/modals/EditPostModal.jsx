@@ -108,7 +108,7 @@ const EditPostModal = (props) => {
               error={titleError}
               name="title"
               placeholder="Title"
-              helperText="Title must be 3-50 characters in length."
+              helperText={`Title must be ${minTitleLength}-${maxTitleLength} characters in length.`}
               required
               fullWidth
             />

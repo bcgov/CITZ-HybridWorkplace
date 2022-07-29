@@ -311,7 +311,6 @@ export const tagPost = (postId, tag) => async (dispatch, getState) => {
 
     dispatch({ type: TAG_POST, payload: { postId, tag } });
 
-    createSuccess(`Successfully Tagged Post`)(dispatch);
   } catch (err) {
     console.error(err);
     successful = false;
@@ -346,7 +345,6 @@ export const unTagPost = (postId, tag) => async (dispatch, getState) => {
       type: UNTAG_POST,
       payload: { postId },
     });
-    createSuccess(`Successfully Untagged Post`)(dispatch);
   } catch (err) {
     console.error(err);
     successful = false;
