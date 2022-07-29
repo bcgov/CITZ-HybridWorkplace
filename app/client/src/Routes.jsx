@@ -45,6 +45,7 @@ import PostPage from "./views/PostPage";
 import { useTransition } from "react";
 import LoadingPage from "./views/LoadingPage";
 import APIDownPage from "./views/APIDownPage";
+import SearchPage from "./views/SearchPage";
 
 const App = (props) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -100,6 +101,10 @@ const App = (props) => {
         <Route
           path="/post/:id"
           element={<PrivateComponent component={<PostPage />} />}
+        />
+        <Route
+          path="/search"
+          element={<PrivateComponent component={<SearchPage />} />}
         />
         <Route path="/logout" element={<LogoutPage />} />
         <Route path="*" exact element={<Page404 />}></Route>
