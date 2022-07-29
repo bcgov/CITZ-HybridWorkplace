@@ -332,9 +332,11 @@ const Post = (props) => {
           </Box>
         </CardContent>
         <CardActions>
-          <IconButton onClick={handlePostClick}>
-            <CommentIcon fontSize="small" />
-          </IconButton>
+          <Tooltip title={<Typography>Comments</Typography>} arrow>
+            <IconButton onClick={handlePostClick}>
+              <CommentIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
 
           {post.availableTags.length ? (
             <>

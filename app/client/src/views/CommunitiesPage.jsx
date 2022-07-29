@@ -26,7 +26,7 @@ import UsersCommunitiesList from "../components/UsersCommunitiesList";
 import AddCommunityModal from "../components/modals/AddCommunityModal";
 import { openAddCommunityModal } from "../redux/ducks/modalDuck";
 
-import { Button, Grid, Typography, Box } from "@mui/material";
+import { Button, Grid, Typography, Box, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
 const CommunitiesPage = (props) => {
@@ -69,7 +69,9 @@ const CommunitiesPage = (props) => {
                 }}
               >
                 <Button onClick={() => props.openAddCommunityModal()}>
-                  <AddIcon sx={{ color: "white", pl: 4 }} />
+                  <Tooltip title={<Typography>Add New Community</Typography>}>
+                    <AddIcon sx={{ color: "white", pl: 4 }} />
+                  </Tooltip>
                 </Button>
               </Grid>
             </Grid>
