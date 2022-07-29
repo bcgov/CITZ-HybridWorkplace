@@ -262,11 +262,7 @@ const Post = (props) => {
                         onClick={handleFlagIconClick}
                         sx={{ padding: 0 }}
                       >
-                        <FlagRounded
-                          sx={{
-                            color: "#FF4500",
-                          }}
-                        />
+                        <FlagRounded />
                       </IconButton>
                     </Tooltip>
                   )}

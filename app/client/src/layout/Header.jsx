@@ -256,7 +256,8 @@ const Header = (props) => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    const search = e.target.elements.searchBar.value;
+    let search = e.target.elements.searchBar.value;
+    search = search.trim();
     if (!search) return;
     navigate(`/search?query=${search}`);
   };
