@@ -114,7 +114,7 @@ router.get("/:title", async (req, res, next) => {
  *        '404':
  *          description: User not found. **||** <br>Community not found.
  *        '403':
- *          description: A community can't have more than 7 tags. **||** <br>No duplicate tags. **||** <br>Only moderator of community can edit community.
+ *          description: A community can't have more than 7 tags. **||** <br>No duplicate tags. **||** <br>Only moderator of community can edit community. **||** <br>Tag must not contain the character '#'.
  *        '204':
  *          description: Success. No content to return.
  *        '400':
@@ -161,6 +161,9 @@ router.post("/:title", async (req, res, next) => {
         403,
         `Tags (${req.body.tag}) must have a length of ${tagMinLength}-${tagMaxLength}`
       );
+
+    if (req.body.tag.contains("#"))
+      throw new ResponseError(403, "Tag must not contain the character '#'.");
 
     // Validate tag description length
     if (
