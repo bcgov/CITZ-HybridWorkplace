@@ -43,7 +43,7 @@ import MarkDownEditor from "../MarkDownEditor";
 
 const EditPostModal = (props) => {
   const minTitleLength = 3;
-  const maxTitleLength = 50;
+  const maxTitleLength = 200;
   const minMessageLength = 3;
   const maxMessageLength = 40000;
 

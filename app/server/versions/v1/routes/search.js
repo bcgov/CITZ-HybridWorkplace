@@ -133,9 +133,8 @@ router.get("/:query", async (req, res, next) => {
         $match: {
           $and: [
             postFilter,
-            {
-              $or: [{ removed: false }, { hidden: false }],
-            },
+            { removed: false },
+            { hidden: false },
             {
               $or: [
                 { title: { $regex: query, $options: "i" } },
@@ -154,6 +153,9 @@ router.get("/:query", async (req, res, next) => {
           creatorUsername: 1,
           createdOn: 1,
           commentCount: 1,
+          availableTags: 1,
+          tags: 1,
+          community: 1,
         },
       },
       { $sort: { _id: -1 } },

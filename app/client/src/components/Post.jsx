@@ -48,7 +48,7 @@ const Post = (props) => {
       await props.getCommunity(props.post.community);
     })();
   }, []);
-  const maxTitleLength = 45;
+  const maxTitleLength = 58;
   const maxCommunityTitleLength = 16;
   const maxMessageLines = 5;
 
@@ -262,11 +262,7 @@ const Post = (props) => {
                         onClick={handleFlagIconClick}
                         sx={{ padding: 0 }}
                       >
-                        <FlagRounded
-                          sx={{
-                            color: "#FF4500",
-                          }}
-                        />
+                        <FlagRounded />
                       </IconButton>
                     </Tooltip>
                   )}

@@ -23,7 +23,8 @@
 
 import hwp_axios from "../../axiosInstance";
 
-const SET_SEARCH = "CITZ-HYBRIDWORKPLACE/SEARCH/SET_USER";
+const SET_SEARCH = "CITZ-HYBRIDWORKPLACE/SEARCH/SET_SEARCH";
+const CLEAR_SEARCH = "CITZ-HYBRIDWORKPLACE/SEARCH/CLEAR_SEARCH";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
@@ -49,6 +50,7 @@ export const search = (query) => async (dispatch, getState) => {
   } catch (err) {
     console.error(err);
     successful = false;
+    dispatch({ type: CLEAR_SEARCH });
   } finally {
     return successful;
   }
@@ -64,10 +66,12 @@ export function searchReducer(state = initialState, action) {
   switch (action.type) {
     case SET_SEARCH:
       return {
-        posts: action.payload.posts,
-        communities: action.payload.communities,
-        users: action.payload.users,
+        posts: action.payload.posts ?? [],
+        communities: action.payload.communities ?? [],
+        users: action.payload.users ?? [],
       };
+    case CLEAR_SEARCH:
+      return initialState;
     default:
       return state;
   }

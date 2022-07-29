@@ -20,12 +20,12 @@ import { search } from "../redux/ducks/searchDuck";
 import LoadingPage from "./LoadingPage";
 
 const UserCard = (props) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const handleCardClick = () => {
-    navigate(`/profile/${props.user.username}`)
-  }
+    navigate(`/profile/${props.user.username}`);
+  };
   return (
-    <Card sx={{ cursor: "pointer"}} onClick={handleCardClick} >
+    <Card sx={{ cursor: "pointer" }} onClick={handleCardClick}>
       <CardHeader
         title={props.user.username}
         subheader={props.user.fullName}
@@ -84,29 +84,55 @@ export const SearchPage = (props) => {
             onChange={handleTabValueChange}
             aria-label="basic tabs example"
           >
-            <Tab label={`Users: ${props.searchData.users.length}`} value="1" />
-            <Tab label={`Posts: ${props.searchData.posts.length}`} value="2" />
             <Tab
-              label={`Communities: ${props.searchData.communities.length}`}
+              label={
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: tabValue === "1" ? "button.main" : "neutral.main",
+                  }}
+                >{`Users: ${props.searchData.users.length}`}</Typography>
+              }
+              value="1"
+            />
+            <Tab
+              label={
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: tabValue === "2" ? "button.main" : "neutral.main",
+                  }}
+                >{`Posts: ${props.searchData.posts.length}`}</Typography>
+              }
+              value="2"
+            />
+            <Tab
+              label={
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: tabValue === "3" ? "button.main" : "neutral.main",
+                  }}
+                >{`Communities: ${props.searchData.communities.length}`}</Typography>
+              }
               value="3"
             />
           </Tabs>
         </Stack>
       </Box>
       <TabPanel value="1">
-        <Grid container spacing={2}>
+        <Stack spacing={1}>
           {props.searchData.users.length ? (
-            props.searchData.users.map((user) => <Grid item xs={3}><UserCard user={user} /></Grid>)
+            props.searchData.users.map((user) => <UserCard user={user} />)
           ) : (
             <Typography variant="body1">No users to display</Typography>
           )}
-          
-        </Grid>
+        </Stack>
       </TabPanel>
       <TabPanel value="2">
         <Stack spacing={1}>
           {props.searchData.posts.length ? (
-            props.searchData.posts.map((post) => <Post post={post}/>)
+            props.searchData.posts.map((post) => <Post post={post} />)
           ) : (
             <Typography variant="body1">No posts to display</Typography>
           )}
