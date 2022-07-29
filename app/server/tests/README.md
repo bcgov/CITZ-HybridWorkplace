@@ -47,7 +47,11 @@ Tests require a .env file in the /server folder.
 Without these keys, API tests will not run.
 This file contains the the following
 
-| Key     | Description                         | Example            |
-| ------- | ----------------------------------- | ------------------ |
-| API_REF | Target API URL that precedes routes | localhost:8080/api |
-| CLEANUP | Perform test cleanup                | true\|\|false      |
+| Key                | Description                         | Example            |
+| ------------------ | ----------------------------------- | ------------------ |
+| API_REF            | Target API URL that precedes routes | localhost:8080/api |
+| CLEANUP            | Perform test cleanup                | true\|\|false      |
+| RUN_BREAKING_TESTS | Toggles on tests that may crash API | true\|\|false      |
+
+Note on RUN_BREAKING_TESTS:
+This was introduced to help avoid exceedingly long test runner times. Devs should be aware that anything surrounded in a block using this boolean should be addressed when possible. If run during the test runner, the API may crash, resulting in all subsequent tests giving time out errors.

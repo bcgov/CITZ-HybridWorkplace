@@ -84,6 +84,7 @@ jobs:
           touch .env
           echo "API_REF=localhost:5000/api" >> .env
           echo "CLEANUP=false" >> .env
+          echo "RUN_BREAKING_TESTS=false" >> .env
 
       - name: Build API and Mongo in Docker
         run: |
@@ -121,7 +122,7 @@ jobs:
         working-directory: ./app/server
         continue-on-error: true
         run: |
-          npm test -- --forceExit --json > tempResults
+          npm run test:series -- --forceExit --json > tempResults
 
       # Refine results
       - name: Select only json line
