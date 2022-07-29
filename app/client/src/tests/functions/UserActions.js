@@ -168,11 +168,11 @@ class UserActions {
       await this.page.click(`li[data-value="${community}"]`); // select community
     }
 
-    await this.page.waitForTimeout(1000); // needs a second for button not to be disabled
+    // await this.page.waitForTimeout(1000); // needs a second for button not to be disabled?
 
     // Try and get button, then click it.
     const [button] = await this.page.$x(
-      "//button[contains(., 'Post')][not(@disabled)]"
+      "//html/body/div[2]/div[3]/div/div/div/div[3]/div/button[contains(., 'Post')][not(@disabled)]"
     );
     if (button) {
       await button.click();
@@ -184,7 +184,16 @@ class UserActions {
     );
   }
 
-  async goToPost() {}
+  async goToPost(postTitle) {
+    // Try and get button, then click it.
+    const [post] = await this.page.$x(`//b[contains(., "${postTitle}")]`);
+    if (post) {
+      await post.click();
+    }
+
+    // Wait for post page (can see Comments area)
+    await this.page.waitForXPath(`//h6[contains(., "Comments")]`);
+  }
 
   async flagPost() {}
 
@@ -194,7 +203,29 @@ class UserActions {
 
   async deletePost() {}
 
-  async addComment() {}
+  // Assumed on post page
+  async addComment(comment) {
+    // Find and click Add Comment
+    const [add] = await this.page.$x(
+      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/button`
+    );
+    if (add) {
+      await add.click();
+    }
+
+    // Type comment
+    await this.page.type(`textarea[id*=mui-]`, comment);
+    //*[@id="mui-13"]
+
+    // Click Comment
+    const [button] = await this.page.$x(`//button[contains(., "Comment")]`);
+    if (button) {
+      await button.click();
+    }
+
+    // Wait for comment to appear
+    await this.page.waitForXPath(`//p[contains(., "${comment}")]`);
+  }
 
   async upvoteComment() {}
 
@@ -379,6 +410,10 @@ class UserActions {
     const bioValue = await this.page.$eval("#user-bio", (el) => el.value);
     await this.page.focus("#user-bio");
     for (let i = 0; i < bioValue.length; i++) {
+      await this.page.keyboard.press("ArrowRight");
+    }
+
+    for (let i = 0; i < bioValue.length; i++) {
       await this.page.keyboard.press("Backspace");
     }
 
@@ -478,7 +513,7 @@ class UserActions {
 
     // Loop the following: type input, hit enter
     for (let i = 0; i < input.length; i++) {
-      await this.page.type("#user-interests", input[i]);
+      await this.page.type("#tag-input", input[i]);
       await this.page.keyboard.press("Enter");
     }
 

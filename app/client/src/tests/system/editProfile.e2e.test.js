@@ -161,7 +161,7 @@ describe("Given that user is on Profile page", () => {
         ).jsonValue();
 
         // Click save
-        const [button] = await page.$x(`//button[contains(., 'Save')]`);
+        const [button] = await page.$x(`//button[contains(., 'Close')]`);
         if (button) {
           await button.click();
         }
