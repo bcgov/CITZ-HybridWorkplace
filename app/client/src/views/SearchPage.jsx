@@ -120,7 +120,7 @@ export const SearchPage = (props) => {
           </Tabs>
         </Stack>
       </Box>
-      <TabPanel value="1">
+      <TabPanel value="1" sx={{ pb: 10 }}>
         <Stack spacing={1}>
           {props.searchData.users.length ? (
             props.searchData.users.map((user) => <UserCard user={user} />)
@@ -129,7 +129,7 @@ export const SearchPage = (props) => {
           )}
         </Stack>
       </TabPanel>
-      <TabPanel value="2">
+      <TabPanel value="2" sx={{ pb: 10 }}>
         <Stack spacing={1}>
           {props.searchData.posts.length ? (
             props.searchData.posts.map((post) => <Post post={post} />)
@@ -138,7 +138,7 @@ export const SearchPage = (props) => {
           )}
         </Stack>
       </TabPanel>
-      <TabPanel value="3">
+      <TabPanel value="3" sx={{ pb: 10 }}>
         <Stack spacing={1}>
           {props.searchData.communities.length ? (
             props.searchData.communities.map((community) => (
