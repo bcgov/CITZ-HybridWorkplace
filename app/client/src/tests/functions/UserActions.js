@@ -100,7 +100,50 @@ class UserActions {
     await this.page.waitForXPath(`//h5[contains(., '${community}')]`); // Community name on community page
   }
 
-  async createCommunity(community) {}
+  async createCommunity(community, description, rules = [], tags = []) {
+    // Assumes user is on community page.
+    await this.page.waitForXPath(`//h5[contains(., "Top Communities")]`, {
+      timeout: 2000,
+    });
+
+    // Click first + button
+    const [plus] = await this.page.$x(
+      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[1]/div[1]/div/div[2]/button`
+    );
+    if (plus) {
+      await plus.click();
+    }
+
+    // Wait for modal to appear
+    await this.page.waitForXPath(`//h2[contains(., "Create Community")]`, {
+      timeout: 2000,
+    });
+
+    // Type title
+    await this.page.type("#create-community-title", community);
+
+    // Type description
+    await this.page.type("textarea.w-md-editor-text-input", description);
+
+    // TODO: if rules or tags >0, add rules or tags
+
+    // Click Create button
+    // Try and get button, then click it.
+    const [button] = await this.page.$x(
+      "//button[contains(., 'Create')][not(@disabled)]"
+    );
+    if (button) {
+      await button.click();
+    }
+
+    // Wait for modal to close
+    await this.page.waitForFunction(
+      `document.getElementById("root").ariaHidden != "true"`,
+      {
+        timeout: 2000,
+      }
+    );
+  }
 
   async createPost(title, body, community = "") {
     await this.page.waitForXPath(
@@ -129,7 +172,7 @@ class UserActions {
 
     // Try and get button, then click it.
     const [button] = await this.page.$x(
-      "//button[contains(., 'Submit')][not(@disabled)]"
+      "//button[contains(., 'Post')][not(@disabled)]"
     );
     if (button) {
       await button.click();
@@ -236,6 +279,21 @@ class UserActions {
 
     // Wait for Settings cog to confirm Profile load
     await this.page.waitForSelector(`svg[data-testid="SettingsRoundedIcon"]`, {
+      timeout: 2000,
+    });
+  }
+
+  async goToCommunitiesBySidemenu() {
+    await this.openSideMenu();
+
+    // Get and click profile link
+    const [button] = await this.page.$x(`//span[contains(., "Communities")]`);
+    if (button) {
+      await button.click();
+    }
+
+    // Wait for Settings cog to confirm Profile load
+    await this.page.waitForXPath(`//h5[contains(., "Top Communities")]`, {
       timeout: 2000,
     });
   }
