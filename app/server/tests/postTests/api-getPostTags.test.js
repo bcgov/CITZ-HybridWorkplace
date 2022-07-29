@@ -40,7 +40,7 @@ describe("Testing GET /post/tags endpoint", () => {
         randomText,
         loginResponse.body.token,
         [],
-        [{ tag: tag1, count: 1 }]
+        [{ tag: tag1, description: "also great" }]
       );
 
       // Join communities
@@ -124,7 +124,7 @@ describe("Testing GET /post/tags endpoint", () => {
         randomText,
         loginResponse.body.token,
         [],
-        [{ tag: tag1, count: 1 }]
+        [{ tag: tag1, description: "also great" }]
       );
 
       // Join communities

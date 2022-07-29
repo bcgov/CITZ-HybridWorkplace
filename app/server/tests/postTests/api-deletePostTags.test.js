@@ -41,7 +41,7 @@ describe("Testing DELETE /post/tags endpoint", () => {
         randomText,
         loginResponse.body.token,
         [],
-        [{ tag: tag1, count: 1 }]
+        [{ tag: tag1, description: "also great" }]
       );
 
       // Join communities
@@ -70,6 +70,7 @@ describe("Testing DELETE /post/tags endpoint", () => {
     });
 
     test("User can delete existing post tag.", async () => {
+      console.log(postResponse.body);
       response = await post.deletePostTags(
         postResponse.body._id,
         loginResponse.body.token

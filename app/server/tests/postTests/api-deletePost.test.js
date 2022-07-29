@@ -65,7 +65,7 @@ describe("Testing DELETE /post endpoint", () => {
         postResponse.body._id,
         loginResponse.body.token
       );
-      expect(response.status).toBe(404); // Post now gone
+      expect(response.status).toBe(403); // Post now marked as removed
     });
 
     test("User cannot delete posts with an invalid token - returns 401", async () => {
