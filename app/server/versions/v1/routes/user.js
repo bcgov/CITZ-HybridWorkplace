@@ -511,6 +511,7 @@ router.get("/:username", async (req, res, next) => {
       username: user.username,
       email: user.email,
       role: user.role,
+      online: user.online,
       firstName: user.firstName,
       lastName: user.lastName,
       bio: user.bio,

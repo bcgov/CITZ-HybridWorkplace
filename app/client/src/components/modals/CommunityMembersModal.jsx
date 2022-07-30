@@ -59,7 +59,7 @@ const CommunityMembersModal = (props) => {
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    props.getCommunityMembers(props.community.title);
+    props.getCommunityMembers(props.community?.title);
   }, [props.open]);
 
   const handlePromoteClick = (username) => {

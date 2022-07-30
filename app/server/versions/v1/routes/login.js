@@ -31,6 +31,9 @@ const generateRefreshToken = require("../functions/auth/generateRefreshToken");
 
 const User = require("../models/user.model");
 
+const defineOfflineStatusJob = require("../jobs/defineOfflineStatusJob");
+const { agenda } = require("../../../db");
+
 /**
  * @swagger
  * paths:
@@ -112,6 +115,13 @@ router.post("/", async (req, res, next) => {
         sameSite: "None",
       });
       req.log.addAction("jwt cookie created.");
+
+      // Define job for offline status
+      await defineOfflineStatusJob(agenda, user.id);
+      // Schedule offline status
+      await agenda.schedule("in 5 minutes", `offlineStatus-${user.id}`);
+      // Set online status
+      await User.updateOne({ _id: user.id }, { online: true });
 
       // Send JWT
       req.log.setResponse(201, "Success");

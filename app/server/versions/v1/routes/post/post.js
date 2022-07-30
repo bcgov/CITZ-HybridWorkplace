@@ -190,6 +190,13 @@ router.post("/", async (req, res, next) => {
       `Community (${req.body.community}) latest activity updated.`
     );
 
+    req.log.addAction(`Updating community (${req.body.community}) post count.`);
+    await Community.updateOne(
+      { title: post.community },
+      { $inc: { postCount: 1 } }
+    );
+    req.log.addAction(`Community (${req.body.community}) post count updated.`);
+
     req.log.addAction("Updating user post count.");
     await User.updateOne({ _id: user.id }, { $inc: { postCount: 1 } });
     req.log.addAction("User post count updated.");
@@ -333,9 +340,22 @@ router.get("/:id", async (req, res, next) => {
       {
         post: req.params.id,
       },
-      req.user.role === "admin"
+      req.user.role === "admin",
+      true
     );
     req.log.addAction("Post found.");
+
+    const postCommunity = await Community.findOne({ title: post.community });
+
+    req.log.addAction("Getting list of moderator usernames.");
+    const modUsernames = [];
+    Object.keys(postCommunity.moderators).forEach((mod) => {
+      modUsernames.push(postCommunity.moderators[mod].username);
+    });
+
+    req.log.addAction("Checking if creatorIsModerator on post.");
+    if (modUsernames.includes(post.creatorUsername))
+      post.creatorIsModerator = true;
 
     req.log.setResponse(200, "Success");
     return res.status(200).json(post);
@@ -431,7 +451,7 @@ router.get("/community/:title", async (req, res, next) => {
 
       posts = await Post.find(matchQuery, "", {
         sort: { pinned: -1, _id: -1 },
-      }).exec();
+      }).lean();
     } else {
       // Return all community posts
       req.log.addAction("Finding posts in community.");
@@ -448,8 +468,20 @@ router.get("/community/:title", async (req, res, next) => {
 
       posts = await Post.find(matchQuery, "", {
         sort: { pinned: -1, _id: -1 },
-      }).exec();
+      }).lean();
     }
+
+    req.log.addAction("Getting list of moderator usernames.");
+    const modUsernames = [];
+    Object.keys(community.moderators).forEach((mod) => {
+      modUsernames.push(community.moderators[mod].username);
+    });
+
+    req.log.addAction("Assigning creatorIsModerator in posts.");
+    Object.keys(posts).forEach((post) => {
+      if (modUsernames.includes(posts[post].creatorUsername))
+        posts[post].creatorIsModerator = true;
+    });
 
     if (!posts) throw new ResponseError(404, "Posts not found.");
     req.log.addAction("Posts found.");
@@ -595,6 +627,11 @@ router.patch("/:id", async (req, res, next) => {
       user.role === "admin"
         ? req.body
         : checkPatchQuery(req.body, post, disallowedFields);
+
+    // When removed is set to true
+    if (query.removed && query.removed === true)
+      throw new ResponseError(403, "Use DELETE /api/post to remove posts.");
+
     req.log.addAction("Edit query has been cleaned.");
     req.log.addPatchQuery(query);
 
@@ -604,6 +641,27 @@ router.patch("/:id", async (req, res, next) => {
       await Comment.updateMany(
         { community: post.community },
         { removed: false }
+      ).exec();
+      // Update post count
+      await Community.updateOne(
+        { title: post.community },
+        { $inc: { postCount: 1 } }
+      ).exec();
+    }
+
+    if (query.hidden && query.hidden === false) {
+      // Update post count
+      await Community.updateOne(
+        { title: post.community },
+        { $inc: { postCount: 1 } }
+      ).exec();
+    }
+
+    if (query.hidden && query.hidden === true) {
+      // Update post count
+      await Community.updateOne(
+        { title: post.community },
+        { $inc: { postCount: -1 } }
       ).exec();
     }
 
@@ -689,6 +747,11 @@ router.delete("/:id", async (req, res, next) => {
     } else {
       await Post.updateOne({ _id: post.id }, { removed: true }).exec();
     }
+    // Update post count
+    await Community.updateOne(
+      { title: post.community },
+      { $inc: { postCount: -1 } }
+    ).exec();
     req.log.addAction("Post removed.");
 
     req.log.addAction("Updating community engagement.");
@@ -702,6 +765,13 @@ router.delete("/:id", async (req, res, next) => {
     req.log.addAction("Updating user post count.");
     await User.updateOne({ _id: user.id }, { $inc: { postCount: -1 } });
     req.log.addAction("User post count updated.");
+
+    req.log.addAction(`Updating community (${req.body.community}) post count.`);
+    await Community.updateOne(
+      { title: post.community },
+      { $inc: { postCount: -1 } }
+    );
+    req.log.addAction(`Community (${req.body.community}) post count updated.`);
 
     req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");

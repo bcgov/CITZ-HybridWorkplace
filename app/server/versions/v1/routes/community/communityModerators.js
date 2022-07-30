@@ -588,31 +588,38 @@ router.post("/kick/:title", async (req, res, next) => {
       );
 
     // Define job for kicking user
-    await communityUnKick(
-      agenda,
-      community.title,
-      kickUser.id,
-      kickUser.username
-    );
+    await communityUnKick(agenda, community.title, kickUser.id);
     switch (req.body.period) {
       // TODO: REMOVE TEST CASE
       case "test":
         periodEnd = moment()
           .add(5, "minutes")
           .format("MMMM Do YYYY, h:mm:ss a");
-        agenda.schedule("in 5 minutes", `communityUnKick-${kickUser.id}`);
+        await agenda.schedule(
+          "in 5 minutes",
+          `communityUnKick-${community.title}-${kickUser.id}`
+        );
         break;
       case "hour":
         periodEnd = moment().add(1, "hour").format("MMMM Do YYYY, h:mm:ss a");
-        agenda.schedule("in 1 hour", `communityUnKick-${kickUser.id}`);
+        await agenda.schedule(
+          "in 1 hour",
+          `communityUnKick-${community.title}-${kickUser.id}`
+        );
         break;
       case "day":
         periodEnd = moment().add(1, "days").format("MMMM Do YYYY, h:mm:ss a");
-        agenda.schedule("in 1 day", `communityUnKick-${kickUser.id}`);
+        await agenda.schedule(
+          "in 1 day",
+          `communityUnKick-${community.title}-${kickUser.id}`
+        );
         break;
       case "week":
         periodEnd = moment().add(1, "week").format("MMMM Do YYYY, h:mm:ss a");
-        agenda.schedule("in 1 week", `communityUnKick-${kickUser.id}`);
+        await agenda.schedule(
+          "in 1 week",
+          `communityUnKick-${community.title}-${kickUser.id}`
+        );
         break;
       case "forever":
         periodEnd = "N/A";

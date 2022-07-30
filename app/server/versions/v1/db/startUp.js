@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* 
  Copyright © 2022 Province of British Columbia
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,6 +23,7 @@ const color = require("ansi-colors");
 const Community = require("../models/community.model");
 const Post = require("../models/post.model");
 const Comment = require("../models/comment.model");
+const User = require("../models/user.model");
 const Options = require("../models/options.model");
 
 const optionsCollection = require("./init/optionsCollection");
@@ -67,22 +67,14 @@ const mongoStartUp = async (db, collections) => {
       console.log(color.yellow("Welcome community created."));
     }
 
-    // Add hidden and removed fields to documents that don't have them
-    await Community.updateMany({ removed: null }, { removed: false });
-    await Post.updateMany({ removed: null }, { removed: false });
-    await Post.updateMany({ hidden: null }, { hidden: false });
-    await Comment.updateMany({ removed: null }, { removed: false });
-    await Comment.updateMany({ hidden: null }, { hidden: false });
+    // Add postCount to communities
+    await Community.updateMany({ postCount: null }, { postCount: 0 });
+    // TODO: ADMIN will have to manually set postCount for existing communities
+  }
 
-    // Add resources field to existing communities
-    await Community.updateMany({ resources: null }, { resources: "" });
-
-    // Fix comment reply voting
-    await Comment.updateMany({ "upvotes.count": null }, { "upvotes.count": 0 });
-    await Comment.updateMany(
-      { "downvotes.count": null },
-      { "downvotes.count": 0 }
-    );
+  if (collections.includes("user")) {
+    // Set offline status
+    await User.updateMany({ online: true }, { online: false });
   }
 };
 

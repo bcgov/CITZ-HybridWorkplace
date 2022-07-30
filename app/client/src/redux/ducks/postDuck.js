@@ -25,9 +25,9 @@ import hwp_axios from "../../axiosInstance";
 import {
   SET_COMMENTS,
   ADD_COMMENT,
+  EDIT_COMMENT,
   DOWNVOTE_COMMENT,
   REMOVE_COMMENT,
-  REMOVE_COMMENT_VOTE,
   REPLY_TO_COMMENT,
   SET_COMMENT_REPLIES,
   UPVOTE_COMMENT,
@@ -489,6 +489,25 @@ export function postReducer(state = initialState, action) {
                           action.payload.comment,
                           ...(comment.replies ?? []),
                         ],
+                      }
+                    : comment
+                ),
+              }
+            : post
+        ),
+      };
+    case EDIT_COMMENT:
+      return {
+        ...state,
+        items: state.items.map((post, index) =>
+          index === state.currentPostIndex
+            ? {
+                ...post,
+                comments: post.comments.map((comment) =>
+                  comment._id === action.payload.id
+                    ? {
+                        ...comment,
+                        message: action.payload.message,
                       }
                     : comment
                 ),
