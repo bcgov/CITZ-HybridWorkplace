@@ -20,31 +20,23 @@
  * @module
  */
 
-const Community = require("../models/community.model");
+const User = require("../models/user.model");
 
 /**
- * @description Defines the job that removes user's from the kicked array on Community.
+ * @description Defines the job that sets user's offline status.
  * @param agenda Job scheduler, defined in connection.js
  */
-const communityUnKick = async (agenda, community, userId) => {
+const defineOfflineStatusJob = async (agenda, userId) => {
   try {
-    await agenda.define(`communityUnKick-${community}-${userId}`, async () => {
-      await Community.updateOne(
-        { title: community },
-        {
-          $pull: {
-            kicked: {
-              userId,
-            },
-          },
-        }
-      );
-      console.log(`Agenda removed a user from kicked array of ${community}.`);
-      await agenda.cancel(`communityUnKick--${community}-${userId}`);
+    // Cancel offline status job
+    await agenda.cancel({ name: `offlineStatus-${userId}` });
+    // Define offline status job
+    await agenda.define(`offlineStatus-${userId}`, async () => {
+      await User.updateOne({ _id: userId }, { online: false });
     });
   } catch (err) {
-    console.log(`jobs/communityUnKick: ${err}`);
+    console.log(`jobs/defineOfflineStatusJob: ${err}`);
   }
 };
 
-module.exports = communityUnKick;
+module.exports = defineOfflineStatusJob;

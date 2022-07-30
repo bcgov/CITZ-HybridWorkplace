@@ -190,6 +190,13 @@ router.post("/", async (req, res, next) => {
       `Community (${req.body.community}) latest activity updated.`
     );
 
+    req.log.addAction(`Updating community (${req.body.community}) post count.`);
+    await Community.updateOne(
+      { title: post.community },
+      { $inc: { postCount: 1 } }
+    );
+    req.log.addAction(`Community (${req.body.community}) post count updated.`);
+
     req.log.addAction("Updating user post count.");
     await User.updateOne({ _id: user.id }, { $inc: { postCount: 1 } });
     req.log.addAction("User post count updated.");
@@ -595,6 +602,11 @@ router.patch("/:id", async (req, res, next) => {
       user.role === "admin"
         ? req.body
         : checkPatchQuery(req.body, post, disallowedFields);
+
+    // When removed is set to true
+    if (query.removed && query.removed === true)
+      throw new ResponseError(403, "Use DELETE /api/post to remove posts.");
+
     req.log.addAction("Edit query has been cleaned.");
     req.log.addPatchQuery(query);
 
@@ -604,6 +616,27 @@ router.patch("/:id", async (req, res, next) => {
       await Comment.updateMany(
         { community: post.community },
         { removed: false }
+      ).exec();
+      // Update post count
+      await Community.updateOne(
+        { title: post.community },
+        { $inc: { postCount: 1 } }
+      ).exec();
+    }
+
+    if (query.hidden && query.hidden === false) {
+      // Update post count
+      await Community.updateOne(
+        { title: post.community },
+        { $inc: { postCount: 1 } }
+      ).exec();
+    }
+
+    if (query.hidden && query.hidden === true) {
+      // Update post count
+      await Community.updateOne(
+        { title: post.community },
+        { $inc: { postCount: -1 } }
       ).exec();
     }
 
@@ -689,6 +722,11 @@ router.delete("/:id", async (req, res, next) => {
     } else {
       await Post.updateOne({ _id: post.id }, { removed: true }).exec();
     }
+    // Update post count
+    await Community.updateOne(
+      { title: post.community },
+      { $inc: { postCount: -1 } }
+    ).exec();
     req.log.addAction("Post removed.");
 
     req.log.addAction("Updating community engagement.");
@@ -702,6 +740,13 @@ router.delete("/:id", async (req, res, next) => {
     req.log.addAction("Updating user post count.");
     await User.updateOne({ _id: user.id }, { $inc: { postCount: -1 } });
     req.log.addAction("User post count updated.");
+
+    req.log.addAction(`Updating community (${req.body.community}) post count.`);
+    await Community.updateOne(
+      { title: post.community },
+      { $inc: { postCount: -1 } }
+    );
+    req.log.addAction(`Community (${req.body.community}) post count updated.`);
 
     req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");

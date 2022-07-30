@@ -1,3 +1,27 @@
+//
+// Copyright © 2022 Province of British Columbia
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+/**
+ * Application entry point
+ * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
+ * @author [Brandon Bouchard](brandonjbouchard@gmail.com)
+ * @author [Zach Bourque](zachbourque01@gmail)
+ * @module
+ */
+
 import {
   Card,
   Grid,
@@ -31,7 +55,6 @@ import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import TagsList from "./TagsList";
-import { useParams } from "react-router-dom";
 import { getCommunity } from "../redux/ducks/communityDuck";
 import { useNavigate } from "react-router-dom";
 import CommentIcon from "@mui/icons-material/Comment";
@@ -256,7 +279,7 @@ const Post = (props) => {
                       <PushPinIcon />
                     </Tooltip>
                   )}
-                  {props.post.flags.length > 0 &&
+                  {props.post.flags?.length > 0 &&
                     (isModerator || props.role === "admin") && (
                       <Tooltip
                         title={<Typography>Flagged Post</Typography>}
@@ -300,7 +323,7 @@ const Post = (props) => {
                   }}
                   align="right"
                 >
-                  {post.community.length > maxCommunityTitleLength
+                  {post.community?.length > maxCommunityTitleLength
                     ? post.community.substring(0, maxCommunityTitleLength) +
                       "..."
                     : post.community}
@@ -340,9 +363,11 @@ const Post = (props) => {
           </Box>
         </CardContent>
         <CardActions>
-          <IconButton onClick={handlePostClick}>
-            <CommentIcon fontSize="small" />
-          </IconButton>
+          <Tooltip title={<Typography>Comments</Typography>} arrow>
+            <IconButton onClick={handlePostClick}>
+              <CommentIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
 
           {post.availableTags.length ? (
             <>

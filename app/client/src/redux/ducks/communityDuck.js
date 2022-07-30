@@ -231,12 +231,7 @@ export const createCommunity =
 
       const response = await hwp_axios.post(
         `/api/community`,
-        {
-          title: communityData.title,
-          description: communityData.description,
-          rules: communityData.rules,
-          tags: communityData.tags,
-        },
+        { ...communityData },
         {
           headers: {
             authorization: `Bearer ${token}`,

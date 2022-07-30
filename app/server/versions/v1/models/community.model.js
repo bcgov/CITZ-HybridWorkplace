@@ -52,6 +52,9 @@
  *        memberCount:
  *          type: number
  *          description: Number of community members.
+ *        postCount:
+ *          type: number
+ *          description: Number of posts in community.
  *        members:
  *          type: array
  *          description: Users that have joined the community.
@@ -153,6 +156,7 @@ const Community = new mongoose.Schema(
     latestActivity: { type: String },
     removed: { type: Boolean },
     memberCount: { type: Number },
+    postCount: { type: Number },
     members: [
       {
         type: mongoose.Schema.Types.ObjectId,
