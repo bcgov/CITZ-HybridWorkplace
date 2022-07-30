@@ -60,6 +60,10 @@ const Community = (props) => {
   //   handleMenuClose();
   // };
 
+  const isModerator = props.communities.find(
+    (comm) => comm.title === community.title
+  )?.userIsModerator;
+
   const handleDeleteCommunityClick = () => {
     props.openDeleteCommunityModal(community);
     handleMenuClose();
@@ -137,7 +141,7 @@ const Community = (props) => {
           }}
           onClick={handleCommunityClick}
           action={
-            props.username === community.creator && (
+            (isModerator || props.role === "admin") && (
               <>
                 <IconButton aria-label="settings" onClick={handleMenuOpen}>
                   <MoreVertIcon sx={{ color: "white" }} />
@@ -169,11 +173,10 @@ const Community = (props) => {
             )
           }
           title={
-            <Typography variant="h5" sx={{ fontWeight: 600 }} >
-                {community.title.length >= maxDisplayedTitleLength
-                  ? community.title.substring(0, maxDisplayedTitleLength) +
-                    "..."
-                  : community.title}
+            <Typography variant="h5" sx={{ fontWeight: 600 }}>
+              {community.title.length >= maxDisplayedTitleLength
+                ? community.title.substring(0, maxDisplayedTitleLength) + "..."
+                : community.title}
             </Typography>
           }
           subheader={
@@ -248,6 +251,8 @@ Community.propTypes = {
 
 const mapStateToProps = (state) => ({
   username: state.auth.user.username,
+  role: state.auth.user.role,
+  communities: state.communities.communities,
 });
 
 const mapActionsToProps = {

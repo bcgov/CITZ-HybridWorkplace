@@ -99,6 +99,7 @@ router.get("/:title", async (req, res, next) => {
           lastName: 1,
           avatar: 1,
           isModerator: 1,
+          online: 1,
         },
       },
     ]);

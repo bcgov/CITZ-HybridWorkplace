@@ -47,8 +47,6 @@ const Post = require("../models/post.model");
  *          schema:
  *            type: string
  *      responses:
- *        '404':
- *          description: No results found.
  *        '200':
  *          description: Success.
  *        '400':
@@ -149,17 +147,18 @@ router.get("/:query", async (req, res, next) => {
           _id: 1,
           title: 1,
           message: 1,
+          community: 1,
           creatorName: 1,
           creatorUsername: 1,
           createdOn: 1,
           commentCount: 1,
+          availableTags: 1,
+          tags: 1,
+          community: 1,
         },
       },
       { $sort: { _id: -1 } },
     ]);
-
-    if (users.length === 0 && communities.length === 0 && posts.length === 0)
-      throw new ResponseError(404, "No results found.");
 
     let results = filterAuthor ? { posts } : { users, communities, posts };
     if (sortCommunities) results = { communities };

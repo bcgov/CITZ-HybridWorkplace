@@ -38,12 +38,12 @@ const InputRuleList = (props) => {
   };
 
   return (
-    <Box sx={{ maxHeight: "600px", overflowY: "auto" }}>
+    <Box sx={{ maxHeight: "50vh", overflowY: "auto" }}>
       <Stack alignItems="flex-start" spacing={1}>
         <Grid container>
           {props.rules &&
             rules.map((rule, index) => (
-              <Grid item xs={11} key={rule + index}>
+              <Grid item xs={12} key={rule + index}>
                 <Rule
                   rule={rule.rule}
                   description={rule.description}

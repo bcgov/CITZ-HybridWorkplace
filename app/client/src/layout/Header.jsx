@@ -20,7 +20,7 @@
  * @module
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled, alpha } from "@mui/material/styles";
 import {
@@ -51,7 +51,7 @@ import "./header.css";
 import BCLogo from "./icons/BCLogo.svg";
 import { connect } from "react-redux";
 import { useTheme } from "@emotion/react";
-
+import { search } from "../redux/ducks/searchDuck";
 import { getUser } from "../redux/ducks/userDuck";
 import AvatarIcon from "../components/AvatarIcon";
 
@@ -113,11 +113,10 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 const menuId = "account-avatar";
-// props: {darkMode, setDarkMode}
-// <SideMenu darkMode={darkMode} setDarkMode={setDarkMode}/>
+
 const Header = (props) => {
   const theme = useTheme();
-  const [menuOpen, setMenuOpen] = React.useState({ right: false });
+  const [menuOpen, setMenuOpen] = useState({ right: false });
 
   const navigate = useNavigate();
 
@@ -168,6 +167,9 @@ const Header = (props) => {
       width: "100%",
       [theme.breakpoints.up("md")]: {
         width: "20ch",
+        "&:focus": {
+          width: "30ch",
+        },
       },
     },
   }));
@@ -252,6 +254,13 @@ const Header = (props) => {
     ? `${props.user.firstName?.charAt(0)}${props.user.lastName?.charAt(0)}`
     : props.user.firstName?.charAt(0);
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    let search = e.target.elements.searchBar.value;
+    search = search.trim();
+    if (!search) return;
+    navigate(`/search?query=${search}`);
+  };
   return (
     <AppBar
       sx={{
@@ -298,10 +307,14 @@ const Header = (props) => {
               <SearchIconWrapper>
                 <SearchIcon />
               </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ "aria-label": "search" }}
-              />
+              <form onSubmit={handleSearch}>
+                <StyledInputBase
+                  placeholder="Search…"
+                  inputProps={{ "aria-label": "search" }}
+                  id="searchBar"
+                  name="searchBar"
+                />
+              </form>
             </Search>
             <Box
               sx={{
@@ -363,8 +376,9 @@ const Header = (props) => {
 const mapStateToProps = (state) => ({
   user: state.self.user,
   auth: state.auth,
+  searchData: state.search,
 });
 
-const mapDispatchToProps = { getUser };
+const mapDispatchToProps = { getUser, search };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

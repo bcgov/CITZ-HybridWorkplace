@@ -45,6 +45,8 @@
  *          minimum: 8
  *        role:
  *          type: string
+ *        online:
+ *          type: boolean
  *        postCount:
  *          type: number
  *          description: Number of posts user has created.
@@ -133,6 +135,7 @@ const User = new mongoose.Schema(
     password: { type: String },
     refreshToken: { type: String },
     role: { type: String },
+    online: { type: Boolean },
     postCount: { type: Number },
     firstName: { type: String },
     lastName: { type: String },
