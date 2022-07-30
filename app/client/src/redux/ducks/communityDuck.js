@@ -86,7 +86,6 @@ export const getCommunity = (title) => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
-    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -119,7 +118,6 @@ export const getCommunities = () => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
-    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -133,7 +131,7 @@ export const getUsersCommunities = () => async (dispatch, getState) => {
     const token = authState.accessToken;
     if (!token) throw new Error(noTokenText);
 
-    const response = await hwp_axios.get(`/api/community?orderBy=lastJoined`, {
+    const response = await hwp_axios.get(`/api/community?orderBy=engagement`, {
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -151,7 +149,6 @@ export const getUsersCommunities = () => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
-    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -188,7 +185,6 @@ export const getCommunityPosts = (title) => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
-    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
@@ -218,7 +214,6 @@ export const getCommunityMembers = (title) => async (dispatch, getState) => {
     });
   } catch (err) {
     console.error(err);
-    createError(err.response.data)(dispatch);
     successful = false;
   } finally {
     return successful;
