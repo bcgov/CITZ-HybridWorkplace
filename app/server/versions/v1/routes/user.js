@@ -588,4 +588,73 @@ router.delete("/:username", async (req, res, next) => {
   }
 });
 
+// Get user data for admin data grid
+router.get("/dataGrid", async (req, res, next) => {
+  try {
+    req.log.addAction("Finding user.");
+    const { user } = await findSingleDocuments({
+      user: req.user.username,
+    });
+    req.log.addAction("User found.");
+
+    req.log.addAction("Checking user is admin.");
+    if (user.role !== "admin") throw new ResponseError(403, "Must be admin.");
+    req.log.addAction("User is admin.");
+
+    req.log.addAction("Finding users.");
+    const rows = await User.aggregate([
+      {
+        $project: {
+          _id: 1,
+          username: 1,
+          firstName: 1,
+          lastName: 1,
+          email: 1,
+          registeredOn: 1,
+        },
+      },
+    ]);
+
+    const columns = [
+      {
+        field: "_id",
+        headerName: "User ID",
+        width: 50,
+      },
+      {
+        field: "username",
+        headerName: "Username",
+        width: 100,
+      },
+      {
+        field: "firstName",
+        headerName: "First Name",
+        width: 100,
+      },
+      {
+        field: "lastName",
+        headerName: "Last Name",
+        width: 100,
+      },
+      {
+        field: "email",
+        headerName: "Email",
+        width: 100,
+      },
+      {
+        field: "registeredOn",
+        headerName: "Registered On",
+        width: 100,
+      },
+    ];
+
+    req.log.setResponse(200, "Success");
+    return res.status(200).json({ columns, rows });
+  } catch (err) {
+    res.locals.err = err;
+  } finally {
+    next();
+  }
+});
+
 module.exports = router;
