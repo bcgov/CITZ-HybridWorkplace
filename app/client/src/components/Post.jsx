@@ -332,8 +332,26 @@ const Post = (props) => {
             </Grid>
           }
           subheader={
-            <Stack direction="row" spacing={0.5}>
+            <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
               <Typography color="white">{"by "}</Typography>
+              {props.post.creatorIsModerator &&
+                props.post.creatorIsModerator === true && (
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Typography
+                      sx={{
+                        fontWeight: 600,
+                        fontSize: "0.8em",
+                        border: "solid 1px white",
+                        borderRadius: "10px",
+                        p: 0.5,
+                        mx: 0.5,
+                        color: "white",
+                      }}
+                    >
+                      Moderator
+                    </Typography>
+                  </Box>
+                )}
               <Typography
                 sx={{
                   display: "inline-block",

@@ -190,6 +190,22 @@ export const Comment = (props) => {
                       >
                         <VisibilityOffIcon />
                       </Tooltip>
+                  )}
+                  {props.comment.creatorIsModerator &&
+                    props.comment.creatorIsModerator === true && (
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Typography
+                          sx={{
+                            fontWeight: 600,
+                            border: "solid 1px",
+                            borderRadius: "10px",
+                            p: 0.5,
+                            mr: 0.5,
+                          }}
+                        >
+                          Moderator
+                        </Typography>
+                      </Box>
                     )}
                   <Typography
                     variant="h5"
