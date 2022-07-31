@@ -782,4 +782,97 @@ router.delete("/:id", async (req, res, next) => {
   }
 });
 
+// Get post data for admin data grid
+router.get("/dataGrid", async (req, res, next) => {
+  try {
+    req.log.addAction("Finding user.");
+    const { user } = await findSingleDocuments({
+      user: req.user.username,
+    });
+    req.log.addAction("User found.");
+
+    req.log.addAction("Checking user is admin.");
+    if (user.role !== "admin") throw new ResponseError(403, "Must be admin.");
+    req.log.addAction("User is admin.");
+
+    req.log.addAction("Finding posts.");
+    const rows = await Post.aggregate([
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          message: 1,
+          creatorUsername: 1,
+          community: 1,
+          createdOn: 1,
+          commentCount: 1,
+          pinned: 1,
+          removed: 1,
+          hidden: 1,
+        },
+      },
+    ]);
+
+    const columns = [
+      {
+        field: "_id",
+        headerName: "Post ID",
+        width: 50,
+      },
+      {
+        field: "title",
+        headerName: "Title",
+        width: 100,
+      },
+      {
+        field: "message",
+        headerName: "Message",
+        width: 100,
+      },
+      {
+        field: "creatorUsername",
+        headerName: "Creator Username",
+        width: 100,
+      },
+      {
+        field: "community",
+        headerName: "Community",
+        width: 100,
+      },
+      {
+        field: "createdOn",
+        headerName: "Created On",
+        width: 100,
+      },
+      {
+        field: "commentCount",
+        headerName: "Comment Count",
+        width: 30,
+      },
+      {
+        field: "pinned",
+        headerName: "Pinned",
+        width: 30,
+      },
+      {
+        field: "removed",
+        headerName: "Removed",
+        width: 30,
+      },
+      {
+        field: "hidden",
+        headerName: "Hidden",
+        width: 30,
+      },
+    ];
+
+    req.log.setResponse(200, "Success");
+    return res.status(200).json({ columns, rows });
+  } catch (err) {
+    res.locals.err = err;
+  } finally {
+    next();
+  }
+});
+
 module.exports = router;
