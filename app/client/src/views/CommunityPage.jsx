@@ -179,14 +179,16 @@ const CommunityPage = (props) => {
                     </IconButton>
                   </Tooltip>
                 )}
-                <IconButton onClick={() => props.openAddPostModal()}>
-                  <AddIcon
-                    sx={{
-                      color: "white",
-                      pl: !(userIsModerator || props.role === "admin") && 4,
-                    }}
-                  />
-                </IconButton>
+                <Tooltip title={<Typography>Add New Post</Typography>}>
+                  <IconButton onClick={() => props.openAddPostModal()}>
+                    <AddIcon
+                      sx={{
+                        color: "white",
+                        pl: !(userIsModerator || props.role === "admin") && 4,
+                      }}
+                    />
+                  </IconButton>
+                </Tooltip>
               </Grid>
             </Grid>
 
@@ -249,13 +251,15 @@ const CommunityPage = (props) => {
                   >
                     Community
                   </Typography>
-                  <Button
-                    variant="text"
-                    color="inherit"
-                    onClick={handleSettingsClick}
-                  >
-                    <SettingsTwoToneIcon sx={{ color: "white", pl: 3 }} />
-                  </Button>
+                  <Tooltip title={<Typography>Edit Community</Typography>}>
+                    <Button
+                      variant="text"
+                      color="inherit"
+                      onClick={handleSettingsClick}
+                    >
+                      <SettingsTwoToneIcon sx={{ color: "white", pl: 3 }} />
+                    </Button>
+                  </Tooltip>
                 </>
               ) : (
                 <Typography

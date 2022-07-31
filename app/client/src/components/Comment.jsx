@@ -147,25 +147,41 @@ export const Comment = (props) => {
             }}
           >
             <Stack alignItems="flex-end" sx={{ alignItems: "center" }}>
-              <IconButton
-                aria-label="upvote"
-                sx={{ padding: 0 }}
-                onClick={handleUpVote}
-                color={props.comment.userVote === "up" ? "success" : "default"}
+              <Tooltip
+                title={<Typography>Upvote</Typography>}
+                placement="left"
+                arrow
               >
-                <UpIcon fontSize="large" />
-              </IconButton>
+                <IconButton
+                  aria-label="upvote"
+                  sx={{ padding: 0 }}
+                  onClick={handleUpVote}
+                  color={
+                    props.comment.userVote === "up" ? "success" : "default"
+                  }
+                >
+                  <UpIcon fontSize="large" />
+                </IconButton>
+              </Tooltip>
               <Typography fontSize="1.5em" sx={{ textAlign: "center" }}>
                 {props.comment.votes}
               </Typography>
-              <IconButton
-                aria-label="downvote"
-                sx={{ padding: 0 }}
-                onClick={handleDownVote}
-                color={props.comment.userVote === "down" ? "error" : "default"}
+              <Tooltip
+                title={<Typography>Downvote</Typography>}
+                placement="left"
+                arrow
               >
-                <DownIcon fontSize="large" />
-              </IconButton>
+                <IconButton
+                  aria-label="downvote"
+                  sx={{ padding: 0 }}
+                  onClick={handleDownVote}
+                  color={
+                    props.comment.userVote === "down" ? "error" : "default"
+                  }
+                >
+                  <DownIcon fontSize="large" />
+                </IconButton>
+              </Tooltip>
             </Stack>
           </Box>
           <Card
@@ -190,7 +206,7 @@ export const Comment = (props) => {
                       >
                         <VisibilityOffIcon />
                       </Tooltip>
-                  )}
+                    )}
                   {props.comment.creatorIsModerator &&
                     props.comment.creatorIsModerator === true && (
                       <Box sx={{ display: "flex", alignItems: "center" }}>
