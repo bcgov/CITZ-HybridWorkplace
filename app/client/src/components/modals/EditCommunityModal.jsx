@@ -39,7 +39,7 @@ import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import MarkDownEditor from "../MarkDownEditor";
 import InputRuleList from "../InputRuleList";
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 const EditCommunityModal = (props) => {
   const [title, setTitle] = useState(props.community.title ?? "");
@@ -116,7 +116,7 @@ const EditCommunityModal = (props) => {
   const page1 = () => {
     return (
       <>
-        <Box sx={{ height: "40vh" }}>
+        <Box sx={{ height: "65vh" }}>
           <Stack spacing={0.5} sx={{ mb: 4 }}>
             <InputLabel htmlFor="create-community-title">Title</InputLabel>
             <TextField
@@ -141,7 +141,7 @@ const EditCommunityModal = (props) => {
             onChange={setDescription}
           />
         </Box>
-                <Stack
+        <Stack
           justifyContent="space-between"
           alignItems="center"
           direction="row"
@@ -171,7 +171,7 @@ const EditCommunityModal = (props) => {
   const page2 = () => {
     return (
       <>
-        <Box sx={{ height: "40vh" }}>
+        <Box sx={{ height: "65vh" }}>
           <Stack sx={{ mb: 2 }}>
             <Typography variant="h6" sx={{ my: 1 }}>
               Community Rules
@@ -205,7 +205,7 @@ const EditCommunityModal = (props) => {
   const page3 = () => {
     return (
       <>
-        <Box sx={{ height: "40vh" }}>
+        <Box sx={{ height: "65vh" }}>
           <Typography variant="h6" sx={{ my: 1 }}>
             Community Resources
           </Typography>
