@@ -68,7 +68,7 @@ import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 const Post = (props) => {
   useEffect(() => {
     (async () => {
-      await props.getCommunity(props.post.community);
+      props.isPostPage && await props.getCommunity(props.post.community);
     })();
   }, []);
   const maxTitleLength = 40;

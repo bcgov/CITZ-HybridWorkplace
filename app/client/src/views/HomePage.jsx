@@ -89,36 +89,38 @@ const HomePage = (props) => {
               </Grid>
             </Grid>
           </Box>
-          {props.posts.length > 0 ? (
-            <PostsList posts={props.posts} />
-          ) : (
-            <Box sx={{ mt: 5 }}>
-              <Typography
-                variant="h5"
-                textAlign="center"
-                sx={{ fontWeight: 600, pb: 3 }}
-              >
-                No posts to display.
-              </Typography>
-              <Typography
-                variant="h6"
-                textAlign="center"
-                sx={{ fontWeight: 600 }}
-              >
-                Press the "+" icon to create a post in a community you are a
-                member of.
-              </Typography>
-              <Typography
-                variant="h6"
-                textAlign="center"
-                sx={{ fontWeight: 600 }}
-              >
-                <Link href="/communities">
-                  Click here to see communities you can join.
-                </Link>
-              </Typography>
-            </Box>
-          )}
+          <Box sx={{ backgroundColor: "backgroundSecondary.main", padding: 1.25, borderRadius: "7.5px"}}>
+            {props.posts.length > 0 ? (
+              <PostsList posts={props.posts} />
+            ) : (
+              <Box sx={{ mt: 5, mb: 5 }}>
+                <Typography
+                  variant="h5"
+                  textAlign="center"
+                  sx={{ fontWeight: 600, pb: 3 }}
+                >
+                  No posts to display.
+                </Typography>
+                <Typography
+                  variant="h6"
+                  textAlign="center"
+                  sx={{ fontWeight: 600 }}
+                >
+                  Press the "+" icon to create a post in a community you are a
+                  member of.
+                </Typography>
+                <Typography
+                  variant="h6"
+                  textAlign="center"
+                  sx={{ fontWeight: 600 }}
+                >
+                  <Link href="/communities">
+                    Click here to see communities you can join.
+                  </Link>
+                </Typography>
+              </Box>
+            )}
+          </Box>
         </Grid>
         <Grid item xs={4}>
           <Box
