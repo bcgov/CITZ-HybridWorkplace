@@ -79,6 +79,10 @@
  *                description: Users that have tagged the post.
  *                items:
  *                  - $ref: '#/components/schemas/User'
+ *        flagCount:
+ *          type: number
+ *        latestFlagTimestamp:
+ *          type: string
  *        flags:
  *          type: array
  *          description: Flags set by users to bring attention to moderators.
@@ -138,6 +142,8 @@ const Post = new mongoose.Schema(
         ],
       },
     ],
+    flagCount: { type: Number },
+    latestFlagTimestamp: { type: String },
   },
   { collection: "post" }
 );

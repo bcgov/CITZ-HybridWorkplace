@@ -21,6 +21,7 @@
  */
 
 const express = require("express");
+const moment = require("moment");
 const ResponseError = require("../../classes/responseError");
 
 const findSingleDocuments = require("../../functions/findSingleDocuments");
@@ -166,6 +167,19 @@ router.post("/:title", async (req, res, next) => {
     }
     req.log.addAction("Community flag set.");
 
+    req.log.addAction(
+      "Incrementing flag count and setting latestFlagTimestamp."
+    );
+    await Community.updateOne(
+      { title: community.title },
+      {
+        $inc: { flagCount: 1 },
+        $set: {
+          latestFlagTimestamp: moment().format("MMMM Do YYYY, h:mm:ss a"),
+        },
+      }
+    );
+
     req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
@@ -248,6 +262,12 @@ router.delete("/:title", async (req, res, next) => {
       { $pull: { "flags.$.flaggedBy": user.username } }
     );
     req.log.addAction("User removed from flaggedBy.");
+
+    req.log.addAction("Decrementing flag count.");
+    await Community.updateOne(
+      { title: community.title },
+      { $inc: { flagCount: -1 } }
+    );
 
     req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");

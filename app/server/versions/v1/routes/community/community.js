@@ -161,6 +161,7 @@ router.post("/", async (req, res, next) => {
       creatorName: getFullName(user) || user.username,
       creatorUsername: user.username,
       memberCount: 1,
+      flagCount: 0,
       postCount: 0,
       removed: false,
       members: [user.id],
@@ -489,6 +490,7 @@ router.patch("/:title", async (req, res, next) => {
             "latestActivity",
             "moderators",
             "removed",
+            "flagCount",
           ]);
     req.log.addAction("Edit query has been cleaned.");
     req.log.addPatchQuery(query);
@@ -653,93 +655,6 @@ router.delete("/:title", async (req, res, next) => {
 
     req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
-  } catch (err) {
-    res.locals.err = err;
-  } finally {
-    next();
-  }
-});
-
-// Get community data for admin data grid
-router.get("/dataGrid", async (req, res, next) => {
-  try {
-    req.log.addAction("Finding user.");
-    const { user } = await findSingleDocuments({
-      user: req.user.username,
-    });
-    req.log.addAction("User found.");
-
-    req.log.addAction("Checking user is admin.");
-    if (user.role !== "admin") throw new ResponseError(403, "Must be admin.");
-    req.log.addAction("User is admin.");
-
-    req.log.addAction("Finding communities.");
-    const rows = await Community.aggregate([
-      {
-        $project: {
-          _id: 1,
-          title: 1,
-          description: 1,
-          creatorUsername: 1,
-          createdOn: 1,
-          latestActivity: 1,
-          removed: 1,
-          memberCount: 1,
-          postCount: 1,
-        },
-      },
-    ]);
-
-    const columns = [
-      {
-        field: "_id",
-        headerName: "ID",
-        width: 50,
-      },
-      {
-        field: "title",
-        headerName: "Title",
-        width: 100,
-      },
-      {
-        field: "description",
-        headerName: "Description",
-        width: 100,
-      },
-      {
-        field: "creatorUsername",
-        headerName: "Creator Username",
-        width: 100,
-      },
-      {
-        field: "createdOn",
-        headerName: "Created On",
-        width: 100,
-      },
-      {
-        field: "latestActivity",
-        headerName: "Latest Activity",
-        width: 100,
-      },
-      {
-        field: "removed",
-        headerName: "Removed",
-        width: 30,
-      },
-      {
-        field: "memberCount",
-        headerName: "Member Count",
-        width: 30,
-      },
-      {
-        field: "postCount",
-        headerName: "Post Count",
-        width: 30,
-      },
-    ];
-
-    req.log.setResponse(200, "Success");
-    return res.status(200).json({ columns, rows });
   } catch (err) {
     res.locals.err = err;
   } finally {
