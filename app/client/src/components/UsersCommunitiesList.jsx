@@ -111,7 +111,6 @@ const UsersCommunitiesList = (props) => {
                     >
                       <IconButton
                         disableRipple
-                        onClick={handleCommunityClick}
                         sx={{ pr: 0 }}
                       >
                         <FeedIcon fontSize="small" />

@@ -33,7 +33,7 @@ const PostsList = (props) => {
   return (
     <div>
       {props.posts?.map((post) => (
-        <Post post={post} key={post._id} />
+        <Post post={post} key={post._id} showIsFlagged={props.showIsFlagged} showIsPinned={props.showIsPinned}/>
       ))}
       <FlagPostModal />
       <DeletePostModal />

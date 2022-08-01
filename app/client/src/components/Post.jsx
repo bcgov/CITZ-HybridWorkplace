@@ -71,7 +71,7 @@ const Post = (props) => {
       await props.getCommunity(props.post.community);
     })();
   }, []);
-  const maxTitleLength = 58;
+  const maxTitleLength = 40;
   const maxCommunityTitleLength = 16;
   const maxMessageLines = 5;
 
@@ -195,124 +195,7 @@ const Post = (props) => {
           }}
           action={
             <Box>
-              <IconButton aria-label="settings" onClick={handleMenuOpen}>
-                <MoreVertIcon sx={{ color: "white" }} />
-              </IconButton>
-              <Menu
-                open={!!anchorEl}
-                onClose={handleMenuClose}
-                anchorEl={anchorEl}
-              >
-                <MenuList>
-                  <MenuItem onClick={handleFlagPostClick}>
-                    <ListItemIcon>
-                      <FlagTwoToneIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText>Flag</ListItemText>
-                  </MenuItem>
-                  {(props.userId === post.creator ||
-                    props.role === "admin") && (
-                    <MenuItem onClick={handleDeletePostClick}>
-                      <ListItemIcon>
-                        <DeleteForeverTwoToneIcon fontSize="small" />
-                      </ListItemIcon>
-                      <ListItemText>Delete</ListItemText>
-                    </MenuItem>
-                  )}
-                  {(props.userId === post.creator ||
-                    isModerator ||
-                    props.role === "admin") && (
-                    <MenuItem onClick={handleEditPostClick}>
-                      <ListItemIcon>
-                        <EditTwoToneIcon fontSize="small" />
-                      </ListItemIcon>
-                      <ListItemText>Edit</ListItemText>
-                    </MenuItem>
-                  )}
-                  {(isModerator || props.role === "admin") && (
-                    <Box>
-                      <MenuItem onClick={() => editPost("hidden")}>
-                        <ListItemIcon>
-                          <VisibilityOffIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText>
-                          {props.post.hidden ? "Show" : "Hide"}
-                        </ListItemText>
-                      </MenuItem>
-                      <MenuItem onClick={() => editPost("pinned")}>
-                        <ListItemIcon>
-                          <PushPinIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText>
-                          {props.post.pinned ? "Unpin" : "Pin"}
-                        </ListItemText>
-                      </MenuItem>
-                    </Box>
-                  )}
-                </MenuList>
-              </Menu>
-            </Box>
-          }
-          title={
-            <Grid container spacing={2}>
-              <Grid item xs={9}>
-                <Stack
-                  direction="row"
-                  spacing={0.5}
-                  sx={{ alignItems: "center" }}
-                >
-                  {props.post.removed && (
-                    <Tooltip
-                      title={<Typography>Removed Post</Typography>}
-                      arrow
-                    >
-                      <RemoveCircleIcon />
-                    </Tooltip>
-                  )}
-                  {props.post.hidden && (
-                    <Tooltip title={<Typography>Hidden Post</Typography>} arrow>
-                      <VisibilityOffIcon />
-                    </Tooltip>
-                  )}
-                  {props.post.pinned && (
-                    <Tooltip title={<Typography>Pinned Post</Typography>} arrow>
-                      <PushPinIcon />
-                    </Tooltip>
-                  )}
-                  {props.post.flags?.length > 0 &&
-                    (isModerator || props.role === "admin") && (
-                      <Tooltip
-                        title={<Typography>Flagged Post</Typography>}
-                        arrow
-                      >
-                        <IconButton
-                          onClick={handleFlagIconClick}
-                          sx={{ padding: 0 }}
-                        >
-                          <FlagRounded
-                            sx={{
-                              color: "#FF4500",
-                            }}
-                          />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-                  <Typography
-                    variant="h6"
-                    onClick={handlePostClick}
-                    sx={{
-                      cursor: props.isPostPage || "pointer",
-                    }}
-                  >
-                    <b>
-                      {post.title.length >= maxTitleLength
-                        ? post.title.substring(0, maxTitleLength) + "..."
-                        : post.title}
-                    </b>
-                  </Typography>
-                </Stack>
-              </Grid>
-              <Grid item xs={3}>
+              <Stack direction="row" alignItems="center">
                 <Typography
                   onClick={() => handleCommunityClick(post.community)}
                   sx={{
@@ -328,8 +211,107 @@ const Post = (props) => {
                       "..."
                     : post.community}
                 </Typography>
-              </Grid>
-            </Grid>
+                <IconButton aria-label="settings" onClick={handleMenuOpen}>
+                  <MoreVertIcon sx={{ color: "white" }} />
+                </IconButton>
+                <Menu
+                  open={!!anchorEl}
+                  onClose={handleMenuClose}
+                  anchorEl={anchorEl}
+                >
+                  <MenuList>
+                    <MenuItem onClick={handleFlagPostClick}>
+                      <ListItemIcon>
+                        <FlagTwoToneIcon fontSize="small" />
+                      </ListItemIcon>
+                      <ListItemText>Flag</ListItemText>
+                    </MenuItem>
+                    {(props.userId === post.creator || isModerator) && (
+                      <MenuItem onClick={handleDeletePostClick}>
+                        <ListItemIcon>
+                          <DeleteForeverTwoToneIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Delete</ListItemText>
+                      </MenuItem>
+                    )}
+                    {props.userId === post.creator && (
+                      <MenuItem onClick={handleEditPostClick}>
+                        <ListItemIcon>
+                          <EditTwoToneIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Edit</ListItemText>
+                      </MenuItem>
+                    )}
+                    {isModerator && (
+                      <Box>
+                        <MenuItem onClick={() => editPost("hidden")}>
+                          <ListItemIcon>
+                            <VisibilityOffIcon fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText>
+                            {props.post.hidden ? "Show" : "Hide"}
+                          </ListItemText>
+                        </MenuItem>
+                        <MenuItem onClick={() => editPost("pinned")}>
+                          <ListItemIcon>
+                            <PushPinIcon fontSize="small" />
+                          </ListItemIcon>
+                          <ListItemText>
+                            {props.post.pinned ? "Unpin" : "Pin"}
+                          </ListItemText>
+                        </MenuItem>
+                      </Box>
+                    )}
+                  </MenuList>
+                </Menu>
+              </Stack>
+            </Box>
+          }
+          title={
+            <Stack direction="row" spacing={0.5}>
+              {props.post.removed && (
+                <Tooltip title={<Typography>Removed Post</Typography>} arrow>
+                  <RemoveCircleIcon />
+                </Tooltip>
+              )}
+              {props.post.hidden && (
+                <Tooltip title={<Typography>Hidden Post</Typography>} arrow>
+                  <VisibilityOffIcon />
+                </Tooltip>
+              )}
+              {props.post.pinned && props.showIsPinned && (
+                <Tooltip title={<Typography>Pinned Post</Typography>} arrow>
+                  <PushPinIcon />
+                </Tooltip>
+              )}
+              {props.showIsFlagged && props.post.flags?.length > 0 &&
+                isModerator &&
+                 (
+                  <Tooltip title={<Typography>Flagged Post</Typography>} arrow>
+                    <IconButton
+                      onClick={handleFlagIconClick}
+                      sx={{ padding: 0 }}
+                    >
+                      <FlagRounded />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              <Typography
+                variant="h6"
+                onClick={handlePostClick}
+                sx={{
+                  cursor: props.isPostPage || "pointer",
+                  wordBreak: "break-word",
+                  maxWidth: "95%",
+                  fontWeight: "bold",
+                }}
+                noWrap={!props.isPostPage}
+              >
+                {!props.isPostPage && post.title.length >= maxTitleLength
+                  ? post.title.substring(0, maxTitleLength) + "..."
+                  : post.title}
+              </Typography>
+            </Stack>
           }
           subheader={
             <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>

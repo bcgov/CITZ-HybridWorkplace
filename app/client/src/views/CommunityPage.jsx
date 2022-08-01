@@ -200,9 +200,11 @@ const CommunityPage = (props) => {
             showFlaggedPosts === true ? (
               <PostsList
                 posts={props.posts.filter((post) => post.flags.length > 0)}
+                showIsFlagged
+                showIsPinned
               />
             ) : (
-              <PostsList posts={props.posts} />
+              <PostsList posts={props.posts} showIsFlagged showIsPinned />
             )
           ) : (
             <Box sx={{ mt: 5 }}>
