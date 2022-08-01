@@ -340,9 +340,22 @@ router.get("/:id", async (req, res, next) => {
       {
         post: req.params.id,
       },
-      req.user.role === "admin"
+      req.user.role === "admin",
+      true
     );
     req.log.addAction("Post found.");
+
+    const postCommunity = await Community.findOne({ title: post.community });
+
+    req.log.addAction("Getting list of moderator usernames.");
+    const modUsernames = [];
+    Object.keys(postCommunity.moderators).forEach((mod) => {
+      modUsernames.push(postCommunity.moderators[mod].username);
+    });
+
+    req.log.addAction("Checking if creatorIsModerator on post.");
+    if (modUsernames.includes(post.creatorUsername))
+      post.creatorIsModerator = true;
 
     req.log.setResponse(200, "Success");
     return res.status(200).json(post);
@@ -438,7 +451,7 @@ router.get("/community/:title", async (req, res, next) => {
 
       posts = await Post.find(matchQuery, "", {
         sort: { pinned: -1, _id: -1 },
-      }).exec();
+      }).lean();
     } else {
       // Return all community posts
       req.log.addAction("Finding posts in community.");
@@ -455,8 +468,20 @@ router.get("/community/:title", async (req, res, next) => {
 
       posts = await Post.find(matchQuery, "", {
         sort: { pinned: -1, _id: -1 },
-      }).exec();
+      }).lean();
     }
+
+    req.log.addAction("Getting list of moderator usernames.");
+    const modUsernames = [];
+    Object.keys(community.moderators).forEach((mod) => {
+      modUsernames.push(community.moderators[mod].username);
+    });
+
+    req.log.addAction("Assigning creatorIsModerator in posts.");
+    Object.keys(posts).forEach((post) => {
+      if (modUsernames.includes(posts[post].creatorUsername))
+        posts[post].creatorIsModerator = true;
+    });
 
     if (!posts) throw new ResponseError(404, "Posts not found.");
     req.log.addAction("Posts found.");

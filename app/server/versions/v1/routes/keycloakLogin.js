@@ -31,6 +31,9 @@ const generateRefreshToken = require("../functions/auth/generateRefreshToken");
 const User = require("../models/user.model");
 const Community = require("../models/community.model");
 
+const defineOfflineStatusJob = require("../jobs/defineOfflineStatusJob");
+const { agenda } = require("../../../db");
+
 const router = express.Router();
 
 const frontendURI =
@@ -140,6 +143,13 @@ router.get("/", async (req, res, next) => {
       secure: true,
       sameSite: "None",
     });
+
+    // Define job for offline status
+    await defineOfflineStatusJob(agenda, user.id);
+    // Schedule offline status
+    await agenda.schedule("in 5 minutes", `offlineStatus-${user.id}`);
+    // Set online status
+    await User.updateOne({ _id: user.id }, { online: true });
 
     req.log.setResponse(201, "Success");
     return res.redirect(frontendURI);

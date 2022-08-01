@@ -23,6 +23,7 @@ const healthCheckRouter = require("./healthCheck");
 const tokenRouter = require("./token");
 
 const searchRouter = require("./search");
+const onlineStatusRouter = require("./onlineStatus");
 
 module.exports = {
   communityRouter,
@@ -45,4 +46,5 @@ module.exports = {
   healthCheckRouter,
   tokenRouter,
   searchRouter,
+  onlineStatusRouter,
 };

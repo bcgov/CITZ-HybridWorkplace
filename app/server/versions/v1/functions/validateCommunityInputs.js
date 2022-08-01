@@ -124,7 +124,7 @@ const validateCommunityInputs = (reqBody, options, patch) => {
             `Tags (${reqBody.tags[tagObject].tag}) must have a length of ${tagMinLength}-${tagMaxLength}`
           );
 
-        if (reqBody.tags[tagObject].tag.contains("#"))
+        if (reqBody.tags[tagObject].tag.includes("#"))
           throw new ResponseError(
             403,
             `Tag (${reqBody.tags[tagObject].tag}) must not contain the character '#'.`
