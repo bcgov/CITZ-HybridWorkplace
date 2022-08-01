@@ -65,6 +65,7 @@ import SettingsModal from "../components/modals/SettingsModal";
 import EditPostModal from "../components/modals/EditPostModal";
 import FlagPostModal from "../components/modals/FlagPostModal";
 import DeletePostModal from "../components/modals/DeletePostModal";
+import Croutons from "../components/Croutons";
 
 const ProfilePage = (props) => {
   let { username } = useParams();
@@ -123,6 +124,7 @@ const ProfilePage = (props) => {
         pb: 20,
       }}
     >
+      <Croutons profile={true} firstCrumb={`${username}`} />
       <Grid
         container
         justifySelf="center"

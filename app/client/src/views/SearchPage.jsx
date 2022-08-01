@@ -15,6 +15,7 @@ import { connect } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import AvatarIcon from "../components/AvatarIcon";
 import Community from "../components/Community";
+import Croutons from "../components/Croutons";
 import Post from "../components/Post";
 import { search } from "../redux/ducks/searchDuck";
 import LoadingPage from "./LoadingPage";
@@ -71,6 +72,7 @@ export const SearchPage = (props) => {
   ) : (
     <TabContext value={tabValue}>
       <Box>
+        <Croutons firstCrumb="Search Results" />
         <Stack spacing={2}>
           <Typography variant="h4">Results for "{query}"</Typography>
           <Typography variant="body1">

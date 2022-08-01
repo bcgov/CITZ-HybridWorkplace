@@ -28,10 +28,12 @@ import { openAddCommunityModal } from "../redux/ducks/modalDuck";
 
 import { Button, Grid, Typography, Box, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import Croutons from "../components/Croutons";
 
 const CommunitiesPage = (props) => {
   return (
     <Box sx={{ pb: 20 }}>
+      <Croutons firstCrumb="Communities" />
       <Grid container spacing={2}>
         <Grid item xs={8}>
           <Box

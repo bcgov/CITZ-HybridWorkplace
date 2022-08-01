@@ -9,7 +9,28 @@ const Croutons = (props) => {
 
   return (
     <Box role="presentation" onClick={handleClick} mb={3}>
-      {props.secondCrumb ? (
+      {props.profile === true ? (
+        <Breadcrumbs>
+          <Link
+            variant="body2"
+            component="button"
+            underline="hover"
+            sx={{ display: "flex", alignItems: "center" }}
+            color="inherit"
+            onClick={() => navigate("/")}
+          >
+            <HomeRounded sx={{ mr: 0.5 }} fontSize="inherit" />
+            Home
+          </Link>
+          <Typography
+            sx={{ display: "flex", alignItems: "center" }}
+            color="text.primary"
+          >
+            <WebRounded sx={{ mr: 0.5 }} fontSize="inherit" />
+            {props.firstCrumb}
+          </Typography>
+        </Breadcrumbs>
+      ) : props.secondCrumb ? (
         <Breadcrumbs>
           <Link
             variant="body2"
