@@ -34,32 +34,32 @@ const userColumns = [
   {
     field: "id",
     headerName: "User ID",
-    width: 50,
+    width: 200,
   },
   {
     field: "username",
     headerName: "Username",
-    width: 100,
+    width: 200,
   },
   {
     field: "firstName",
     headerName: "First Name",
-    width: 100,
+    width: 200,
   },
   {
     field: "lastName",
     headerName: "Last Name",
-    width: 100,
+    width: 200,
   },
   {
     field: "email",
     headerName: "Email",
-    width: 100,
+    width: 200,
   },
   {
     field: "registeredOn",
     headerName: "Registered On",
-    width: 100,
+    width: 200,
   },
 ];
 
@@ -67,52 +67,52 @@ const communityColumns = [
   {
     field: "id",
     headerName: "ID",
-    width: 50,
+    width: 200,
   },
   {
     field: "flagCount",
     headerName: "Flags",
-    width: 30,
+    width: 80,
   },
   {
     field: "title",
     headerName: "Title",
-    width: 100,
+    width: 200,
   },
   {
     field: "description",
     headerName: "Description",
-    width: 100,
+    width: 200,
   },
   {
     field: "creatorUsername",
     headerName: "Creator Username",
-    width: 100,
+    width: 200,
   },
   {
     field: "createdOn",
     headerName: "Created On",
-    width: 100,
+    width: 200,
   },
   {
     field: "latestActivity",
     headerName: "Latest Activity",
-    width: 100,
+    width: 200,
   },
   {
     field: "removed",
     headerName: "Removed",
-    width: 30,
+    width: 80,
   },
   {
     field: "memberCount",
     headerName: "Member Count",
-    width: 30,
+    width: 80,
   },
   {
     field: "postCount",
     headerName: "Post Count",
-    width: 30,
+    width: 80,
   },
 ];
 
@@ -120,57 +120,57 @@ const postColumns = [
   {
     field: "id",
     headerName: "Post ID",
-    width: 50,
+    width: 200,
   },
   {
     field: "flagCount",
     headerName: "Flags",
-    width: 30,
+    width: 80,
   },
   {
     field: "title",
     headerName: "Title",
-    width: 100,
+    width: 200,
   },
   {
     field: "message",
     headerName: "Message",
-    width: 100,
+    width: 200,
   },
   {
     field: "creatorUsername",
     headerName: "Creator Username",
-    width: 100,
+    width: 200,
   },
   {
     field: "community",
     headerName: "Community",
-    width: 100,
+    width: 200,
   },
   {
     field: "createdOn",
     headerName: "Created On",
-    width: 100,
+    width: 200,
   },
   {
     field: "commentCount",
     headerName: "Comment Count",
-    width: 30,
+    width: 80,
   },
   {
     field: "pinned",
     headerName: "Pinned",
-    width: 30,
+    width: 80,
   },
   {
     field: "removed",
     headerName: "Removed",
-    width: 30,
+    width: 80,
   },
   {
     field: "hidden",
     headerName: "Hidden",
-    width: 30,
+    width: 80,
   },
 ];
 
@@ -178,57 +178,57 @@ const commentColumns = [
   {
     field: "id",
     headerName: "Comment ID",
-    width: 50,
+    width: 200,
   },
   {
     field: "flagCount",
     headerName: "Flags",
-    width: 30,
+    width: 80,
   },
   {
     field: "post",
     headerName: "Post ID",
-    width: 50,
+    width: 200,
   },
   {
     field: "message",
     headerName: "Message",
-    width: 100,
+    width: 200,
   },
   {
     field: "creatorUsername",
     headerName: "Creator Username",
-    width: 100,
+    width: 200,
   },
   {
     field: "community",
     headerName: "Community",
-    width: 100,
+    width: 200,
   },
   {
     field: "createdOn",
     headerName: "Created On",
-    width: 100,
+    width: 200,
   },
   {
     field: "replyTo",
     headerName: "Reply To",
-    width: 50,
+    width: 200,
   },
   {
     field: "hasReplies",
     headerName: "Has Replies",
-    width: 30,
+    width: 80,
   },
   {
     field: "removed",
     headerName: "Removed",
-    width: 30,
+    width: 80,
   },
   {
     field: "hidden",
     headerName: "Hidden",
-    width: 30,
+    width: 80,
   },
 ];
 
