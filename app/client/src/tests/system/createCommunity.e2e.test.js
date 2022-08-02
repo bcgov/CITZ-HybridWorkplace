@@ -26,17 +26,18 @@ describe("Given that user is logged in and on the homepage", () => {
       height: 768,
       deviceScaleFactor: 1,
     });
-    await page.goto("http://localhost:8080");
+    await page.goto(process.env.URL);
 
     user = new UserActions(idir, password, page);
     await user.login();
   });
 
   describe("When the user tries to create a community", () => {
-    const communityName = `matts amazing community - ${time}`;
+    const communityName = `matts amazing community ${time}`;
     const communityDescript = "the best community you can find";
 
     beforeAll(async () => {
+      await user.goToCommunitiesBySidemenu();
       await user.createCommunity(communityName, communityDescript);
     });
 

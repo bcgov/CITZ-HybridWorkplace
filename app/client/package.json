@@ -41,7 +41,8 @@
     "start-mac": "PORT=8080 react-scripts start",
     "start-pc": "set PORT=8080 && react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --runInBand e2e",
+    "test": "react-scripts test",
+    "test:e2e": "react-scripts test --runInBand e2e",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
