@@ -102,7 +102,9 @@ class UserActions {
     }
 
     // Wait until Community page
-    await this.page.waitForXPath(`//h5[contains(., '${community}')]`); // Community name on community page
+    await this.page.waitForXPath(`//h6[contains(., '${community}')]`, {
+      timeout: 2000,
+    }); // Community name on community page
   }
 
   async createCommunity(
@@ -191,17 +193,18 @@ class UserActions {
   }
 
   async createPost(title, body, community = "") {
-    await this.page.waitForXPath(
-      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[1]/div[1]/div/div[2]/button`
-    ); // try to get first + button
+    await this.page.waitForXPath(`//h5[contains(., "Community Posts")]`, {
+      timeout: 2000,
+    });
 
     // try to click first + button
     const [plus] = await this.page.$x(
-      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[1]/div[1]/div/div[2]/button`
+      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div[2]/div[1]/div[1]/div/div[2]/button[2]`
     );
     if (plus) {
       await plus.click();
     }
+
     await this.page.waitForSelector("#add-post-title"); // wait for field to appear
 
     await this.page.type("#add-post-title", `${title}`); // type in title field
@@ -223,15 +226,13 @@ class UserActions {
       await button.click();
     }
 
-    // Wait for Avatar to appear
-    await this.page.waitForXPath(
-      '//button[@aria-label="account of current user"]'
-    );
+    // Wait for Post title to appear
+    await this.page.waitForXPath(`//h6[contains(., "${title}")]`);
   }
 
   async goToPost(postTitle) {
     // Try and get button, then click it.
-    const [post] = await this.page.$x(`//b[contains(., "${postTitle}")]`);
+    const [post] = await this.page.$x(`//h6[contains(., "${postTitle}")]`);
     if (post) {
       await post.click();
     }
@@ -251,9 +252,7 @@ class UserActions {
   // Assumed on post page
   async addComment(comment) {
     // Find and click Add Comment
-    const [add] = await this.page.$x(
-      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/button`
-    );
+    const [add] = await this.page.$x(`//button[contains(., "+ Add Comment")]`);
     if (add) {
       await add.click();
     }
@@ -374,6 +373,11 @@ class UserActions {
     });
   }
 
+  async search(contents) {
+    await this.page.type("#searchBar", contents);
+    await this.page.keyboard.press("Enter");
+  }
+
   // Profile page actions
   async editAvatar(colour, type, optionalColour = "") {
     // Get and click avatar
@@ -483,7 +487,7 @@ class UserActions {
   async editInfo(firstName, lastName, title, ministry) {
     // Click edit pencil
     const [pencil] = await this.page.$x(
-      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[1]/div[1]/div/div[1]/button`
+      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[1]/div[1]/div/div[1]/div/button`
     );
     if (pencil) {
       await pencil.click();
@@ -580,7 +584,7 @@ class UserActions {
   async editSettings(notification, theme) {
     // Click edit gear
     const [gear] = await this.page.$x(
-      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[1]/div[3]/button`
+      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[1]/div[4]/button`
     );
     if (gear) {
       await gear.click();

@@ -24,7 +24,7 @@ describe("Given that user is on home page", () => {
       height: 768,
       deviceScaleFactor: 1,
     });
-    await page.goto("http://localhost:8080");
+    await page.goto(process.env.URL);
     user = new UserActions(idir, password, page);
     await user.login();
   });

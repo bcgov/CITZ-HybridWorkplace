@@ -24,7 +24,7 @@ describe("Given that user is on the Home page", () => {
       height: 768,
       deviceScaleFactor: 1,
     });
-    await page.goto("http://localhost:8080");
+    await page.goto(process.env.URL);
     user = await new UserActions(idir, password, page);
     await user.login();
   });
@@ -45,7 +45,7 @@ describe("Given that user is on the Home page", () => {
       let postIsVisible;
       try {
         // Is title there?
-        await page.waitForXPath(`//b[contains(., "${title}")]`, {
+        await page.waitForXPath(`//h6[contains(., "${title}")]`, {
           timeout: 2000,
         });
         // Is blockquote there?
@@ -80,7 +80,7 @@ describe("Given that user is on the Home page", () => {
       let postIsVisible;
       try {
         // Is title there?
-        await page.waitForXPath(`//b[contains(., "${title}")]`, {
+        await page.waitForXPath(`//h6[contains(., "${title}")]`, {
           timeout: 2000,
         });
         // Is body there?
