@@ -84,7 +84,7 @@ const AdminStatusBox = (props) => {
               pb: 0.3,
             }}
           >
-            {latest}
+            Latest: {latest}
           </Typography>
         </Stack>
       </Tooltip>
