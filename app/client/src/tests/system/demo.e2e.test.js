@@ -36,7 +36,7 @@ describe("Given that user is on Home page", () => {
 
   // Create Community
   describe("When user creates a community", () => {
-    const communityName = `Demo Community - ${time}`;
+    const communityName = `Demo Community ${time}`;
     beforeAll(async () => {
       await user.goToCommunitiesBySidemenu();
       await user.createCommunity(
@@ -65,7 +65,7 @@ describe("Given that user is on Home page", () => {
   // Create Post
   describe("When user navigates to a community and creates a post", () => {
     let title = "Posting from Community page";
-    let community = `Demo Community - ${time}`;
+    let community = `Demo Community ${time}`;
     let body = `I posted from the ${community} page!`;
 
     beforeAll(async () => {
@@ -77,7 +77,7 @@ describe("Given that user is on Home page", () => {
       let postIsVisible;
       try {
         // Is title there?
-        await page.waitForXPath(`//b[contains(., "${title}")]`, {
+        await page.waitForXPath(`//h6[contains(., "${title}")]`, {
           timeout: 2000,
         });
         // Is body there?
@@ -210,12 +210,12 @@ describe("Given that user is on Home page", () => {
         // If solid colour, else is gradient
         if (
           (await page.$eval(
-            "#root > div > div > div.App > div > div.Routes > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-2.css-1r3qf17 > button > div",
+            "#root > div > div > div.App > div > div.Routes > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-2 > button > div",
             (e) => getComputedStyle(e).backgroundColor
           )) !== "rgba(0, 0, 0, 0)"
         ) {
           const backgroundColor = await page.$eval(
-            "#root > div > div > div.App > div > div.Routes > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-2.css-1r3qf17 > button > div",
+            "#root > div > div > div.App > div > div.Routes > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-2 > button > div",
             (e) => getComputedStyle(e).backgroundColor
           );
 
@@ -223,7 +223,7 @@ describe("Given that user is on Home page", () => {
             throw new Error("Wrong solid colour");
         } else {
           const backgroundImage = await page.$eval(
-            "#root > div > div > div.App > div > div.Routes > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-2.css-1r3qf17 > button > div",
+            "#root > div > div > div.App > div > div.Routes > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-2 > button > div",
             (e) => getComputedStyle(e).backgroundImage
           );
 
@@ -241,6 +241,63 @@ describe("Given that user is on Home page", () => {
         avatarChanged = false;
       }
       expect(avatarChanged).toBeTruthy();
+    });
+  });
+
+  // Edit Bio
+  describe("When user edits their bio", () => {
+    let input = "This is my fantastic new bio.";
+    beforeAll(async () => {
+      await user.editBio(input);
+    });
+
+    test("Then their bio should reflect those edits", async () => {
+      // Checking if bio was successfully edited
+      let bioChanged = false;
+      try {
+        await page.waitForXPath(`//p[contains(., '${input}')]`, {
+          timeout: 2000,
+        });
+        bioChanged = true;
+      } catch (e) {
+        bioChanged = false;
+      }
+      expect(bioChanged).toBeTruthy();
+    });
+  });
+
+  // Edit user info
+  describe("When user edits their User Info", () => {
+    const firstName = "John";
+    const lastName = "Scott";
+    const title = "NHL Player";
+    const ministry = "Silly Walks";
+
+    beforeAll(async () => {
+      await user.editInfo(firstName, lastName, title, ministry);
+    });
+
+    test("Then their User Info should reflect those edits", async () => {
+      // Checking if info was successfully edited
+      let infoChanged = false;
+      try {
+        await page.waitForXPath(
+          `//h5[contains(., '${firstName} ${lastName}')]`,
+          {
+            timeout: 2000,
+          }
+        );
+        await page.waitForXPath(`//p[contains(., '${title}')]`, {
+          timeout: 2000,
+        });
+        await page.waitForXPath(`//p[contains(., '${ministry}')]`, {
+          timeout: 2000,
+        });
+        infoChanged = true;
+      } catch (e) {
+        infoChanged = false;
+      }
+      expect(infoChanged).toBeTruthy();
     });
   });
 
@@ -276,7 +333,7 @@ describe("Given that user is on Home page", () => {
         // Is notification still set?
         // Click edit gear
         const [gear] = await page.$x(
-          `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[1]/div[3]/button`
+          `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[1]/div[4]/button`
         );
         if (gear) {
           await gear.click();
@@ -327,7 +384,7 @@ describe("Given that user is on Home page", () => {
       // Checking if interests were successfully edited
       let intrestsChanged = false;
       const chips = await page.$$(
-        `#root > div > div > div.App > div > div.Routes > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-2.css-1r3qf17 > div > div.MuiBox-root > div > span`
+        `#root > div > div > div.App > div > div.Routes > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-2 > div:nth-child(3) > div.MuiBox-root > div.MuiChip-root.MuiChip-filled.MuiChip-sizeMedium.MuiChip-colorDefault.MuiChip-filledDefault > span`
       );
       try {
         // Loop through chips. If chip text is from input array, interest must have worked.
