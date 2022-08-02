@@ -33,26 +33,17 @@ import {
   Box,
   Button,
   Typography,
-  ListItemIcon,
-  ListItemText,
   IconButton,
-  Menu,
-  MenuItem,
-  MenuList,
-  Divider,
   Tooltip,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SettingsTwoToneIcon from "@mui/icons-material/SettingsTwoTone";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
-import EditAttributesIcon from "@mui/icons-material/EditAttributes";
 import FlagIcon from "@mui/icons-material/Flag";
 import FeedIcon from "@mui/icons-material/Feed";
 
 import { connect } from "react-redux";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import PostsList from "../components/PostsList";
 import PostModal from "../components/modals/AddPostModal";
@@ -79,18 +70,16 @@ import {
 import MarkDownDisplay from "../components/MarkDownDisplay";
 import LoadingPage from "./LoadingPage";
 import CommunityNotFoundPage from "./CommunityNotFoundPage";
-import { isUserModerator } from "../helperFunctions/communityHelpers";
 import DemoteUserModal from "../components/modals/DemoteUserModal";
 import CommunityMembersModal from "../components/modals/CommunityMembersModal";
 import Croutons from "../components/Croutons";
+import ModListItem from "../components/ModListItem";
 
 const CommunityPage = (props) => {
-  const navigate = useNavigate();
   const [show, setShow] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [communityFound, setCommunityFound] = useState(true);
-  const [moderators, setModerators] = useState([]);
+  const [showFlaggedPosts, setShowFlaggedPosts] = useState(false);
 
   const { title } = useParams();
   const { userIsModerator } = props.community;
@@ -106,15 +95,7 @@ const CommunityPage = (props) => {
       await props.getUsersCommunities();
       setLoading(false);
     })();
-    setModerators(props.community.moderators);
   }, []);
-
-  useEffect(() => {
-    setModerators(props.community.moderators);
-  }, [props.community]);
-
-  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
-  const handleMenuClose = () => setAnchorEl(null);
 
   function useQuery() {
     const { search } = useLocation();
@@ -140,40 +121,8 @@ const CommunityPage = (props) => {
   const handleSettingsClick = () =>
     props.openEditCommunityModal(props.community);
 
-  const handleCommunityModeratorClick = (mod) => {
-    if (mod) navigate(`/profile/${mod}`);
-  };
-
-  const handleEditModeratorPermissionsClick = (username) => {
-    handleMenuClose();
-    let moderator = {};
-    Object.keys(props.community.moderators).forEach((key) => {
-      if (props.community.moderators[key].username === username) {
-        moderator = props.community.moderators[key];
-      }
-    });
-    props.openEditModeratorPermissionsModal(moderator);
-  };
-
-  let modPermissions = [];
-  if (props.community.moderators)
-    Object.keys(props.community.moderators).forEach((key) => {
-      if (props.community.moderators[key].userId === props.userId) {
-        modPermissions = props.community.moderators[key].permissions;
-      }
-    });
-
-  const [showFlaggedPosts, setShowFlaggedPosts] = useState(false);
-
   const handleShowFlaggedPosts = () => {
     setShowFlaggedPosts(!showFlaggedPosts);
-  };
-
-  const handleDemoteClick = (key) => {
-    return () => {
-      handleMenuClose();
-      props.openDemoteUserModal(props.community.moderators[key].username);
-    };
   };
 
   return loading ? (
@@ -212,7 +161,7 @@ const CommunityPage = (props) => {
                 </Typography>
               </Grid>
               <Grid item xs={1.35}>
-                {props.community.userIsModerator && (
+                {(userIsModerator || props.role === "admin") && (
                   <Tooltip
                     title={
                       showFlaggedPosts
@@ -234,7 +183,7 @@ const CommunityPage = (props) => {
                   <AddIcon
                     sx={{
                       color: "white",
-                      pl: !props.community.userIsModerator && 4,
+                      pl: !(userIsModerator || props.role === "admin") && 4,
                     }}
                   />
                 </IconButton>
@@ -251,9 +200,11 @@ const CommunityPage = (props) => {
             showFlaggedPosts === true ? (
               <PostsList
                 posts={props.posts.filter((post) => post.flags.length > 0)}
+                showIsFlagged
+                showIsPinned
               />
             ) : (
-              <PostsList posts={props.posts} />
+              <PostsList posts={props.posts} showIsFlagged showIsPinned />
             )
           ) : (
             <Box sx={{ mt: 5 }}>
@@ -287,7 +238,7 @@ const CommunityPage = (props) => {
             }}
           >
             <Stack direction="row">
-              {props.community.creator === props.userId ? (
+              {userIsModerator || props.role === "admin" ? (
                 <>
                   <Typography
                     variant="h6"
@@ -384,86 +335,22 @@ const CommunityPage = (props) => {
                 Members Of This Community: {props.community.memberCount || 0}
               </Typography>
             </Button>
-            {moderators && moderators.length > 0 && (
-              <>
-                <Typography sx={{ fontSize: "1.3em", py: 1 }}>
-                  Moderated By:
-                </Typography>
-                <Box sx={{ flexWrap: "wrap" }}>
-                  {Object.keys(moderators).map((key) => (
-                    <Stack
-                      direction="row"
-                      spacing={0}
-                      sx={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                        pl: userIsModerator ? 1.5 : 0,
-                        py: 0.2,
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          fontWeight: "bold",
-                          ":hover": {
-                            textDecoration: "underline",
-                            cursor: "pointer",
-                          },
-                        }}
-                        onClick={() =>
-                          handleCommunityModeratorClick(
-                            moderators[key].username
-                          )
-                        }
-                      >
-                        {moderators[key].name ?? moderators[key].username}
-                      </Typography>
-                      {userIsModerator && (
-                        <>
-                          <IconButton
-                            aria-label="settings"
-                            onClick={handleMenuOpen}
-                            sx={{ py: 0.2 }}
-                          >
-                            <AdminPanelSettingsIcon />
-                          </IconButton>
-                          <Menu
-                            open={!!anchorEl}
-                            onClose={handleMenuClose}
-                            anchorEl={anchorEl}
-                          >
-                            <MenuList>
-                              {modPermissions &&
-                                modPermissions.includes("set_permissions") && (
-                                  <MenuItem
-                                    onClick={() =>
-                                      handleEditModeratorPermissionsClick(
-                                        moderators[key].username
-                                      )
-                                    }
-                                  >
-                                    <ListItemIcon>
-                                      <EditAttributesIcon fontSize="small" />
-                                    </ListItemIcon>
-                                    <ListItemText>
-                                      Edit Permissions
-                                    </ListItemText>
-                                  </MenuItem>
-                                )}
-                              <MenuItem onClick={handleDemoteClick(key)}>
-                                <ListItemIcon>
-                                  <PersonRemoveIcon fontSize="small" />
-                                </ListItemIcon>
-                                <ListItemText>Demote</ListItemText>
-                              </MenuItem>
-                            </MenuList>
-                          </Menu>
-                        </>
-                      )}
-                    </Stack>
-                  ))}
-                </Box>
-              </>
-            )}
+            {props.community.moderators &&
+              props.community.moderators.length > 0 && (
+                <>
+                  <Typography sx={{ fontSize: "1.3em", py: 1 }}>
+                    Moderated By:
+                  </Typography>
+                  <Box sx={{ flexWrap: "wrap" }}>
+                    {props.community.moderators.map((mod) => (
+                      <ModListItem
+                        mod={mod}
+                        userIsModerator={userIsModerator}
+                      />
+                    ))}
+                  </Box>
+                </>
+              )}
           </Box>
           {props.community.rules && props.community.rules.length > 0 && (
             <Box
@@ -578,6 +465,7 @@ const mapStateToProps = (state) => ({
         ?.title
   ),
   userId: state.auth.user.id,
+  role: state.auth.user.role,
 });
 
 const mapDispatchToProps = {

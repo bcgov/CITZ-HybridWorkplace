@@ -23,11 +23,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import {
-  Box,
   Button,
-  Typography,
-  Select,
-  MenuItem,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -108,7 +104,7 @@ const EditPostModal = (props) => {
               error={titleError}
               name="title"
               placeholder="Title"
-              helperText="Title must be 3-50 characters in length."
+              helperText={`Title must be ${minTitleLength}-${maxTitleLength} characters in length.`}
               required
               fullWidth
             />

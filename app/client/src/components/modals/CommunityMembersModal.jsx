@@ -38,6 +38,7 @@ import {
   Typography,
   TextField,
   Tooltip,
+  Box,
 } from "@mui/material";
 
 import NoMeetingRoomRoundedIcon from "@mui/icons-material/NoMeetingRoomRounded";
@@ -58,7 +59,7 @@ const CommunityMembersModal = (props) => {
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    props.getCommunityMembers(props.community.title);
+    props.getCommunityMembers(props.community?.title);
   }, [props.open]);
 
   const handlePromoteClick = (username) => {
@@ -108,29 +109,51 @@ const CommunityMembersModal = (props) => {
                 <ListItem
                   key={member._id}
                   secondaryAction={
-                    <Stack
-                      direction="row"
-                      sx={{ display: "flex", alignItems: "center" }}
-                    >
-                      <Tooltip title={<Typography>Promote</Typography>} arrow>
-                        <IconButton
-                          color="success"
-                          onClick={() => handlePromoteClick(member.username)}
+                    <>
+                      {member.isModerator && member.isModerator === true ? (
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <Typography
+                            sx={{
+                              fontWeight: 600,
+                              border: "solid 1px",
+                              borderRadius: "10px",
+                              p: 0.5,
+                            }}
+                          >
+                            Moderator
+                          </Typography>
+                        </Box>
+                      ) : (
+                        <Stack
+                          direction="row"
+                          sx={{ display: "flex", alignItems: "center" }}
                         >
-                          <AddCircleTwoToneIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title={<Typography>Kick</Typography>} arrow>
-                        <IconButton
-                          edge="end"
-                          aria-label="kick user"
-                          color="error"
-                          onClick={() => handleKickUserClick(member)}
-                        >
-                          <NoMeetingRoomRoundedIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </Stack>
+                          <Tooltip
+                            title={<Typography>Promote</Typography>}
+                            arrow
+                          >
+                            <IconButton
+                              color="success"
+                              onClick={() =>
+                                handlePromoteClick(member.username)
+                              }
+                            >
+                              <AddCircleTwoToneIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title={<Typography>Kick</Typography>} arrow>
+                            <IconButton
+                              edge="end"
+                              aria-label="kick user"
+                              color="error"
+                              onClick={() => handleKickUserClick(member)}
+                            >
+                              <NoMeetingRoomRoundedIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </Stack>
+                      )}
+                    </>
                   }
                 >
                   <ListItemText

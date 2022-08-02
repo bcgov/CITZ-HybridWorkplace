@@ -90,10 +90,31 @@ router.get("/:title", async (req, res, next) => {
       {
         $match: { "communities.community": community.title },
       },
+      { $addFields: { isModerator: false } },
       {
-        $project: { _id: 1, username: 1, firstName: 1, lastName: 1, avatar: 1 },
+        $project: {
+          _id: 1,
+          username: 1,
+          firstName: 1,
+          lastName: 1,
+          avatar: 1,
+          isModerator: 1,
+          online: 1,
+        },
       },
     ]);
+
+    req.log.addAction("Getting list of moderator usernames.");
+    const modUsernames = [];
+    Object.keys(community.moderators).forEach((mod) => {
+      modUsernames.push(community.moderators[mod].username);
+    });
+
+    req.log.addAction("Assigning isModerator in members list.");
+    Object.keys(members).forEach((member) => {
+      if (modUsernames.includes(members[member].username))
+        members[member].isModerator = true;
+    });
 
     req.log.setResponse(204, "Success");
     return res.status(200).json(members);

@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import { PropTypes } from "prop-types";
 import { joinCommunity, leaveCommunity } from "../redux/ducks/communityDuck";
 
-import { IconButton, Typography, Button } from "@mui/material";
+import { IconButton, Typography, Button, Tooltip } from "@mui/material";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 
 const JoinButton = (props) => {
@@ -49,7 +49,9 @@ const JoinButton = (props) => {
     <>
       {isInCommunity && (
         <IconButton variant="contained" color={"error"} onClick={handleLeave}>
-          <LogoutOutlinedIcon />
+          <Tooltip title={<Typography>Leave Community</Typography>} arrow>
+            <LogoutOutlinedIcon />
+          </Tooltip>
         </IconButton>
       )}
       {!isInCommunity && (

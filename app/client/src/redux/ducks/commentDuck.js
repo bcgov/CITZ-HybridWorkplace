@@ -31,6 +31,7 @@ import {
 
 export const SET_COMMENTS = "CITZ-HYBRIDWORKPLACE/COMMENT/SET_COMMENTS";
 export const ADD_COMMENT = "CITZ-HYBRIDWORKPLACE/COMMENT/ADD_COMMENT";
+export const EDIT_COMMENT = "CITZ-HYBRIDWORKPLACE/COMMENT/EDIT_COMMENT";
 export const REMOVE_COMMENT = "CITZ-HYBRIDWORKPLACE/COMMENT/REMOVE_COMMENT";
 export const REPLY_TO_COMMENT = "CITZ-HYBRIDWORKPLACE/COMMENT/REPLY_TO_COMMENT";
 export const SET_COMMENT_REPLIES =
@@ -108,6 +109,42 @@ export const createComment = (post, comment) => async (dispatch, getState) => {
     dispatch({
       type: ADD_COMMENT,
       payload: returnedComment,
+    });
+  } catch (err) {
+    console.error(err);
+    successful = false;
+    createError(err.response.data)(dispatch);
+  } finally {
+    return successful;
+  }
+};
+
+export const editComment = (comment) => async (dispatch, getState) => {
+  let successful = true;
+  try {
+    const authState = getState().auth;
+    const token = authState.accessToken;
+
+    if (!token) throw new Error(noTokenText);
+
+    const response = await hwp_axios.patch(
+      `/api/comment/${comment.id}`,
+      {
+        message: comment.message,
+      },
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        params: {
+          dispatch,
+        },
+      }
+    );
+
+    dispatch({
+      type: EDIT_COMMENT,
+      payload: comment,
     });
   } catch (err) {
     console.error(err);
