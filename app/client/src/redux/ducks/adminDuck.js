@@ -63,7 +63,7 @@ export const adminDeleteUser = (username) => async (dispatch, getState) => {
     const token = getState().auth.accessToken;
     if (!token) throw new Error(noTokenText);
 
-    const response = await hwp_axios.get(`/api/user/${username}`, {
+    const response = await hwp_axios.delete(`/api/user/${username}`, {
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -74,7 +74,7 @@ export const adminDeleteUser = (username) => async (dispatch, getState) => {
 
     dispatch({
       type: ADMIN_DELETE_USER,
-      payload: response.data,
+      payload: username,
     });
   } catch (err) {
     console.error(err);
@@ -84,33 +84,37 @@ export const adminDeleteUser = (username) => async (dispatch, getState) => {
   }
 };
 
-export const adminEditUser = (changes) => async (dispatch, getState) => {
-  let successful = true;
-  try {
-    const token = getState().auth.accessToken;
-    if (!token) throw new Error(noTokenText);
+export const adminEditUser =
+  (username, changes) => async (dispatch, getState) => {
+    let successful = true;
+    try {
+      const token = getState().auth.accessToken;
+      if (!token) throw new Error(noTokenText);
 
-    /* ENDPOINT TBD */
-    // const response = await hwp_axios.get(`/api/`, {
-    //   headers: {
-    //     authorization: `Bearer ${token}`,
-    //   },
-    //   params: {
-    //     dispatch,
-    //   },
-    // });
+      const response = await hwp_axios.patch(
+        `/api/user?username=${username}`,
+        { ...changes },
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          params: {
+            dispatch,
+          },
+        }
+      );
 
-    dispatch({
-      type: ADMIN_EDIT_USER,
-      //payload: response.data,
-    });
-  } catch (err) {
-    console.error(err);
-    successful = false;
-  } finally {
-    return successful;
-  }
-};
+      dispatch({
+        type: ADMIN_EDIT_USER,
+        payload: changes,
+      });
+    } catch (err) {
+      console.error(err);
+      successful = false;
+    } finally {
+      return successful;
+    }
+  };
 
 const initialState = {
   status: { communities: {}, posts: {}, comments: {} },

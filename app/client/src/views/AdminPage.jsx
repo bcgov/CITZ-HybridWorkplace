@@ -16,6 +16,7 @@
 /**
  * Application entry point
  * @author [Brady Mitchell](braden.jr.mitch@gmail.com)
+ * @author [Zach Bourque](bettesworthjayna@gmail.com)
  * @module
  */
 
@@ -41,9 +42,11 @@ import { Navigate } from "react-router-dom";
 import {
   openAdminDeleteUserModal,
   openAdminEditUserInfoModal,
+  openAdminGetUserModal,
 } from "../redux/ducks/modalDuck";
 import AdminDeleteUserModal from "../components/modals/AdminDeleteUserModal";
 import AdminEditUserModal from "../components/modals/AdminEditUserModal";
+import AdminGetUserModal from "../components/modals/AdminGetUserModal";
 
 const AdminPage = (props) => {
   const [loading, setLoading] = useState(true);
@@ -68,12 +71,17 @@ const AdminPage = (props) => {
     setSelectedUser(event.target.value);
   };
 
-  /**
-   * GET - Get user by username and return pure object or map of objects properties in modal.
-   * EDIT - Open modal to set fields to edit on user.
-   * DELETE - Permanently delete user. Warning and confirmation modal
-   * like how github prompts deleting a repository.
-   */
+  const handleDeleteUserClick = () => {
+    if (selectedUser !== "") props.openAdminDeleteUserModal(selectedUser);
+  };
+
+  const handleEditUserClick = () => {
+    if (selectedUser !== "") props.openAdminEditUserInfoModal(selectedUser);
+  };
+
+  const handleGetUserClick = () => {
+    if (selectedUser !== "") props.openAdminGetUserModal(selectedUser);
+  };
 
   return !props.userIsAdmin ? (
     <Navigate to="/" />
@@ -102,9 +110,27 @@ const AdminPage = (props) => {
           </Typography>
         </Box>
         <Stack>
-          <AdminStatusBox title={"Flagged Communities"} value={2} />
-          <AdminStatusBox title={"Flagged Posts"} value={34} />
-          <AdminStatusBox title={"Flagged Comments"} value={49} />
+          {props.adminData.status.communities.flagCount > 0 && (
+            <AdminStatusBox
+              title={"Flagged Communities"}
+              value={props.adminData.status.communities.flagCount}
+              latest={props.adminData.status.communities.latest}
+            />
+          )}
+          {props.adminData.status.posts.flagCount > 0 && (
+            <AdminStatusBox
+              title={"Flagged Posts"}
+              value={props.adminData.status.posts.flagCount}
+              latest={props.adminData.status.posts.latest}
+            />
+          )}
+          {props.adminData.status.comments.flagCount > 0 && (
+            <AdminStatusBox
+              title={"Flagged Comments"}
+              value={props.adminData.status.comments.flagCount}
+              latest={props.adminData.status.comments.latest}
+            />
+          )}
         </Stack>
       </Grid>
       <Grid item xs={0.5} sx={{ justifyContent: "center", display: "flex" }}>
@@ -143,37 +169,54 @@ const AdminPage = (props) => {
                     onChange={onSelectedUserChange}
                     fullWidth
                   />
-                  <Button>Get</Button>
-                  {/* //TO BE REPLACED WITH ACTUAL USER DATA*/}
-                  <Button
-                    onClick={() =>
-                      props.openAdminEditUserInfoModal(selectedUser)
-                    }
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    onClick={() => props.openAdminDeleteUserModal(selectedUser)}
-                  >
-                    Delete
-                  </Button>
+                  <Button onClick={handleGetUserClick}>Get</Button>
+                  <Button onClick={handleEditUserClick}>Edit</Button>
+                  <Button onClick={handleDeleteUserClick}>Delete</Button>
                 </Stack>
               </Box>
             </TabPanel>
             <TabPanel value={2}>
-              <Box sx={{ height: 400, width: "100%" }}></Box>
+              <Box sx={{ height: 400, width: "100%" }}>
+                <DataGrid
+                  rows={props.adminData.communities.rows ?? []}
+                  columns={props.adminData.communities.columns ?? []}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  checkboxSelection
+                  disableSelectionOnClick
+                />
+              </Box>
             </TabPanel>
             <TabPanel value={3}>
-              <Box sx={{ height: 400, width: "100%" }}></Box>
+              <Box sx={{ height: 400, width: "100%" }}>
+                <DataGrid
+                  rows={props.adminData.posts.rows ?? []}
+                  columns={props.adminData.posts.columns ?? []}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  checkboxSelection
+                  disableSelectionOnClick
+                />
+              </Box>
             </TabPanel>
             <TabPanel value={4}>
-              <Box sx={{ height: 400, width: "100%" }}></Box>
+              <Box sx={{ height: 400, width: "100%" }}>
+                <DataGrid
+                  rows={props.adminData.comments.rows ?? []}
+                  columns={props.adminData.comments.columns ?? []}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  checkboxSelection
+                  disableSelectionOnClick
+                />
+              </Box>
             </TabPanel>
           </TabContext>
         </Box>
       </Grid>
       <AdminDeleteUserModal />
       <AdminEditUserModal />
+      <AdminGetUserModal />
     </Grid>
   );
 };
@@ -189,6 +232,7 @@ const mapDispatchToProps = {
   getAdminData,
   openAdminDeleteUserModal,
   openAdminEditUserInfoModal,
+  openAdminGetUserModal,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AdminPage);

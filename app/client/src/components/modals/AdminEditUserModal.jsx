@@ -26,43 +26,121 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  InputLabel,
   Stack,
   TextField,
-  Typography,
 } from "@mui/material";
 import { connect } from "react-redux";
+import { useEffect, useState } from "react";
 import { closeAdminEditUserInfoModal } from "../../redux/ducks/modalDuck";
+import { getProfile } from "../../redux/ducks/profileDuck";
 import PropTypes from "prop-types";
-import { useState } from "react";
 
 const AdminEditUserModal = (props) => {
+  const closeModal = () => props.closeAdminEditUserInfoModal();
 
-  const closeModal = () => {
-    props.closeAdminEditUserInfoModal();
+  // Edit User
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [title, setTitle] = useState("");
+  const [ministry, setMinistry] = useState("");
+  const [bio, setBio] = useState("");
+  const [postCount, setPostCount] = useState(0);
+  const [notificationFrequency, setNotificationFrequency] = useState("");
+  const [registeredOn, setRegisteredOn] = useState("");
+
+  useEffect(() => {
+    if (props.username) props.getProfile(props.username);
+  }, [props.open]);
+
+  useEffect(() => {
+    setUsername(props.user?.username);
+    setEmail(props.user?.email);
+    setRole(props.user?.role);
+    setFirstName(props.user?.firstName);
+    setLastName(props.user?.lastName);
+    setTitle(props.user?.title);
+    setMinistry(props.user?.ministry);
+    setBio(props.user?.bio);
+    setPostCount(props.user?.postCount);
+    setNotificationFrequency(props.user?.notificationFrequency);
+    setRegisteredOn(props.user?.registeredOn);
+  }, [props.user]);
+
+  const onUsernameChange = (event) => setUsername(event.target.value);
+  const onEmailChange = (event) => setEmail(event.target.value);
+  const onRoleChange = (event) => setRole(event.target.value);
+  const onFirstNameChange = (event) => setFirstName(event.target.value);
+  const onLastNameChange = (event) => setLastName(event.target.value);
+  const onTitleChange = (event) => setTitle(event.target.value);
+  const onMinistryChange = (event) => setMinistry(event.target.value);
+  const onBioChange = (event) => setBio(event.target.value);
+  const onPostCountChange = (event) => setPostCount(event.target.value);
+  const onNotificationFrequencyChange = (event) =>
+    setNotificationFrequency(event.target.value);
+  const onRegisteredOnChange = (event) => setRegisteredOn(event.target.value);
+
+  const onEditClick = () => {
+    // TODO
   };
 
   return (
     <Dialog
       onClose={closeModal}
       open={props.open}
-      sx={{ zIndex: 500 }}
+      sx={{ zIndex: 500, maxHeight: "90vh" }}
       fullWidth
     >
       <DialogTitle fontWeight={600}>Editing {props.username}</DialogTitle>
       <DialogContent>
-        <Stack spacing={2} sx={{mt: 1}}>
-        <TextField label="First Name" defaultValue={props.user.firstName}/>
-        <TextField label="Last Name" defaultValue={props.user.lastName}/>
-        <TextField label="Title" defaultValue={props.user.title}/>
-        <TextField label="Ministry" defaultValue={props.user.ministry}/>
+        <Stack spacing={2} sx={{ mt: 1 }}>
+          <TextField
+            label="Username"
+            value={username}
+            onChange={onUsernameChange}
+          />
+          <TextField label="Email" value={email} onChange={onEmailChange} />
+          <TextField label="Role" value={role} onChange={onRoleChange} />
+          <TextField
+            label="First Name"
+            value={firstName}
+            onChange={onFirstNameChange}
+          />
+          <TextField
+            label="Last Name"
+            value={lastName}
+            onChange={onLastNameChange}
+          />
+          <TextField label="Title" value={title} onChange={onTitleChange} />
+          <TextField
+            label="Ministry"
+            value={ministry}
+            onChange={onMinistryChange}
+          />
+          <TextField label="Bio" value={bio} onChange={onBioChange} />
+          <TextField
+            label="Post Count"
+            value={postCount}
+            onChange={onPostCountChange}
+          />
+          <TextField
+            label="Notification Frequency"
+            value={notificationFrequency}
+            onChange={onNotificationFrequencyChange}
+          />
+          <TextField
+            label="Registered On"
+            value={registeredOn}
+            onChange={onRegisteredOnChange}
+          />
         </Stack>
-
       </DialogContent>
 
       <DialogActions>
         <Stack spacing={1} direction="row-reverse" justifyContent="end">
-          <Button variant="contained">
+          <Button onClick={onEditClick} variant="contained">
             Edit
           </Button>
           <Button onClick={closeModal} color="button">
@@ -80,11 +158,13 @@ AdminEditUserModal.propTypes = {
 
 const mapStateToProps = (state) => ({
   open: state.modal.adminEditUser.open,
-  user: state.modal.adminEditUser.user,
+  username: state.modal.adminEditUser.username,
+  user: state.profile.user,
 });
 
 const mapActionsToProps = {
   closeAdminEditUserInfoModal,
+  getProfile,
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(AdminEditUserModal);

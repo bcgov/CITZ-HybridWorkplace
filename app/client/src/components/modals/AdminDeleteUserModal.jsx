@@ -47,12 +47,15 @@ const AdminDeleteUserModal = (props) => {
   const handleDeleteUser = async () => {
     const successful = await props.adminDeleteUser(props.username);
     if (successful === true) {
-      closeModal()
+      closeModal();
       props.sideEffect?.();
     }
   };
 
-  const closeModal = () => {props.closeAdminDeleteUserModal(); setInputValue("");}
+  const closeModal = () => {
+    props.closeAdminDeleteUserModal();
+    setInputValue("");
+  };
 
   return (
     <Dialog
@@ -73,7 +76,9 @@ const AdminDeleteUserModal = (props) => {
               <b>{props.username}</b> and all of their saved info permanently.
             </Typography>
           </Stack>
-          <InputLabel>Type <b>{props.username}</b> to confirm</InputLabel>
+          <InputLabel>
+            Type <b>{props.username}</b> to confirm
+          </InputLabel>
           <TextField
             value={inputValue}
             onChange={handleInputChange}
@@ -106,7 +111,7 @@ AdminDeleteUserModal.propTypes = {
 
 const mapStateToProps = (state) => ({
   open: state.modal.adminDeleteUser.open,
-  username: state.modal.adminDeleteUser.user.username,
+  username: state.modal.adminDeleteUser.username,
 });
 
 const mapActionsToProps = {
@@ -114,4 +119,7 @@ const mapActionsToProps = {
   adminDeleteUser,
 };
 
-export default connect(mapStateToProps, mapActionsToProps)(AdminDeleteUserModal);
+export default connect(
+  mapStateToProps,
+  mapActionsToProps
+)(AdminDeleteUserModal);

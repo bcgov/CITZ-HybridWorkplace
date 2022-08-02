@@ -20,9 +20,28 @@
  * @module
  */
 
+import moment from "moment";
 import { Box, Stack, Typography } from "@mui/material";
 
 const AdminStatusBox = (props) => {
+  // Convert props.latest to local time
+  let latest =
+    moment(moment.utc(props.latest, "MMMM Do YYYY, h:mm:ss a").toDate())
+      .local()
+      .format("MMMM Do YYYY, h:mm:ss a") || "";
+  // Remove milliseconds
+  latest = `${latest.substring(0, latest.length - 6)} ${latest.substring(
+    latest.length - 2,
+    latest.length
+  )}`;
+  const splitLatest = latest.split(",");
+
+  const today = moment().format("MMMM Do YYYY");
+  const yesterday = moment().subtract(1, "days").format("MMMM Do YYYY");
+
+  if (splitLatest[0] === today) latest = `Today${splitLatest[1]}`;
+  if (splitLatest[0] === yesterday) latest = `Yesterday${splitLatest[1]}`;
+
   return (
     <Box
       sx={{
@@ -51,7 +70,7 @@ const AdminStatusBox = (props) => {
             pb: 0.3,
           }}
         >
-          Latest: Today, 12:00pm
+          {latest}
         </Typography>
       </Stack>
     </Box>

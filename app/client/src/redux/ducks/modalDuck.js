@@ -119,6 +119,11 @@ const OPEN_ADMIN_DELETE_USER_MODAL =
 const CLOSE_ADMIN_DELETE_USER_MODAL =
   "CITZ-HYBRIDWORKPLACE/DELETE/CLOSE_ADMIN_DELETE_USER_MODAL";
 
+const OPEN_ADMIN_GET_USER_MODAL =
+  "CITZ-HYBRIDWORKPLACE/GET/OPEN_ADMIN_GET_USER_MODAL";
+const CLOSE_ADMIN_GET_USER_MODAL =
+  "CITZ-HYBRIDWORKPLACE/GET/CLOSE_ADMIN_GET_USER_MODAL";
+
 /*********************** DELETE ACTIONS***********************/
 export const openDeletePostModal = (post) => (dispatch) => {
   dispatch({ type: OPEN_DELETE_POST_MODAL, payload: post });
@@ -249,7 +254,6 @@ export const openEditModeratorPermissionsModal = (moderator) => (dispatch) => {
 export const closeEditModeratorPermissionsModal = () => (dispatch) =>
   dispatch({ type: CLOSE_EDIT_MODERATOR_PERMISSIONS_MODAL });
 
-
 /*********************** ADD MODAL ACTIONS***********************/
 
 export const openAddPostModal = () => (dispatch) => {
@@ -287,20 +291,28 @@ export const closePromoteUserModal = () => (dispatch) => {
 };
 
 /***********************ADMIN ACTIONS***************************/
-export const openAdminEditUserInfoModal = (user) => (dispatch) => {
-  dispatch({ type: OPEN_ADMIN_EDIT_USER_INFO_MODAL, payload: user });
+export const openAdminEditUserInfoModal = (username) => (dispatch) => {
+  dispatch({ type: OPEN_ADMIN_EDIT_USER_INFO_MODAL, payload: username });
 };
 
 export const closeAdminEditUserInfoModal = () => (dispatch) => {
   dispatch({ type: CLOSE_ADMIN_EDIT_USER_INFO_MODAL });
 };
 
-export const openAdminDeleteUserModal = (user) => (dispatch) => {
-  dispatch({ type: OPEN_ADMIN_DELETE_USER_MODAL, payload: user });
+export const openAdminDeleteUserModal = (username) => (dispatch) => {
+  dispatch({ type: OPEN_ADMIN_DELETE_USER_MODAL, payload: username });
 };
 
 export const closeAdminDeleteUserModal = () => (dispatch) => {
   dispatch({ type: CLOSE_ADMIN_DELETE_USER_MODAL });
+};
+
+export const openAdminGetUserModal = (username) => (dispatch) => {
+  dispatch({ type: OPEN_ADMIN_GET_USER_MODAL, payload: username });
+};
+
+export const closeAdminGetUserModal = () => (dispatch) => {
+  dispatch({ type: CLOSE_ADMIN_GET_USER_MODAL });
 };
 
 /************************MODAL REDUCER************************/
@@ -309,14 +321,15 @@ const initialState = {
   deletePost: { open: false, post: {} },
   deleteCommunity: { open: false, community: {} },
   deleteComment: { open: false, comment: {} },
-  adminDeleteUser: { open: false, user: {} },
-  adminEditUser: {open: false, user: {}},
+  // Admin State
+  adminDeleteUser: { open: false, username: {} },
+  adminEditUser: { open: false, username: {} },
+  adminGetUser: { open: false, username: {} },
   // Flag State
   flagPost: { open: false, post: {} },
   flagCommunity: { open: false, community: {} },
   flagComment: { open: false, comment: {} },
   resolveFlags: { open: false, post: {} },
-
   // Edit State
   editPost: { open: false, post: {} },
   editCommunity: { open: false, community: {} },
@@ -536,7 +549,7 @@ export function modalReducer(state = initialState, action) {
     case OPEN_ADMIN_DELETE_USER_MODAL:
       return {
         ...state,
-        adminDeleteUser: { open: true, user: action.payload },
+        adminDeleteUser: { open: true, username: action.payload },
       };
 
     case CLOSE_ADMIN_DELETE_USER_MODAL:
@@ -545,11 +558,20 @@ export function modalReducer(state = initialState, action) {
     case OPEN_ADMIN_EDIT_USER_INFO_MODAL:
       return {
         ...state,
-        adminEditUser: {open: true, user: action.payload}
-      }
+        adminEditUser: { open: true, username: action.payload },
+      };
 
     case CLOSE_ADMIN_EDIT_USER_INFO_MODAL:
-      return initialState
+      return initialState;
+
+    case OPEN_ADMIN_GET_USER_MODAL:
+      return {
+        ...state,
+        adminGetUser: { open: true, username: action.payload },
+      };
+
+    case CLOSE_ADMIN_GET_USER_MODAL:
+      return initialState;
 
     default:
       return state;
