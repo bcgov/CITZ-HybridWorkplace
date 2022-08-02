@@ -130,7 +130,7 @@ describe("Testing DELETE /user endpoint", () => {
         expect(response.status).toBe(404);
       });
 
-      if (RUN_BREAKING_TESTS === "true") {
+      if (process.env.RUN_BREAKING_TESTS === "true") {
         test("Empty string", async () => {
           response = await user.deleteUserByName(loginResponse.body.token, "");
           expect(response.status).toBe(404);

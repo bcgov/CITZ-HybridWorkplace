@@ -227,7 +227,7 @@ describe("Testing GET /post endpoint", () => {
         expect(response.status).toBe(404);
       });
 
-      if (RUN_BREAKING_TESTS === "true") {
+      if (process.env.RUN_BREAKING_TESTS === "true") {
         test("URL", async () => {
           response = await post.getPostById(
             "https://github.com/bcgov/CITZ-HybridWorkplace",

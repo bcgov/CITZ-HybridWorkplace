@@ -165,7 +165,7 @@ describe('Get Community by Title - With Login, testing with new " " Community', 
   });
 });
 
-if (RUN_BREAKING_TESTS === "true") {
+if (process.env.RUN_BREAKING_TESTS === "true") {
   describe("Deleting new Community - (2)", () => {
     test("API returns a unsuccessful response - code 404", async () => {
       const response = await community.deleteCommunity(" ", token);

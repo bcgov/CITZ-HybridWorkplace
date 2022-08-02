@@ -200,7 +200,7 @@ describe("Testing GET /post/tags endpoint", () => {
         expect(response.status).toBe(404);
       });
 
-      if (RUN_BREAKING_TESTS === "true") {
+      if (process.env.RUN_BREAKING_TESTS === "true") {
         test("Empty string", async () => {
           response = await post.getPostTags("", loginResponse.body.token);
           expect(response.status).toBe(404);
