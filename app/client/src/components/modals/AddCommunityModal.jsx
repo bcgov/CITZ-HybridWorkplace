@@ -118,7 +118,7 @@ const AddCommunityModal = (props) => {
   const page1 = () => {
     return (
       <>
-        <Box sx={{ height: "45vh" }}>
+        <Box sx={{ height: "65vh" }}>
           <Stack spacing={0.5} sx={{ mb: 4 }}>
             <InputLabel htmlFor="create-community-title">Title</InputLabel>
             <TextField
@@ -174,7 +174,7 @@ const AddCommunityModal = (props) => {
   const page2 = () => {
     return (
       <>
-        <Box sx={{ height: "45vh" }}>
+        <Box sx={{ height: "65vh" }}>
           <Stack sx={{ mb: 2 }}>
             <Typography variant="h6" sx={{ my: 1 }}>
               Community Rules
@@ -210,7 +210,7 @@ const AddCommunityModal = (props) => {
   const page3 = () => {
     return (
       <>
-        <Box sx={{ height: "45vh" }}>
+        <Box sx={{ height: "65vh" }}>
           <Stack sx={{ mb: 2 }}>
             <Typography variant="h6" sx={{ my: 1 }}>
               Community Tags
@@ -323,7 +323,7 @@ const AddCommunityModal = (props) => {
   const page4 = () => {
     return (
       <>
-        <Box sx={{ height: "45vh" }}>
+        <Box sx={{ height: "65vh" }}>
           <Typography variant="h6" sx={{ my: 1 }}>
             Community Resources
           </Typography>
