@@ -124,6 +124,8 @@ router.post("/", async (req, res, next) => {
       creatorName: getFullName(user) || user.username,
       creatorUsername: user.username,
       post: post.id,
+      flagCount: 0,
+      latestFlagTimestamp: null,
       removed: false,
       hidden: false,
       community: post.community,
@@ -591,6 +593,7 @@ router.patch("/:id", async (req, res, next) => {
           "edits",
           "upvotes",
           "downvotes",
+          "flagCount",
         ]
       : [
           "creator",
@@ -606,6 +609,7 @@ router.patch("/:id", async (req, res, next) => {
           "edits",
           "upvotes",
           "downvotes",
+          "flagCount",
         ];
 
     req.log.addAction("Checking edit query.");

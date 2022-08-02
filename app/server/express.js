@@ -65,6 +65,7 @@ const {
   tokenRouter,
   searchRouter,
   onlineStatusRouter,
+  adminRouter,
 } = require(`./versions/v${process.env.API_VERSION}/routes/routeImports`);
 
 const keycloakRouter = require(`./versions/v${process.env.API_VERSION}/routes/keycloakLogin`);
@@ -154,6 +155,14 @@ app.use(
   initLogger,
   authenticateToken,
   onlineStatusRouter,
+  requestFinally
+);
+
+app.use(
+  "/api/admin",
+  initLogger,
+  authenticateToken,
+  adminRouter,
   requestFinally
 );
 
