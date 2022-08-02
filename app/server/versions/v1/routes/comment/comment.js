@@ -125,6 +125,7 @@ router.post("/", async (req, res, next) => {
       creatorUsername: user.username,
       post: post.id,
       flagCount: 0,
+      latestFlagTimestamp: null,
       removed: false,
       hidden: false,
       community: post.community,

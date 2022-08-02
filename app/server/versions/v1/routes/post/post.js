@@ -167,6 +167,7 @@ router.post("/", async (req, res, next) => {
       removed: false,
       hidden: false,
       flagCount: 0,
+      latestFlagTimestamp: null,
       availableTags,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
