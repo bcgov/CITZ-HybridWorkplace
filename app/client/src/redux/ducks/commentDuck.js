@@ -38,8 +38,12 @@ export const SET_COMMENT_REPLIES =
   "CITZ-HYBRIDWORKPLACE/COMMENT/SET_COMMENT_REPLIES";
 export const UPVOTE_COMMENT = "CITZ-HYBRIDWORKPLACE/COMMENT/UPVOTE_COMMENT";
 export const DOWNVOTE_COMMENT = "CITZ-HYBRIDWORKPLACE/COMMENT/DOWNVOTE_COMMENT";
+export const UPVOTE_REPLY = "CITZ-HYBRIDWORKPLACE/COMMENT/UPVOTE_REPLY";
+export const DOWNVOTE_REPLY = "CITZ-HYBRIDWORKPLACE/COMMENT/DOWNVOTE_REPLY";
 export const REMOVE_COMMENT_VOTE =
   "CITZ-HYBRIDWORKPLACE/COMMENT/REMOVE_COMMENT_VOTE";
+export const REMOVE_REPLY = "CITZ-HYBRIDWORKPLACE/COMMENT/REMOVE_REPLY";
+export const EDIT_REPLY = "CITZ-HYBRIDWORKPLACE/COMMENT/EDIT_REPLY";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
 
@@ -119,7 +123,7 @@ export const createComment = (post, comment) => async (dispatch, getState) => {
   }
 };
 
-export const editComment = (comment) => async (dispatch, getState) => {
+export const editComment = (comment, replyTo) => async (dispatch, getState) => {
   let successful = true;
   try {
     const authState = getState().auth;
@@ -143,8 +147,8 @@ export const editComment = (comment) => async (dispatch, getState) => {
     );
 
     dispatch({
-      type: EDIT_COMMENT,
-      payload: comment,
+      type: replyTo ? EDIT_REPLY : EDIT_COMMENT,
+      payload: {comment, replyTo},
     });
   } catch (err) {
     console.error(err);
@@ -155,37 +159,38 @@ export const editComment = (comment) => async (dispatch, getState) => {
   }
 };
 
-export const deleteComment = (commentId) => async (dispatch, getState) => {
-  let successful = true;
-  try {
-    //TODO: Throw error if given delete is not in list of available deletes
-    if (commentId === "") throw new Error("Error: Invalid Input");
-    const authState = getState().auth;
-    const token = authState.accessToken;
+export const deleteComment =
+  (commentId, replyTo) => async (dispatch, getState) => {
+    let successful = true;
+    try {
+      //TODO: Throw error if given delete is not in list of available deletes
+      if (commentId === "") throw new Error("Error: Invalid Input");
+      const authState = getState().auth;
+      const token = authState.accessToken;
 
-    if (!token) throw new Error(noTokenText);
+      if (!token) throw new Error(noTokenText);
 
-    const response = await hwp_axios.delete(`/api/comment/${commentId}`, {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-      params: {
-        dispatch,
-      },
-    });
+      const response = await hwp_axios.delete(`/api/comment/${commentId}`, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        params: {
+          dispatch,
+        },
+      });
 
-    dispatch({
-      type: REMOVE_COMMENT,
-      payload: commentId,
-    });
-  } catch (err) {
-    console.error(err);
-    successful = false;
-    createError(err.response.data)(dispatch);
-  } finally {
-    return successful;
-  }
-};
+      dispatch({
+        type: replyTo ? REMOVE_REPLY : REMOVE_COMMENT,
+        payload: { commentId, replyTo },
+      });
+    } catch (err) {
+      console.error(err);
+      successful = false;
+      createError(err.response.data)(dispatch);
+    } finally {
+      return successful;
+    }
+  };
 
 export const replyToComment =
   (commentId, reply) => async (dispatch, getState) => {
@@ -243,9 +248,14 @@ export const getCommentReplies = (commentId) => async (dispatch, getState) => {
       },
     });
 
+    const replies = reshapeCommentsForFrontend(
+      authState.user.id,
+      response.data
+    );
+
     dispatch({
       type: SET_COMMENT_REPLIES,
-      payload: { commentId, comments: response.data },
+      payload: { commentId, comments: replies },
     });
   } catch (err) {
     console.error(err);
@@ -285,75 +295,77 @@ export const flagComment = (commentId, flag) => async (dispatch, getState) => {
   }
 };
 
-export const upvoteComment = (commentId) => async (dispatch, getState) => {
-  let successful = true;
-  try {
-    const authState = getState().auth;
-    const token = authState.accessToken;
-    const userId = authState.user.id;
+export const upvoteComment =
+  (commentId, replyTo) => async (dispatch, getState) => {
+    let successful = true;
+    try {
+      const authState = getState().auth;
+      const token = authState.accessToken;
+      const userId = authState.user.id;
 
-    if (!token) throw new Error(noTokenText);
+      if (!token) throw new Error(noTokenText);
 
-    const response = await hwp_axios.patch(
-      `/api/comment/vote/${commentId}?vote=up`,
-      {
-        id: commentId,
-      },
-      {
-        headers: {
-          authorization: `Bearer ${token}`,
+      const response = await hwp_axios.patch(
+        `/api/comment/vote/${commentId}?vote=up`,
+        {
+          id: commentId,
         },
-        params: {
-          dispatch,
-        },
-      }
-    );
-    dispatch({
-      type: UPVOTE_COMMENT,
-      payload: { commentId, userId },
-    });
-  } catch (err) {
-    console.error(err);
-    successful = false;
-  } finally {
-    return successful;
-  }
-};
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          params: {
+            dispatch,
+          },
+        }
+      );
+      dispatch({
+        type: replyTo ? UPVOTE_REPLY : UPVOTE_COMMENT,
+        payload: { commentId, userId, replyTo },
+      });
+    } catch (err) {
+      console.error(err);
+      successful = false;
+    } finally {
+      return successful;
+    }
+  };
 
-export const downvoteComment = (commentId) => async (dispatch, getState) => {
-  let successful = true;
-  try {
-    const authState = getState().auth;
-    const token = authState.accessToken;
-    const userId = authState.user.id;
+export const downvoteComment =
+  (commentId, replyTo) => async (dispatch, getState) => {
+    let successful = true;
+    try {
+      const authState = getState().auth;
+      const token = authState.accessToken;
+      const userId = authState.user.id;
 
-    if (!token) throw new Error(noTokenText);
+      if (!token) throw new Error(noTokenText);
 
-    const response = await hwp_axios.patch(
-      `/api/comment/vote/${commentId}?vote=down`,
-      {
-        id: commentId,
-      },
-      {
-        headers: {
-          authorization: `Bearer ${token}`,
+      const response = await hwp_axios.patch(
+        `/api/comment/vote/${commentId}?vote=down`,
+        {
+          id: commentId,
         },
-        params: {
-          dispatch,
-        },
-      }
-    );
-    dispatch({
-      type: DOWNVOTE_COMMENT,
-      payload: { commentId, userId },
-    });
-  } catch (err) {
-    console.error(err);
-    successful = false;
-  } finally {
-    return successful;
-  }
-};
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          params: {
+            dispatch,
+          },
+        }
+      );
+      dispatch({
+        type: replyTo ? DOWNVOTE_REPLY : DOWNVOTE_COMMENT,
+        payload: { commentId, userId, replyTo },
+      });
+    } catch (err) {
+      console.error(err);
+      successful = false;
+    } finally {
+      return successful;
+    }
+  };
 
 const initialState = {};
 

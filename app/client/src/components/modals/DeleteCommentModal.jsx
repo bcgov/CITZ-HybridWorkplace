@@ -36,7 +36,7 @@ import PropTypes from "prop-types";
 
 const DeleteCommentModal = (props) => {
   const handleDeleteComment = async () => {
-    const successful = await props.deleteComment(props.comment._id);
+    const successful = await props.deleteComment(props.comment._id, props.replyTo);
     if (successful === true) {
       props.closeDeleteCommentModal();
     }
@@ -87,6 +87,7 @@ DeleteCommentModal.propTypes = {
 const mapStateToProps = (state) => ({
   open: state.modal.deleteComment.open,
   comment: state.modal.deleteComment.comment,
+  replyTo: state.modal.deleteComment.replyTo
 });
 
 const mapActionsToProps = {

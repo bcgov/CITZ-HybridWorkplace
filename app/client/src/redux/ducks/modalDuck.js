@@ -125,8 +125,8 @@ export const closeDeleteCommunityModal = () => (dispatch) => {
   dispatch({ type: CLOSE_DELETE_COMMUNITY_MODAL });
 };
 
-export const openDeleteCommentModal = (post) => (dispatch) => {
-  dispatch({ type: OPEN_DELETE_COMMENT_MODAL, payload: post });
+export const openDeleteCommentModal = (post, replyTo) => (dispatch) => {
+  dispatch({ type: OPEN_DELETE_COMMENT_MODAL, payload: {comment: post, replyTo} });
 };
 
 export const closeDeleteCommentModal = () => (dispatch) => {
@@ -279,7 +279,7 @@ const initialState = {
   // Delete State
   deletePost: { open: false, post: {} },
   deleteCommunity: { open: false, community: {} },
-  deleteComment: { open: false, comment: {} },
+  deleteComment: { open: false, comment: {}, replyTo: "" },
   // Flag State
   flagPost: { open: false, post: {} },
   flagCommunity: { open: false, community: {} },
@@ -338,7 +338,7 @@ export function modalReducer(state = initialState, action) {
     case OPEN_DELETE_COMMENT_MODAL:
       return {
         ...state,
-        deleteComment: { open: true, comment: action.payload },
+        deleteComment: { open: true, comment: action.payload.comment, replyTo: action.payload.replyTo },
       };
 
     case CLOSE_DELETE_COMMENT_MODAL:
