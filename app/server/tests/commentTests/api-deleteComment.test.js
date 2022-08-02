@@ -19,7 +19,7 @@ let token = "";
 let commentResponse;
 let postResponse;
 
-const newComTitle = "delete Comments";
+const newComTitle = `delete Comments - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {
@@ -58,9 +58,9 @@ describe("Creating new Community", () => {
     const response = await community.createCommunity(
       newComTitle,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
     expect(response.status).toBe(201);
   });
@@ -97,7 +97,7 @@ describe("Delete Comment - on the created post", () => {
   });
 
   test("API returns a successful response - code 204", () => {
-    expect(response.text).toBe(204);
+    expect(response.status).toBe(204);
   });
 });
 

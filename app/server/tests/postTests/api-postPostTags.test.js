@@ -39,9 +39,9 @@ describe("Testing POST /post/tag endpoint", () => {
     await community.createCommunity(
       communityName,
       randomText,
-      randomText,
-      [{ tag: tag1, count: 1 }],
-      loginResponse.body.token
+      loginResponse.body.token,
+      [],
+      [{ tag: tag1, description: "also great" }]
     );
 
     // Join communities

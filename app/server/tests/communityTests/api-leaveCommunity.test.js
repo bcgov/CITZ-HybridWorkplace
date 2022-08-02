@@ -14,7 +14,7 @@ const userName = name.gen();
 const userPassword = "Tester123!";
 const userEmail = email.gen();
 
-const newComTitle = "Leave Communities";
+const newComTitle = `Leave Communities - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {
@@ -66,9 +66,9 @@ describe("Creating new Community", () => {
     response = await community.createCommunity(
       newComTitle,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
     expect(response.status).toBe(201);
   });
@@ -93,8 +93,8 @@ describe("Leave Community by Title - With Login, but already left", () => {
     response = await community.leaveCommunity(newComTitle, token);
   });
 
-  test("API returns a unsuccessful response - code 404", () => {
-    expect(response.status).toBe(404);
+  test("API returns a unsuccessful response - code 403", () => {
+    expect(response.status).toBe(403);
   });
 });
 
@@ -107,10 +107,6 @@ describe('Get Community Members - With Login, testing with "new" community', () 
 
   test("API returns a successful response - code 200", () => {
     expect(response.status).toBe(200);
-  });
-
-  test("API returns the member count of ''", () => {
-    expect(`${response.text}`).toContain("");
   });
 });
 
@@ -128,12 +124,12 @@ describe("Leave Community by Title - With Login, but community does not exist", 
     response = await community.leaveCommunity(newComTitle, token);
   });
 
-  test("API returns a unsuccessful response - code 404", () => {
-    expect(response.status).toBe(404);
+  test("API returns a unsuccessful response - code 403", () => {
+    expect(response.status).toBe(403);
   });
 
   test('API returns description - "Community not found."', () => {
-    expect(`${response.text}`).toContain("Community not found.");
+    expect(`${response.text}`).toContain("Community has been removed.");
   });
 });
 

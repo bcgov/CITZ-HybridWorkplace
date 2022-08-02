@@ -122,11 +122,6 @@ describe("Testing DELETE /user endpoint", () => {
     });
 
     describe("Sending strings as username", () => {
-      test("Empty string", async () => {
-        response = await user.deleteUserByName(loginResponse.body.token, "");
-        expect(response.status).toBe(404);
-      });
-
       test("Very large string", async () => {
         response = await user.deleteUserByName(
           loginResponse.body.token,
@@ -135,21 +130,28 @@ describe("Testing DELETE /user endpoint", () => {
         expect(response.status).toBe(404);
       });
 
-      test("URL", async () => {
-        response = await user.deleteUserByName(
-          loginResponse.body.token,
-          "https://github.com/bcgov/CITZ-HybridWorkplace"
-        );
-        expect(response.status).toBe(404);
-      });
+      if (process.env.RUN_BREAKING_TESTS === "true") {
+        test("Empty string", async () => {
+          response = await user.deleteUserByName(loginResponse.body.token, "");
+          expect(response.status).toBe(404);
+        });
 
-      test("Special characters", async () => {
-        response = await user.deleteUserByName(
-          loginResponse.body.token,
-          characters.gen()
-        );
-        expect(response.status).toBe(404);
-      });
+        test("URL", async () => {
+          response = await user.deleteUserByName(
+            loginResponse.body.token,
+            "https://github.com/bcgov/CITZ-HybridWorkplace"
+          );
+          expect(response.status).toBe(404);
+        });
+
+        test("Special characters", async () => {
+          response = await user.deleteUserByName(
+            loginResponse.body.token,
+            characters.gen()
+          );
+          expect(response.status).toBe(404);
+        });
+      }
     });
 
     describe("Sending other things as username", () => {

@@ -39,8 +39,6 @@ describe("Testing PATCH /community/moderators/add/{title} endpoint", () => {
       await community.createCommunity(
         communityName,
         "Description goes here",
-        // "No rules",
-        // [],
         loginResponse1.body.token
       );
 

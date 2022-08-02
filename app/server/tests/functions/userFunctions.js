@@ -25,7 +25,7 @@ function getUser(token) {
  * @returns              Response from API.
  */
 function editUserByObject(token, body) {
-  if (!body.notificationFrequency) body.notificationFrequency = "none";
+  // if (!body.notificationFrequency) body.notificationFrequency = "none";
 
   return request
     .patch("/user")

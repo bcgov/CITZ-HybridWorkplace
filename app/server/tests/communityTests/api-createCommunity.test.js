@@ -16,9 +16,9 @@ const userEmail = email.gen();
 
 const welComTitle = "Welcome";
 const welComDescript = "Welcome to theNeighbourhood";
-const welComRules = "string";
+const welComRules = [];
 
-const newComTitle = "Create community";
+const newComTitle = `Create community - ${name.gen()}`;
 const newComDescript = "world";
 const newComRules = [
   {
@@ -62,312 +62,283 @@ const jsonCom = JSON.stringify({
     },
   ],
 });
-
-describe("Registering a test user", () => {
-  test("API returns a successful response - code 201", async () => {
-    const response = await auth.register(userName, userEmail, userPassword);
-    token = response.body.token;
-    expect(response.status).toBe(201);
-  });
-});
-
-describe("Logging in the test user", () => {
-  test("API returns a successful response - code 201", async () => {
-    const response = await auth.login(userName, userPassword);
-    token = response.body.token;
-    expect(response.status).toBe(201);
-  });
-});
-
-describe("Create Community - With login", () => {
-  let response = "";
-
-  beforeAll(async () => {
-    await community.deleteCommunity(newComTitle, token);
-    response = await community.createCommunity(
-      newComTitle,
-      newComDescript,
-      newComRules,
-      newComTags,
-      token
-    );
+describe("Testing POST /community endpoint", () => {
+  afterAll(async () => {
+    await community.deleteAllCommunities();
+    await auth.deleteUsers();
   });
 
-  test("API returns a successful response - code 201", () => {
-    expect(response.status).toBe(201);
+  describe("Registering a test user", () => {
+    test("API returns a successful response - code 201", async () => {
+      const response = await auth.register(userName, userEmail, userPassword);
+      token = response.body.token;
+      expect(response.status).toBe(201);
+    });
   });
 
-  test("API returns description and title of new community", () => {
-    expect(`${response.text}`).toContain(newComTitle);
-    expect(`${response.text}`).toContain(newComDescript);
-  });
-});
-
-describe("Create Community - With login, but community already exists", () => {
-  let response = "";
-
-  beforeAll(async () => {
-    response = await community.createCommunity(
-      welComTitle,
-      welComDescript,
-      welComRules,
-      "",
-      token
-    );
+  describe("Logging in the test user", () => {
+    test("API returns a successful response - code 201", async () => {
+      const response = await auth.login(userName, userPassword);
+      token = response.body.token;
+      expect(response.status).toBe(201);
+    });
   });
 
-  test("API returns a unsuccessful response - code 403", () => {
-    expect(response.status).toBe(403);
+  describe("Create Community - With login", () => {
+    let response = "";
+
+    beforeAll(async () => {
+      await community.deleteCommunity(newComTitle, token);
+      response = await community.createCommunity(
+        newComTitle,
+        newComDescript,
+        token,
+        newComRules,
+        newComTags
+      );
+    });
+
+    test("API returns a successful response - code 201", () => {
+      expect(response.status).toBe(201);
+    });
+
+    test("API returns description and title of new community", () => {
+      expect(`${response.text}`).toContain(newComTitle);
+      expect(`${response.text}`).toContain(newComDescript);
+    });
   });
 
-  test('API returns description - "Community already exists."', () => {
-    expect(`${response.text}`).toContain("Community already exists.");
-  });
-});
+  describe("Create Community - With login, but community already exists", () => {
+    let response = "";
 
-describe("Create Communities by Title - After Login, with token, but title is an array(1 element)", () => {
-  beforeAll(async () => {
-    response = await community.createCommunity(
-      arrayCom,
-      newComDescript,
-      newComRules,
-      newComTags,
-      token
-    );
-  });
+    beforeAll(async () => {
+      response = await community.createCommunity(
+        welComTitle,
+        welComDescript,
+        token,
+        welComRules,
+        []
+      );
+    });
 
-  test("API returns a unsuccessful response - code 400", () => {
-    expect(response.status).toBe(400);
-  });
+    test("API returns a unsuccessful response - code 403", () => {
+      expect(response.status).toBe(403);
+    });
 
-  test('API returns description -  "Bad Request: TypeError: string.trim is not a function"', () => {
-    expect(response.text).toBe(
-      "Bad Request: TypeError: string.trim is not a function"
-    );
-  });
-});
-
-describe("Create Communities by Title - After Login, with token, but title is an array(3 elements)", () => {
-  beforeAll(async () => {
-    response = await community.createCommunity(
-      arrayCom2,
-      newComDescript,
-      newComRules,
-      newComTags,
-      token
-    );
+    test('API returns description - "Community already exists."', () => {
+      expect(`${response.text}`).toContain("Community already exists.");
+    });
   });
 
-  test("API returns a unsuccessful response - code 400", () => {
-    expect(response.status).toBe(400);
+  describe("Create Communities by Title - After Login, with token, but title is an array(1 element)", () => {
+    beforeAll(async () => {
+      response = await community.createCommunity(
+        arrayCom,
+        newComDescript,
+        token,
+        newComRules,
+        newComTags
+      );
+    });
+
+    test("API returns a unsuccessful response - code 400", () => {
+      expect(response.status).toBe(400);
+    });
+
+    test('API returns description -  "Bad Request: TypeError: string.trim is not a function"', () => {
+      expect(response.text).toBe(
+        "Bad Request: TypeError: string.trim is not a function"
+      );
+    });
   });
 
-  test('API returns description -  "Bad Request: TypeError: string.trim is not a function"', () => {
-    expect(response.text).toBe(
-      "Bad Request: TypeError: string.trim is not a function"
-    );
-  });
-});
+  describe("Create Communities by Title - After Login, with token, but title is an array(3 elements)", () => {
+    beforeAll(async () => {
+      response = await community.createCommunity(
+        arrayCom2,
+        newComDescript,
+        token,
+        newComRules,
+        newComTags
+      );
+    });
 
-describe("Create Communities by Title - After Login, with token, but getting an integer", () => {
-  beforeAll(async () => {
-    response = await community.createCommunity(
-      intCom,
-      newComDescript,
-      newComRules,
-      newComTags,
-      token
-    );
-  });
+    test("API returns a unsuccessful response - code 400", () => {
+      expect(response.status).toBe(400);
+    });
 
-  test("API returns a unsuccessful response - code 400", () => {
-    expect(response.status).toBe(400);
-  });
-
-  test('API returns description -  "Bad Request: TypeError: string.trim is not a function"', () => {
-    expect(response.text).toContain(
-      "Bad Request: TypeError: string.trim is not a function"
-    );
-  });
-});
-
-describe("Create Communities by Title - After Login, with token, but getting an boolean", () => {
-  beforeAll(async () => {
-    response = await community.createCommunity(
-      boolCom,
-      newComDescript,
-      newComRules,
-      newComTags,
-      token
-    );
+    test('API returns description -  "Bad Request: TypeError: string.trim is not a function"', () => {
+      expect(response.text).toBe(
+        "Bad Request: TypeError: string.trim is not a function"
+      );
+    });
   });
 
-  test("API returns a unsuccessful response - code 400", () => {
-    expect(response.status).toBe(400);
+  describe("Create Communities by Title - After Login, with token, but getting an integer", () => {
+    beforeAll(async () => {
+      response = await community.createCommunity(
+        intCom,
+        newComDescript,
+        token,
+        newComRules,
+        newComTags
+      );
+    });
+
+    test("API returns a unsuccessful response - code 400", () => {
+      expect(response.status).toBe(400);
+    });
+
+    test('API returns description -  "Bad Request: TypeError: string.trim is not a function"', () => {
+      expect(response.text).toContain(
+        "Bad Request: TypeError: string.trim is not a function"
+      );
+    });
   });
 
-  test('API returns description -  "Bad Request: ValidationError: title: Path `title` is required."', () => {
-    expect(response.text).toBe(
-      "Bad Request: ValidationError: title: Path `title` is required."
-    );
-  });
-});
+  describe("Create Communities by Title - After Login, with token, but getting an boolean", () => {
+    beforeAll(async () => {
+      response = await community.createCommunity(
+        boolCom,
+        newComDescript,
+        token,
+        newComRules,
+        newComTags
+      );
+    });
 
-describe("Create Communities by Title - After Login, with token, but getting an object", () => {
-  beforeAll(async () => {
-    response = await community.createCommunity(
-      community,
-      newComDescript,
-      newComRules,
-      newComTags,
-      token
-    );
+    test("API returns a unsuccessful response - code 400", () => {
+      expect(response.status).toBe(400);
+    });
   });
 
-  test("API returns a unsuccessful response - code 400", () => {
-    expect(response.status).toBe(400);
+  describe("Create Communities by Title - After Login, with token, but getting an object", () => {
+    beforeAll(async () => {
+      response = await community.createCommunity(
+        community,
+        newComDescript,
+        token,
+        newComRules,
+        newComTags
+      );
+    });
+
+    test("API returns a unsuccessful response - code 400", () => {
+      expect(response.status).toBe(400);
+    });
+
+    test('API returns description -  "Bad Request: TypeError: string.trim is not a function."', () => {
+      expect(response.text).toBe(
+        "Bad Request: TypeError: string.trim is not a function"
+      );
+    });
   });
 
-  test('API returns description -  "Bad Request: TypeError: string.trim is not a function."', () => {
-    expect(response.text).toBe(
-      "Bad Request: TypeError: string.trim is not a function"
-    );
-  });
-});
+  describe("Create Communities by Title - After Login, with token, but getting a json object", () => {
+    beforeAll(async () => {
+      response = await community.createCommunity(
+        jsonCom,
+        newComDescript,
+        token,
+        newComRules,
+        newComTags
+      );
+    });
 
-describe("Create Communities by Title - After Login, with token, but getting a json object", () => {
-  beforeAll(async () => {
-    response = await community.createCommunity(
-      jsonCom,
-      newComDescript,
-      newComRules,
-      newComTags,
-      token
-    );
-  });
+    test("API returns a unsuccessful response - code 403", () => {
+      expect(response.status).toBe(403);
+    });
 
-  test("API returns a unsuccessful response - code 403", () => {
-    expect(response.status).toBe(403);
-  });
-
-  test('API returns description -  "title does not meet requirements: length 3-25, must not contain characters (\\/@*^_+-=`~][{}:;<>)."', () => {
-    expect(response.text).toBe(
-      "title does not meet requirements: length 3-25, must not contain characters (\\/@*^_+-=`~][{}:;<>)."
-    );
-  });
-});
-
-describe("Create Communities by Title - After Login, with token, but getting a link", () => {
-  beforeAll(async () => {
-    response = await community.createCommunity(
-      linkCom,
-      newComDescript,
-      newComRules,
-      newComTags,
-      token
-    );
+    test('API returns description -  "title does not meet requirements: length 3-25, must not contain characters (\\/@*^_+-=`~][{}:;<>)."', () => {
+      expect(response.text).toBe(
+        "title does not meet requirements: length 3-200, must not contain characters (\\/@*^_+-=`~][{}:;<>)."
+      );
+    });
   });
 
-  test("API returns a unsuccessful response - code 403", () => {
-    expect(response.status).toBe(403);
+  describe("Create Communities by Title - After Login, with token, but getting a link", () => {
+    beforeAll(async () => {
+      response = await community.createCommunity(
+        linkCom,
+        newComDescript,
+        token,
+        newComRules,
+        newComTags
+      );
+    });
+
+    test("API returns a unsuccessful response - code 403", () => {
+      expect(response.status).toBe(403);
+    });
+
+    test('API returns description -  "Invalid Entry."', () => {
+      expect(response.text).toBe("Invalid Entry.");
+    });
   });
 
-  test('API returns description -  "Invalid Entry."', () => {
-    expect(response.text).toBe("Invalid Entry.");
-  });
-});
+  describe("Create Communities by Title - After Login, with token, but getting special characters", () => {
+    beforeAll(async () => {
+      response = await community.createCommunity(
+        specialCom,
+        newComDescript,
+        token,
+        newComRules,
+        newComTags
+      );
+    });
 
-describe("Create Communities by Title - After Login, with token, but getting special characters", () => {
-  beforeAll(async () => {
-    response = await community.createCommunity(
-      specialCom,
-      newComDescript,
-      newComRules,
-      newComTags,
-      token
-    );
-  });
+    test("API returns a unsuccessful response - code 403", () => {
+      expect(response.status).toBe(403);
+    });
 
-  test("API returns a unsuccessful response - code 403", () => {
-    expect(response.status).toBe(403);
-  });
-
-  test('API returns description -  "title does not meet requirements: length 3-25, must not contain characters (\\/@*^_+-=`~][{}:;<>)."', () => {
-    expect(response.text).toBe(
-      "title does not meet requirements: length 3-25, must not contain characters (\\/@*^_+-=`~][{}:;<>)."
-    );
-  });
-});
-
-describe("Create Communities by Title - After Login, with token, but getting html entity codes", () => {
-  beforeAll(async () => {
-    response = await community.createCommunity(
-      entityCodeComs,
-      newComDescript,
-      newComRules,
-      newComTags,
-      token
-    );
+    test('API returns description -  "title does not meet requirements: length 3-200, must not contain characters (\\/@*^_+-=`~][{}:;<>)."', () => {
+      expect(response.text).toBe(
+        "title does not meet requirements: length 3-200, must not contain characters (\\/@*^_+-=`~][{}:;<>)."
+      );
+    });
   });
 
-  test("API returns a unsuccessful response - code 403", () => {
-    expect(response.status).toBe(403);
+  describe("Create Communities by Title - After Login, with token, but getting html entity codes", () => {
+    beforeAll(async () => {
+      response = await community.createCommunity(
+        entityCodeComs,
+        newComDescript,
+        token,
+        newComRules,
+        newComTags
+      );
+    });
+
+    test("API returns a unsuccessful response - code 403", () => {
+      expect(response.status).toBe(403);
+    });
+
+    test('API returns description -  "title does not meet requirements: length 3-25, must not contain characters (\\/@*^_+-=`~][{}:;<>)."', () => {
+      expect(response.text).toBe(
+        "title does not meet requirements: length 3-200, must not contain characters (\\/@*^_+-=`~][{}:;<>)."
+      );
+    });
   });
 
-  test('API returns description -  "title does not meet requirements: length 3-25, must not contain characters (\\/@*^_+-=`~][{}:;<>)."', () => {
-    expect(response.text).toBe(
-      "title does not meet requirements: length 3-25, must not contain characters (\\/@*^_+-=`~][{}:;<>)."
-    );
-  });
-});
+  describe("Create Communities by Title - After Login, with token, but getting html code", () => {
+    beforeAll(async () => {
+      response = await community.createCommunity(
+        htmlComs,
+        newComDescript,
+        token,
+        newComRules,
+        newComTags
+      );
+    });
 
-describe("Create Communities by Title - After Login, with token, but getting html code", () => {
-  beforeAll(async () => {
-    response = await community.createCommunity(
-      htmlComs,
-      newComDescript,
-      newComRules,
-      newComTags,
-      token
-    );
-  });
+    test("API returns a unsuccessful response - code 403", () => {
+      expect(response.status).toBe(403);
+    });
 
-  test("API returns a unsuccessful response - code 403", () => {
-    expect(response.status).toBe(403);
-  });
-
-  test('API returns description -  "title does not meet requirements: length 3-25, must not contain characters (\\/@*^_+-=`~][{}:;<>)."', () => {
-    expect(response.text).toBe(
-      "title does not meet requirements: length 3-25, must not contain characters (\\/@*^_+-=`~][{}:;<>)."
-    );
-  });
-});
-
-describe("Deleting all createdCommunity", () => {
-  test("API returns a successful response - code 200 (removes all Communities)", async () => {
-    response = await community.deleteAllCommunities();
-    expect(response.status).toBe(200);
-  });
-
-  test("API returns a successful response - code 200 (removes newComTitle)", async () => {
-    response = await community.deleteCommunity(newComTitle, token);
-    expect(response.status).toBe(200);
-  });
-
-  test("API returns a successful response - code 200 (removes linkCommunity)", async () => {
-    response = await community.deleteCommunity(linkCom, token);
-    expect(response.status).toBe(200);
-  });
-
-  test("API returns a successful response - code 200 (removes htmlCommunity)", async () => {
-    response = await community.deleteCommunity(htmlComs, token);
-    expect(response.status).toBe(200);
-  });
-});
-
-describe("Deleting a test user", () => {
-  test("API returns a successful response - code 204", async () => {
-    const response = await user.deleteUserByName(token, userName);
-    expect(response.status).toBe(204);
+    test('API returns description -  "title does not meet requirements: length 3-25, must not contain characters (\\/@*^_+-=`~][{}:;<>)."', () => {
+      expect(response.text).toBe(
+        "title does not meet requirements: length 3-200, must not contain characters (\\/@*^_+-=`~][{}:;<>)."
+      );
+    });
   });
 });

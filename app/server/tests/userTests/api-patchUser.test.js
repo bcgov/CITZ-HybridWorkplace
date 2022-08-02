@@ -192,100 +192,137 @@ describe("Testing PATCH /user endpoint", () => {
     });
   });
 
-  describe("Testing limitations of keys within request body", () => {
-    const userName = name.gen();
-    const userPassword = password.gen();
-    const userEmail = email.gen();
-    let loginResponse;
-    let response;
-    beforeAll(async () => {
-      await auth.register(userName, userEmail, userPassword);
-      loginResponse = await auth.login(userName, userPassword);
+  if (process.env.RUN_BREAKING_TESTS === "true") {
+    describe("Testing limitations of keys within request body", () => {
+      const userName = name.gen();
+      const userPassword = password.gen();
+      const userEmail = email.gen();
+      let loginResponse;
+      let response;
+      beforeAll(async () => {
+        await auth.register(userName, userEmail, userPassword);
+        loginResponse = await auth.login(userName, userPassword);
+      });
+
+      afterAll(async () => {
+        await auth.deleteUsers();
+      });
+
+      describe("Sending numbers as username", () => {
+        test("Positive integer", async () => {
+          const body = { email: positiveInt.gen() };
+          response = await user.editUserByObject(
+            loginResponse.body.token,
+            body
+          );
+          expect(response.status).toBe(403);
+        });
+
+        test("Positive decimal", async () => {
+          const body = { email: positive.gen() };
+          response = await user.editUserByObject(
+            loginResponse.body.token,
+            body
+          );
+          expect(response.status).toBe(403);
+        });
+
+        test("Negative integer", async () => {
+          const body = { email: negative.gen() };
+          response = await user.editUserByObject(
+            loginResponse.body.token,
+            body
+          );
+          expect(response.status).toBe(403);
+        });
+
+        test("Negative decimal", async () => {
+          const body = { email: negativeInt.gen() };
+          response = await user.editUserByObject(
+            loginResponse.body.token,
+            body
+          );
+          expect(response.status).toBe(403);
+        });
+
+        test("Zero", async () => {
+          const body = { email: 0 };
+          response = await user.editUserByObject(
+            loginResponse.body.token,
+            body
+          );
+          expect(response.status).toBe(403);
+        });
+      });
+
+      describe("Sending strings as username", () => {
+        test("Empty string", async () => {
+          const body = { email: "" };
+          response = await user.editUserByObject(
+            loginResponse.body.token,
+            body
+          );
+          expect(response.status).toBe(403);
+        });
+
+        test("Very large string", async () => {
+          const body = { email: largeString.gen() };
+          response = await user.editUserByObject(
+            loginResponse.body.token,
+            body
+          );
+          expect(response.status).toBe(403);
+        });
+
+        test("URL", async () => {
+          const body = {
+            email: "https://github.com/bcgov/CITZ-HybridWorkplace",
+          };
+          response = await user.editUserByObject(
+            loginResponse.body.token,
+            body
+          );
+          expect(response.status).toBe(403);
+        });
+
+        test("Special characters", async () => {
+          const body = { email: characters.gen() };
+          response = await user.editUserByObject(
+            loginResponse.body.token,
+            body
+          );
+          expect(response.status).toBe(403);
+        });
+      });
+
+      describe("Sending other things as username", () => {
+        test("Null", async () => {
+          const body = { email: null };
+          response = await user.editUserByObject(
+            loginResponse.body.token,
+            body
+          );
+          expect(response.status).toBe(403);
+        });
+
+        test("Array", async () => {
+          const body = {
+            email: [
+              {
+                email: "mynewemail@gmail.com",
+              },
+              {
+                email: "mysecondemail@gmail.com",
+              },
+            ],
+          };
+          response = await user.editUserByObject(
+            loginResponse.body.token,
+            body
+          );
+          expect(response.status).toBe(403);
+        });
+      });
     });
-
-    afterAll(async () => {
-      await auth.deleteUsers();
-    });
-
-    describe("Sending numbers as username", () => {
-      test("Positive integer", async () => {
-        const body = { email: positiveInt.gen() };
-        response = await user.editUserByObject(loginResponse.body.token, body);
-        expect(response.status).toBe(403);
-      });
-
-      test("Positive decimal", async () => {
-        const body = { email: positive.gen() };
-        response = await user.editUserByObject(loginResponse.body.token, body);
-        expect(response.status).toBe(403);
-      });
-
-      test("Negative integer", async () => {
-        const body = { email: negative.gen() };
-        response = await user.editUserByObject(loginResponse.body.token, body);
-        expect(response.status).toBe(403);
-      });
-
-      test("Negative decimal", async () => {
-        const body = { email: negativeInt.gen() };
-        response = await user.editUserByObject(loginResponse.body.token, body);
-        expect(response.status).toBe(403);
-      });
-
-      test("Zero", async () => {
-        const body = { email: 0 };
-        response = await user.editUserByObject(loginResponse.body.token, body);
-        expect(response.status).toBe(403);
-      });
-    });
-
-    describe("Sending strings as username", () => {
-      test("Empty string", async () => {
-        const body = { email: "" };
-        response = await user.editUserByObject(loginResponse.body.token, body);
-        expect(response.status).toBe(403);
-      });
-
-      test("Very large string", async () => {
-        const body = { email: largeString.gen() };
-        response = await user.editUserByObject(loginResponse.body.token, body);
-        expect(response.status).toBe(403);
-      });
-
-      test("URL", async () => {
-        const body = { email: "https://github.com/bcgov/CITZ-HybridWorkplace" };
-        response = await user.editUserByObject(loginResponse.body.token, body);
-        expect(response.status).toBe(403);
-      });
-
-      test("Special characters", async () => {
-        const body = { email: characters.gen() };
-        response = await user.editUserByObject(loginResponse.body.token, body);
-        expect(response.status).toBe(403);
-      });
-    });
-
-    describe("Sending other things as username", () => {
-      test("Null", async () => {
-        const body = { email: null };
-        response = await user.editUserByObject(loginResponse.body.token, body);
-        expect(response.status).toBe(403);
-      });
-
-      test("Array", async () => {
-        const body = {
-          email: [
-            {
-              email: "mynewemail@gmail.com",
-            },
-            {
-              email: "mysecondemail@gmail.com",
-            },
-          ],
-        };
-        response = await user.editUserByObject(loginResponse.body.token, body);
-        expect(response.status).toBe(403);
-      });
-    });
-  });
+  }
 });
