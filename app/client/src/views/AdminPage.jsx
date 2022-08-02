@@ -19,7 +19,7 @@
  * @module
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 
 import {
@@ -34,10 +34,27 @@ import {
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import AdminStatusBox from "../components/AdminStatusBox";
-
+import { getAdminData } from "../redux/ducks/adminDuck";
 import { DataGrid } from "@mui/x-data-grid";
+import LoadingPage from "./LoadingPage";
+import { Navigate } from "react-router-dom";
+import {
+  openAdminDeleteUserModal,
+  openAdminEditUserInfoModal,
+} from "../redux/ducks/modalDuck";
+import AdminDeleteUserModal from "../components/modals/AdminDeleteUserModal";
+import AdminEditUserModal from "../components/modals/AdminEditUserModal";
 
 const AdminPage = (props) => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      await props.getAdminData();
+      setLoading(false);
+    })();
+  }, []);
+
   // TABS
   const [tab, setTab] = useState(1);
   const handleTabChange = (event, newValue) => {
@@ -64,7 +81,9 @@ const AdminPage = (props) => {
    * like how github prompts deleting a repository.
    */
 
-  return (
+  return !props.userIsAdmin ? (
+    <Navigate to="/" />
+  ) : (
     <Grid container spacing={2} sx={{ pb: 10 }}>
       <Grid item xs={3}>
         <Box
@@ -131,8 +150,17 @@ const AdminPage = (props) => {
                     fullWidth
                   />
                   <Button>Get</Button>
-                  <Button>Edit</Button>
-                  <Button>Delete</Button>
+                  {/* //TO BE REPLACED WITH ACTUAL USER DATA*/}
+                  <Button
+                    onClick={() => props.openAdminEditUserInfoModal(props.user)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    onClick={() => props.openAdminDeleteUserModal(props.user)}
+                  >
+                    Delete
+                  </Button>
                 </Stack>
               </Box>
             </TabPanel>
@@ -148,12 +176,23 @@ const AdminPage = (props) => {
           </TabContext>
         </Box>
       </Grid>
+      <AdminDeleteUserModal />
+      <AdminEditUserModal />
     </Grid>
   );
 };
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = (state) => ({
+  adminData: state.admin,
+  userIsAdmin: state.auth.user.role === "admin",
+  //TO BE REPLACED WITH ACTUAL USER DATA
+  user: state.auth.user,
+});
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  getAdminData,
+  openAdminDeleteUserModal,
+  openAdminEditUserInfoModal,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(AdminPage);
