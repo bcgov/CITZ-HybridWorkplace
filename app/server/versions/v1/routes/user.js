@@ -385,8 +385,20 @@ router.patch("/", async (req, res, next) => {
       );
     }
 
+    // Admin can set other username
+    let otherUsername;
+    if (
+      req.user.role === "admin" &&
+      req.query.username &&
+      req.query.username !== ""
+    )
+      otherUsername = req.query.username;
+
     req.log.addAction("Updating user.");
-    await User.updateOne({ _id: user.id }, query).exec();
+    await User.updateOne(
+      { username: otherUsername || user.username },
+      query
+    ).exec();
     req.log.addAction("User updated.");
 
     req.log.setResponse(204, "Success");

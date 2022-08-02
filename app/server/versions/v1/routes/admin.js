@@ -346,7 +346,7 @@ router.get("/", async (req, res, next) => {
 
     req.log.addAction("Finding latest flagged comment.");
     let latestFlaggedCommentTimestamp;
-    let latestFlaggedCommentId = "";
+    let latestFlaggedCommentPostId = "";
     Object.keys(flaggedComments).forEach((comment) => {
       const latest = flaggedComments[comment].latestFlagTimestamp
         ? moment(
@@ -358,14 +358,14 @@ router.get("/", async (req, res, next) => {
         : null;
       if (!latestFlaggedCommentTimestamp) {
         latestFlaggedCommentTimestamp = latest;
-        latestFlaggedCommentId = flaggedComments[comment].id;
+        latestFlaggedCommentPostId = flaggedComments[comment].post;
       }
       if (
         latest &&
         now.diff(latest, "days", true) <
           now.diff(latestFlaggedCommentTimestamp, "days", true)
       ) {
-        latestFlaggedCommentId = flaggedComments[comment].id;
+        latestFlaggedCommentPostId = flaggedComments[comment].post;
         latestFlaggedCommentTimestamp = latest;
       }
     });
@@ -473,7 +473,7 @@ router.get("/", async (req, res, next) => {
                 "MMMM Do YYYY, h:mm:ss a"
               )
             : "",
-          identifier: latestFlaggedCommentId,
+          identifier: latestFlaggedCommentPostId,
         },
       },
       users: { columns: userColumns, rows: userRows },
