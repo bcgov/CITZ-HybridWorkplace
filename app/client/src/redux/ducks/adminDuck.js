@@ -91,6 +91,8 @@ export const adminEditUser =
       const token = getState().auth.accessToken;
       if (!token) throw new Error(noTokenText);
 
+      console.log(changes);
+
       const response = await hwp_axios.patch(
         `/api/user?username=${username}`,
         { ...changes },

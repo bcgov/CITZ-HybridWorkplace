@@ -322,9 +322,9 @@ const initialState = {
   deleteCommunity: { open: false, community: {} },
   deleteComment: { open: false, comment: {} },
   // Admin State
-  adminDeleteUser: { open: false, username: {} },
-  adminEditUser: { open: false, username: {} },
-  adminGetUser: { open: false, username: {} },
+  adminDeleteUser: { open: false, username: "" },
+  adminEditUser: { open: false, username: "" },
+  adminGetUser: { open: false, username: "" },
   // Flag State
   flagPost: { open: false, post: {} },
   flagCommunity: { open: false, community: {} },

@@ -32,6 +32,7 @@ import {
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import { closeAdminEditUserInfoModal } from "../../redux/ducks/modalDuck";
+import { adminEditUser } from "../../redux/ducks/adminDuck";
 import { getProfile } from "../../redux/ducks/profileDuck";
 import PropTypes from "prop-types";
 
@@ -52,7 +53,8 @@ const AdminEditUserModal = (props) => {
   const [registeredOn, setRegisteredOn] = useState("");
 
   useEffect(() => {
-    if (props.username) props.getProfile(props.username);
+    if (props.username && typeof props.username === "string")
+      props.getProfile(props.username);
   }, [props.open]);
 
   useEffect(() => {
@@ -82,8 +84,25 @@ const AdminEditUserModal = (props) => {
     setNotificationFrequency(event.target.value);
   const onRegisteredOnChange = (event) => setRegisteredOn(event.target.value);
 
-  const onEditClick = () => {
-    // TODO
+  const onEditClick = async () => {
+    const changes = {};
+    if (props.user.username !== username) changes.username = username;
+    if (props.user.email !== email) changes.email = email;
+    if (props.user.role !== role) changes.role = role;
+    if (props.user.firstName !== firstName) changes.firstName = firstName;
+    if (props.user.lastName !== lastName) changes.lastName = lastName;
+    if (props.user.title !== title) changes.title = title;
+    if (props.user.ministry !== ministry) changes.ministry = ministry;
+    if (props.user.bio !== bio) changes.bio = bio;
+    if (props.user.postCount !== postCount) changes.postCount = postCount;
+    if (props.user.notificationFrequency !== notificationFrequency)
+      changes.notificationFrequency = notificationFrequency;
+    if (props.user.registeredOn !== registeredOn)
+      changes.registeredOn = registeredOn;
+    const successful = await props.adminEditUser(props.username, changes);
+    if (successful === true) {
+      closeModal();
+    }
   };
 
   return (
@@ -98,41 +117,49 @@ const AdminEditUserModal = (props) => {
         <Stack spacing={2} sx={{ mt: 1 }}>
           <TextField
             label="Username"
-            value={username}
+            value={username || ""}
             onChange={onUsernameChange}
           />
-          <TextField label="Email" value={email} onChange={onEmailChange} />
-          <TextField label="Role" value={role} onChange={onRoleChange} />
+          <TextField
+            label="Email"
+            value={email || ""}
+            onChange={onEmailChange}
+          />
+          <TextField label="Role" value={role || ""} onChange={onRoleChange} />
           <TextField
             label="First Name"
-            value={firstName}
+            value={firstName || ""}
             onChange={onFirstNameChange}
           />
           <TextField
             label="Last Name"
-            value={lastName}
+            value={lastName || ""}
             onChange={onLastNameChange}
           />
-          <TextField label="Title" value={title} onChange={onTitleChange} />
+          <TextField
+            label="Title"
+            value={title || ""}
+            onChange={onTitleChange}
+          />
           <TextField
             label="Ministry"
-            value={ministry}
+            value={ministry || ""}
             onChange={onMinistryChange}
           />
-          <TextField label="Bio" value={bio} onChange={onBioChange} />
+          <TextField label="Bio" value={bio || ""} onChange={onBioChange} />
           <TextField
             label="Post Count"
-            value={postCount}
+            value={postCount || ""}
             onChange={onPostCountChange}
           />
           <TextField
             label="Notification Frequency"
-            value={notificationFrequency}
+            value={notificationFrequency || ""}
             onChange={onNotificationFrequencyChange}
           />
           <TextField
             label="Registered On"
-            value={registeredOn}
+            value={registeredOn || ""}
             onChange={onRegisteredOnChange}
           />
         </Stack>
@@ -164,6 +191,7 @@ const mapStateToProps = (state) => ({
 
 const mapActionsToProps = {
   closeAdminEditUserInfoModal,
+  adminEditUser,
   getProfile,
 };
 

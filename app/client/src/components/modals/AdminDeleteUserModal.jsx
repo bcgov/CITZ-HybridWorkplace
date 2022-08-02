@@ -48,7 +48,6 @@ const AdminDeleteUserModal = (props) => {
     const successful = await props.adminDeleteUser(props.username);
     if (successful === true) {
       closeModal();
-      props.sideEffect?.();
     }
   };
 

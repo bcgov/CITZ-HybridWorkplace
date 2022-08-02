@@ -59,7 +59,7 @@ const AdminPage = (props) => {
   }, []);
 
   // TABS
-  const [tab, setTab] = useState(1);
+  const [tab, setTab] = useState("1");
   const handleTabChange = (event, newValue) => {
     // event is required
     setTab(newValue);
@@ -81,6 +81,10 @@ const AdminPage = (props) => {
 
   const handleGetUserClick = () => {
     if (selectedUser !== "") props.openAdminGetUserModal(selectedUser);
+  };
+
+  const handleUserCellClick = (params) => {
+    if (params.field === "username") setSelectedUser(params.value);
   };
 
   return !props.userIsAdmin ? (
@@ -115,6 +119,7 @@ const AdminPage = (props) => {
               title={"Flagged Communities"}
               value={props.adminData.status.communities.flagCount}
               latest={props.adminData.status.communities.latest}
+              navigate={`community/${props.adminData.status.communities.identifier}`}
             />
           )}
           {props.adminData.status.posts.flagCount > 0 && (
@@ -122,6 +127,7 @@ const AdminPage = (props) => {
               title={"Flagged Posts"}
               value={props.adminData.status.posts.flagCount}
               latest={props.adminData.status.posts.latest}
+              navigate={`post/${props.adminData.status.posts.identifier}`}
             />
           )}
           {props.adminData.status.comments.flagCount > 0 && (
@@ -129,6 +135,7 @@ const AdminPage = (props) => {
               title={"Flagged Comments"}
               value={props.adminData.status.comments.flagCount}
               latest={props.adminData.status.comments.latest}
+              navigate={`post/${props.adminData.status.comments.identifier}`}
             />
           )}
         </Stack>
@@ -138,7 +145,7 @@ const AdminPage = (props) => {
       </Grid>
       <Grid item xs={8.5}>
         <Box sx={{ width: "100%" }}>
-          <TabContext value={tab}>
+          <TabContext value={tab || "1"}>
             <Box
               sx={{
                 borderBottom: 1,
@@ -146,13 +153,13 @@ const AdminPage = (props) => {
               }}
             >
               <TabList onChange={handleTabChange}>
-                <Tab label="Users" value={1} sx={{ fontWeight: 600 }} />
-                <Tab label="Communities" value={2} sx={{ fontWeight: 600 }} />
-                <Tab label="Posts" value={3} sx={{ fontWeight: 600 }} />
-                <Tab label="Comments" value={4} sx={{ fontWeight: 600 }} />
+                <Tab label="Users" value={"1"} sx={{ fontWeight: 600 }} />
+                <Tab label="Communities" value={"2"} sx={{ fontWeight: 600 }} />
+                <Tab label="Posts" value={"3"} sx={{ fontWeight: 600 }} />
+                <Tab label="Comments" value={"4"} sx={{ fontWeight: 600 }} />
               </TabList>
             </Box>
-            <TabPanel value={1}>
+            <TabPanel value={"1"}>
               <Box sx={{ height: 350, width: "100%" }}>
                 <DataGrid
                   rows={props.adminData.users.rows ?? []}
@@ -161,6 +168,7 @@ const AdminPage = (props) => {
                   rowsPerPageOptions={[5]}
                   checkboxSelection
                   disableSelectionOnClick
+                  onCellClick={handleUserCellClick}
                 />
                 <Stack spacing={1.5} direction="row" sx={{ my: 2 }}>
                   <TextField
@@ -175,7 +183,7 @@ const AdminPage = (props) => {
                 </Stack>
               </Box>
             </TabPanel>
-            <TabPanel value={2}>
+            <TabPanel value={"2"}>
               <Box sx={{ height: 400, width: "100%" }}>
                 <DataGrid
                   rows={props.adminData.communities.rows ?? []}
@@ -187,7 +195,7 @@ const AdminPage = (props) => {
                 />
               </Box>
             </TabPanel>
-            <TabPanel value={3}>
+            <TabPanel value={"3"}>
               <Box sx={{ height: 400, width: "100%" }}>
                 <DataGrid
                   rows={props.adminData.posts.rows ?? []}
@@ -199,7 +207,7 @@ const AdminPage = (props) => {
                 />
               </Box>
             </TabPanel>
-            <TabPanel value={4}>
+            <TabPanel value={"4"}>
               <Box sx={{ height: 400, width: "100%" }}>
                 <DataGrid
                   rows={props.adminData.comments.rows ?? []}
@@ -224,7 +232,6 @@ const AdminPage = (props) => {
 const mapStateToProps = (state) => ({
   adminData: state.admin,
   userIsAdmin: state.auth.user.role === "admin",
-  //TO BE REPLACED WITH ACTUAL USER DATA
   user: state.auth.user,
 });
 

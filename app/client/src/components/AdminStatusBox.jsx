@@ -21,9 +21,15 @@
  */
 
 import moment from "moment";
-import { Box, Stack, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { Box, Stack, Typography, Tooltip } from "@mui/material";
 
 const AdminStatusBox = (props) => {
+  const navigate = useNavigate();
+  const handleNavigate = () => {
+    if (props.navigate) navigate(`/${props.navigate}`);
+  };
+
   // Convert props.latest to local time
   let latest =
     moment(moment.utc(props.latest, "MMMM Do YYYY, h:mm:ss a").toDate())
@@ -54,25 +60,34 @@ const AdminStatusBox = (props) => {
         justifyContent: "center",
         alignItems: "center",
         display: "flex",
+        ":hover": {
+          cursor: "pointer",
+        },
       }}
+      onClick={handleNavigate}
     >
-      <Stack>
-        <Typography
-          variant="h6"
-          sx={{ color: "white", textAlign: "center", fontWeight: 600 }}
-        >
-          {props.title}: {props.value}
-        </Typography>
-        <Typography
-          sx={{
-            color: "white",
-            textAlign: "center",
-            pb: 0.3,
-          }}
-        >
-          {latest}
-        </Typography>
-      </Stack>
+      <Tooltip
+        title={<Typography>Click to see most recently flagged.</Typography>}
+        followCursor={true}
+      >
+        <Stack>
+          <Typography
+            variant="h6"
+            sx={{ color: "white", textAlign: "center", fontWeight: 600 }}
+          >
+            {props.title}: {props.value}
+          </Typography>
+          <Typography
+            sx={{
+              color: "white",
+              textAlign: "center",
+              pb: 0.3,
+            }}
+          >
+            {latest}
+          </Typography>
+        </Stack>
+      </Tooltip>
     </Box>
   );
 };

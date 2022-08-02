@@ -39,7 +39,8 @@ const AdminGetUserModal = (props) => {
   const closeModal = () => props.closeAdminGetUserModal();
 
   useEffect(() => {
-    if (props.username) props.getProfile(props.username);
+    if (props.username && typeof props.username === "string")
+      props.getProfile(props.username);
   }, [props.open]);
 
   useEffect(() => {}, [props.user]);
