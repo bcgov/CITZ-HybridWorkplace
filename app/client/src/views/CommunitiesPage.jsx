@@ -78,7 +78,15 @@ const CommunitiesPage = (props) => {
 
             <AddCommunityModal />
           </Box>
-          <Communities />
+          <Box
+            sx={{
+              backgroundColor: "backgroundSecondary.main",
+              padding: 1.25,
+              borderRadius: "7.5px",
+            }}
+          >
+            <Communities />
+          </Box>
         </Grid>
         <Grid item xs={4}>
           <Box

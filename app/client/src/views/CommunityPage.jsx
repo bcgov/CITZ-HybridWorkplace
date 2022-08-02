@@ -198,34 +198,43 @@ const CommunityPage = (props) => {
               show={show}
             />
           </Box>
-          {props.posts.length > 0 ? (
-            showFlaggedPosts === true ? (
-              <PostsList
-                posts={props.posts.filter((post) => post.flags.length > 0)}
-                showIsFlagged
-                showIsPinned
-              />
+          <Box
+            sx={{
+              backgroundColor: "backgroundSecondary.main",
+              pt: 5,
+              pb: 5,
+              borderRadius: "7.5px"
+            }}
+          >
+            {props.posts.length > 0 ? (
+              showFlaggedPosts === true ? (
+                <PostsList
+                  posts={props.posts.filter((post) => post.flags.length > 0)}
+                  showIsFlagged
+                  showIsPinned
+                />
+              ) : (
+                <PostsList posts={props.posts} showIsFlagged showIsPinned />
+              )
             ) : (
-              <PostsList posts={props.posts} showIsFlagged showIsPinned />
-            )
-          ) : (
-            <Box sx={{ mt: 5 }}>
-              <Typography
-                variant="h5"
-                textAlign="center"
-                sx={{ fontWeight: 600 }}
-              >
-                This community doesn't have any posts yet.
-              </Typography>
-              <Typography
-                variant="h6"
-                textAlign="center"
-                sx={{ fontWeight: 600 }}
-              >
-                Press the "+" icon to create a post.
-              </Typography>
-            </Box>
-          )}
+              <Box>
+                <Typography
+                  variant="h5"
+                  textAlign="center"
+                  sx={{ fontWeight: 600 }}
+                >
+                  This community doesn't have any posts yet.
+                </Typography>
+                <Typography
+                  variant="h6"
+                  textAlign="center"
+                  sx={{ fontWeight: 600 }}
+                >
+                  Press the "+" icon to create a post.
+                </Typography>
+              </Box>
+            )}
+          </Box>
         </Grid>
         <Grid item align="center" xs={4}>
           <Box
@@ -257,7 +266,7 @@ const CommunityPage = (props) => {
                     <Button
                       variant="text"
                       color="inherit"
-                      onClick={handleSettingsClick}
+                      onClick={handleSettingsClick} 
                     >
                       <SettingsTwoToneIcon sx={{ color: "white", pl: 3 }} />
                     </Button>
