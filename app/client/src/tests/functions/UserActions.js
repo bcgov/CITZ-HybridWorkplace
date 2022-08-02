@@ -59,8 +59,8 @@ class UserActions {
     await this.page.waitForSelector("#user");
 
     // Enter info into fields
-    await this.page.type('#user', this.idir);
-    await this.page.type('#password', this.password);
+    await this.page.type("#user", this.idir);
+    await this.page.type("#password", this.password);
 
     // Click Continue Button
     await this.page.click(`[value="Continue"]`);
@@ -85,6 +85,12 @@ class UserActions {
     });
   }
 
+  async leaveCommunity(community) {
+    this.goToCommunity(community);
+
+    this.page.waitForSelector('data-testid="LogoutOutlinedIcon"');
+    this.page.click('data-testid="LogoutOutlinedIcon"');
+  }
 
   async goToCommunity(community) {
     // Find community title link and click it
@@ -99,47 +105,50 @@ class UserActions {
     await this.page.waitForXPath(`//h5[contains(., '${community}')]`); // Community name on community page
   }
 
+  async createCommunity(community, description, rules = [], tags = []) {
+    // Assumes user is on community page.
+    await this.page.waitForXPath(`//h5[contains(., "Top Communities")]`, {
+      timeout: 2000,
+    });
 
-  async createCommunity(community, description) {
-    await this.page.waitForXPath(
-      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[2]/div[1]/div/div[2]/button`
-    ); // try to get second + button
-
-    // try to click second + button
+    // Click first + button
     const [plus] = await this.page.$x(
-      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[2]/div[1]/div/div[2]/button`
+      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[1]/div[1]/div/div[2]/button`
     );
     if (plus) {
       await plus.click();
     }
 
-    await this.page.waitForSelector('input[placeholder="Title"]'); // wait for field to appear
+    // Wait for modal to appear
+    await this.page.waitForXPath(`//h2[contains(., "Create Community")]`, {
+      timeout: 2000,
+    });
 
-    await this.page.type('input[placeholder="Title"]', `${community}`); // type in title field
-    await this.page.type("textarea.w-md-editor-text-input", `${description}`); // type in body field
-    
-    // add rules button
-    const [rules] = await this.page.$x(
-      `/html/body/div[2]/div[3]/div/div/div/div[3]/div/div/button`
+    // Type title
+    await this.page.type("#create-community-title", community);
+
+    // Type description
+    await this.page.type("textarea.w-md-editor-text-input", description);
+
+    // TODO: if rules or tags >0, add rules or tags
+
+    // Click Create button
+    // Try and get button, then click it.
+    const [button] = await this.page.$x(
+      "//button[contains(., 'Create')][not(@disabled)]"
     );
-    if (rules) {
-      await rules.click();
+    if (button) {
+      await button.click();
     }
 
-    await this.page.waitForXPath(`/html/body/div[2]/div[3]/div/div/div/div[3]/div/div/div/div/div/div[1]/p`); // wait for field to appear
-
-    await this.page.type(`input#mui-11`, `${community}`); // type in title field
-    await this.page.type(`input#mui-12`, `${community}`); // type in description field
+    // Wait for modal to close
+    await this.page.waitForFunction(
+      `document.getElementById("root").ariaHidden != "true"`,
+      {
+        timeout: 2000,
+      }
+    );
   }
-
-
-  async leaveCommunity(community) {
-    this.goToCommunity(community);
-
-    this.page.waitForSelector('data-testid="LogoutOutlinedIcon"');
-    this.page.click('data-testid="LogoutOutlinedIcon"');
-  }
-
 
   async createPost(title, body, community = "") {
     await this.page.waitForXPath(
@@ -164,11 +173,11 @@ class UserActions {
       await this.page.click(`li[data-value="${community}"]`); // select community
     }
 
-    await this.page.waitForTimeout(1000); // needs a second for button not to be disabled
+    // await this.page.waitForTimeout(1000); // needs a second for button not to be disabled?
 
     // Try and get button, then click it.
     const [button] = await this.page.$x(
-      "//button[contains(., 'Submit')][not(@disabled)]"
+      "//html/body/div[2]/div[3]/div/div/div/div[3]/div/button[contains(., 'Post')][not(@disabled)]"
     );
     if (button) {
       await button.click();
@@ -180,21 +189,18 @@ class UserActions {
     );
   }
 
-  async goToPost(post) {
-    const [postTitle] = await this.page.$x(
-      `//p/b[contains(., '${post}')]`
-    );
-    if (postTitle) {
-      await postTitle.click();
+  async goToPost(postTitle) {
+    // Try and get button, then click it.
+    const [post] = await this.page.$x(`//b[contains(., "${postTitle}")]`);
+    if (post) {
+      await post.click();
     }
 
-    // Wait until Community page
-    await this.page.waitForSelector(`//*[contains(., 'Top Communities')]`); // Community name on community page
+    // Wait for post page (can see Comments area)
+    await this.page.waitForXPath(`//h6[contains(., "Comments")]`);
   }
 
-
-  async flagPost() {
-  }
+  async flagPost() {}
 
   async goToPostersProfile() {}
 
@@ -202,12 +208,33 @@ class UserActions {
 
   async deletePost() {}
 
-  async addComment() {}
+  // Assumed on post page
+  async addComment(comment) {
+    // Find and click Add Comment
+    const [add] = await this.page.$x(
+      `//*[@id="root"]/div/div/div[1]/div/div[1]/div/button`
+    );
+    if (add) {
+      await add.click();
+    }
+
+    // Type comment
+    await this.page.type(`textarea[id*=mui-]`, comment);
+    //*[@id="mui-13"]
+
+    // Click Comment
+    const [button] = await this.page.$x(`//button[contains(., "Comment")]`);
+    if (button) {
+      await button.click();
+    }
+
+    // Wait for comment to appear
+    await this.page.waitForXPath(`//p[contains(., "${comment}")]`);
+  }
 
   async upvoteComment() {}
 
-  async downvoteComment() {
-  }
+  async downvoteComment() {}
 
   async replyToComment() {}
 
@@ -292,6 +319,21 @@ class UserActions {
     });
   }
 
+  async goToCommunitiesBySidemenu() {
+    await this.openSideMenu();
+
+    // Get and click profile link
+    const [button] = await this.page.$x(`//span[contains(., "Communities")]`);
+    if (button) {
+      await button.click();
+    }
+
+    // Wait for Settings cog to confirm Profile load
+    await this.page.waitForXPath(`//h5[contains(., "Top Communities")]`, {
+      timeout: 2000,
+    });
+  }
+
   // Profile page actions
   async editAvatar(colour, type, optionalColour = "") {
     // Get and click avatar
@@ -372,6 +414,10 @@ class UserActions {
     // Remove existing bio
     const bioValue = await this.page.$eval("#user-bio", (el) => el.value);
     await this.page.focus("#user-bio");
+    for (let i = 0; i < bioValue.length; i++) {
+      await this.page.keyboard.press("ArrowRight");
+    }
+
     for (let i = 0; i < bioValue.length; i++) {
       await this.page.keyboard.press("Backspace");
     }
@@ -472,7 +518,7 @@ class UserActions {
 
     // Loop the following: type input, hit enter
     for (let i = 0; i < input.length; i++) {
-      await this.page.type("#user-interests", input[i]);
+      await this.page.type("#tag-input", input[i]);
       await this.page.keyboard.press("Enter");
     }
 

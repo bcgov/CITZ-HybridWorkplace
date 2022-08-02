@@ -1,18 +1,18 @@
 import { UserActions } from "../functions/UserActions";
 import puppeteer from "puppeteer";
 
-
 jest.setTimeout(30000);
 
 const idir = process.env.IDIR;
 const password = process.env.PASSWORD;
-const slowmo = process.env.SLOWMO;
-const headless = process.env.HEADLESS;
+const headless = process.env.HEADLESS === "true";
+const slowmo = parseInt(process.env.SLOWMO);
 
-describe("Given that user is on login page", () => {
+describe("Given that user is logged in and on the homepage", () => {
   let browser;
   let page;
   let user;
+  const time = new Date().getMilliseconds();
 
   beforeAll(async () => {
     browser = await puppeteer.launch({
@@ -32,27 +32,26 @@ describe("Given that user is on login page", () => {
     await user.login();
   });
 
-  describe("when the user tries to create a community", () => {
-    const communityName = "matts amazing community";
+  describe("When the user tries to create a community", () => {
+    const communityName = `matts amazing community - ${time}`;
     const communityDescript = "the best community you can find";
 
     beforeAll(async () => {
-        await user.createCommunity(communityName, communityDescript);
+      await user.createCommunity(communityName, communityDescript);
     });
-    
-    test("They should see the community on the main page", async () => {
-      let postIsVisible;
+
+    test("They should see the community on the home page", async () => {
+      let communityIsVisible;
       try {
         await page.waitForXPath(`//*[contains(., "${communityName}")]`, {
           timeout: 2000,
         });
-        postIsVisible = true;
+        communityIsVisible = true;
       } catch (e) {
-        postIsVisible = false;
+        communityIsVisible = false;
       }
 
-      expect(postIsVisible).toBeTruthy();
+      expect(communityIsVisible).toBeTruthy();
     });
   });
 });
-
