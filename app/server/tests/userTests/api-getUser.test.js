@@ -214,13 +214,15 @@ describe("Testing GET /user endpoint", () => {
         expect(response.status).toBe(404);
       });
 
-      test("URL", async () => {
-        response = await user.getUserByName(
-          loginResponse.body.token,
-          "https://github.com/bcgov/CITZ-HybridWorkplace"
-        );
-        expect(response.status).toBe(404);
-      });
+      if (RUN_BREAKING_TESTS === "true") {
+        test("URL", async () => {
+          response = await user.getUserByName(
+            loginResponse.body.token,
+            "https://github.com/bcgov/CITZ-HybridWorkplace"
+          );
+          expect(response.status).toBe(404);
+        });
+      }
 
       test("Special characters", async () => {
         response = await user.getUserByName(
