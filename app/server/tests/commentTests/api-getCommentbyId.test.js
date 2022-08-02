@@ -19,7 +19,7 @@ let token = "";
 let postResponse;
 let commentResponse;
 
-const newComTitle = "get Comments by Id";
+const newComTitle = `get Comments by Id - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {
@@ -58,9 +58,9 @@ describe("Creating new Community", () => {
     const response = await community.createCommunity(
       newComTitle,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
     expect(response.status).toBe(201);
   });
@@ -106,12 +106,12 @@ describe("Get Comment by ID - on the created comment", () => {
 });
 
 describe("Delete Comment - on the created comment", () => {
-  test("API returns a successful response - code 201", async () => {
-    const response = await comment.createComment(
+  test("API returns a successful response - code 204", async () => {
+    const response = await comment.deleteComment(
       commentResponse.body._id,
       token
     );
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(204);
   });
 });
 
@@ -122,8 +122,8 @@ describe("Get Comment by ID - on the created comment, after comment is removed",
     response = await comment.getCommentsById(commentResponse.body._id, token);
   });
 
-  test("API returns a successful response - code 200", () => {
-    expect(response.status).toBe(200);
+  test("API returns an unsuccessful response - code 403", () => {
+    expect(response.status).toBe(403);
   });
 
   test("API returns description -  includes new comment", () => {

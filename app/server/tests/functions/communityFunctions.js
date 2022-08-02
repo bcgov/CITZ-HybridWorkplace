@@ -54,7 +54,7 @@ class CommunityFunctions {
    * @param {String}  token       JWT that authenticates the user.
    * @returns                     Response from API. Body contains object with community info.
    */
-  createCommunity(title, description, token) {
+  createCommunity(title, description, token, rules = [], tags = []) {
     this.communityList.push({
       community: {
         name: title,
@@ -68,8 +68,8 @@ class CommunityFunctions {
       .send({
         title,
         description,
-        // rules,
-        // tags,
+        rules,
+        tags,
       });
   }
 
@@ -90,14 +90,16 @@ class CommunityFunctions {
    * @returns                 nothing.
    */
   deleteAllCommunities() {
-    for (let i = 0; i < this.communityList.length; i++) {
-      this.deleteCommunity(
-        this.communityList[i].community.name,
-        this.communityList[i].community.creator
-      );
-    }
+    if (process.env.CLEANUP === "true") {
+      for (let i = 0; i < this.communityList.length; i++) {
+        this.deleteCommunity(
+          this.communityList[i].community.name,
+          this.communityList[i].community.creator
+        );
+      }
 
-    return this.communityList;
+      return this.communityList;
+    }
   }
 
   /**
@@ -214,7 +216,7 @@ class CommunityFunctions {
     return request
       .post(`/community/tags/${title}`)
       .set({ authorization: `Bearer ${token}` })
-      .query(`tag=${tag}`);
+      .send(tag);
   }
 
   /**

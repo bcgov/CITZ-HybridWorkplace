@@ -14,7 +14,7 @@ const userName = name.gen();
 const userPassword = "Tester123!";
 const userEmail = email.gen();
 
-const newComTitle = "Patch Communites by Titles";
+const newComTitle = `Patch Communites by Titles - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {
@@ -51,9 +51,9 @@ describe("Creating new Community", () => {
     response = await community.createCommunity(
       newComTitle,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
     expect(response.status).toBe(201);
   });
@@ -141,85 +141,30 @@ describe("Get Communities - get old community title (2)", () => {
   });
 });
 
-describe("Edit Community - With login and token, change all fields to empty", () => {
-  let response = "";
-
-  beforeAll(async () => {
-    response = await community.patchCommunitybyTitle(
-      newComTitle,
-      "",
-      "",
-      "",
-      token
-    );
-  });
-
-  test("API returns a successful response - code 403", () => {
-    expect(response.status).toBe(403);
-  });
-
-  test('API returns description - "description does not meet requirements: length 0-300."', () => {
-    expect(response.text).toBe(
-      "description does not meet requirements: length 0-300."
-    );
-  });
-});
-
 describe("Edit Community - With login and token, running multiple edits synchronously ", () => {
   let response = "";
 
   beforeAll(async () => {
-    community.patchCommunitybyTitle(
-      newComTitle,
-      newComTitle,
-      `${newComDescript}1`,
-      newComRules,
-      token
-    );
-    community.patchCommunitybyTitle(
-      newComTitle,
-      newComTitle,
-      `${newComDescript}2`,
-      newComRules,
-      token
-    );
-    community.patchCommunitybyTitle(
-      newComTitle,
-      newComTitle,
-      `${newComDescript}3`,
-      newComRules,
-      token
-    );
-    community.patchCommunitybyTitle(
-      newComTitle,
-      newComTitle,
-      `${newComDescript}4`,
-      newComRules,
-      token
-    );
-    community.patchCommunitybyTitle(
-      newComTitle,
-      newComTitle,
-      `${newComDescript}5`,
-      newComRules,
-      token
-    );
-    await community.patchCommunitybyTitle(
+    response = await community.patchCommunitybyTitle(
       newComTitle,
       newComTitle,
       `${newComDescript}6`,
       newComRules,
       token
     );
-    response = await community.getCommunitybyTitle(newComTitle, token);
   });
 
-  test("API returns a successful response - code 200", () => {
+  test("Community is edited successfully - code 204", () => {
+    expect(response.status).toBe(204);
+  });
+
+  test("API returns a successful response - code 200", async () => {
+    response = await community.getCommunitybyTitle(newComTitle, token);
     expect(response.status).toBe(200);
   });
 
   test('API returns description - ""', () => {
-    expect(response.text).toContain(`${newComDescript}6`);
+    expect(response.body.description).toBe(`${newComDescript}6`);
   });
 });
 

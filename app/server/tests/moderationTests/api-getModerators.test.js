@@ -38,8 +38,6 @@ describe("Testing GET /community/moderators/{title} endpoint", () => {
       response = await community.createCommunity(
         communityName,
         "Description goes here",
-        // "No rules",
-        // [],
         loginResponse1.body.token
       );
     });

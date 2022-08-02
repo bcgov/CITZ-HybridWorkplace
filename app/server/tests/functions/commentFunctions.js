@@ -54,7 +54,7 @@ class CommentFunctions {
 
   setCommentVote(id, vote, token) {
     return request
-      .get(`/comment/vote/${id}`)
+      .patch(`/comment/vote/${id}`)
       .set({ authorization: `Bearer ${token}` })
       .query(`vote=${vote}`);
   }

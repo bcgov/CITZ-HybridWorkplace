@@ -14,7 +14,7 @@ const userName = name.gen();
 const userPassword = "Tester123!";
 const userEmail = email.gen();
 
-const newComTitle = "Set Community Tags";
+const newComTitle = `Set Community Tags - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {
@@ -25,11 +25,14 @@ const newComRules = [
 const newComTags = [
   {
     tag: "Informative",
+    description: "this is informative",
   },
 ];
 
-const updatedTags = "new";
-
+const updatedTags = {
+  tag: "new tag",
+  description: "this is a new tag",
+};
 const specialTag = "$@#*()#@*()$()&&&*@$@&";
 const linkTag =
   "https://hwp-express-api-d63404-dev.apps.silver.devops.gov.bc.ca/api";
@@ -80,9 +83,9 @@ describe("Creating new Community", () => {
     const response = await community.createCommunity(
       newComTitle,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
     expect(response.status).toBe(201);
   });
@@ -106,8 +109,8 @@ describe("Set Communities tags - After Login on new community", () => {
 
 describe("Get Communities Tags - After Login with new community (2)", () => {
   test("API returns the updated tag", async () => {
-    response = await community.getCommunityTags(newComTitle, token);
-    expect(` ${response.text} `).toContain(updatedTags);
+    const response = await community.getCommunityTags(newComTitle, token);
+    expect(response.body[1].tag).toBe(updatedTags.tag);
   });
 });
 

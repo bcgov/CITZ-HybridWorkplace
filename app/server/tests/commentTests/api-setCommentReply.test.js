@@ -19,7 +19,7 @@ let token = "";
 let commentResponse;
 let postResponse;
 
-const newComTitle = "set comment replies";
+const newComTitle = `set comment replies - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {
@@ -61,9 +61,9 @@ describe("Creating new Community", () => {
     const response = await community.createCommunity(
       newComTitle,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
     expect(response.status).toBe(201);
   });

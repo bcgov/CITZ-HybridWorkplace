@@ -2,10 +2,10 @@ name: Run HWP Tests
 
 on:
   pull_request:
-    types: 
+    types:
       - opened
       - synchronize
-    branches: 
+    branches:
       - main
     paths:
       - "app/client/**"
@@ -13,15 +13,15 @@ on:
       - ".github/workflows/run-tests-on-pr.yaml"
   workflow_dispatch:
 
-jobs: 
+jobs:
   api-endpoint-tests:
     runs-on: ubuntu-latest
     steps:
-    # Set variables
+      # Set variables
       - name: Get repository name and remove owner
         id: repo-name
         run: |
-          echo "::set-output name=repo-name::$(echo "${{ github.repository }}" | sed 's/\(.*\)\/\(.*\)/\2/g; s/[<>:\"\/\\\|\?\*]//g')" 
+          echo "::set-output name=repo-name::$(echo "${{ github.repository }}" | sed 's/\(.*\)\/\(.*\)/\2/g; s/[<>:\"\/\\\|\?\*]//g')"
 
       - name: Get PR name and remove spaces
         id: pr-name
@@ -38,9 +38,9 @@ jobs:
         run: |
           echo "::set-output name=results::${{ steps.repo-name.outputs.repo-name }}_${{ github.job }}_${{ steps.date.outputs.date }}_${{ steps.pr-name.outputs.pr-name }}.json"
 
-    # Prepare and build containers
+      # Prepare and build containers
       - uses: actions/checkout@v2
-          
+
       - name: Install dependencies
         working-directory: ./app/server
         run: |
@@ -83,6 +83,8 @@ jobs:
         run: |
           touch .env
           echo "API_REF=localhost:5000/api" >> .env
+          echo "CLEANUP=false" >> .env
+          echo "RUN_BREAKING_TESTS=false" >> .env
 
       - name: Build API and Mongo in Docker
         run: |
@@ -94,8 +96,8 @@ jobs:
           container: mongodb
           wait-time: 60
           require-status: running
-          require-healthy: true 
-      
+          require-healthy: true
+
       - name: Wait for API container
         uses: stringbean/docker-healthcheck-action@v1
         continue-on-error: true
@@ -103,9 +105,9 @@ jobs:
         with:
           container: hwp-api
           wait-time: 60
-          require-status: running 
+          require-status: running
           require-healthy: true
-      
+
       - name: Print docker API logs
         run: |
           docker logs hwp-api
@@ -115,14 +117,14 @@ jobs:
         run: |
           exit 1
 
-    # Run tests
+      # Run tests
       - name: Run test command
         working-directory: ./app/server
         continue-on-error: true
         run: |
-          npm test -- --forceExit --json > tempResults
+          npm run test:series -- --forceExit --json > tempResults
 
-    # Refine results
+      # Refine results
       - name: Select only json line
         working-directory: ./app/server
         run: |
@@ -141,7 +143,6 @@ jobs:
           data['creator'] = '${{ github.event.pull_request.user.login }}'
           with open('${{ steps.results.outputs.results }}', 'w') as json_file:
             json.dump(data, json_file, indent=2)
-        
 
       - name: Save file as artifact
         uses: actions/upload-artifact@v1

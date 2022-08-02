@@ -14,7 +14,7 @@ const userName = name.gen();
 const userPassword = "Tester123!";
 const userEmail = email.gen();
 
-const newComTitle = "set Community Flags";
+const newComTitle = `set Community Flags - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {
@@ -55,9 +55,9 @@ describe("Creating new Community", () => {
     response = await community.createCommunity(
       newComTitle,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
     expect(response.status).toBe(201);
   });

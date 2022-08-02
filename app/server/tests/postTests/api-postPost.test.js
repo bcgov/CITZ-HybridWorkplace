@@ -71,8 +71,6 @@ describe("Testing POST /post endpoint", () => {
       await community.createCommunity(
         "TempCommunity",
         "test",
-        "no rules",
-        [],
         loginResponse.body.token
       );
       response = await post.createPost(
@@ -149,8 +147,6 @@ describe("Testing POST /post endpoint", () => {
       await community.createCommunity(
         "PostPost",
         "Testing POST /post",
-        "no rules",
-        [],
         loginResponse.body.token
       );
     });
@@ -301,8 +297,6 @@ describe("Testing POST /post endpoint", () => {
       await community.createCommunity(
         "PostPost",
         "Testing POST /post",
-        "no rules",
-        [],
         loginResponse.body.token
       );
     });

@@ -48,7 +48,7 @@ class UserActions {
   // Page-specific Actions
   async login() {
     // Go to login page
-    await this.page.goto(`http://localhost:8080/login`);
+    await this.page.goto(`${process.env.URL}/login`);
     await this.page.waitForXPath(`//button[contains(., 'Login')]`); // Login button
 
     // Click login button
@@ -85,7 +85,12 @@ class UserActions {
     });
   }
 
-  async leaveCommunity(community) {}
+  async leaveCommunity(community) {
+    this.goToCommunity(community);
+
+    this.page.waitForSelector('data-testid="LogoutOutlinedIcon"');
+    this.page.click('data-testid="LogoutOutlinedIcon"');
+  }
 
   async goToCommunity(community) {
     // Find community title link and click it
@@ -100,7 +105,13 @@ class UserActions {
     await this.page.waitForXPath(`//h5[contains(., '${community}')]`); // Community name on community page
   }
 
-  async createCommunity(community, description, rules = [], tags = []) {
+  async createCommunity(
+    community,
+    description,
+    rules = [],
+    tags = [],
+    resources = ""
+  ) {
     // Assumes user is on community page.
     await this.page.waitForXPath(`//h5[contains(., "Top Communities")]`, {
       timeout: 2000,
@@ -125,11 +136,45 @@ class UserActions {
     // Type description
     await this.page.type("textarea.w-md-editor-text-input", description);
 
-    // TODO: if rules or tags >0, add rules or tags
+    // Click Next button
+    let [button] = await this.page.$x(
+      "//button[contains(., 'Next')][not(@disabled)]"
+    );
+    if (button) {
+      await button.click();
+    }
+
+    if (rules.length > 0) {
+      // TODO: if rules >0, add rules or tags
+    }
+
+    // Click Next button
+    [button] = await this.page.$x(
+      "//button[contains(., 'Next')][not(@disabled)]"
+    );
+    if (button) {
+      await button.click();
+    }
+
+    if (tags.length > 0) {
+      // TODO: if tags >0, add rules or tags
+    }
+
+    // Click Next button
+    [button] = await this.page.$x(
+      "//button[contains(., 'Next')][not(@disabled)]"
+    );
+    if (button) {
+      await button.click();
+    }
+
+    if (resources.length > 0) {
+      await this.page.type("textarea", resources);
+    }
 
     // Click Create button
     // Try and get button, then click it.
-    const [button] = await this.page.$x(
+    [button] = await this.page.$x(
       "//button[contains(., 'Create')][not(@disabled)]"
     );
     if (button) {

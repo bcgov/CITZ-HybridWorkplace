@@ -16,7 +16,7 @@ const userEmail = email.gen();
 
 const welComTitle = "Welcome";
 
-const newComTitle = "delete Community Tags";
+const newComTitle = `delete Community Tags - ${userName}`;
 const newComDescript = "world";
 const newComRules = [
   {
@@ -27,10 +27,14 @@ const newComRules = [
 const newComTags = [
   {
     tag: "Informative",
+    description: "This is informative.",
   },
 ];
 
-const updatedTags = "new";
+const updatedTags = {
+  tag: "New tag",
+  description: "This is a new tag.",
+};
 
 describe("Registering a test user", () => {
   test("API returns a successful response - code 201", async () => {
@@ -70,9 +74,9 @@ describe("Creating new Community", () => {
     const response = await community.createCommunity(
       newComTitle,
       newComDescript,
+      token,
       newComRules,
-      newComTags,
-      token
+      newComTags
     );
     expect(response.status).toBe(201);
   });
@@ -92,7 +96,7 @@ describe("Set Communities tag to updatedTags", () => {
 describe("Get Communities tags", () => {
   test("API returns the updated tag", async () => {
     response = await community.getCommunityTags(newComTitle, token);
-    expect(` ${response.text} `).toContain(updatedTags);
+    expect(response.body[1].tag).toContain(updatedTags.tag);
   });
 });
 
@@ -102,7 +106,7 @@ describe("Delete Communities tags - After Login on new community", () => {
   beforeAll(async () => {
     response = await community.deleteCommunityTags(
       newComTitle,
-      updatedTags,
+      updatedTags.tag,
       token
     );
   });
@@ -119,7 +123,7 @@ describe("Delete Communities tags - After Login on new community", () => {
 describe("Get Communities Tags after tag deletion", () => {
   test("API returns the updated tag", async () => {
     response = await community.getCommunityTags(newComTitle, token);
-    expect(` ${response.text} `).not.toContain(updatedTags);
+    expect(response.body[1].tag).not.toContain(updatedTags.tag);
   });
 });
 
@@ -129,7 +133,7 @@ describe("Delete Communities tags - After Login on new community, tag does not e
   beforeAll(async () => {
     response = await community.deleteCommunityTags(
       newComTitle,
-      updatedTags,
+      updatedTags.tag,
       token
     );
   });
