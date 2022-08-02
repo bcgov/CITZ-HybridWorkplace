@@ -214,7 +214,7 @@ describe("Testing GET /user endpoint", () => {
         expect(response.status).toBe(404);
       });
 
-      if (RUN_BREAKING_TESTS === "true") {
+      if (process.env.RUN_BREAKING_TESTS === "true") {
         test("URL", async () => {
           response = await user.getUserByName(
             loginResponse.body.token,
