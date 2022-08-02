@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@bcgov/bc-sans": "^1.0.1",
-    "@emotion/react": "^11.8.2",
+    "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.8.1",
     "@mui/icons-material": "^5.5.1",
     "@mui/lab": "^5.0.0-alpha.86",
@@ -32,16 +32,16 @@
     "react-router-dom": "^6.2.1",
     "react-scripts": "5.0.0",
     "redux-thunk": "^2.4.1",
-    "styled-components": "^5.3.3",
+    "styled-components": "^5.3.5",
     "web-vitals": "^1.0.1",
-    "webpack": "^5.69.1"
+    "webpack": "^5.74.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "start-mac": "PORT=8080 react-scripts start",
     "start-pc": "set PORT=8080 && react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --runInBand e2e",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -67,7 +67,7 @@
     "@babel/preset-env": "^7.17.10",
     "babel-jest": "^28.1.0",
     "jest": "^28.1.0",
-    "jsdom": "^19.0.0",
+    "jsdom": "^20.0.0",
     "puppeteer": "^15.3.2"
   }
 }

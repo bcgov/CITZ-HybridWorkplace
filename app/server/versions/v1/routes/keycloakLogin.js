@@ -11,7 +11,7 @@
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
- limitations under the License.
+ limitations under the License. 
  */
 
 /**
@@ -30,6 +30,9 @@ const ResponseError = require("../classes/responseError");
 const generateRefreshToken = require("../functions/auth/generateRefreshToken");
 const User = require("../models/user.model");
 const Community = require("../models/community.model");
+
+const defineOfflineStatusJob = require("../jobs/defineOfflineStatusJob");
+const { agenda } = require("../../../db");
 
 const router = express.Router();
 
@@ -63,6 +66,7 @@ router.get("/", async (req, res, next) => {
       user = await User.create({
         username: decoded.idir_username,
         email: decoded.email,
+        role: "user",
         registeredOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
         postCount: 0,
         notificationFrequency: "none",
@@ -140,21 +144,24 @@ router.get("/", async (req, res, next) => {
       sameSite: "None",
     });
 
-    req.log.setResponse(201, "Success", null);
+    // Define job for offline status
+    await defineOfflineStatusJob(agenda, user.id);
+    // Schedule offline status
+    await agenda.schedule("in 5 minutes", `offlineStatus-${user.id}`);
+    // Set online status
+    await User.updateOne({ _id: user.id }, { online: true });
+
+    req.log.setResponse(201, "Success");
     return res.redirect(frontendURI);
   } catch (err) {
     // Explicitly thrown error
-    if (res.locals.err instanceof ResponseError) {
-      req.log.setResponse(
-        res.locals.err.status,
-        "ResponseError",
-        res.locals.err.message
-      );
-      return res.status(res.locals.err.status).send(res.locals.err.message);
+    if (err instanceof ResponseError) {
+      req.log.setResponse(err.status, "ResponseError", err.message);
+      return res.status(err.status).send(err.message);
     }
     // Bad Request
-    req.log.setResponse(400, "Error", res.locals.err);
-    return res.status(400).send(`Bad Request: ${res.locals.err}`);
+    req.log.setResponse(400, "Error", err);
+    return res.status(400).send(`Bad Request: ${err}`);
   } finally {
     req.log.print();
   }

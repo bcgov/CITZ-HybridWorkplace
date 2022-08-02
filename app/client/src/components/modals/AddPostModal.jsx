@@ -31,7 +31,6 @@ import {
   DialogContent,
   DialogTitle,
   Select,
-  Typography,
   Button,
   Stack,
   Box,
@@ -47,7 +46,7 @@ import MarkDownEditor from "../MarkDownEditor";
 const AddPostModal = (props) => {
   // TODO: Grab length options from API
   const minTitleLength = 3;
-  const maxTitleLength = 50;
+  const maxTitleLength = 200;
   const minMessageLength = 3;
   const maxMessageLength = 40000;
 
@@ -129,7 +128,7 @@ const AddPostModal = (props) => {
               placeholder="Title"
               value={title}
               error={titleError}
-              helperText="Title must be 3-50 characters in length."
+              helperText={`Title must be ${minTitleLength}-${maxTitleLength} characters in length.`}
               required
               fullWidth
             />
@@ -177,7 +176,9 @@ const AddPostModal = (props) => {
               >
                 Post
               </Button>
-              <Button onClick={props.closeAddPostModal} color="button">Cancel</Button>
+              <Button onClick={props.closeAddPostModal} color="button">
+                Cancel
+              </Button>
             </Stack>
           </DialogActions>
         </Stack>

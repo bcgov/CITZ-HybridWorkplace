@@ -15,6 +15,7 @@ import {
   Button,
   Box,
   Tooltip,
+  TextField,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import UpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -27,6 +28,7 @@ import {
   openFlagCommentModal,
 } from "../redux/ducks/modalDuck";
 import FlagTwoToneIcon from "@mui/icons-material/FlagTwoTone";
+import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 
 import { connect } from "react-redux";
 import moment from "moment";
@@ -35,24 +37,19 @@ import CommentRepliesList from "./CommentRepliesList";
 import {
   upvoteComment,
   downvoteComment,
-  removeCommentVote,
-} from "../redux/ducks/postDuck";
+  editComment,
+} from "../redux/ducks/commentDuck";
 import { useNavigate } from "react-router-dom";
 import AvatarIcon from "./AvatarIcon";
 
 export const Comment = (props) => {
-  const getUserVote = () => {
-    return (
-      (props.comment.upvotes.users.includes(props.userId) && "up") ||
-      (props.comment.downvotes.users.includes(props.userId) && "down") ||
-      undefined
-    );
-  };
-
   const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = useState(null);
-  const [userVote, setUserVote] = useState(getUserVote());
+  const [showInput, setShowInput] = useState(false);
+  const [editedComment, setEditedComment] = useState(
+    props.comment.message ?? ""
+  );
 
   const handleDeleteCommentClick = () => {
     props.openDeleteCommentModal(props.comment);
@@ -69,6 +66,10 @@ export const Comment = (props) => {
 
   const today = moment().format("MMMM Do YYYY");
   const yesterday = moment().subtract(1, "days").format("MMMM Do YYYY");
+
+  const isModerator = props.communities.find(
+    (comm) => comm.title === props.comment.community
+  )?.userIsModerator;
 
   // Convert to local time
   const editTimeStamp = props.comment.edits[0]
@@ -112,39 +113,26 @@ export const Comment = (props) => {
   };
 
   const handleUpVote = async () => {
-    const commentId = props.comment._id;
-    if (!userVote) {
-      await props.upvoteComment(commentId);
-      setUserVote("up");
-      return;
-    }
-
-    if (userVote === "up") {
-      await props.removeCommentVote(commentId);
-      setUserVote(undefined);
-    } else if (userVote === "down") {
-      await props.removeCommentVote(commentId);
-      await props.upvoteComment(commentId);
-      setUserVote("up");
-    }
+    props.upvoteComment(props.comment._id);
   };
 
   const handleDownVote = async () => {
-    const commentId = props.comment._id;
-    if (!userVote) {
-      await props.downvoteComment(commentId);
-      setUserVote("down");
-      return;
-    }
+    props.downvoteComment(props.comment._id);
+  };
 
-    if (userVote === "down") {
-      await props.removeCommentVote(commentId);
-      setUserVote(undefined);
-    } else if (userVote === "up") {
-      await props.removeCommentVote(commentId);
-      await props.downvoteComment(commentId);
-      setUserVote("down");
-    }
+  const handleEditedCommentTextChange = (event) => {
+    setEditedComment(event.target.value);
+  };
+
+  const handleEditComment = async () => {
+    const comment = {
+      id: props.comment._id,
+      message: editedComment,
+    };
+
+    if (editedComment !== props.comment.message)
+      await props.editComment(comment);
+    setShowInput(false);
   };
 
   return (
@@ -163,18 +151,18 @@ export const Comment = (props) => {
                 aria-label="upvote"
                 sx={{ padding: 0 }}
                 onClick={handleUpVote}
-                color={userVote === "up" ? "success" : "default"}
+                color={props.comment.userVote === "up" ? "success" : "default"}
               >
                 <UpIcon fontSize="large" />
               </IconButton>
               <Typography fontSize="1.5em" sx={{ textAlign: "center" }}>
-                {props.comment.votes || 0}
+                {props.comment.votes}
               </Typography>
               <IconButton
                 aria-label="downvote"
                 sx={{ padding: 0 }}
                 onClick={handleDownVote}
-                color={userVote === "down" ? "error" : "default"}
+                color={props.comment.userVote === "down" ? "error" : "default"}
               >
                 <DownIcon fontSize="large" />
               </IconButton>
@@ -194,14 +182,31 @@ export const Comment = (props) => {
                   direction="row"
                   sx={{ alignItems: "center" }}
                 >
-                  {props.comment.hidden && (
-                    <Tooltip
-                      title={<Typography>Hidden Comment</Typography>}
-                      arrow
-                    >
-                      <VisibilityOffIcon />
-                    </Tooltip>
+                  {props.comment.hidden &&
+                    (isModerator || props.role === "admin") && (
+                      <Tooltip
+                        title={<Typography>Hidden Comment</Typography>}
+                        arrow
+                      >
+                        <VisibilityOffIcon />
+                      </Tooltip>
                   )}
+                  {props.comment.creatorIsModerator &&
+                    props.comment.creatorIsModerator === true && (
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Typography
+                          sx={{
+                            fontWeight: 600,
+                            border: "solid 1px",
+                            borderRadius: "10px",
+                            p: 0.5,
+                            mr: 0.5,
+                          }}
+                        >
+                          Moderator
+                        </Typography>
+                      </Box>
+                    )}
                   <Typography
                     variant="h5"
                     sx={{
@@ -242,7 +247,8 @@ export const Comment = (props) => {
                 </Box>
               }
               action={
-                props.userId === props.comment.creator && (
+                (props.userId === props.comment.creator ||
+                  props.role === "admin") && (
                   <>
                     <IconButton aria-label="settings" onClick={handleMenuOpen}>
                       <MoreVertIcon />
@@ -253,12 +259,30 @@ export const Comment = (props) => {
                       anchorEl={anchorEl}
                     >
                       <MenuList>
-                        <MenuItem onClick={handleDeleteCommentClick}>
-                          <ListItemIcon>
-                            <DeleteForeverTwoToneIcon fontSize="small" />
-                          </ListItemIcon>
-                          <ListItemText>Delete</ListItemText>
-                        </MenuItem>
+                        {(props.userId === props.comment.creator ||
+                          props.role === "admin") && (
+                          <MenuItem onClick={handleDeleteCommentClick}>
+                            <ListItemIcon>
+                              <DeleteForeverTwoToneIcon fontSize="small" />
+                            </ListItemIcon>
+                            <ListItemText>Delete</ListItemText>
+                          </MenuItem>
+                        )}
+                        {(props.userId === props.comment.creator ||
+                          isModerator ||
+                          props.role === "admin") && (
+                          <MenuItem
+                            onClick={() => {
+                              setShowInput(true);
+                              handleMenuClose();
+                            }}
+                          >
+                            <ListItemIcon>
+                              <EditTwoToneIcon fontSize="small" />
+                            </ListItemIcon>
+                            <ListItemText>Edit</ListItemText>
+                          </MenuItem>
+                        )}
                         <MenuItem onClick={handleFlagCommentClick}>
                           <ListItemIcon>
                             <FlagTwoToneIcon fontSize="small" />
@@ -277,12 +301,46 @@ export const Comment = (props) => {
                 backgroundColor: "card.main",
               }}
             >
-              {props.comment.edits.length > 0 && (
+              {props.comment.edits?.length > 0 && (
                 <Typography variant="caption" color="#898989">
                   Edited: {editDate}
                 </Typography>
               )}
-              <Typography variant="body2">{props.comment.message}</Typography>
+              {showInput ? (
+                <Stack direction="row" spacing={1} sx={{ pt: 1 }}>
+                  <TextField
+                    value={editedComment}
+                    onChange={handleEditedCommentTextChange}
+                    size="small"
+                    label="Edit comment"
+                    multiline
+                    sx={{ width: "85%" }}
+                    error={
+                      !editedComment ||
+                      (editedComment.length >= 3 &&
+                        editedComment.length <= 1000)
+                        ? false
+                        : true
+                    }
+                    helperText="Comment must be 3-1000 characters in length."
+                  />
+                  <Button
+                    variant="contained"
+                    onClick={handleEditComment}
+                    sx={{ height: 38 }}
+                    disabled={
+                      !(
+                        editedComment.length >= 3 &&
+                        editedComment.length <= 1000
+                      )
+                    }
+                  >
+                    Save Changes
+                  </Button>
+                </Stack>
+              ) : (
+                <Typography variant="body2">{props.comment.message}</Typography>
+              )}
             </CardContent>
             <CardActions sx={{ backgroundColor: "card.main" }}>
               {!props.hideReply && (
@@ -308,6 +366,8 @@ export const Comment = (props) => {
 
 const mapStateToProps = (state) => ({
   userId: state.auth.user.id,
+  role: state.auth.user.role,
+  communities: state.communities.communities,
 });
 
 const mapDispatchToProps = {
@@ -315,7 +375,7 @@ const mapDispatchToProps = {
   openFlagCommentModal,
   upvoteComment,
   downvoteComment,
-  removeCommentVote,
+  editComment,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Comment);

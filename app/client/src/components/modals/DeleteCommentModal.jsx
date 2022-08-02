@@ -31,7 +31,7 @@ import {
 } from "@mui/material";
 import { connect } from "react-redux";
 import { closeDeleteCommentModal } from "../../redux/ducks/modalDuck";
-import { deleteComment } from "../../redux/ducks/postDuck";
+import { deleteComment } from "../../redux/ducks/commentDuck";
 import PropTypes from "prop-types";
 
 const DeleteCommentModal = (props) => {
@@ -68,7 +68,9 @@ const DeleteCommentModal = (props) => {
               >
                 Delete
               </Button>
-              <Button onClick={props.closeDeleteCommentModal} color="button">Cancel</Button>
+              <Button onClick={props.closeDeleteCommentModal} color="button">
+                Cancel
+              </Button>
             </Stack>
           </DialogActions>
         </Stack>

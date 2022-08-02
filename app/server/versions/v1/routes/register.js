@@ -188,7 +188,7 @@ router.post("/", async (req, res, next) => {
       }
     }
 
-    req.log.setResponse(201, "Success", null);
+    req.log.setResponse(201, "Success");
     return res.status(201).send("Registered.");
   } catch (err) {
     res.locals.err = err;

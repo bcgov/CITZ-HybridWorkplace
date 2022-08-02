@@ -26,22 +26,25 @@ const Community = require("../models/community.model");
  * @description Defines the job that removes user's from the kicked array on Community.
  * @param agenda Job scheduler, defined in connection.js
  */
-const communityUnKick = async (agenda, community, userId, username) => {
-  agenda.define(`communityUnKick-${userId}`, async () => {
-    await Community.updateOne(
-      { title: community },
-      {
-        $pull: {
-          kicked: {
-            userId,
+const communityUnKick = async (agenda, community, userId) => {
+  try {
+    await agenda.define(`communityUnKick-${community}-${userId}`, async () => {
+      await Community.updateOne(
+        { title: community },
+        {
+          $pull: {
+            kicked: {
+              userId,
+            },
           },
-        },
-      }
-    );
-    console.log(
-      `Agenda removed ${username} from kicked array of ${community}.`
-    );
-  });
+        }
+      );
+      console.log(`Agenda removed a user from kicked array of ${community}.`);
+      await agenda.cancel(`communityUnKick--${community}-${userId}`);
+    });
+  } catch (err) {
+    console.log(`jobs/communityUnKick: ${err}`);
+  }
 };
 
 module.exports = communityUnKick;

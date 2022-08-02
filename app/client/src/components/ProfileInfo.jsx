@@ -25,22 +25,18 @@ import { connect } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getProfile } from "../redux/ducks/profileDuck";
 import PropTypes from "prop-types";
-import { Typography, Box, Stack, IconButton } from "@mui/material";
+import { Typography, Box, Stack, IconButton, Divider } from "@mui/material";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { openEditUserInfoModal } from "../redux/ducks/modalDuck";
 import EditUserInfoModal from "./modals/EditUserInfoModal";
 
 const ProfileInfo = (props) => {
-  let { username } = useParams();
   const body2TextColor = "#999";
-  useEffect(() => {
-    props.getProfile(props.username);
-  }, []);
 
   const registeredOn = props.profile.registeredOn || "";
   const registrationDate = registeredOn.split(",")[0];
 
-  let name = props.profile.firstName || username;
+  let name = props.profile.firstName || props.profile.username;
   if (props.profile.firstName && props.profile.lastName)
     name += ` ${props.profile.lastName}`;
 
@@ -49,29 +45,39 @@ const ProfileInfo = (props) => {
   // comment for rebuild
   return (
     <Box width="max-content">
-      <Stack spacing={0.5} minWidth="10rem">
-        <Stack direction="row" spacing={0.5} alignItems="center">
+      <Stack spacing={2} minWidth="10rem">
+        <Stack spacing={0.5}>
+          <Stack direction="row" alignItems="center">
+            <Typography
+              variant="h5"
+              sx={{ fontWeight: 600, color: "neutral.main" }}
+            >
+              {name || ""}
+            </Typography>
+            {props.username === props.profile.username && (
+              <IconButton
+                onClick={() => handleEditUserInfoClick(props.profile)}
+              >
+                <EditRoundedIcon fontSize="small" />
+              </IconButton>
+            )}
+            <EditUserInfoModal />
+          </Stack>
           <Typography
-            variant="h5"
-            sx={{ fontWeight: 600, color: "neutral.main" }}
+            variant="body2"
+            sx={{ fontWeight: 600, color: body2TextColor }}
           >
-            {name || "No name to display."}
+            {props.profile.title || ""}
           </Typography>
-          {props.username === username && (
-            <IconButton onClick={() => handleEditUserInfoClick(props.profile)}>
-              <EditRoundedIcon fontSize="small" />
-            </IconButton>
-          )}
-          <EditUserInfoModal />
+          <Typography
+            variant="body2"
+            sx={{ fontWeight: 600, color: body2TextColor }}
+          >
+            {props.profile.ministry || ""}
+          </Typography>
         </Stack>
 
-        <Typography variant="body2" sx={{ color: body2TextColor }}>
-          {props.profile.title || "No title to display"}
-        </Typography>
-        <Typography variant="body2" sx={{ color: body2TextColor }}>
-          {props.profile.ministry || "No ministry to display"}
-        </Typography>
-        <Stack spacing={0.5}>
+        <Stack spacing={0.5} sx={{ my: 2 }}>
           <Typography
             variant="h6"
             sx={{ fontWeight: 600, color: "neutral.main" }}
@@ -82,10 +88,10 @@ const ProfileInfo = (props) => {
             variant="body2"
             sx={{ fontWeight: 600, color: body2TextColor }}
           >
-            {registrationDate || "No join date to display"}
+            {registrationDate || ""}
           </Typography>
         </Stack>
-        <Stack spacing={0.5}>
+        <Stack spacing={0.5} sx={{ my: 2 }}>
           <Typography
             variant="h6"
             sx={{ fontWeight: 600, color: "neutral.main" }}
@@ -106,7 +112,6 @@ const ProfileInfo = (props) => {
 
 ProfileInfo.propTypes = {
   getProfile: PropTypes.func.isRequired,
-  profile: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({

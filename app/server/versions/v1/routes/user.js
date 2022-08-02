@@ -18,6 +18,7 @@
  */
 
 const express = require("express");
+const { ObjectId } = require("mongodb");
 const ResponseError = require("../classes/responseError");
 
 const checkPatchQuery = require("../functions/checkPatchQuery");
@@ -82,10 +83,63 @@ router.get("/", async (req, res, next) => {
     });
     req.log.addAction("User found.");
 
+    req.log.addAction("Getting community information.");
+    const communities = await Community.aggregate([
+      { $match: { removed: false } },
+      {
+        $lookup: {
+          from: "user",
+          let: { community_title: "$title" },
+          pipeline: [
+            {
+              $unwind: "$communities",
+            },
+            {
+              $match: {
+                username: user.username,
+                $expr: {
+                  $and: [
+                    { $eq: ["$communities.community", "$$community_title"] },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "userData",
+        },
+      },
+      {
+        $addFields: {
+          engagement: {
+            $ifNull: [{ $sum: ["$userData.communities.engagement"] }, 0],
+          },
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          createdOn: 1,
+          latestActivity: 1,
+          engagement: 1,
+          members: 1,
+          memberCount: 1,
+          description: 1,
+        },
+      },
+      {
+        $match: {
+          members: new ObjectId(user.id),
+        },
+      },
+      { $sort: { engagement: -1, _id: -1 } },
+    ]).exec();
+    req.log.addAction("Got community information.");
+
     req.log.setResponse(200, "Success");
     return res.status(200).json({
       username: user.username,
       email: user.email,
+      role: user.role,
       firstName: user.firstName,
       lastName: user.lastName,
       bio: user.bio,
@@ -96,7 +150,7 @@ router.get("/", async (req, res, next) => {
       postCount: user.postCount,
       notificationFrequency: user.notificationFrequency,
       interests: user.interests,
-      communities: user.communities,
+      communities,
     });
   } catch (err) {
     res.locals.err = err;
@@ -282,15 +336,19 @@ router.patch("/", async (req, res, next) => {
 
     // Check patch query for disallowed fields
     req.log.addAction("Checking edit query.");
-    const query = checkPatchQuery(req.body, user, [
-      "username",
-      "password",
-      "refreshToken",
-      "registeredOn",
-      "communities",
-      "postCount",
-      "isInMailingList",
-    ]);
+    const query =
+      user.role === "admin"
+        ? req.body
+        : checkPatchQuery(req.body, user, [
+            "username",
+            "password",
+            "refreshToken",
+            "registeredOn",
+            "communities",
+            "postCount",
+            "isInMailingList",
+            "role",
+          ]);
     req.log.addAction("Edit query has been cleaned.");
 
     // Set fullName
@@ -396,10 +454,64 @@ router.get("/:username", async (req, res, next) => {
     });
     req.log.addAction("User found.");
 
+    req.log.addAction("Getting community information.");
+    const communities = await Community.aggregate([
+      { $match: { removed: false } },
+      {
+        $lookup: {
+          from: "user",
+          let: { community_title: "$title" },
+          pipeline: [
+            {
+              $unwind: "$communities",
+            },
+            {
+              $match: {
+                username: user.username,
+                $expr: {
+                  $and: [
+                    { $eq: ["$communities.community", "$$community_title"] },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "userData",
+        },
+      },
+      {
+        $addFields: {
+          engagement: {
+            $ifNull: [{ $sum: ["$userData.communities.engagement"] }, 0],
+          },
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          createdOn: 1,
+          latestActivity: 1,
+          engagement: 1,
+          members: 1,
+          memberCount: 1,
+          description: 1,
+        },
+      },
+      {
+        $match: {
+          members: new ObjectId(user.id),
+        },
+      },
+      { $sort: { engagement: -1, _id: -1 } },
+    ]).exec();
+    req.log.addAction("Got community information.");
+
     req.log.setResponse(200, "Success");
     return res.status(200).json({
       username: user.username,
       email: user.email,
+      role: user.role,
+      online: user.online,
       firstName: user.firstName,
       lastName: user.lastName,
       bio: user.bio,
@@ -410,7 +522,7 @@ router.get("/:username", async (req, res, next) => {
       postCount: user.postCount,
       notificationFrequency: user.notificationFrequency,
       interests: user.interests,
-      communities: user.communities,
+      communities,
     });
   } catch (err) {
     res.locals.err = err;
@@ -456,7 +568,7 @@ router.delete("/:username", async (req, res, next) => {
     req.log.addAction("User found.");
 
     req.log.addAction("Checking user is account owner.");
-    if (user.username !== req.user.username)
+    if (!(user.username === req.user.username || user.role === "admin"))
       throw new ResponseError(403, "Must be account owner to remove user.");
     req.log.addAction("User is account owner.");
 

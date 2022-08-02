@@ -24,8 +24,8 @@ const options = [
     component: "post",
     options: {
       titleMinLength: 3,
-      titleMaxLength: 50,
-      titleDisallowedCharacters: "\\\\/@\\*\\^_\\+\\-=`~\\]\\[{}:;<>",
+      titleMaxLength: 200,
+      titleDisallowedCharacters: "\\\\/@\\*\\^_\\+\\-=`~\\]\\[{}:;<>#",
       titleDisallowedStrings: [
         "www.",
         ".com",
@@ -46,8 +46,8 @@ const options = [
     component: "community",
     options: {
       titleMinLength: 3,
-      titleMaxLength: 25,
-      titleDisallowedCharacters: "\\\\/@\\*\\^_\\+\\-=`~\\]\\[{}:;<>",
+      titleMaxLength: 200,
+      titleDisallowedCharacters: "\\\\/@\\*\\^_\\+\\-=`~\\]\\[{}:;<>#?",
       titleDisallowedStrings: [
         "www.",
         ".com",
@@ -61,6 +61,8 @@ const options = [
       ],
       descriptionMinLength: 0,
       descriptionMaxLength: 300,
+      resourcesMinLength: 0,
+      resourcesMaxLength: 500,
       tagMinLength: 3,
       tagMaxLength: 16,
       tagDescriptionMinLength: 0,

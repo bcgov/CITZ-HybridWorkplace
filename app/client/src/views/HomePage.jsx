@@ -22,7 +22,7 @@
 
 import React, { useEffect, useState } from "react";
 
-import { Grid, Box, Button, Typography, Link } from "@mui/material";
+import { Grid, Box, Button, Typography, Link, Tooltip } from "@mui/material";
 import { getPosts } from "../redux/ducks/postDuck";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -37,6 +37,7 @@ import {
 } from "../redux/ducks/modalDuck";
 import LoadingPage from "./LoadingPage";
 import ResolveFlagsModal from "../components/modals/ResolveFlagsModal";
+import Croutons from "../components/Croutons";
 
 const HomePage = (props) => {
   const [loading, setLoading] = useState(true);
@@ -51,6 +52,7 @@ const HomePage = (props) => {
     <LoadingPage />
   ) : (
     <Box sx={{ pb: 20 }}>
+      <Croutons />
       <Grid container spacing={2}>
         <Grid item xs={8}>
           <Box
@@ -80,7 +82,9 @@ const HomePage = (props) => {
               </Grid>
               <Grid item xs={3} align="right">
                 <Button onClick={() => props.openAddPostModal()}>
-                  <AddIcon sx={{ color: "white", pl: 4 }} />
+                  <Tooltip title={<Typography>Add New Post</Typography>}>
+                    <AddIcon sx={{ color: "white", pl: 4 }} />
+                  </Tooltip>
                 </Button>
               </Grid>
             </Grid>
@@ -147,7 +151,9 @@ const HomePage = (props) => {
                   variant="text"
                   onClick={() => props.openAddCommunityModal()}
                 >
-                  <AddIcon sx={{ color: "white", pl: 4 }} />
+                  <Tooltip title={<Typography>Add New Community</Typography>}>
+                    <AddIcon sx={{ color: "white", pl: 4 }} />
+                  </Tooltip>
                 </Button>
               </Grid>
             </Grid>

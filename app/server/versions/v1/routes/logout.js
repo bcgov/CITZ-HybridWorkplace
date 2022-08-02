@@ -29,6 +29,7 @@ const bcrypt = require("bcryptjs"); // hashing
 const ResponseError = require("../classes/responseError");
 
 const User = require("../models/user.model");
+const { agenda } = require("../../../db");
 
 /**
  * @swagger
@@ -89,7 +90,12 @@ router.get("/", async (req, res, next) => {
     res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "None" });
     req.log.addAction("jwt cookie set to clear.");
 
-    req.log.setResponse(204, "Success", null);
+    // Set offline status
+    await User.updateOne({ _id: user.id }, { online: false });
+    // Cancel offline status job
+    await agenda.cancel({ name: `offlineStatus-${user.id}` });
+
+    req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
     res.locals.err = err;

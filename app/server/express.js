@@ -31,6 +31,7 @@ const initLogger = require(`./versions/v${process.env.API_VERSION}/middleware/in
 const authenticateToken = require(`./versions/v${process.env.API_VERSION}/middleware/authenticateToken`);
 const sanitizeInputs = require(`./versions/v${process.env.API_VERSION}/middleware/sanitizeInputs`);
 const requestFinally = require(`./versions/v${process.env.API_VERSION}/middleware/requestFinally`);
+const setOnlineStatus = require(`./versions/v${process.env.API_VERSION}/middleware/setOnlineStatus`);
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
@@ -62,6 +63,8 @@ const {
   logoutRouter,
   healthCheckRouter,
   tokenRouter,
+  searchRouter,
+  onlineStatusRouter,
 } = require(`./versions/v${process.env.API_VERSION}/routes/routeImports`);
 
 const keycloakRouter = require(`./versions/v${process.env.API_VERSION}/routes/keycloakLogin`);
@@ -138,10 +141,28 @@ app.use("/api/logout", initLogger, logoutRouter, requestFinally);
 app.use("/api/token", initLogger, tokenRouter, requestFinally);
 
 app.use(
+  "/api/search",
+  initLogger,
+  authenticateToken,
+  searchRouter,
+  setOnlineStatus,
+  requestFinally
+);
+
+app.use(
+  "/api/online",
+  initLogger,
+  authenticateToken,
+  onlineStatusRouter,
+  requestFinally
+);
+
+app.use(
   "/api/community/moderators",
   initLogger,
   authenticateToken,
   communityModeratorsRouter,
+  setOnlineStatus,
   requestFinally
 );
 
@@ -150,6 +171,7 @@ app.use(
   initLogger,
   authenticateToken,
   communityFlagsRouter,
+  setOnlineStatus,
   requestFinally
 );
 app.use(
@@ -157,6 +179,7 @@ app.use(
   initLogger,
   authenticateToken,
   communityTagsRouter,
+  setOnlineStatus,
   requestFinally
 );
 app.use(
@@ -164,6 +187,7 @@ app.use(
   initLogger,
   authenticateToken,
   communityRulesRouter,
+  setOnlineStatus,
   requestFinally
 );
 app.use(
@@ -171,6 +195,7 @@ app.use(
   initLogger,
   authenticateToken,
   communityMembersRouter,
+  setOnlineStatus,
   requestFinally
 );
 
@@ -179,6 +204,7 @@ app.use(
   initLogger,
   authenticateToken,
   communityRouter,
+  setOnlineStatus,
   requestFinally
 );
 
@@ -187,6 +213,7 @@ app.use(
   initLogger,
   authenticateToken,
   postFlagsRouter,
+  setOnlineStatus,
   requestFinally
 );
 app.use(
@@ -194,15 +221,24 @@ app.use(
   initLogger,
   authenticateToken,
   postTagsRouter,
+  setOnlineStatus,
   requestFinally
 );
-app.use("/api/post", initLogger, authenticateToken, postRouter, requestFinally);
+app.use(
+  "/api/post",
+  initLogger,
+  authenticateToken,
+  postRouter,
+  setOnlineStatus,
+  requestFinally
+);
 
 app.use(
   "/api/comment/reply",
   initLogger,
   authenticateToken,
   commentReplyRouter,
+  setOnlineStatus,
   requestFinally
 );
 app.use(
@@ -210,6 +246,7 @@ app.use(
   initLogger,
   authenticateToken,
   commentVoteRouter,
+  setOnlineStatus,
   requestFinally
 );
 app.use(
@@ -217,6 +254,7 @@ app.use(
   initLogger,
   authenticateToken,
   commentFlagsRouter,
+  setOnlineStatus,
   requestFinally
 );
 app.use(
@@ -224,9 +262,17 @@ app.use(
   initLogger,
   authenticateToken,
   commentRouter,
+  setOnlineStatus,
   requestFinally
 );
 
-app.use("/api/user", initLogger, authenticateToken, userRouter, requestFinally);
+app.use(
+  "/api/user",
+  initLogger,
+  authenticateToken,
+  userRouter,
+  setOnlineStatus,
+  requestFinally
+);
 
 module.exports = app;

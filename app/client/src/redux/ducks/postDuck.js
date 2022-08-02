@@ -22,6 +22,20 @@
 
 import { createSuccess, createError } from "./alertDuck";
 import hwp_axios from "../../axiosInstance";
+import {
+  SET_COMMENTS,
+  ADD_COMMENT,
+  EDIT_COMMENT,
+  DOWNVOTE_COMMENT,
+  REMOVE_COMMENT,
+  REPLY_TO_COMMENT,
+  SET_COMMENT_REPLIES,
+  UPVOTE_COMMENT,
+} from "./commentDuck";
+import {
+  reshapePostForFrontend,
+  reshapePostsForFrontend,
+} from "../../helperFunctions/postHelpers";
 
 export const GET_POSTS = "CITZ-HYBRIDWORKPLACE/POST/GET_POSTS";
 const SET_USER_POSTS = "CITZ-HYBRIDWORKPLACE/POST/SET_USER_POSTS";
@@ -31,25 +45,8 @@ const REMOVE_POST = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_POST";
 export const EDIT_POST = "CITZ-HYBRIDWORKPLACE/POST/EDIT_POST";
 const TAG_POST = "CITZ-HYBRIDWORKPLACE/POST/TAG_POST";
 const UNTAG_POST = "CITZ-HYBRIDWORKPLACE/POST/UNTAG_POST";
-const SET_COMMENTS = "CITZ-HYBRIDWORKPLACE/POST/SET_COMMENTS";
-const ADD_COMMENT = "CITZ-HYBRIDWORKPLACE/POST/ADD_COMMENT";
-const REMOVE_COMMENT = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_COMMENT";
-const REPLY_TO_COMMENT = "CITZ-HYBRIDWORKPLACE/POST/REPLY_TO_COMMENT";
-const SET_COMMENT_REPLIES = "CITZ-HYBRIDWORKPLACE/POST/SET_COMMENT_REPLIES";
-const UPVOTE_COMMENT = "CITZ-HYBRIDWORKPLACE/POST/UPVOTE_COMMENT";
-const DOWNVOTE_COMMENT = "CITZ-HYBRIDWORKPLACE/POST/DOWNVOTE_COMMENT";
-const REMOVE_COMMENT_VOTE = "CITZ-HYBRIDWORKPLACE/POST/REMOVE_COMMENT_VOTE";
 
 const noTokenText = "Trying to access accessToken, no accessToken in store";
-
-const getUserTag = (post, userId) => {
-  try {
-    return post.tags.find((tag) => tag.taggedBy.find((user) => user === userId))
-      ?.tag;
-  } catch (err) {
-    console.error(err);
-  }
-};
 
 export const getPosts = () => async (dispatch, getState) => {
   let successful = true;
@@ -70,10 +67,7 @@ export const getPosts = () => async (dispatch, getState) => {
     });
 
     //Modifies each post and adds a userTag field which shows the tag the user has given it
-    const posts = response.data.map((post) => ({
-      ...post,
-      userTag: getUserTag(post, authState.user.id),
-    }));
+    const posts = reshapePostsForFrontend(authState.user.id, response.data);
 
     dispatch({
       type: GET_POSTS,
@@ -90,7 +84,8 @@ export const getPosts = () => async (dispatch, getState) => {
 export const getUserPosts = (postCreator) => async (dispatch, getState) => {
   let successful = true;
   try {
-    const token = getState().auth.accessToken;
+    const authState = getState().auth;
+    const token = authState.accessToken;
     if (!token) throw new Error(noTokenText);
 
     const response = await hwp_axios.get(`/api/post?username=${postCreator}`, {
@@ -101,9 +96,12 @@ export const getUserPosts = (postCreator) => async (dispatch, getState) => {
         dispatch,
       },
     });
+
+    const posts = reshapePostsForFrontend(authState.user.id, response.data);
+
     dispatch({
       type: SET_USER_POSTS,
-      payload: response.data,
+      payload: posts,
     });
   } catch (err) {
     console.error(err);
@@ -132,11 +130,7 @@ export const getPost = (postId) => async (dispatch, getState) => {
     });
 
     //Modifies each post and adds a userTag field which shows the tag the user has given it
-    const post = {
-      ...response.data,
-      userTag: getUserTag(response.data, authState.user.id),
-    };
-
+    const post = reshapePostForFrontend(authState.user.id, response.data);
     dispatch({
       type: GET_POST,
       payload: post,
@@ -175,9 +169,11 @@ export const createPost = (postData) => async (dispatch, getState) => {
       }
     );
 
+    const post = reshapePostForFrontend(authState.user.id, response.data);
+
     dispatch({
       type: ADD_POST,
-      payload: response.data,
+      payload: post,
     });
   } catch (err) {
     console.error(err);
@@ -315,7 +311,6 @@ export const tagPost = (postId, tag) => async (dispatch, getState) => {
 
     dispatch({ type: TAG_POST, payload: { postId, tag } });
 
-    createSuccess(`Successfully Tagged Post`)(dispatch);
   } catch (err) {
     console.error(err);
     successful = false;
@@ -350,7 +345,6 @@ export const unTagPost = (postId, tag) => async (dispatch, getState) => {
       type: UNTAG_POST,
       payload: { postId },
     });
-    createSuccess(`Successfully Untagged Post`)(dispatch);
   } catch (err) {
     console.error(err);
     successful = false;
@@ -359,317 +353,10 @@ export const unTagPost = (postId, tag) => async (dispatch, getState) => {
     return successful;
   }
 };
-
-export const getComments = (postId) => async (dispatch, getState) => {
-  let successful = true;
-  try {
-    const authState = getState().auth;
-    const token = authState.accessToken;
-
-    if (!token) throw new Error(noTokenText);
-
-    const response = await hwp_axios.get(`/api/comment/post/${postId}`, {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-      params: {
-        dispatch,
-      },
-    });
-
-    dispatch({
-      type: SET_COMMENTS,
-      payload: { comments: response.data },
-    });
-  } catch (err) {
-    console.error(err);
-    successful = false;
-  } finally {
-    return successful;
-  }
-};
-
-export const createComment = (post, comment) => async (dispatch, getState) => {
-  let successful = true;
-  try {
-    const authState = getState().auth;
-    const token = authState.accessToken;
-
-    if (!token) throw new Error(noTokenText);
-
-    const response = await hwp_axios.post(
-      `/api/comment`,
-      {
-        post,
-        message: comment,
-      },
-      {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-        params: {
-          dispatch,
-        },
-      }
-    );
-
-    dispatch({
-      type: ADD_COMMENT,
-      payload: response.data,
-    });
-  } catch (err) {
-    console.error(err);
-    successful = false;
-    createError(err.response.data)(dispatch);
-  } finally {
-    return successful;
-  }
-};
-
-export const deleteComment = (commentId) => async (dispatch, getState) => {
-  let successful = true;
-  try {
-    //TODO: Throw error if given delete is not in list of available deletes
-    if (commentId === "") throw new Error("Error: Invalid Input");
-    const authState = getState().auth;
-    const token = authState.accessToken;
-
-    if (!token) throw new Error(noTokenText);
-
-    const response = await hwp_axios.delete(`/api/comment/${commentId}`, {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-      params: {
-        dispatch,
-      },
-    });
-
-    dispatch({
-      type: REMOVE_COMMENT,
-      payload: commentId,
-    });
-  } catch (err) {
-    console.error(err);
-    successful = false;
-    createError(err.response.data)(dispatch);
-  } finally {
-    return successful;
-  }
-};
-
-export const replyToComment =
-  (commentId, reply) => async (dispatch, getState) => {
-    let successful = true;
-    try {
-      if (commentId === "") throw new Error("Error: Invalid Input");
-      const authState = getState().auth;
-      const token = authState.accessToken;
-
-      if (!token) throw new Error(noTokenText);
-
-      const response = await hwp_axios.post(
-        `/api/comment/reply/${commentId}`,
-        {
-          message: reply,
-        },
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-          params: {
-            dispatch,
-          },
-        }
-      );
-
-      dispatch({
-        type: REPLY_TO_COMMENT,
-        payload: { commentId, comment: response.data },
-      });
-    } catch (err) {
-      console.error(err);
-      successful = false;
-      createError(err.response.data)(dispatch);
-    } finally {
-      return successful;
-    }
-  };
-
-export const getCommentReplies = (commentId) => async (dispatch, getState) => {
-  let successful = true;
-  try {
-    if (commentId === "") throw new Error("Error: Invalid Input");
-    const authState = getState().auth;
-    const token = authState.accessToken;
-
-    if (!token) throw new Error(noTokenText);
-
-    const response = await hwp_axios.get(`/api/comment/reply/${commentId}`, {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-      params: {
-        dispatch,
-      },
-    });
-
-    dispatch({
-      type: SET_COMMENT_REPLIES,
-      payload: { commentId, comments: response.data },
-    });
-  } catch (err) {
-    console.error(err);
-    successful = false;
-  } finally {
-    return successful;
-  }
-};
-
-export const flagComment = (commentId, flag) => async (dispatch, getState) => {
-  let successful = true;
-  try {
-    //TODO: Check for flag in list of available flags
-    const authState = getState().auth;
-    const token = authState.accessToken;
-
-    if (!token) throw new Error(noTokenText);
-
-    const response = await hwp_axios.post(
-      `/api/comment/flags/${commentId}?flag=${flag}`,
-      {},
-      {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-        params: {
-          dispatch,
-        },
-      }
-    );
-    createSuccess(`Successfully flagged post for reason: ${flag}`)(dispatch);
-  } catch (err) {
-    console.error(err);
-    successful = false;
-  } finally {
-    return successful;
-  }
-};
-
-export const upvoteComment = (commentId) => async (dispatch, getState) => {
-  let successful = true;
-  try {
-    const authState = getState().auth;
-    const token = authState.accessToken;
-    const userId = authState.user.id;
-
-    if (!token) throw new Error(noTokenText);
-
-    const response = await hwp_axios.patch(
-      `/api/comment/vote/${commentId}?vote=up`,
-      {
-        id: commentId,
-      },
-      {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-        params: {
-          dispatch,
-        },
-      }
-    );
-    dispatch({
-      type: UPVOTE_COMMENT,
-      payload: { commentId, userId },
-    });
-  } catch (err) {
-    console.error(err);
-    successful = false;
-  } finally {
-    return successful;
-  }
-};
-
-export const downvoteComment = (commentId) => async (dispatch, getState) => {
-  let successful = true;
-  try {
-    const authState = getState().auth;
-    const token = authState.accessToken;
-    const userId = authState.user.id;
-
-    if (!token) throw new Error(noTokenText);
-
-    const response = await hwp_axios.patch(
-      `/api/comment/vote/${commentId}?vote=down`,
-      {
-        id: commentId,
-      },
-      {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-        params: {
-          dispatch,
-        },
-      }
-    );
-    dispatch({
-      type: DOWNVOTE_COMMENT,
-      payload: { commentId, userId },
-    });
-  } catch (err) {
-    console.error(err);
-    successful = false;
-  } finally {
-    return successful;
-  }
-};
-
-export const removeCommentVote =
-  (commentId, callAPI = false) =>
-  async (dispatch, getState) => {
-    let successful = true;
-    try {
-      const authState = getState().auth;
-      const token = authState.accessToken;
-      const userId = authState.user.id;
-
-      if (!token) throw new Error(noTokenText);
-
-      if (callAPI) {
-        await hwp_axios.patch(
-          `/api/comment/vote/${commentId}`,
-          {
-            id: commentId,
-          },
-          {
-            headers: {
-              authorization: `Bearer ${token}`,
-            },
-            params: {
-              dispatch,
-            },
-          }
-        );
-      }
-
-      dispatch({
-        type: REMOVE_COMMENT_VOTE,
-        payload: { commentId, userId },
-      });
-    } catch (err) {
-      console.error(err);
-      successful = false;
-    } finally {
-      return successful;
-    }
-  };
 
 const initialState = {
-  userPosts: [], // user posts
-  items: [], //posts
-  item: {}, //single post
+  currentPostIndex: -1,
+  items: [],
 };
 
 export function postReducer(state = initialState, action) {
@@ -680,15 +367,32 @@ export function postReducer(state = initialState, action) {
         items: action.payload,
       };
     case SET_USER_POSTS:
-      return {
-        ...state,
-        userPosts: action.payload,
-      };
+      return (() => {
+        const newState = { ...state };
+        newState.items = [
+          ...newState.items,
+          ...action.payload.filter(
+            (post) =>
+              !newState.items.find((statePost) => statePost._id === post._id)
+          ),
+        ];
+        return newState;
+      })();
     case GET_POST:
-      return {
-        ...state,
-        item: action.payload,
-      };
+      return (() => {
+        const newState = { ...state };
+        const postIndex = newState.items.findIndex(
+          (post) => post._id === action.payload._id
+        );
+        if (postIndex !== -1) {
+          newState.items[postIndex] = action.payload;
+          newState.currentPostIndex = postIndex;
+        } else {
+          newState.items.unshift(action.payload);
+          newState.currentPostIndex = 0;
+        }
+        return newState;
+      })();
     case ADD_POST:
       return {
         ...state,
@@ -729,138 +433,178 @@ export function postReducer(state = initialState, action) {
             : element
         ),
       };
+    // COMMENTS
     case SET_COMMENTS:
       return {
         ...state,
-        item: { ...state.item, comments: action.payload.comments },
+        items: state.items.map((post, index) =>
+          index === state.currentPostIndex
+            ? {
+                ...post,
+                comments: action.payload.comments,
+              }
+            : post
+        ),
       };
     case ADD_COMMENT:
       return {
         ...state,
-        item: {
-          ...state.item,
-          comments: [action.payload, ...state.item.comments],
-        },
+        items: state.items.map((post, index) =>
+          index === state.currentPostIndex
+            ? {
+                ...post,
+                comments: [action.payload, ...post.comments],
+              }
+            : post
+        ),
       };
     case REMOVE_COMMENT:
       return {
         ...state,
-        item: {
-          ...state.item,
-          comments: state.item.comments.filter(
-            (comment) => comment._id !== action.payload
-          ),
-        },
+        items: state.items.map((post, index) =>
+          index === state.currentPostIndex
+            ? {
+                ...post,
+                comments: post.comments.filter(
+                  (comment) => comment._id !== action.payload
+                ),
+              }
+            : post
+        ),
       };
     case REPLY_TO_COMMENT:
       return {
         ...state,
-        item: {
-          ...state.item,
-          comments: state.item.comments.map((comment) => {
-            if (comment._id === action.payload.commentId) {
-              if (!comment.replies) comment.replies = [];
-
-              return {
-                ...comment,
-                replies: [action.payload.comment, ...comment.replies],
-                hasReplies: true,
-              };
-            } else {
-              return comment;
-            }
-          }),
-        },
+        items: state.items.map((post, index) =>
+          index === state.currentPostIndex
+            ? {
+                ...post,
+                comments: post.comments.map((comment) =>
+                  comment._id === action.payload.commentId
+                    ? {
+                        ...comment,
+                        replies: [
+                          action.payload.comment,
+                          ...(comment.replies ?? []),
+                        ],
+                      }
+                    : comment
+                ),
+              }
+            : post
+        ),
+      };
+    case EDIT_COMMENT:
+      return {
+        ...state,
+        items: state.items.map((post, index) =>
+          index === state.currentPostIndex
+            ? {
+                ...post,
+                comments: post.comments.map((comment) =>
+                  comment._id === action.payload.id
+                    ? {
+                        ...comment,
+                        message: action.payload.message,
+                      }
+                    : comment
+                ),
+              }
+            : post
+        ),
       };
     case SET_COMMENT_REPLIES:
       return {
         ...state,
-        item: {
-          ...state.item,
-          comments: state.item.comments.map((comment) =>
-            comment._id === action.payload.commentId
-              ? {
-                  ...comment,
-                  replies: action.payload.comments,
-                }
-              : comment
-          ),
-        },
+        items: state.items.map((post, index) =>
+          index === state.currentPostIndex
+            ? {
+                ...post,
+                comments: post.comments.map((comment) =>
+                  comment._id === action.payload.commentId
+                    ? {
+                        ...comment,
+                        replies: action.payload.comments,
+                      }
+                    : comment
+                ),
+              }
+            : post
+        ),
       };
     case UPVOTE_COMMENT:
       return {
         ...state,
-        item: {
-          ...state.item,
-          comments: state.item.comments.map((comment) =>
-            comment._id === action.payload.commentId
-              ? {
-                  ...comment,
-                  upvotes: {
-                    ...comment.upvotes,
-                    users: [...comment.upvotes.users, action.payload.userId],
-                  },
-                  votes: comment.votes + 1,
-                }
-              : comment
-          ),
-        },
+        items: state.items.map((post, index) =>
+          index === state.currentPostIndex
+            ? {
+                ...post,
+                comments: post.comments.map((comment) =>
+                  comment._id === action.payload.commentId
+                    ? // If comment._id is the id of the comment we're upvoting, do the following logic
+                      {
+                        ...comment,
+                        /* 
+                  The upvote/downvote button work as a switch.
+                  If upvote is already clicked and you click it again, it will unclick upvote,
+                  and same with downvote.
+                  */
+                        userVote:
+                          comment.userVote === "down" || !comment.userVote
+                            ? "up"
+                            : null,
+                        votes: (() => {
+                          if (comment.userVote === "down") {
+                            return comment.votes + 2;
+                          }
+                          if (comment.userVote === "up") {
+                            return comment.votes - 1;
+                          }
+                          return comment.votes + 1;
+                        })(),
+                      }
+                    : comment
+                ),
+              }
+            : post
+        ),
       };
     case DOWNVOTE_COMMENT:
       return {
         ...state,
-        item: {
-          ...state.item,
-          comments: state.item.comments.map((comment) =>
-            comment._id === action.payload.commentId
-              ? {
-                  ...comment,
-                  downvotes: {
-                    ...comment.downvotes,
-                    users: [...comment.downvotes.users, action.payload.userId],
-                  },
-                  votes: comment.votes - 1,
-                }
-              : comment
-          ),
-        },
-      };
-    case REMOVE_COMMENT_VOTE:
-      return {
-        ...state,
-        item: {
-          ...state.item,
-          comments: state.item.comments.map((comment) =>
-            comment._id === action.payload.commentId
-              ? {
-                  ...comment,
-                  downvotes: {
-                    ...comment.downvotes,
-                    users: comment.downvotes.users.filter(
-                      (user) => user !== action.payload.userId
-                    ),
-                  },
-                  upvotes: {
-                    ...comment.upvotes,
-                    users: comment.upvotes.users.filter(
-                      (user) => user !== action.payload.userId
-                    ),
-                  },
-                  votes: (() => {
-                    if (comment.upvotes.users.includes(action.payload.userId)) {
-                      return comment.votes - 1;
-                    } else if (
-                      comment.downvotes.users.includes(action.payload.userId)
-                    ) {
-                      return comment.votes + 1;
-                    } else {
-                      return comment.votes;
-                    }
-                  })(),
-                }
-              : comment
-          ),
-        },
+        items: state.items.map((post, index) =>
+          index === state.currentPostIndex
+            ? {
+                ...post,
+                comments: post.comments.map((comment) =>
+                  comment._id === action.payload.commentId
+                    ? // If comment._id is the id of the comment we're upvoting, do the following logic
+                      {
+                        ...comment,
+                        /* 
+                  The upvote/downvote button work as a switch.
+                  If upvote is already clicked and you click it again, it will unclick upvote,
+                  and same with downvote.
+                  */
+                        userVote:
+                          comment.userVote === "up" || !comment.userVote
+                            ? "down"
+                            : null,
+                        votes: (() => {
+                          if (comment.userVote === "up") {
+                            return comment.votes - 2;
+                          }
+                          if (comment.userVote === "down") {
+                            return comment.votes + 1;
+                          }
+                          return comment.votes - 1;
+                        })(),
+                      }
+                    : comment
+                ),
+              }
+            : post
+        ),
       };
     default:
       return state;

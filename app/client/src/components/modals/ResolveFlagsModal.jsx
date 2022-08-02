@@ -79,7 +79,7 @@ export const ResolveFlagsModal = ({
       <DialogContent>
         {Object.keys(post).length !== 0 && (
           <Stack spacing={1}>
-            <Post post={post} isPostPage />
+            <Post post={post} isPostPage showIsFlagged showIsPinned />
             <Divider />
             <Stack spacing={2}>
               <Typography variant="h5">Flags</Typography>
