@@ -89,7 +89,8 @@ const AddCommunityModal = (props) => {
     setCreateCommunityLoading(false);
     if (successful === true) {
       props.closeAddCommunityModal();
-      navigate("/");
+      setPage(1);
+      navigate(`/community/${title}`);
     }
   };
 

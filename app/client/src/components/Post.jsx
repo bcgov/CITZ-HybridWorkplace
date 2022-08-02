@@ -66,11 +66,6 @@ import { FlagRounded } from "@mui/icons-material";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 
 const Post = (props) => {
-  useEffect(() => {
-    (async () => {
-      await props.getCommunity(props.post.community);
-    })();
-  }, []);
   const maxTitleLength = 40;
   const maxCommunityTitleLength = 16;
   const maxMessageLines = 5;
