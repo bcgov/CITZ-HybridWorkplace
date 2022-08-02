@@ -59,7 +59,6 @@ describe("Testing DELETE /community endpoint", () => {
         newComRules,
         newComTags
       );
-      console.log(response.status);
       response = await community.deleteCommunity(newComTitle, token);
     });
 

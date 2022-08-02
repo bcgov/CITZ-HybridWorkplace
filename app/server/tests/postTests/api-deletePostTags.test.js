@@ -70,7 +70,6 @@ describe("Testing DELETE /post/tags endpoint", () => {
     });
 
     test("User can delete existing post tag.", async () => {
-      console.log(postResponse.body);
       response = await post.deletePostTags(
         postResponse.body._id,
         loginResponse.body.token
