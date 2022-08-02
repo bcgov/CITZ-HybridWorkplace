@@ -63,19 +63,18 @@ export const adminDeleteUser = (username) => async (dispatch, getState) => {
     const token = getState().auth.accessToken;
     if (!token) throw new Error(noTokenText);
 
-    /* ENDPOINT TBD */
-    // const response = await hwp_axios.get(`/api/`, {
-    //   headers: {
-    //     authorization: `Bearer ${token}`,
-    //   },
-    //   params: {
-    //     dispatch,
-    //   },
-    // });
+    const response = await hwp_axios.get(`/api/user/${username}`, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      params: {
+        dispatch,
+      },
+    });
 
     dispatch({
       type: ADMIN_DELETE_USER,
-      //payload: response.data,
+      payload: response.data,
     });
   } catch (err) {
     console.error(err);
@@ -114,6 +113,7 @@ export const adminEditUser = (changes) => async (dispatch, getState) => {
 };
 
 const initialState = {
+  status: { communities: {}, posts: {}, comments: {} },
   users: { columns: [], rows: [] },
   posts: { columns: [], rows: [] },
   communities: { columns: [], rows: [] },

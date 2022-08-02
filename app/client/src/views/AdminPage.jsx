@@ -69,12 +69,6 @@ const AdminPage = (props) => {
   };
 
   /**
-   * Get Data Grid columns and rows
-   * for GET /api/user/dataGrid
-   * returns { columns, rows }
-   */
-
-  /**
    * GET - Get user by username and return pure object or map of objects properties in modal.
    * EDIT - Open modal to set fields to edit on user.
    * DELETE - Permanently delete user. Warning and confirmation modal
@@ -135,8 +129,8 @@ const AdminPage = (props) => {
             <TabPanel value={1}>
               <Box sx={{ height: 350, width: "100%" }}>
                 <DataGrid
-                  rows={[]}
-                  columns={[]}
+                  rows={props.adminData.users.rows ?? []}
+                  columns={props.adminData.users.columns ?? []}
                   pageSize={5}
                   rowsPerPageOptions={[5]}
                   checkboxSelection
@@ -152,12 +146,14 @@ const AdminPage = (props) => {
                   <Button>Get</Button>
                   {/* //TO BE REPLACED WITH ACTUAL USER DATA*/}
                   <Button
-                    onClick={() => props.openAdminEditUserInfoModal(props.user)}
+                    onClick={() =>
+                      props.openAdminEditUserInfoModal(selectedUser)
+                    }
                   >
                     Edit
                   </Button>
                   <Button
-                    onClick={() => props.openAdminDeleteUserModal(props.user)}
+                    onClick={() => props.openAdminDeleteUserModal(selectedUser)}
                   >
                     Delete
                   </Button>
