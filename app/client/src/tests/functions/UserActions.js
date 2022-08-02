@@ -373,6 +373,11 @@ class UserActions {
     });
   }
 
+  async search(contents) {
+    await this.page.type("#searchBar", contents);
+    await this.page.keyboard.press("Enter");
+  }
+
   // Profile page actions
   async editAvatar(colour, type, optionalColour = "") {
     // Get and click avatar

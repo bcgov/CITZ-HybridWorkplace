@@ -120,6 +120,34 @@ describe("Given that user is on Home page", () => {
   });
 
   // Search
+  describe("When user searches for their previously made post", () => {
+    const postTitle = "Posting from Community page";
+    beforeAll(async () => {
+      await user.search(postTitle);
+    });
+
+    test("Then that post will be visible in the search results", async () => {
+      // Click Posts tab
+      const [postsTab] = await page.$x(`//p[contains(., "Posts:")]`);
+      if (postsTab) {
+        await postsTab.click();
+      }
+
+      let postIsVisible;
+      try {
+        // Is post title there?
+        await page.waitForXPath(`//h6[contains(., "${postTitle}")]`, {
+          timeout: 2000,
+        });
+
+        postIsVisible = true;
+      } catch (e) {
+        postIsVisible = false;
+      }
+
+      expect(postIsVisible).toBeTruthy();
+    });
+  });
 
   // Go to profile
   describe("When user clicks on avatar", () => {
