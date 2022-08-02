@@ -36,6 +36,12 @@ const lightModeColors = {
   backgroundSecondary: {
     main: "rgba(220, 220, 220, .5)",
   },
+  onlineStatus: {
+    main: "#27CC13",
+  },
+  offlineStatus: {
+    main: "#F4281C",
+  },
 };
 const darkModeColors = {
   primary: {
@@ -58,6 +64,12 @@ const darkModeColors = {
   },
   backgroundSecondary: {
     main: "rgba(220, 220, 220, .1)",
+  },
+  onlineStatus: {
+    main: "#27CC13",
+  },
+  offlineStatus: {
+    main: "#F4281C",
   },
 };
 
