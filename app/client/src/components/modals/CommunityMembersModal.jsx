@@ -227,22 +227,44 @@ const CommunityMembersModal = (props) => {
                         spacing={1}
                         sx={{ display: "flex", alignItems: "center" }}
                       >
-                        <AvatarIcon
-                          type={member.avatar?.avatarType ?? ""}
-                          initials={
-                            member.lastName
-                              ? `${member.firstName?.charAt(
-                                  0
-                                )}${member.lastName?.charAt(0)}`
-                              : member.firstName?.charAt(0) ??
-                                member.username?.charAt(0) ??
-                                ""
+                        <Tooltip
+                          title={
+                            <Typography>
+                              {member.online ? "Online" : "Offline"}
+                            </Typography>
                           }
-                          image={member.avatar?.image ?? ""}
-                          gradient={member.avatar?.gradient ?? ""}
-                          colors={member.avatar?.colors ?? {}}
-                          size={30}
-                        />
+                          placement="left"
+                          arrow
+                        >
+                          <Badge
+                            badgeContent=" "
+                            color={
+                              member.online ? "onlineStatus" : "offlineStatus"
+                            }
+                            variant="dot"
+                            anchorOrigin={{
+                              vertical: "top",
+                              horizontal: "left",
+                            }}
+                          >
+                            <AvatarIcon
+                              type={member.avatar?.avatarType ?? ""}
+                              initials={
+                                member.lastName
+                                  ? `${member.firstName?.charAt(
+                                      0
+                                    )}${member.lastName?.charAt(0)}`
+                                  : member.firstName?.charAt(0) ??
+                                    member.username?.charAt(0) ??
+                                    ""
+                              }
+                              image={member.avatar?.image ?? ""}
+                              gradient={member.avatar?.gradient ?? ""}
+                              colors={member.avatar?.colors ?? {}}
+                              size={30}
+                            />
+                          </Badge>
+                        </Tooltip>
                         <Typography
                           sx={{
                             ":hover": {
