@@ -162,6 +162,7 @@ router.post("/", async (req, res, next) => {
       creatorUsername: user.username,
       memberCount: 1,
       flagCount: 0,
+      latestFlagTimestamp: null,
       postCount: 0,
       removed: false,
       members: [user.id],
