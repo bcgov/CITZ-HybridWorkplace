@@ -47,6 +47,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import "./header.css";
 import BCLogo from "./icons/BCLogo.svg";
 import { connect } from "react-redux";
@@ -215,6 +216,12 @@ const Header = (props) => {
       itemLink: "/about",
     },
     {
+      itemText: "Admin",
+      itemIcon: <AdminPanelSettingsIcon color="primary" />,
+      itemLink: "/admin",
+      hide: !props.userIsAdmin,
+    },
+    {
       itemText: "Log Out",
       itemIcon: <LogoutIcon />,
       itemLink: "/logout",
@@ -228,20 +235,24 @@ const Header = (props) => {
       }}
     >
       <List onClick={toggleDrawer("right", false)}>
-        {menuItems.map((menuItem) => (
-          <div>
-            <ListItem key={menuItem.itemText} disablePadding>
-              <ListItemButton
-                divider
-                onClick={() => navigate(menuItem.itemLink)}
-                value={menuItem.itemLink}
-              >
-                <ListItemIcon>{menuItem.itemIcon}</ListItemIcon>
-                <ListItemText primary={menuItem.itemText} />
-              </ListItemButton>
-            </ListItem>
-          </div>
-        ))}
+        {menuItems.map((menuItem) =>
+          menuItem.hide ? (
+            <div></div>
+          ) : (
+            <div>
+              <ListItem key={menuItem.itemText} disablePadding>
+                <ListItemButton
+                  divider
+                  onClick={() => navigate(menuItem.itemLink)}
+                  value={menuItem.itemLink}
+                >
+                  <ListItemIcon>{menuItem.itemIcon}</ListItemIcon>
+                  <ListItemText primary={menuItem.itemText} />
+                </ListItemButton>
+              </ListItem>
+            </div>
+          )
+        )}
       </List>
     </Box>
   );
@@ -377,6 +388,7 @@ const mapStateToProps = (state) => ({
   user: state.self.user,
   auth: state.auth,
   searchData: state.search,
+  userIsAdmin: state.auth.user.role === "admin",
 });
 
 const mapDispatchToProps = { getUser, search };

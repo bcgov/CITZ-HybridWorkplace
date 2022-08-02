@@ -33,6 +33,8 @@ import { modalReducer } from "./ducks/modalDuck";
 import { moderatorReducer } from "./ducks/moderatorDuck";
 import { commentReducer } from "./ducks/commentDuck";
 import { searchReducer } from "./ducks/searchDuck";
+import { adminReducer } from "./ducks/adminDuck";
+
 export default combineReducers({
   communities: communityReducer,
   posts: postReducer,
@@ -44,4 +46,5 @@ export default combineReducers({
   moderator: moderatorReducer,
   comments: commentReducer,
   search: searchReducer,
+  admin: adminReducer,
 });
