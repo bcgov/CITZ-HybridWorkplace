@@ -30,6 +30,7 @@ import { openDeleteCommunityModal } from "../redux/ducks/modalDuck";
 import JoinButton from "./JoinButton";
 import moment from "moment";
 import MarkDownDisplay from "./MarkDownDisplay";
+import Croutons from "./Croutons";
 
 const Community = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -119,6 +120,7 @@ const Community = (props) => {
       key={community._id}
       sx={{ mb: "15px", backgroundColor: "transparent" }}
     >
+      <Croutons firstCrumb="communities" secondCrumb={props.community.title} />
       <Card
         sx={{
           px: 0,
