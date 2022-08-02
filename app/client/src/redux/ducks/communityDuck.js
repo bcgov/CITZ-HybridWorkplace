@@ -592,15 +592,12 @@ export function communityReducer(state = initialState, action) {
       return (() => {
         const newState = { ...state };
         // Merging Array of UsersCommunities and Communities already in the store
-        newState.communities = [
-          ...newState.communities,
-          ...action.payload.filter(
-            (comm) =>
-              !newState.communities.find(
-                (stateComm) => stateComm._id === comm._id
-              )
-          ),
-        ];
+        newState.communities = newState.communities.map((comm) =>{
+          const newComm = action.payload.find((newComm) => newComm._id === comm._id);
+          return newComm ? {...comm, ...newComm} : comm
+        }
+          
+        );
         return newState;
       })();
     case ADD_COMMUNITY:

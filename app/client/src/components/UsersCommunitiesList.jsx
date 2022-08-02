@@ -109,10 +109,7 @@ const UsersCommunitiesList = (props) => {
                       title={<Typography>Community Posts</Typography>}
                       arrow
                     >
-                      <IconButton
-                        disableRipple
-                        sx={{ pr: 0 }}
-                      >
+                      <IconButton disableRipple sx={{ pr: 0 }}>
                         <FeedIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
@@ -141,9 +138,17 @@ UsersCommunitiesList.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  communities: state.communities.communities.filter(
-    (comm) => comm.userIsInCommunity
-  ),
+  communities: state.communities.communities
+    .filter((comm) => comm.userIsInCommunity)
+    .sort((a, b) => {
+      if (a.engagement < b.engagement) {
+        return -1;
+      }
+      if (a.engagement > b.engagement) {
+        return 1;
+      }
+      return 0;
+    }),
 });
 
 const mapActionsToProps = {
