@@ -96,7 +96,12 @@ const UsersCommunitiesList = (props) => {
                     spacing={1}
                     sx={{ ml: "15px", alignItems: "center" }}
                   >
-                    <GroupsIcon sx={{ color: "#898989" }} />
+                    <Tooltip
+                      title={<Typography>Community Members</Typography>}
+                      arrow
+                    >
+                      <GroupsIcon sx={{ color: "#898989" }} />
+                    </Tooltip>
                     <Typography color="#898989">
                       {community.memberCount || 0}
                     </Typography>
@@ -106,7 +111,6 @@ const UsersCommunitiesList = (props) => {
                     >
                       <IconButton
                         disableRipple
-                        onClick={handleCommunityClick}
                         sx={{ pr: 0 }}
                       >
                         <FeedIcon fontSize="small" />

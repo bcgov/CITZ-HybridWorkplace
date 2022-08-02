@@ -42,6 +42,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Box,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { closeAddCommunityModal } from "../../redux/ducks/modalDuck";
@@ -53,8 +54,16 @@ import InputRuleList from "../InputRuleList";
 
 const AddCommunityModal = (props) => {
   const navigate = useNavigate();
+
+  const minTitleLength = 3;
+  const maxTitleLength = 200;
+  const maxDescriptionLength = 300;
+  const maxResourcesLength = 500;
+
+  const [page, setPage] = useState(1);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [resources, setResources] = useState("");
   const [createCommunityLoading, setCreateCommunityLoading] = useState(false);
 
   const [rules, setRules] = useState([]);
@@ -68,10 +77,11 @@ const AddCommunityModal = (props) => {
     setCreateCommunityLoading(true);
 
     const community = {
-      title: title,
-      description: description,
-      rules: rules,
-      tags: tags,
+      title,
+      description,
+      resources,
+      rules,
+      tags,
     };
 
     const successful = await props.createCommunity(community);
@@ -81,6 +91,16 @@ const AddCommunityModal = (props) => {
       props.closeAddCommunityModal();
       navigate("/");
     }
+  };
+
+  const handleCancelClick = () => {
+    setPage(1);
+    setTitle("");
+    setDescription("");
+    setRules([]);
+    setTags([]);
+    setResources("");
+    props.closeAddCommunityModal();
   };
 
   const addTag = () => {
@@ -95,18 +115,11 @@ const AddCommunityModal = (props) => {
     }
   };
 
-  return (
-    <Dialog
-      open={props.open}
-      onClose={props.closeAddCommunityModal}
-      sx={{ zIndex: 500, mb: 5 }}
-      maxWidth="md"
-      fullWidth
-    >
-      <DialogTitle fontWeight={600}>Create Community</DialogTitle>
-      <DialogContent>
-        <Stack spacing={1}>
-          <Stack spacing={0.5}>
+  const page1 = () => {
+    return (
+      <>
+        <Box sx={{ height: "45vh" }}>
+          <Stack spacing={0.5} sx={{ mb: 4 }}>
             <InputLabel htmlFor="create-community-title">Title</InputLabel>
             <TextField
               id="create-community-title"
@@ -115,40 +128,97 @@ const AddCommunityModal = (props) => {
               type="text"
               placeholder="Title"
               error={
-                title === "" || (title.length >= 3 && title.length <= 200)
-                  ? false
-                  : true
+                (title.length > 0 && title.length < minTitleLength) ||
+                title.length > maxTitleLength
               }
-              helperText="Title must be 3-200 characters in length."
+              helperText={`Title must be ${minTitleLength}-${maxTitleLength} characters in length.`}
               required
             />
           </Stack>
-          <Stack spacing={0.5}>
-            <MarkDownEditor
-              label="Description"
-              error={
-                description === "" ||
-                (description.length >= 3 && description.length <= 300)
-                  ? false
-                  : true
-              }
-              id="description-input"
-              value={description}
-              onChange={setDescription}
-            />
-          </Stack>
-          <Stack sx={{ mb: 2 }}>
-            <InputLabel htmlFor="create-community-rules">
-              Community Rules
-            </InputLabel>
+          <MarkDownEditor
+            label="Description"
+            error={description.length > maxDescriptionLength}
+            id="description-input"
+            value={description}
+            onChange={setDescription}
+          />
+        </Box>
+        <Stack
+          justifyContent="space-between"
+          alignItems="center"
+          direction="row"
+        >
+          <Typography variant="body1">Page {page}/4</Typography>
 
+          <Stack spacing={1} direction="row-reverse">
+            <Button
+              onClick={() => setPage(2)}
+              variant="contained"
+              disabled={
+                title.length < minTitleLength ||
+                title.length > maxTitleLength ||
+                description.length > maxDescriptionLength
+              }
+            >
+              Next
+            </Button>
+            <Button onClick={handleCancelClick} color="button">
+              Cancel
+            </Button>
+          </Stack>
+        </Stack>
+      </>
+    );
+  };
+
+  const page2 = () => {
+    return (
+      <>
+        <Box sx={{ height: "45vh" }}>
+          <Stack sx={{ mb: 2 }}>
+            <Typography variant="h6" sx={{ my: 1 }}>
+              Community Rules
+            </Typography>
+            <Typography sx={{ mb: 1 }}>
+              The standards by which moderators enforce community engagement.
+              (Optional)
+            </Typography>
             <InputRuleList rules={rules} setRules={setRules} />
           </Stack>
+        </Box>
 
+        <Stack
+          justifyContent="space-between"
+          alignItems="center"
+          direction="row"
+        >
+          <Typography variant="body1">Page {page}/4</Typography>
+
+          <Stack spacing={1} direction="row-reverse" justifyContent="end">
+            <Button onClick={() => setPage(3)} variant="contained">
+              Next
+            </Button>
+            <Button onClick={() => setPage(1)} color="button">
+              Prev
+            </Button>
+          </Stack>
+        </Stack>
+      </>
+    );
+  };
+
+  const page3 = () => {
+    return (
+      <>
+        <Box sx={{ height: "45vh" }}>
           <Stack sx={{ mb: 2 }}>
-            <InputLabel htmlFor="create-community-rules">
+            <Typography variant="h6" sx={{ my: 1 }}>
               Community Tags
-            </InputLabel>
+            </Typography>
+            <Typography sx={{ mb: 1 }}>
+              Meaningful community engagement metadata which is used to filter
+              and serve relevent content. (Optional)
+            </Typography>
 
             <Accordion>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -230,29 +300,97 @@ const AddCommunityModal = (props) => {
               </AccordionDetails>
             </Accordion>
           </Stack>
-
-          <DialogActions>
-            <Stack spacing={1} direction="row-reverse" justifyContent="end">
-              <LoadingButton
-                variant="contained"
-                loading={createCommunityLoading}
-                disabled={
-                  title.length < 3 ||
-                  title.length > 200 ||
-                  description.length < 3 ||
-                  description.length > 300
-                }
-                onClick={registerCommunity}
-              >
-                Create
-              </LoadingButton>
-              <Button onClick={props.closeAddCommunityModal} color="button">
-                Cancel
-              </Button>
-            </Stack>
-          </DialogActions>
+        </Box>
+        <Stack
+          justifyContent="space-between"
+          alignItems="center"
+          direction="row"
+        >
+          <Typography variant="body1">Page {page}/4</Typography>
+          <Stack spacing={1} direction="row-reverse" justifyContent="end">
+            <Button onClick={() => setPage(4)} variant="contained">
+              Next
+            </Button>
+            <Button onClick={() => setPage(2)} color="button">
+              Prev
+            </Button>
+          </Stack>
         </Stack>
-      </DialogContent>
+      </>
+    );
+  };
+
+  const page4 = () => {
+    return (
+      <>
+        <Box sx={{ height: "45vh" }}>
+          <Typography variant="h6" sx={{ my: 1 }}>
+            Community Resources
+          </Typography>
+          <Typography sx={{ my: 1 }}>
+            Include hyperlinks that can be utilized by community members.
+            (Optional)
+          </Typography>
+          <MarkDownEditor
+            error={resources.length > maxResourcesLength}
+            id="resources-input"
+            value={resources}
+            onChange={setResources}
+          />
+        </Box>
+        <Stack
+          justifyContent="space-between"
+          alignItems="center"
+          direction="row"
+        >
+          <Typography variant="body1">Page {page}/4</Typography>
+          <Stack spacing={1} direction="row-reverse" justifyContent="end">
+            <LoadingButton
+              variant="contained"
+              loading={createCommunityLoading}
+              disabled={
+                title.length < minTitleLength ||
+                title.length > maxTitleLength ||
+                description.length > maxDescriptionLength
+              }
+              onClick={registerCommunity}
+            >
+              Create
+            </LoadingButton>
+            <Button onClick={() => setPage(3)} color="button">
+              Prev
+            </Button>
+          </Stack>
+        </Stack>
+      </>
+    );
+  };
+
+  const selectPage = () => {
+    switch (page) {
+      case 2:
+        return page2();
+      case 3:
+        return page3();
+      case 4:
+        return page4();
+      default:
+        return page1();
+    }
+  };
+
+  return (
+    <Dialog
+      open={props.open}
+      onClose={props.closeAddCommunityModal}
+      sx={{ zIndex: 500, mb: 5 }}
+      maxWidth="md"
+      fullWidth
+    >
+      <DialogTitle sx={{ fontWeight: 600, fontSize: "1.5em" }}>
+        Create Community
+      </DialogTitle>
+      <DialogContent>{selectPage()}</DialogContent>
     </Dialog>
   );
 };

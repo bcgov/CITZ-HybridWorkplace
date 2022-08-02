@@ -24,8 +24,8 @@ const options = [
     component: "post",
     options: {
       titleMinLength: 3,
-      titleMaxLength: 50,
-      titleDisallowedCharacters: "\\\\/@\\*\\^_\\+\\-=`~\\]\\[{}:;<>",
+      titleMaxLength: 200,
+      titleDisallowedCharacters: "\\\\/@\\*\\^_\\+\\-=`~\\]\\[{}:;<>#",
       titleDisallowedStrings: [
         "www.",
         ".com",
@@ -47,7 +47,7 @@ const options = [
     options: {
       titleMinLength: 3,
       titleMaxLength: 200,
-      titleDisallowedCharacters: "\\\\/@\\*\\^_\\+\\-=`~\\]\\[{}:;<>",
+      titleDisallowedCharacters: "\\\\/@\\*\\^_\\+\\-=`~\\]\\[{}:;<>#?",
       titleDisallowedStrings: [
         "www.",
         ".com",

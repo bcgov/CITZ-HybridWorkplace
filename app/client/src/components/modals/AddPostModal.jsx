@@ -128,7 +128,7 @@ const AddPostModal = (props) => {
               placeholder="Title"
               value={title}
               error={titleError}
-              helperText="Title must be 3-50 characters in length."
+              helperText={`Title must be ${minTitleLength}-${maxTitleLength} characters in length.`}
               required
               fullWidth
             />
