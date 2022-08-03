@@ -31,6 +31,10 @@ import {
   REPLY_TO_COMMENT,
   SET_COMMENT_REPLIES,
   UPVOTE_COMMENT,
+  UPVOTE_REPLY,
+  DOWNVOTE_REPLY,
+  REMOVE_REPLY,
+  EDIT_REPLY,
 } from "./commentDuck";
 import {
   reshapePostForFrontend,
@@ -310,7 +314,6 @@ export const tagPost = (postId, tag) => async (dispatch, getState) => {
     );
 
     dispatch({ type: TAG_POST, payload: { postId, tag } });
-
   } catch (err) {
     console.error(err);
     successful = false;
@@ -466,7 +469,7 @@ export function postReducer(state = initialState, action) {
             ? {
                 ...post,
                 comments: post.comments.filter(
-                  (comment) => comment._id !== action.payload
+                  (comment) => comment._id !== action.payload.commentId
                 ),
               }
             : post
@@ -487,6 +490,7 @@ export function postReducer(state = initialState, action) {
                           action.payload.comment,
                           ...(comment.replies ?? []),
                         ],
+                        hasReplies: true,
                       }
                     : comment
                 ),
@@ -502,10 +506,10 @@ export function postReducer(state = initialState, action) {
             ? {
                 ...post,
                 comments: post.comments.map((comment) =>
-                  comment._id === action.payload.id
+                  comment._id === action.payload.comment.id
                     ? {
                         ...comment,
-                        message: action.payload.message,
+                        message: action.payload.comment.message,
                       }
                     : comment
                 ),
@@ -599,6 +603,130 @@ export function postReducer(state = initialState, action) {
                           }
                           return comment.votes - 1;
                         })(),
+                      }
+                    : comment
+                ),
+              }
+            : post
+        ),
+      };
+    case UPVOTE_REPLY:
+      return {
+        ...state,
+        items: state.items.map((post, index) => {
+          return index === state.currentPostIndex
+            ? {
+                ...post,
+                comments: post.comments.map((comment) => {
+                  return comment._id === action.payload.replyTo
+                    ? {
+                        ...comment,
+                        replies: comment.replies.map((reply) =>
+                          reply._id === action.payload.commentId
+                            ? {
+                                ...reply,
+                                userVote:
+                                  reply.userVote === "down" || !reply.userVote
+                                    ? "up"
+                                    : null,
+                                votes: (() => {
+                                  if (reply.userVote === "down") {
+                                    return reply.votes + 2;
+                                  }
+                                  if (reply.userVote === "up") {
+                                    return reply.votes - 1;
+                                  }
+                                  return reply.votes + 1;
+                                })(),
+                              }
+                            : reply
+                        ),
+                      }
+                    : comment;
+                }),
+              }
+            : post;
+        }),
+      };
+    case DOWNVOTE_REPLY:
+      return {
+        ...state,
+        items: state.items.map((post, index) => {
+          return index === state.currentPostIndex
+            ? {
+                ...post,
+                comments: post.comments.map((comment) => {
+                  return comment._id === action.payload.replyTo
+                    ? {
+                        ...comment,
+                        replies: comment.replies.map((reply) =>
+                          reply._id === action.payload.commentId
+                            ? {
+                                ...reply,
+                                userVote:
+                                  reply.userVote === "up" || !reply.userVote
+                                    ? "down"
+                                    : null,
+                                votes: (() => {
+                                  if (reply.userVote === "up") {
+                                    return reply.votes - 2;
+                                  }
+                                  if (reply.userVote === "down") {
+                                    return reply.votes + 1;
+                                  }
+                                  return reply.votes - 1;
+                                })(),
+                              }
+                            : reply
+                        ),
+                      }
+                    : comment;
+                }),
+              }
+            : post;
+        }),
+      };
+    case REMOVE_REPLY:
+      return {
+        ...state,
+        items: state.items.map((post, index) =>
+          index === state.currentPostIndex
+            ? {
+                ...post,
+                comments: post.comments.map((comment) =>
+                  comment._id === action.payload.replyTo
+                    ? {
+                        ...comment,
+                        hasReplies: comment.replies?.length > 1,
+                        replies: comment.replies.filter(
+                          (reply) => reply._id !== action.payload.commentId
+                        ),
+                      }
+                    : comment
+                ),
+              }
+            : post
+        ),
+      };
+    case EDIT_REPLY:
+      return {
+        ...state,
+        items: state.items.map((post, index) =>
+          index === state.currentPostIndex
+            ? {
+                ...post,
+                comments: post.comments.map((comment) =>
+                  comment._id === action.payload.replyTo
+                    ? {
+                        ...comment,
+                        replies: comment.replies.map((reply) =>
+                          reply._id === action.payload.comment.id
+                            ? {
+                                ...reply,
+                                message: action.payload.comment.message,
+                              }
+                            : reply
+                        ),
                       }
                     : comment
                 ),

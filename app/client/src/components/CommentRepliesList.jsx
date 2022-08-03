@@ -28,7 +28,7 @@ export const CommentRepliesList = (props) => {
           <Grid container justifyContent="flex-end">
             {props.comment.replies?.map((reply, index) => (
               <Grid item xs={11} key={reply._id}>
-                <Comment comment={reply} hideReply />
+                <Comment comment={reply} hideReply replyTo={props.comment._id} />
               </Grid>
             ))}
           </Grid>

@@ -52,7 +52,7 @@ export const Comment = (props) => {
   );
 
   const handleDeleteCommentClick = () => {
-    props.openDeleteCommentModal(props.comment);
+    props.openDeleteCommentModal(props.comment, props.replyTo);
     handleMenuClose();
   };
 
@@ -113,11 +113,11 @@ export const Comment = (props) => {
   };
 
   const handleUpVote = async () => {
-    props.upvoteComment(props.comment._id);
+    props.upvoteComment(props.comment._id, props.replyTo);
   };
 
   const handleDownVote = async () => {
-    props.downvoteComment(props.comment._id);
+    props.downvoteComment(props.comment._id, props.replyTo);
   };
 
   const handleEditedCommentTextChange = (event) => {
@@ -131,7 +131,7 @@ export const Comment = (props) => {
     };
 
     if (editedComment !== props.comment.message)
-      await props.editComment(comment);
+      await props.editComment(comment, props.replyTo);
     setShowInput(false);
   };
 
@@ -374,7 +374,7 @@ export const Comment = (props) => {
         )}
       </Grid>
       <Grid item xs={12}>
-        {!props.isReply && <CommentRepliesList comment={props.comment} />}
+        {!props.replyTo && <CommentRepliesList comment={props.comment}  />}
       </Grid>
     </Grid>
   );
