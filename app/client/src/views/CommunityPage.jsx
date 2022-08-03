@@ -201,8 +201,7 @@ const CommunityPage = (props) => {
           <Box
             sx={{
               backgroundColor: "backgroundSecondary.main",
-              pt: 5,
-              pb: 5,
+padding: 1.25,
               borderRadius: "7.5px"
             }}
           >
@@ -217,7 +216,7 @@ const CommunityPage = (props) => {
                 <PostsList posts={props.posts} showIsFlagged showIsPinned />
               )
             ) : (
-              <Box>
+              <Box sx={{ mt: 5, mb: 5 }}>
                 <Typography
                   variant="h5"
                   textAlign="center"

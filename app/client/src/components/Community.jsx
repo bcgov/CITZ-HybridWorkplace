@@ -120,7 +120,7 @@ const Community = (props) => {
       key={community._id}
       sx={{ mb: "15px", backgroundColor: "transparent" }}
     >
-      <Croutons firstCrumb="communities" secondCrumb={props.community.title} />
+
       <Card
         sx={{
           px: 0,
