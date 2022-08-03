@@ -361,9 +361,12 @@ router.patch("/", async (req, res, next) => {
     req.log.addAction("Edit query has been cleaned.");
 
     // Set fullName
-    const firstName =
-      req.body.firstName || otherUser.firstName || user.firstName;
-    const lastName = req.body.lastName || otherUser.lastName || user.lastName;
+    const firstName = otherUser
+      ? otherUser.firstName
+      : req.body.firstName || user.firstName;
+    const lastName = otherUser
+      ? otherUser.lastName
+      : req.body.lastName || user.lastName;
 
     // If first or last name was set in request body
     // and firstName is set either in the request body or in the database.
@@ -377,27 +380,51 @@ router.patch("/", async (req, res, next) => {
         lastName && lastName !== ""
           ? `${firstName} ${lastName}`
           : firstName || user.username;
-      await Comment.updateMany(
-        { creator: otherUser.id || user.id },
-        { $set: { creatorName: fullName } }
-      );
-      await Post.updateMany(
-        { creator: otherUser.id || user.id },
-        { $set: { creatorName: fullName } }
-      );
-      await Community.updateMany(
-        { creator: otherUser.id || user.id },
-        { $set: { creatorName: fullName } }
-      );
-      await Community.updateMany(
-        { moderators: { $elemMatch: { userId: otherUser.id || user.id } } },
-        { $set: { "moderators.$.name": fullName } }
-      );
-    }
 
-    req.log.addAction("Updating user.");
-    await User.updateOne({ _id: otherUser.id || user.id }, query).exec();
-    req.log.addAction("User updated.");
+      if (otherUser) {
+        await Comment.updateMany(
+          { creator: otherUser.id },
+          { $set: { creatorName: fullName } }
+        );
+        await Post.updateMany(
+          { creator: otherUser.id },
+          { $set: { creatorName: fullName } }
+        );
+        await Community.updateMany(
+          { creator: otherUser.id },
+          { $set: { creatorName: fullName } }
+        );
+        await Community.updateMany(
+          { moderators: { $elemMatch: { userId: otherUser.id } } },
+          { $set: { "moderators.$.name": fullName } }
+        );
+
+        req.log.addAction("Updating user.");
+        await User.updateOne({ _id: otherUser.id }, query).exec();
+        req.log.addAction("User updated.");
+      } else {
+        await Comment.updateMany(
+          { creator: user.id },
+          { $set: { creatorName: fullName } }
+        );
+        await Post.updateMany(
+          { creator: user.id },
+          { $set: { creatorName: fullName } }
+        );
+        await Community.updateMany(
+          { creator: user.id },
+          { $set: { creatorName: fullName } }
+        );
+        await Community.updateMany(
+          { moderators: { $elemMatch: { userId: user.id } } },
+          { $set: { "moderators.$.name": fullName } }
+        );
+
+        req.log.addAction("Updating user.");
+        await User.updateOne({ _id: user.id }, query).exec();
+        req.log.addAction("User updated.");
+      }
+    }
 
     req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
