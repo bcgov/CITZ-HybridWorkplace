@@ -65,7 +65,7 @@ describe("Given that user is on Profile page", () => {
       // Checking if interests were successfully edited
       let intrestsChanged = false;
       const chips = await page.$$(
-        `#root > div > div > div.App > div > div.Routes > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-2.css-1r3qf17 > div > div.MuiBox-root > div > span`
+        `#root > div > div > div.App > div > div.Routes > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-2 > div:nth-child(3) > div.MuiBox-root > div.MuiChip-root.MuiChip-filled.MuiChip-sizeMedium.MuiChip-colorDefault.MuiChip-filledDefault > span`
       );
       try {
         // Loop through chips. If chip text is from input array, interest must have worked.
@@ -147,7 +147,7 @@ describe("Given that user is on Profile page", () => {
         // Is notification still set?
         // Click edit gear
         const [gear] = await page.$x(
-          `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[1]/div[3]/button`
+          `//*[@id="root"]/div/div/div[1]/div/div[1]/div/div/div[1]/div[4]/button`
         );
         if (gear) {
           await gear.click();
@@ -161,7 +161,7 @@ describe("Given that user is on Profile page", () => {
         ).jsonValue();
 
         // Click save
-        const [button] = await page.$x(`//button[contains(., 'Save')]`);
+        const [button] = await page.$x(`//button[contains(., 'Close')]`);
         if (button) {
           await button.click();
         }
@@ -254,12 +254,12 @@ describe("Given that user is on Profile page", () => {
         // If solid colour, else is gradient
         if (
           (await page.$eval(
-            "#root > div > div > div.App > div > div.Routes > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-2.css-1r3qf17 > button > div",
+            "#root > div > div > div.App > div > div.Routes > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-2 > button > div",
             (e) => getComputedStyle(e).backgroundColor
           )) !== "rgba(0, 0, 0, 0)"
         ) {
           const backgroundColor = await page.$eval(
-            "#root > div > div > div.App > div > div.Routes > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-2.css-1r3qf17 > button > div",
+            "#root > div > div > div.App > div > div.Routes > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-2 > button > div",
             (e) => getComputedStyle(e).backgroundColor
           );
 
@@ -267,7 +267,7 @@ describe("Given that user is on Profile page", () => {
             throw new Error("Wrong solid colour");
         } else {
           const backgroundImage = await page.$eval(
-            "#root > div > div > div.App > div > div.Routes > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-2.css-1r3qf17 > button > div",
+            "#root > div > div > div.App > div > div.Routes > div > div > div.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-2 > button > div",
             (e) => getComputedStyle(e).backgroundImage
           );
 

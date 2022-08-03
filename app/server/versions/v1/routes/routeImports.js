@@ -24,6 +24,7 @@ const tokenRouter = require("./token");
 
 const searchRouter = require("./search");
 const onlineStatusRouter = require("./onlineStatus");
+const adminRouter = require("./admin");
 
 module.exports = {
   communityRouter,
@@ -47,4 +48,5 @@ module.exports = {
   tokenRouter,
   searchRouter,
   onlineStatusRouter,
+  adminRouter,
 };

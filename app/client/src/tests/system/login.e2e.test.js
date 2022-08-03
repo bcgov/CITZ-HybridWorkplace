@@ -23,7 +23,7 @@ describe("Given that user is on login page", () => {
       height: 768,
       deviceScaleFactor: 1,
     });
-    await page.goto("http://localhost:8080");
+    await page.goto(process.env.URL);
   });
 
   afterAll(async () => {

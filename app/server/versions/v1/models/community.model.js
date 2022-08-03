@@ -92,6 +92,10 @@
  *              count:
  *                type: number
  *                example: 1
+ *        flagCount:
+ *          type: number
+ *        latestFlagTimestamp:
+ *          type: string
  *        flags:
  *          type: array
  *          description: Flags set by users to bring attention to admins.
@@ -175,6 +179,8 @@ const Community = new mongoose.Schema(
         ],
       },
     ],
+    flagCount: { type: Number },
+    latestFlagTimestamp: { type: String },
     moderators: [
       {
         userId: String,

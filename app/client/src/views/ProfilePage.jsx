@@ -47,6 +47,8 @@ import {
   IconButton,
   Button,
   Divider,
+  Badge,
+  Tooltip,
 } from "@mui/material";
 
 import { default as BackArrow } from "@mui/icons-material/ArrowBackIosNewRounded";
@@ -65,6 +67,7 @@ import SettingsModal from "../components/modals/SettingsModal";
 import EditPostModal from "../components/modals/EditPostModal";
 import FlagPostModal from "../components/modals/FlagPostModal";
 import DeletePostModal from "../components/modals/DeletePostModal";
+import Croutons from "../components/Croutons";
 
 const ProfilePage = (props) => {
   let { username } = useParams();
@@ -123,6 +126,7 @@ const ProfilePage = (props) => {
         pb: 20,
       }}
     >
+      <Croutons profile={true} firstCrumb={`${username}`} />
       <Grid
         container
         justifySelf="center"
@@ -148,14 +152,30 @@ const ProfilePage = (props) => {
                 handleEditAvatarClick(props.profile);
             }}
           >
-            <AvatarIcon
-              type={props.profile.avatar?.avatarType ?? ""}
-              initials={props.profile?.initials ?? ""}
-              image={props.profile.avatar?.image ?? ""}
-              gradient={props.profile.avatar?.gradient ?? ""}
-              colors={props.profile.avatar?.colors ?? {}}
-              size={150}
-            />
+            <Badge
+              badgeContent={
+                <Tooltip
+                  title={
+                    <Typography>
+                      {props.profile?.online ? "Online" : "Offline"}
+                    </Typography>
+                  }
+                  arrow
+                >
+                  <Box width={1} height={1} />
+                </Tooltip>
+              }
+              color={props.profile?.online ? "onlineStatus" : "offlineStatus"}
+            >
+              <AvatarIcon
+                type={props.profile.avatar?.avatarType ?? ""}
+                initials={props.profile?.initials ?? ""}
+                image={props.profile.avatar?.image ?? ""}
+                gradient={props.profile.avatar?.gradient ?? ""}
+                colors={props.profile.avatar?.colors ?? {}}
+                size={150}
+              />
+            </Badge>
           </Button>
           <ProfileInfo profile={props.profile} />
           <Stack direction="column" spacing={1} width="20vw">

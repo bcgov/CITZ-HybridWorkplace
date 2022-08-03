@@ -161,6 +161,8 @@ router.post("/", async (req, res, next) => {
       creatorName: getFullName(user) || user.username,
       creatorUsername: user.username,
       memberCount: 1,
+      flagCount: 0,
+      latestFlagTimestamp: null,
       postCount: 0,
       removed: false,
       members: [user.id],
@@ -489,6 +491,7 @@ router.patch("/:title", async (req, res, next) => {
             "latestActivity",
             "moderators",
             "removed",
+            "flagCount",
           ]);
     req.log.addAction("Edit query has been cleaned.");
     req.log.addPatchQuery(query);

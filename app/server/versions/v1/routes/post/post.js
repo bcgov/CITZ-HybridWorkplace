@@ -166,6 +166,8 @@ router.post("/", async (req, res, next) => {
       pinned: req.body.pinned || false,
       removed: false,
       hidden: false,
+      flagCount: 0,
+      latestFlagTimestamp: null,
       availableTags,
       createdOn: moment().format("MMMM Do YYYY, h:mm:ss a"),
     });
@@ -606,6 +608,7 @@ router.patch("/:id", async (req, res, next) => {
           "flags",
           "removed",
           "commentCount",
+          "flagCount",
         ]
       : [
           "creator",
@@ -620,6 +623,7 @@ router.patch("/:id", async (req, res, next) => {
           "tags",
           "flags",
           "commentCount",
+          "flagCount",
         ];
 
     req.log.addAction("Checking edit query.");

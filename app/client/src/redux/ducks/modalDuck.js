@@ -108,6 +108,22 @@ const OPEN_PROMOTE_USER_MODAL =
 const CLOSE_PROMOTE_USER_MODAL =
   "CITZ-HYBRIDWORKPLACE/MODERATOR/CLOSE_PROMOTE_USER_MODAL";
 
+/**********************ADMIN TYPES**********************/
+const OPEN_ADMIN_EDIT_USER_INFO_MODAL =
+  "CITZ-HYBRIDWORKPLACE/ADMIN/OPEN_ADMIN_EDIT_USER_INFO_MODAL";
+const CLOSE_ADMIN_EDIT_USER_INFO_MODAL =
+  "CITZ-HYBRIDWORKPLACE/ADMIN/CLOSE_ADMIN_EDIT_USER_INFO_MODAL";
+
+const OPEN_ADMIN_DELETE_USER_MODAL =
+  "CITZ-HYBRIDWORKPLACE/DELETE/OPEN_ADMIN_DELETE_USER_MODAL";
+const CLOSE_ADMIN_DELETE_USER_MODAL =
+  "CITZ-HYBRIDWORKPLACE/DELETE/CLOSE_ADMIN_DELETE_USER_MODAL";
+
+const OPEN_ADMIN_GET_USER_MODAL =
+  "CITZ-HYBRIDWORKPLACE/GET/OPEN_ADMIN_GET_USER_MODAL";
+const CLOSE_ADMIN_GET_USER_MODAL =
+  "CITZ-HYBRIDWORKPLACE/GET/CLOSE_ADMIN_GET_USER_MODAL";
+
 /*********************** DELETE ACTIONS***********************/
 export const openDeletePostModal = (post) => (dispatch) => {
   dispatch({ type: OPEN_DELETE_POST_MODAL, payload: post });
@@ -274,18 +290,46 @@ export const closePromoteUserModal = () => (dispatch) => {
   dispatch({ type: CLOSE_PROMOTE_USER_MODAL });
 };
 
+/***********************ADMIN ACTIONS***************************/
+export const openAdminEditUserInfoModal = (username) => (dispatch) => {
+  dispatch({ type: OPEN_ADMIN_EDIT_USER_INFO_MODAL, payload: username });
+};
+
+export const closeAdminEditUserInfoModal = () => (dispatch) => {
+  dispatch({ type: CLOSE_ADMIN_EDIT_USER_INFO_MODAL });
+};
+
+export const openAdminDeleteUserModal = (username) => (dispatch) => {
+  dispatch({ type: OPEN_ADMIN_DELETE_USER_MODAL, payload: username });
+};
+
+export const closeAdminDeleteUserModal = () => (dispatch) => {
+  dispatch({ type: CLOSE_ADMIN_DELETE_USER_MODAL });
+};
+
+export const openAdminGetUserModal = (username) => (dispatch) => {
+  dispatch({ type: OPEN_ADMIN_GET_USER_MODAL, payload: username });
+};
+
+export const closeAdminGetUserModal = () => (dispatch) => {
+  dispatch({ type: CLOSE_ADMIN_GET_USER_MODAL });
+};
+
 /************************MODAL REDUCER************************/
 const initialState = {
   // Delete State
   deletePost: { open: false, post: {} },
   deleteCommunity: { open: false, community: {} },
   deleteComment: { open: false, comment: {}, replyTo: "" },
+  // Admin State
+  adminDeleteUser: { open: false, username: "" },
+  adminEditUser: { open: false, username: "" },
+  adminGetUser: { open: false, username: "" },
   // Flag State
   flagPost: { open: false, post: {} },
   flagCommunity: { open: false, community: {} },
   flagComment: { open: false, comment: {} },
   resolveFlags: { open: false, post: {} },
-
   // Edit State
   editPost: { open: false, post: {} },
   editCommunity: { open: false, community: {} },
@@ -499,6 +543,34 @@ export function modalReducer(state = initialState, action) {
       };
 
     case CLOSE_KICK_USER_MODAL:
+      return initialState;
+
+    //ADMIN
+    case OPEN_ADMIN_DELETE_USER_MODAL:
+      return {
+        ...state,
+        adminDeleteUser: { open: true, username: action.payload },
+      };
+
+    case CLOSE_ADMIN_DELETE_USER_MODAL:
+      return initialState;
+
+    case OPEN_ADMIN_EDIT_USER_INFO_MODAL:
+      return {
+        ...state,
+        adminEditUser: { open: true, username: action.payload },
+      };
+
+    case CLOSE_ADMIN_EDIT_USER_INFO_MODAL:
+      return initialState;
+
+    case OPEN_ADMIN_GET_USER_MODAL:
+      return {
+        ...state,
+        adminGetUser: { open: true, username: action.payload },
+      };
+
+    case CLOSE_ADMIN_GET_USER_MODAL:
       return initialState;
 
     default:

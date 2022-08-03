@@ -18,6 +18,7 @@
  */
 
 const express = require("express");
+const moment = require("moment");
 const ResponseError = require("../../classes/responseError");
 
 const findSingleDocuments = require("../../functions/findSingleDocuments");
@@ -163,6 +164,19 @@ router.post("/:id", async (req, res, next) => {
       );
     }
 
+    req.log.addAction(
+      "Incrementing flag count and setting latestFlagTimestamp."
+    );
+    await Post.updateOne(
+      { id: post.id },
+      {
+        $inc: { flagCount: 1 },
+        $set: {
+          latestFlagTimestamp: moment().format("MMMM Do YYYY, h:mm:ss a"),
+        },
+      }
+    );
+
     req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
@@ -247,6 +261,9 @@ router.delete("/:id", async (req, res, next) => {
     );
     req.log.addAction("User removed from flaggedBy.");
 
+    req.log.addAction("Decrementing flag count.");
+    await Post.updateOne({ id: post.id }, { $inc: { flagCount: -1 } });
+
     req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");
   } catch (err) {
@@ -323,6 +340,12 @@ router.delete("/resolve/:id", async (req, res, next) => {
       await Post.updateOne({ _id: post.id }, { flags: [] });
       req.log.addAction("Flags resolved.");
     }
+
+    req.log.addAction("Resetting flag count and latestFlagTimestamp.");
+    await Post.updateOne(
+      { id: post.id },
+      { $set: { flagCount: 0, latestFlagTimestamp: null } }
+    );
 
     req.log.setResponse(204, "Success");
     return res.status(204).send("Success. No content to return.");

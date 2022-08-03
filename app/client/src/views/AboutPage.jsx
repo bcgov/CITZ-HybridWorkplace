@@ -27,11 +27,13 @@ import {
   Typography,
   Grid,
 } from "@mui/material";
+import Croutons from "../components/Croutons";
 import "./Styles/about.css";
 
 const AboutPage = () => {
   return (
     <Box>
+      <Croutons firstCrumb="About" />
       <Stack spacing={2} sx={{ pb: 1 }}>
         <Typography variant="h4">Hybrid Workplace: The Neigbourhood</Typography>
         <Typography variant="body1">

@@ -86,6 +86,10 @@ const tags = [
     name: "User",
     description: "View and edit user settings.",
   },
+  {
+    name: "Admin",
+    description: "Data for admin dashboard.",
+  },
 ];
 
 module.exports = tags;

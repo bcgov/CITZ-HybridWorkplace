@@ -21,7 +21,7 @@
  */
 
 import "./App.css";
-import React, { Component, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import { isAPIHealthy } from "./helperFunctions/isAPIHealthy";
 
@@ -37,6 +37,7 @@ import CommunitiesPage from "./views/CommunitiesPage";
 import PostsPage from "./views/PostsPage";
 import Page404 from "./views/Page404";
 import CommunityPage from "./views/CommunityPage";
+import AdminPage from "./views/AdminPage";
 
 //Components
 import NewCommunity from "./components/NewCommunity";
@@ -105,6 +106,10 @@ const App = (props) => {
         <Route
           path="/search"
           element={<PrivateComponent component={<SearchPage />} />}
+        />
+        <Route
+          path="/admin"
+          element={<PrivateComponent component={<AdminPage />} />}
         />
         <Route path="/logout" element={<LogoutPage />} />
         <Route path="*" exact element={<Page404 />}></Route>

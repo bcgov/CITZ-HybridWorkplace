@@ -213,6 +213,15 @@ router.patch("/", async (req, res, next) => {
     });
     req.log.addAction("User found.");
 
+    // Admin can set other user
+    let otherUser;
+    if (
+      req.user.role === "admin" &&
+      req.query.username &&
+      req.query.username !== ""
+    )
+      otherUser = await User.findOne({ username: req.query.username });
+
     req.log.addAction("Finding user options.");
     const {
       firstNameMinLength,
@@ -352,8 +361,9 @@ router.patch("/", async (req, res, next) => {
     req.log.addAction("Edit query has been cleaned.");
 
     // Set fullName
-    const firstName = req.body.firstName || user.firstName;
-    const lastName = req.body.lastName || user.lastName;
+    const firstName =
+      req.body.firstName || otherUser.firstName || user.firstName;
+    const lastName = req.body.lastName || otherUser.lastName || user.lastName;
 
     // If first or last name was set in request body
     // and firstName is set either in the request body or in the database.
@@ -368,25 +378,25 @@ router.patch("/", async (req, res, next) => {
           ? `${firstName} ${lastName}`
           : firstName || user.username;
       await Comment.updateMany(
-        { creator: user.id },
+        { creator: otherUser.id || user.id },
         { $set: { creatorName: fullName } }
       );
       await Post.updateMany(
-        { creator: user.id },
+        { creator: otherUser.id || user.id },
         { $set: { creatorName: fullName } }
       );
       await Community.updateMany(
-        { creator: user.id },
+        { creator: otherUser.id || user.id },
         { $set: { creatorName: fullName } }
       );
       await Community.updateMany(
-        { moderators: { $elemMatch: { userId: user.id } } },
+        { moderators: { $elemMatch: { userId: otherUser.id || user.id } } },
         { $set: { "moderators.$.name": fullName } }
       );
     }
 
     req.log.addAction("Updating user.");
-    await User.updateOne({ _id: user.id }, query).exec();
+    await User.updateOne({ _id: otherUser.id || user.id }, query).exec();
     req.log.addAction("User updated.");
 
     req.log.setResponse(204, "Success");
@@ -567,8 +577,12 @@ router.delete("/:username", async (req, res, next) => {
     });
     req.log.addAction("User found.");
 
+    const requestingUser = await User.findOne({ username: req.user.username });
+
     req.log.addAction("Checking user is account owner.");
-    if (!(user.username === req.user.username || user.role === "admin"))
+    if (
+      !(user.username === req.user.username || requestingUser.role === "admin")
+    )
       throw new ResponseError(403, "Must be account owner to remove user.");
     req.log.addAction("User is account owner.");
 
