@@ -108,6 +108,7 @@ const mongoStartUp = async (db, collections) => {
     { title: "Welcome" },
     {
       $set: {
+        postCount: 0,
         moderators: [
           {
             userId: brady[0].id,
