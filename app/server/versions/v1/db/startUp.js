@@ -88,19 +88,19 @@ const mongoStartUp = async (db, collections) => {
   });
 
   await User.updateOne(
-    { username: brady.username },
+    { username: brady[0].username },
     { $set: { role: "admin" } }
   );
   await User.updateOne(
-    { username: robert.username },
+    { username: robert[0].username },
     { $set: { role: "admin" } }
   );
   await User.updateOne(
-    { username: zach.username },
+    { username: zach[0].username },
     { $set: { role: "admin" } }
   );
   await User.updateOne(
-    { username: dylan.username },
+    { username: dylan[0].username },
     { $set: { role: "admin" } }
   );
 
@@ -108,30 +108,29 @@ const mongoStartUp = async (db, collections) => {
     { title: "Welcome" },
     {
       $set: {
-        postCount: 0,
         moderators: [
           {
-            userId: brady.id,
+            userId: brady[0].id,
             name: "Brady Mitchell",
-            username: brady.username,
+            username: brady[0].username,
             permissions: ["set_permissions", "set_moderators"],
           },
           {
-            userId: robert.id,
+            userId: robert[0].id,
             name: "Robert Kobenter",
-            username: robert.username,
+            username: robert[0].username,
             permissions: ["set_permissions", "set_moderators"],
           },
           {
-            userId: zach.id,
+            userId: zach[0].id,
             name: "Zach Bourque",
-            username: zach.username,
+            username: zach[0].username,
             permissions: ["set_permissions", "set_moderators"],
           },
           {
-            userId: dylan.id,
+            userId: dylan[0].id,
             name: "Dylan Barkowsky",
-            username: dylan.username,
+            username: dylan[0].username,
             permissions: ["set_permissions", "set_moderators"],
           },
         ],
@@ -139,14 +138,7 @@ const mongoStartUp = async (db, collections) => {
     }
   );
 
-  await Community.deleteMany({ title: { $ne: "Welcome" } });
-  await Post.deleteMany({});
-  await Comment.deleteMany({});
-
-  await User.updateMany(
-    {},
-    { communities: [{ community: "Welcome", engagement: 0, removed: false }] }
-  );
+  await User.updateMany({}, { postCount: 0 });
 };
 
 module.exports = mongoStartUp;
