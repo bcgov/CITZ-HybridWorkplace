@@ -398,10 +398,6 @@ router.patch("/", async (req, res, next) => {
           { moderators: { $elemMatch: { userId: otherUser.id } } },
           { $set: { "moderators.$.name": fullName } }
         );
-
-        req.log.addAction("Updating user.");
-        await User.updateOne({ _id: otherUser.id }, query).exec();
-        req.log.addAction("User updated.");
       } else {
         await Comment.updateMany(
           { creator: user.id },
@@ -419,11 +415,17 @@ router.patch("/", async (req, res, next) => {
           { moderators: { $elemMatch: { userId: user.id } } },
           { $set: { "moderators.$.name": fullName } }
         );
-
-        req.log.addAction("Updating user.");
-        await User.updateOne({ _id: user.id }, query).exec();
-        req.log.addAction("User updated.");
       }
+    }
+
+    if (otherUser) {
+      req.log.addAction("Updating user.");
+      await User.updateOne({ _id: otherUser.id }, query).exec();
+      req.log.addAction("User updated.");
+    } else {
+      req.log.addAction("Updating user.");
+      await User.updateOne({ _id: user.id }, query).exec();
+      req.log.addAction("User updated.");
     }
 
     req.log.setResponse(204, "Success");
