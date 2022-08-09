@@ -27,7 +27,7 @@
     "express-session": "^1.17.3",
     "got": "^11.8.5",
     "jsonwebtoken": "^8.5.1",
-    "keycloak-connect": "^18.0.2",
+    "keycloak-connect": "^19.0.1",
     "moment": "^2.29.3",
     "mongodb": "^4.7.0",
     "mongoose": "^6.2.3",
