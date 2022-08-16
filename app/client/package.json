@@ -9,7 +9,7 @@
     "@mui/icons-material": "^5.5.1",
     "@mui/lab": "^5.0.0-alpha.86",
     "@mui/material": "^5.10.0",
-    "@mui/styles": "^5.8.6",
+    "@mui/styles": "^5.9.3",
     "@mui/x-data-grid": "^5.13.1",
     "@reduxjs/toolkit": "^1.8.3",
     "@testing-library/jest-dom": "^5.16.5",
