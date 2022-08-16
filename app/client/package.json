@@ -33,7 +33,7 @@
     "react-scripts": "5.0.1",
     "redux-thunk": "^2.4.1",
     "styled-components": "^5.3.5",
-    "web-vitals": "^1.0.1",
+    "web-vitals": "^2.1.4",
     "webpack": "^5.74.0"
   },
   "scripts": {
