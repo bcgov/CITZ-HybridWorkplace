@@ -1,5 +1,3 @@
-[![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://github.com/bcgov/citz-HybridWorkplace)
-
 # CITZ Hybrid Workplace
 
 ## Project Introduction
