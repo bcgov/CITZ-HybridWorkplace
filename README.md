@@ -169,3 +169,7 @@ The .env file must be created by using .env-template as a template.
 ## Documentation
 
 Click [here](https://github.com/bcgov/citz-hybridworkplace/wiki) to view the project documentation.
+
+## Lifecycle
+
+[![Lifecycle:Retired](https://img.shields.io/badge/Lifecycle-Retired-d45500)](<Redirect-URL>)
